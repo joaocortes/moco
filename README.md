@@ -9,7 +9,7 @@ $ mvn -DskipTests=true package
 to generate the target/org.sat4j.moco-0.0.1-SNAPSHOT-jar-with-dependencies.jar jar file.
 
 The MOCO solver supports an extended OPB format with multiple cost functions.
-Stratification is disabled by default. Enable using the '-s' option.
+Stratification is disabled by default. Should be enabled using the '-s' option.
 
 # HOW TO RUN THE ANALYZER
 
