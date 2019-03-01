@@ -22,5 +22,5 @@ Run it using the following command:
 $ java -cp org.sat4j.moco.jar org.sat4j.moco.analysis.Analyzer <instance file> [<label>:<output file>]+
 ```
 
-<output file> is expected to be in the output format produced by the MOCO solver.
-If there exist multiple files for different runs of the same algorithm, these should have the same <label>.
+`<output file>` is expected to be in the output format produced by the MOCO solver.
+If there exist multiple files for different runs of the same algorithm, these should have the same `<label>`.
