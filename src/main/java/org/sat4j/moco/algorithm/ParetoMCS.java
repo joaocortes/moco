@@ -107,7 +107,7 @@ public class ParetoMCS {
     
     /**
      * Applies the Pareto-MCS algorithm to the MOCO instance provided in {@link #ParetoMCS(Instance)}.
-     * If the instance has already been solved, nothing happens.
+      * If the instance has already been solved, nothing happens.
      */
     public void solve() {
         if (this.result.isParetoFront()) {
