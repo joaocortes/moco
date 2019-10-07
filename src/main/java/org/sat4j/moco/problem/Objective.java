@@ -81,6 +81,20 @@ public abstract class Objective {
      * @param i The sub-objective index.
      * @return The {@code i}-th sub-objective.
      */
+
+    public int getTotalLits(){
+	int total = 0;
+	for (int i = 0; i < this.nSubObj() ; ++i)
+	    total += this.getSubObjLits(i).size();
+	return total;
+    }
+
+    /**
+     * get the Total Weight of an objective
+     *@param o The objective
+     */
+    public int getTotalWeight(){return 0;    }
+
     public ReadOnlyVec<Real> getSubObjCoeffs(int i) { return getSubObj(i).getCoeffs(); }
     
     /**

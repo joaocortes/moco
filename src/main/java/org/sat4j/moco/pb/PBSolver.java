@@ -144,6 +144,7 @@ public class PBSolver {
      * @throws ContradictionException if the solver detects that the addition of {@code c} would cause the
      * formula to become unsatisfiable.
      */
+
     public void addConstr(PBConstr c) throws ContradictionException { c.addToSolver(this.solver); }
     
     /**

@@ -30,9 +30,11 @@ import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.Params;
+import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.mcs.IModelListener;
 import org.sat4j.moco.mcs.MCSExtractor;
+import org.sat4j.moco.pb.PBExpr;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
@@ -50,7 +52,7 @@ import org.sat4j.specs.IVecInt;
  *      of Satisfiability Testing (pp. 195-211). Springer, Cham.<br>
  * Includes MOCO stratification, proposed in:<br>
  *      Terra-Neves, M., Lynce, I., & Manquinho, V. M. (2018).
- *      Stratification for Constraint-Based Multi-Objective Combinatorial Optimization. In IJCAI
+  *      Stratification for Constraint-Based Multi-Objective Combinatorial Optimization. In IJCAI
  *      (pp. 1376-1382).
  * @author Miguel Terra-Neves
  */
@@ -76,6 +78,19 @@ public class ParetoMCS {
      */
     private MCSExtractor extractor = null;
     
+    /**
+     * IDs of the variables used int the sequential encoder.
+     */
+    private IVec<IVec<IVecInt>> sequentialEncoder = null;
+
+
+    /**
+     * Constraints ids of the clauses to remove while incrementing the goal function cap
+     */  
+    private IVec<ConstrID> removableConstraints = null;
+
+
+
     /**
      * Creates an instance of a MOCO solver, for a given instance, that applies the Pareto-MCS algorithm.
      * @param m The MOCO instance.
@@ -157,7 +172,9 @@ public class ParetoMCS {
         Log.comment(3, "out ParetoMCS.buildSolver");
         return solver;
     }
-    
+
+
+
     /**
      * Builds a partition sequence of the literals in the objective functions to be used for stratified
      * MCS extraction.
@@ -258,7 +275,8 @@ public class ParetoMCS {
      * partitioning process.
      */
     private double lwr = 15.0;
-    
+
+
     /**
      * Initializes the objective literal partition sequences.
      * If stratification is disabled, a single partition is created with all objective literals for all
@@ -372,7 +390,48 @@ public class ParetoMCS {
         }
         return w_lits;
     }
+
+
+    /**
+     * Initializes the sequentialEncoder.
+     */
+
+    public void initializeSequentialEncoder(){
+	int totalWeight = 0;
+
+	for (int j = 0 ; j < this.problem.nObjs() ; ++j){
+	    Objective o = this.problem.getObj(j);
+	    IVec<WeightedLit> wlit = getWeightedLits(o);
+	}
+	for (int j = 0 ; j < this.problem.nObjs() ; ++j){
+	    Objective o = this.problem.getObj(j);
+	    IVec<WeightedLit> wlit = getWeightedLits(o);
+
+	    for (int k = 0; k < totalWeight ; ++k){
+		for (int l = 0 ; l < wlit.size(); ++ l){
+		    this.solver.newVar();
+		}
+	    }
+	}
+    }
+
+    /**
+     *My little method. It should add the hard constraints needed for the sequential encoding
+     *@param iObj The objective index
+     *@param kBefore The previous max value for the objective 
+     *@param kNow The desired max value for the objective 
+     */
     
+    private void SequentialEncoderAddClauses(int iObj , int kBefore , int kNow ){
+	int nLit = this.problem.getObj(iObj).getTotalLits();
+	for (int i=2 ; i < nLit; ++i){
+	    for (int j = kBefore + 1; j < kNow; ++j){
+		this.solver.addConstr(PBFactory.instance().mkClause(null));
+		
+	    }
+	}
+    }
+
     /**
      * Sets the algorithm configuration to the one stored in a given set of parameters.
      * @param p The parameters object.
