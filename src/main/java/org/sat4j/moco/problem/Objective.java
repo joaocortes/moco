@@ -77,7 +77,8 @@ public abstract class Objective {
     public ReadOnlyVecInt getSubObjLits(int i) { return getSubObj(i).getLits(); }
     
     /**
-     * Retrieves the coefficients of one of the PB objective's sub-objectives.
+     * Retrieves the coefficients of one of the PB objective's sub-objectives. 
+     * THIS IS WRONG? It returns the total number of literals for each objective
      * @param i The sub-objective index.
      * @return The {@code i}-th sub-objective.
      */

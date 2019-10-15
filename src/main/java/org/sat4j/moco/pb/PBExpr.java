@@ -150,6 +150,7 @@ public class PBExpr {
      * Checks if all coefficients in the PB expression are 1.
      * @return True if all of the PB expression's coefficients are 1, false otherwise.
      */
+
     boolean allUnitCoeffs() {
         return checkAllTerms(new ITermChecker() {
             public boolean check(int l, Real c) { return c.equals(Real.ONE); }

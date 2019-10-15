@@ -39,6 +39,7 @@ import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
+import org.sat4j.moco.problem.SeqEncoder;
 import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
 import org.sat4j.specs.ContradictionException;
@@ -79,25 +80,31 @@ public class ParetoMCS {
     private MCSExtractor extractor = null;
     
     /**
-     * IDs of the variables used int the sequential encoder.
+     * IDs of the variables used int the sequential encoder. The first
+     * index is the goal, the second is the first index of s from " On
+     * using Incremental Encodings...".Remember that s(i,j) is an
+     * indicator of the propositions of the form x_i>=j.
      */
-    private IVec<IVec<IVecInt>> sequentialEncoder = null;
+
+    private SeqEncoder seqEncoder = null;
 
 
     /**
-     * Constraints ids of the clauses to remove while incrementing the goal function cap
+     * Constraints ids of the clauses to remove while incrementing the
+     * goal function cap. This must be done in order to remove the
+     * clauses of type 7 in " On using Incremental Encodings..."
      */  
-    private IVec<ConstrID> removableConstraints = null;
-
 
 
     /**
-     * Creates an instance of a MOCO solver, for a given instance, that applies the Pareto-MCS algorithm.
+     * Creates an instance of a MOCO solver, for a given instance,
+     * that applies the Pareto-MCS algorithm.
      * @param m The MOCO instance.
      */
     public ParetoMCS(Instance m) {
-        this.problem = m;
+
         this.result = new Result(m);
+	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
         try {
             this.solver = buildSolver();
         }
@@ -106,9 +113,11 @@ public class ParetoMCS {
             this.result.setParetoFrontFound();
             return;
         }
+
+
         this.extractor = new MCSExtractor(this.solver);
         this.extractor.setModelListener(new IModelListener() {
-            public void onModel(PBSolver s) {
+		public void onModel(PBSolver s) {
                 result.saveModel(s);
             }
         });
@@ -121,8 +130,9 @@ public class ParetoMCS {
     public Result getResult() { return this.result; }
     
     /**
-     * Applies the Pareto-MCS algorithm to the MOCO instance provided in {@link #ParetoMCS(Instance)}.
-      * If the instance has already been solved, nothing happens.
+     * Applies the Pareto-MCS algorithm to the MOCO instance provided
+      * in {@link #ParetoMCS(Instance)}.  If the instance has already
+      * been solved, nothing happens.
      */
     public void solve() {
         if (this.result.isParetoFront()) {
@@ -160,7 +170,8 @@ public class ParetoMCS {
     /**
      * Creates a PB oracle initialized with the MOCO's constraints.
      * @return The oracle.
-     * @throws ContradictionException if the oracle detects that the MOCO's constraint set is unsatisfiable.
+     * @throws ContradictionException if the oracle detects that the
+     * MOCO's constraint set is unsatisfiable.
      */
     private PBSolver buildSolver() throws ContradictionException {
         Log.comment(3, "in ParetoMCS.buildSolver");
@@ -208,8 +219,9 @@ public class ParetoMCS {
     }
     
     /**
-     * Representation of weighted literals.
-     * Used to store and sort literals based on their coefficients in some objective function.
+     * Representation of weighted literals.  Used to store and sort
+     * literals based on their coefficients in some objective
+     * function.
      * @author Miguel Terra-Neves
      */
     private class WeightedLit implements Comparable<WeightedLit> {
@@ -250,9 +262,10 @@ public class ParetoMCS {
          * Compares the weighted literal to another weighted literal.
          * The weighted literal order is entailed by their weights.
          * @param other The other weighted literal.
-         * @return An integer smaller than 0 if this literal's weight is smaller than {@code other}'s, 0 if
-         * the weight are equal, an integer greater than 0 if this literal's weight is larger than
-         * {@code other}'s.
+         * @return An integer smaller than 0 if this literal's weight
+         * is smaller than {@code other}'s, 0 if the weight are equal,
+         * an integer greater than 0 if this literal's weight is
+         * larger than {@code other}'s.
          */
         public int compareTo(WeightedLit other) {
             return getWeight().compareTo(other.getWeight());
@@ -392,45 +405,7 @@ public class ParetoMCS {
     }
 
 
-    /**
-     * Initializes the sequentialEncoder.
-     */
 
-    public void initializeSequentialEncoder(){
-	int totalWeight = 0;
-
-	for (int j = 0 ; j < this.problem.nObjs() ; ++j){
-	    Objective o = this.problem.getObj(j);
-	    IVec<WeightedLit> wlit = getWeightedLits(o);
-	}
-	for (int j = 0 ; j < this.problem.nObjs() ; ++j){
-	    Objective o = this.problem.getObj(j);
-	    IVec<WeightedLit> wlit = getWeightedLits(o);
-
-	    for (int k = 0; k < totalWeight ; ++k){
-		for (int l = 0 ; l < wlit.size(); ++ l){
-		    this.solver.newVar();
-		}
-	    }
-	}
-    }
-
-    /**
-     *My little method. It should add the hard constraints needed for the sequential encoding
-     *@param iObj The objective index
-     *@param kBefore The previous max value for the objective 
-     *@param kNow The desired max value for the objective 
-     */
-    
-    private void SequentialEncoderAddClauses(int iObj , int kBefore , int kNow ){
-	int nLit = this.problem.getObj(iObj).getTotalLits();
-	for (int i=2 ; i < nLit; ++i){
-	    for (int j = kBefore + 1; j < kNow; ++j){
-		this.solver.addConstr(PBFactory.instance().mkClause(null));
-		
-	    }
-	}
-    }
 
     /**
      * Sets the algorithm configuration to the one stored in a given set of parameters.
