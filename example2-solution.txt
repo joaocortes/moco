@@ -1,0 +1,127 @@
+c :verbosity 1
+c :decimal-scale 5
+c :nvars 16 :constraints 8 :objectives 3
+c :parse-time 0.02143547
+c :stratify false
+c :part-max-confl 200000
+c :trivial-thres 20
+c :obj-idx 0 :partitions 1
+c :part-idx 0 :part-size 48
+o 18.0 22.0 22.0
+c :elapsed 0.075124037 :front-size 1
+c :mss-size 36 :mcs-size 12
+c MCS:  -x4 -x7 -x10 -x13
+o 16.0 22.0 26.0
+c :elapsed 0.078862033 :front-size 2
+c :mss-size 36 :mcs-size 12
+c MCS:  -x3 -x8 -x10 -x13
+o 22.0 26.0 18.0
+c :elapsed 0.080224233 :front-size 3
+c :mss-size 36 :mcs-size 12
+c MCS:  -x8 -x11 -x2 -x13
+o 24.0 20.0 18.0
+c :elapsed 0.081423458 :front-size 4
+c :mss-size 36 :mcs-size 12
+c MCS:  -x4 -x6 -x11 -x13
+o 16.0 28.0 20.0
+c :elapsed 0.082896185 :front-size 5
+c :mss-size 36 :mcs-size 12
+c MCS:  -x3 -x6 -x12 -x13
+o 16.0 34.0 16.0
+c :elapsed 0.084214067 :front-size 6
+c :mss-size 36 :mcs-size 12
+c MCS:  -x7 -x12 -x2 -x13
+o 24.0 26.0 10.0
+c :elapsed 0.085634697 :front-size 7
+c :mss-size 36 :mcs-size 12
+c MCS:  -x3 -x14 -x5 -x12
+o 20.0 26.0 12.0
+c :elapsed 0.086909406 :front-size 7
+c :mss-size 36 :mcs-size 12
+c MCS:  -x14 -x4 -x7 -x9
+o 18.0 26.0 16.0
+c :elapsed 0.08814383 :front-size 8
+c :mss-size 36 :mcs-size 12
+c MCS:  -x3 -x14 -x8 -x9
+o 32.0 18.0 8.0
+c :elapsed 0.089214743 :front-size 9
+c :mss-size 36 :mcs-size 12
+c MCS:  -x14 -x4 -x5 -x11
+o 26.0 18.0 14.0
+c :elapsed 0.090446273 :front-size 10
+c :mss-size 36 :mcs-size 12
+c MCS:  -x4 -x15 -x5 -x10
+o 20.0 24.0 14.0
+c :elapsed 0.091588082 :front-size 11
+c :mss-size 36 :mcs-size 12
+c MCS:  -x4 -x15 -x6 -x9
+o 18.0 30.0 14.0
+c :elapsed 0.092852299 :front-size 12
+c :mss-size 36 :mcs-size 12
+c MCS:  -x15 -x8 -x9 -x2
+o 24.0 30.0 8.0
+c :elapsed 0.094128139 :front-size 13
+c :mss-size 36 :mcs-size 12
+c MCS:  -x15 -x5 -x12 -x2
+o 12.0 32.0 18.0
+c :elapsed 0.09602021 :front-size 14
+c :mss-size 36 :mcs-size 12
+c MCS:  -x16 -x7 -x9 -x2
+o 12.0 26.0 22.0
+c :elapsed 0.097131685 :front-size 15
+c :mss-size 36 :mcs-size 12
+c MCS:  -x3 -x16 -x6 -x9
+o 18.0 20.0 22.0
+c :elapsed 0.098180348 :front-size 15
+c :mss-size 36 :mcs-size 12
+c MCS:  -x3 -x5 -x16 -x10
+c :mss-size 36 :mcs-size 12
+c MCS:  -x5 -x16 -x11 -x2
+o 24.0 18.0 22.0
+c :elapsed 0.100113762 :front-size 16
+c :mss-size 36 :mcs-size 12
+c MCS:  -x16 -x6 -x11 -x1
+c :mss-size 36 :mcs-size 12
+c MCS:  -x16 -x7 -x10 -x1
+c :mss-size 36 :mcs-size 12
+c MCS:  -x14 -x7 -x12 -x1
+c :mss-size 36 :mcs-size 12
+c MCS:  -x14 -x8 -x11 -x1
+c :mss-size 36 :mcs-size 12
+c MCS:  -x15 -x8 -x10 -x1
+c :mss-size 36 :mcs-size 12
+c MCS:  -x15 -x6 -x12 -x1
+c :mcs-found 24
+s OPTIMUM
+v -x1 -x2 x3 -x4 -x5 -x6 -x7 x8 -x9 x10 -x11 -x12 x13 -x14 -x15 -x16
+o 16.0 22.0 26.0
+v -x1 -x2 -x3 x4 -x5 x6 -x7 -x8 -x9 -x10 x11 -x12 x13 -x14 -x15 -x16
+o 24.0 20.0 18.0
+v -x1 -x2 x3 -x4 -x5 x6 -x7 -x8 -x9 -x10 -x11 x12 x13 -x14 -x15 -x16
+o 16.0 28.0 20.0
+v -x1 x2 -x3 -x4 -x5 -x6 x7 -x8 -x9 -x10 -x11 x12 x13 -x14 -x15 -x16
+o 16.0 34.0 16.0
+v -x1 -x2 x3 -x4 x5 -x6 -x7 -x8 -x9 -x10 -x11 x12 -x13 x14 -x15 -x16
+o 24.0 26.0 10.0
+v -x1 -x2 -x3 x4 -x5 -x6 x7 -x8 x9 -x10 -x11 -x12 -x13 x14 -x15 -x16
+o 20.0 26.0 12.0
+v -x1 -x2 x3 -x4 -x5 -x6 -x7 x8 x9 -x10 -x11 -x12 -x13 x14 -x15 -x16
+o 18.0 26.0 16.0
+v -x1 -x2 -x3 x4 x5 -x6 -x7 -x8 -x9 -x10 x11 -x12 -x13 x14 -x15 -x16
+o 32.0 18.0 8.0
+v -x1 -x2 -x3 x4 x5 -x6 -x7 -x8 -x9 x10 -x11 -x12 -x13 -x14 x15 -x16
+o 26.0 18.0 14.0
+v -x1 -x2 -x3 x4 -x5 x6 -x7 -x8 x9 -x10 -x11 -x12 -x13 -x14 x15 -x16
+o 20.0 24.0 14.0
+v -x1 x2 -x3 -x4 -x5 -x6 -x7 x8 x9 -x10 -x11 -x12 -x13 -x14 x15 -x16
+o 18.0 30.0 14.0
+v -x1 x2 -x3 -x4 x5 -x6 -x7 -x8 -x9 -x10 -x11 x12 -x13 -x14 x15 -x16
+o 24.0 30.0 8.0
+v -x1 x2 -x3 -x4 -x5 -x6 x7 -x8 x9 -x10 -x11 -x12 -x13 -x14 -x15 x16
+o 12.0 32.0 18.0
+v -x1 -x2 x3 -x4 -x5 x6 -x7 -x8 x9 -x10 -x11 -x12 -x13 -x14 -x15 x16
+o 12.0 26.0 22.0
+v -x1 -x2 x3 -x4 x5 -x6 -x7 -x8 -x9 x10 -x11 -x12 -x13 -x14 -x15 x16
+o 18.0 20.0 22.0
+v x1 -x2 -x3 -x4 -x5 x6 -x7 -x8 -x9 -x10 x11 -x12 -x13 -x14 -x15 x16
+o 24.0 18.0 22.0

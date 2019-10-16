@@ -91,7 +91,17 @@ public abstract class Objective {
      * get the Total Weight of an objective
      *@param o The objective
      */
-    public int getTotalWeight(){return 0;    }
+    public int getTotalWeight(){
+
+	int total = 0;
+	for (int i = 0; i < this.nSubObj() ; ++i){
+	    ReadOnlyVec<Real> ithCoeffs =  this.getSubObjCoeffs(i);
+	    int ithCeoffsN = ithCoeffs.size();
+	    for(int  k = 0; k < ithCeoffsN;++k)
+		total += ithCoeffs.get(k).asInt();
+	}
+	return total;
+    }
 
     public ReadOnlyVec<Real> getSubObjCoeffs(int i) { return getSubObj(i).getCoeffs(); }
     

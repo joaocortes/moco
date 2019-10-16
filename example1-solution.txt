@@ -1,0 +1,14 @@
+c :verbosity 0
+c :decimal-scale 5
+c :stratify false
+c :part-max-confl 200000
+c :trivial-thres 20
+o -9.0 -3.0
+o -14.0 -10.0
+o -16.0 -12.0
+o -12.0 -16.0
+s OPTIMUM
+v -x1 x2 -x3 x4
+o -16.0 -12.0
+v -x1 -x2 x3 x4
+o -12.0 -16.0

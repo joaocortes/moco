@@ -39,7 +39,6 @@ import org.sat4j.specs.IVecInt;
 
  public class SeqEncoder {
 
-
      /** 
       * IDs of the S(equential) variables used to enforce the semantics of the sequential encoder
       */
@@ -50,8 +49,6 @@ import org.sat4j.specs.IVecInt;
       */
      private int[][] idsB = null;
      // private ConstrID topConstraint = null;
-
-
 
      /** 
       * Current top limits for all objective functions
@@ -74,7 +71,7 @@ import org.sat4j.specs.IVecInt;
 	 this.initializeIdsS();
 	 this.initializeIdsB();
 	 this.currentKs = new int[this.instance.nObjs()];	
-	 //this.ClausesIndependentOfK();
+	 this.ClausesIndependentOfK();
 
     }
 
@@ -170,8 +167,6 @@ import org.sat4j.specs.IVecInt;
       */
      private void ClausesIndependentOfK(){
 
-
-
 	 for(int iObj = 0;iObj< this.instance.nObjs(); ++iObj){
 	     Objective ithObj = this.instance.getObj(iObj);
 	     int ithObjNLit = ithObj.getTotalLits();
@@ -184,14 +179,15 @@ import org.sat4j.specs.IVecInt;
 		 for (int k  = 1;  k < ithXW ; ++k){
 
 		 IVecInt clauseSet = new VecInt(2);
-		 clauseSet.push(-ithObjLits.get(iX));
+		 clauseSet.push(ithObjLits.get(iX));
 		 clauseSet.push(this.getS(iObj, iX, k));
 
 		 try {
 		     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
 		 }
 		 catch (ContradictionException e) {
-		 }
+		     break;
+	 }
 		 }
 	     }
 	     
@@ -214,6 +210,7 @@ import org.sat4j.specs.IVecInt;
 		     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
 		 }
 		 catch (ContradictionException e) {
+		     break;
 		 }
 	     }
 	 }
@@ -240,6 +237,7 @@ import org.sat4j.specs.IVecInt;
 		     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
 		 }
 		 catch (ContradictionException e) {
+		     break;
 		 }
 	     }
 	 }
@@ -268,6 +266,7 @@ import org.sat4j.specs.IVecInt;
 		     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
 		 }
 		 catch (ContradictionException e) {
+		     break;
 		 }
 	 }
      }
@@ -282,7 +281,7 @@ import org.sat4j.specs.IVecInt;
 	 try {
 	     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
 	 }
-	 catch (ContradictionException e) {
+	 catch (ContradictionException e){
 	 }
      }
 
