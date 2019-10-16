@@ -86,7 +86,7 @@ public class ParetoMCS {
      * indicator of the propositions of the form x_i>=j.
      */
 
-     private SeqEncoder seqEncoder = null;
+    private SeqEncoder seqEncoder = null;
 
 
     /**

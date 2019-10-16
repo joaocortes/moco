@@ -25,33 +25,43 @@ package org.sat4j.moco.problem;
 import java.lang.Math;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
-import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
-import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.specs.ContradictionException;
-import org.sat4j.specs.IVec;
 import org.sat4j.specs.IVecInt;
 
 /**
  * Class with the implementation of the sequetial encoder. 
- * @author Miguel Terra-Neves
+ * @author Joao O'Neill Cortes
  */
 
  public class SeqEncoder {
 
+
      /** 
-      * IDs of the variables used to enforce the semantics of the sequential encoder
+      * IDs of the S(equential) variables used to enforce the semantics of the sequential encoder
       */
-     private Instance instance = null;
      private int[][][] idsS = null;
-     // private ConstrID topConstraint = null;
-     private PBSolver solver = null;
-     private int[] currentKs = null;
+
+     /** 
+      * IDs of the B(locking) variables used to allow incrementality
+      */
      private int[][] idsB = null;
-    /**
+     // private ConstrID topConstraint = null;
+
+
+
+     /** 
+      * Current top limits for all objective functions
+      */
+     private int[] currentKs = null;
+
+     private Instance instance = null;
+     private PBSolver solver = null;
+
+     /**
      * Creates an Instance of the sequential encoder
      * @param lits The literals in the constraint's left-hand side.
      * @param coeffs The coefficients in the constraint's left-hand side.
@@ -59,49 +69,17 @@ import org.sat4j.specs.IVecInt;
      */
 
      public SeqEncoder(Instance instance, PBSolver solver) {
-	this.instance = instance;	
-	this.solver = solver;
-	this.initializeIdsS();
-	this.initializeIdsB();
-	this.currentKs = new int[this.instance.nObjs()];	
-	this.ClausesIndependentOfK();
+	 this.instance = instance;	
+	 this.solver = solver;
+	 this.initializeIdsS();
+	 this.initializeIdsB();
+	 this.currentKs = new int[this.instance.nObjs()];	
+	 //this.ClausesIndependentOfK();
 
     }
 
 
-     /**
-      * Clause of type 4 in "On Using Incremental Encodings in..'"
-      */
-     private void ClausesIndependentOfK(){
-
-
-
-	 for(int iObj = 0;iObj< this.instance.nObjs(); ++iObj){
-	     Objective ithObj = this.instance.getObj(iObj);
-	     int ithObjNLit = ithObj.getTotalLits();
-	     ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
-	     ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
-	     assert ithObjNLit ==ithObjLits.size();
-
-	     for (int iX = 0 ; iX < ithObjNLit-1; ++iX){
-		 int ithXW = Math.round(ithObjCoeffs.get(iX).asInt());
-		 for (int k  = 1;  k < ithXW ; ++k){
-
-		 IVecInt clauseSet = new VecInt(2);
-		 clauseSet.push(-ithObjLits.get(iX));
-		 clauseSet.push(this.getS(iObj, iX, k));
-
-		 try {
-		     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
-		 }
-		 catch (ContradictionException e) {
-		 }
-		 }
-	     }
-	     
-	 }
-
-}
+     
      private void initializeIdsB(){
 	this.idsB = new int[this.instance.nObjs()][];
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
@@ -111,7 +89,9 @@ import org.sat4j.specs.IVecInt;
 	}
      }
 
-
+     /**
+      * Initialize the container of the S variables
+      */
      private void initializeIdsS(){
 	this.idsS = new int[this.instance.nObjs()][][];
 	for(int i = 0;i< instance.nObjs(); ++i){
@@ -122,19 +102,36 @@ import org.sat4j.specs.IVecInt;
 	}
      }
 
+     /**
+      * Get the ithObj, ith Literal ith K S variable
+      */
+
      public int getS(int iObj, int iX, int iK){
 	 return	 this.idsS[iObj][iX][iK];
      }
+
+     /**
+      * Set the ithObj, ith Literal ith K S variable to 
+      * */
 
      public void setS(int iObj, int iX, int iK, int id){
 	 this.idsS[iObj][iX][iK] = id;
 
      }
 
+     /**
+      * Get the ithObj, ith K B variable
+      * */
 
      public int getB(int iObj, int iK){
 	 return	 this.idsB[iObj][iK];
      }
+
+
+
+     /**
+      * Set the ithObj, ith K B variable to d
+      * */
 
      public void setB(int iObj, int iK, int id){
 	 this.idsB[iObj][iK] = id;
@@ -167,47 +164,60 @@ import org.sat4j.specs.IVecInt;
     }
 
 
-
-     /**
-      * Clause of type 11 in "On Using Incremental Encodings in..'"
-      */
-     private void blockingVariableB(int iObj,int afterK){
-	 int beforeK = this.currentKs[iObj];
-	     IVecInt clauseSet = new VecInt(1);
-	 clauseSet.push(this.getB(iObj, beforeK));
-	 try {
-	     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
-	 }
-	 catch (ContradictionException e) {
-	 }
-     }
  
-
      /**
-      * Clause of type 10 in "On Using Incremental Encodings in..'"
+      * Add Clauses of type 4 in "On Using Incremental Encodings in..'"
       */
-     private void IfLowNotX(int iObj,int afterK){
+     private void ClausesIndependentOfK(){
 
-	 int ithObjNLit = this.instance.getObj(iObj).getTotalLits();
-	 ReadOnlyVecInt ithObjLits = this.instance.getObj(iObj).getSubObjLits(0);
-	 ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
-	 assert ithObjNLit ==ithObjLits.size();
 
-	 for (int iX = 1 ; iX < ithObjNLit-1; ++iX){
-	     int ithXW = Math.round(ithObjCoeffs.get(iX).asInt());
-		 IVecInt clauseSet = new VecInt(3);
 
-		 clauseSet.push(this.getB(iObj, afterK));
-		 clauseSet.push(-this.getS(iObj, iX-1, afterK + 1 - ithXW));
+	 for(int iObj = 0;iObj< this.instance.nObjs(); ++iObj){
+	     Objective ithObj = this.instance.getObj(iObj);
+	     int ithObjNLit = ithObj.getTotalLits();
+	     ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
+	     ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
+	     assert ithObjNLit ==ithObjLits.size();
+
+	     for (int iX = 0 ; iX < ithObjNLit-1; ++iX){
+		 int ithXW = Math.round(ithObjCoeffs.get(iX).asInt());
+		 for (int k  = 1;  k < ithXW ; ++k){
+
+		 IVecInt clauseSet = new VecInt(2);
 		 clauseSet.push(-ithObjLits.get(iX));
+		 clauseSet.push(this.getS(iObj, iX, k));
+
 		 try {
 		     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
 		 }
 		 catch (ContradictionException e) {
 		 }
+		 }
+	     }
+	     
+	 }
+
+}
+
+     /**
+      * Clause of type 8 in "On Using Incremental Encodings in..'"
+      */
+     private void IfLessAlsoMore(int iObj,int afterK){
+
+	int nLit = this.instance.getObj(iObj).getTotalLits();
+	 for (int iX = 1 ; iX < nLit-1; ++iX){
+	     for (int k  = this.currentKs[iObj];  k < afterK; ++k){
+		 IVecInt clauseSet = new VecInt(2);
+		 clauseSet.push(-this.getS(iObj, iX-1, k));
+		 clauseSet.push(this.getS(iObj, iX, k));
+		 try {
+		     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
+		 }
+		 catch (ContradictionException e) {
+		 }
+	     }
 	 }
      }
-
 
      /**
       * Clause of type 9 in "On Using Incremental Encodings in..'"
@@ -235,26 +245,51 @@ import org.sat4j.specs.IVecInt;
 	 }
      }
 
-     /**
-      * Clause of type 8 in "On Using Incremental Encodings in..'"
-      */
-     private void IfLessAlsoMore(int iObj,int afterK){
 
-	int nLit = this.instance.getObj(iObj).getTotalLits();
-	 for (int iX = 1 ; iX < nLit-1; ++iX){
-	     for (int k  = this.currentKs[iObj];  k < afterK; ++k){
-		 IVecInt clauseSet = new VecInt(2);
-		 clauseSet.push(-this.getS(iObj, iX-1, k));
-		 clauseSet.push(this.getS(iObj, iX, k));
+
+     /**
+      * Clause of type 10 in "On Using Incremental Encodings in..'"
+      */
+     private void IfLowNotX(int iObj,int afterK){
+
+	 int ithObjNLit = this.instance.getObj(iObj).getTotalLits();
+	 ReadOnlyVecInt ithObjLits = this.instance.getObj(iObj).getSubObjLits(0);
+	 ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
+	 assert ithObjNLit ==ithObjLits.size();
+
+	 for (int iX = 1 ; iX < ithObjNLit-1; ++iX){
+	     int ithXW = Math.round(ithObjCoeffs.get(iX).asInt());
+		 IVecInt clauseSet = new VecInt(3);
+
+		 clauseSet.push(this.getB(iObj, afterK));
+		 clauseSet.push(-this.getS(iObj, iX-1, afterK + 1 - ithXW));
+		 clauseSet.push(-ithObjLits.get(iX));
 		 try {
 		     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
 		 }
 		 catch (ContradictionException e) {
 		 }
-	     }
 	 }
      }
 
+     /**
+      * Clause of type 11 in "On Using Incremental Encodings in..'"
+      */
+     private void blockingVariableB(int iObj,int afterK){
+	 int beforeK = this.currentKs[iObj];
+	     IVecInt clauseSet = new VecInt(1);
+	 clauseSet.push(this.getB(iObj, beforeK));
+	 try {
+	     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
+	 }
+	 catch (ContradictionException e) {
+	 }
+     }
+
+
+     /** 
+      *  Extend the B variables in k
+      */
 
 private void ExtendTopIdsBInK(int iObj, int afterK){
 
@@ -264,6 +299,11 @@ private void ExtendTopIdsBInK(int iObj, int afterK){
 	 }
 	 
      }
+
+
+     /** 
+      * Extend the S variables in k
+      */
 
 
      private void ExtendTopIdsSInK(int iObj, int afterK){
