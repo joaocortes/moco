@@ -25,12 +25,13 @@ package org.sat4j.moco.problem;
 import java.lang.Math;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
+import org.sat4j.core.LiteralsUtils;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
-import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
+import org.sat4j.specs.ContradictionException;
 
 /**
  * Class with the implementation of the sequetial encoder. 
@@ -66,7 +67,8 @@ import org.sat4j.specs.IVecInt;
      */
 
      public SeqEncoder(Instance instance, PBSolver solver) {
-	 this.instance = instance;	
+
+   	 this.instance = instance;	
 	 this.solver = solver;
 	 this.initializeIdsS();
 	 this.initializeIdsB();
@@ -92,7 +94,7 @@ import org.sat4j.specs.IVecInt;
      private void initializeIdsS(){
 	this.idsS = new int[this.instance.nObjs()][][];
 	for(int i = 0;i< instance.nObjs(); ++i){
-	    Objective ithObj = instance.getObj(i);
+ 	    Objective ithObj = instance.getObj(i);
 	    this.idsS[i] = new int[ithObj.getTotalLits()][];
 	    for(int k = 0; k < ithObj.getTotalLits();++k)
 		this.idsS[i][k] = new int[ithObj.getTotalWeight()];
@@ -135,6 +137,19 @@ import org.sat4j.specs.IVecInt;
 
      }
 
+     private void AddClause(IVecInt setOfPositiveNegativeIds){
+	 int idsN = setOfPositiveNegativeIds.size();
+	 IVecInt setOfLiterals = new VecInt(idsN);
+	 for(int i = 0; i< idsN; ++i ){
+            setOfLiterals.push(org.sat4j.core.LiteralsUtils.toInternal(setOfPositiveNegativeIds.get(i)));
+	    try{
+		this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
+	    }
+	    catch (ContradictionException e) {
+		return;
+	    }
+	 }
+     }
     /**
      *My little method. It should add the hard constraints needed for
      *the sequential encoding. I need to add the variables before I can 
@@ -147,15 +162,12 @@ import org.sat4j.specs.IVecInt;
     public void SequentialEncoderUpdateK(int iObj , int afterK ){
 
 	assert this.currentKs[iObj] < afterK;
-
 	ExtendTopIdsSInK(iObj, afterK);
 	ExtendTopIdsBInK(iObj, afterK);
 	IfLessAlsoMore(iObj, afterK);
 	IfLessAndIthXAtLeastIthW(iObj, afterK);
 	blockingVariableB(iObj, afterK);
-
 	IfLowNotX(iObj, afterK);
-
 	this.currentKs[iObj] = afterK;
 
     }
@@ -173,7 +185,6 @@ import org.sat4j.specs.IVecInt;
 	     ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
 	     ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
 	     assert ithObjNLit ==ithObjLits.size();
-
 	     for (int iX = 0 ; iX < ithObjNLit-1; ++iX){
 		 int ithXW = Math.round(ithObjCoeffs.get(iX).asInt());
 		 for (int k  = 1;  k < ithXW ; ++k){
@@ -181,13 +192,7 @@ import org.sat4j.specs.IVecInt;
 		 IVecInt clauseSet = new VecInt(2);
 		 clauseSet.push(ithObjLits.get(iX));
 		 clauseSet.push(this.getS(iObj, iX, k));
-
-		 try {
-		     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
-		 }
-		 catch (ContradictionException e) {
-		     break;
-	 }
+		     this.AddClause(clauseSet);
 		 }
 	     }
 	     
@@ -206,12 +211,7 @@ import org.sat4j.specs.IVecInt;
 		 IVecInt clauseSet = new VecInt(2);
 		 clauseSet.push(-this.getS(iObj, iX-1, k));
 		 clauseSet.push(this.getS(iObj, iX, k));
-		 try {
-		     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
-		 }
-		 catch (ContradictionException e) {
-		     break;
-		 }
+		     this.AddClause(clauseSet);
 	     }
 	 }
      }
@@ -233,12 +233,7 @@ import org.sat4j.specs.IVecInt;
 		 clauseSet.push(-this.getS(iObj, iX-1, k));
 		 clauseSet.push(-ithObjLits.get(iX));
 		 clauseSet.push(this.getS(iObj, iX, k + ithXW));
-		 try {
-		     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
-		 }
-		 catch (ContradictionException e) {
-		     break;
-		 }
+		     this.AddClause(clauseSet);
 	     }
 	 }
      }
@@ -262,12 +257,7 @@ import org.sat4j.specs.IVecInt;
 		 clauseSet.push(this.getB(iObj, afterK));
 		 clauseSet.push(-this.getS(iObj, iX-1, afterK + 1 - ithXW));
 		 clauseSet.push(-ithObjLits.get(iX));
-		 try {
-		     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
-		 }
-		 catch (ContradictionException e) {
-		     break;
-		 }
+		     this.AddClause(clauseSet);
 	 }
      }
 
@@ -278,11 +268,7 @@ import org.sat4j.specs.IVecInt;
 	 int beforeK = this.currentKs[iObj];
 	     IVecInt clauseSet = new VecInt(1);
 	 clauseSet.push(this.getB(iObj, beforeK));
-	 try {
-	     this.solver.addConstr(PBFactory.instance().mkClause(clauseSet));
-	 }
-	 catch (ContradictionException e){
-	 }
+	     this.AddClause(clauseSet);
      }
 
 
@@ -316,6 +302,5 @@ private void ExtendTopIdsBInK(int iObj, int afterK){
 	 }
 	 
      }
-    
-
 }
+
