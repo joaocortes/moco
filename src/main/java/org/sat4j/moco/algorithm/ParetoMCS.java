@@ -86,7 +86,7 @@ public class ParetoMCS {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private SeqEncoder seqEncoder = null;
+       private SeqEncoder seqEncoder = null;
 
 
     /**
@@ -104,7 +104,6 @@ public class ParetoMCS {
     public ParetoMCS(Instance m) {
 	this.problem = m;
         this.result = new Result(m);
-	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
         try {
             this.solver = buildSolver();
         }
@@ -114,7 +113,7 @@ public class ParetoMCS {
             return;
         }
 
-
+	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
         this.extractor = new MCSExtractor(this.solver);
         this.extractor.setModelListener(new IModelListener() {
 		public void onModel(PBSolver s) {
