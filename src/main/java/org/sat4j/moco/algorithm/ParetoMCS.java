@@ -38,7 +38,7 @@ import org.sat4j.moco.pb.PBExpr;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
-import org.sat4j.moco.problem.SeqEncoder;
+//import org.sat4j.moco.problem.SeqEncoder;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
@@ -113,7 +113,7 @@ public class ParetoMCS {
             return;
         }
 
-	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
+	//	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
         this.extractor = new MCSExtractor(this.solver);
         this.extractor.setModelListener(new IModelListener() {
 		public void onModel(PBSolver s) {
