@@ -38,7 +38,7 @@ import org.sat4j.moco.pb.PBExpr;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
-//import org.sat4j.moco.problem.SeqEncoder;
+import org.sat4j.moco.problem.SeqEncoder;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
@@ -86,7 +86,7 @@ public class ParetoMCS {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    //       private SeqEncoder seqEncoder = null;
+    private SeqEncoder seqEncoder = null;
 
 
     /**
@@ -104,16 +104,19 @@ public class ParetoMCS {
     public ParetoMCS(Instance m) {
 	this.problem = m;
         this.result = new Result(m);
-        try {
+        
+	try {
             this.solver = buildSolver();
+	    System.out.println(this.solver.nVars());
         }
         catch (ContradictionException e) {
             Log.comment(3, "Contradiction in ParetoMCS.buildSolver");
             this.result.setParetoFrontFound();
             return;
         }
-
-	//	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
+	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
+	seqEncoder.SequentialEncoderUpdateK(0, );
+	
         this.extractor = new MCSExtractor(this.solver);
         this.extractor.setModelListener(new IModelListener() {
 		public void onModel(PBSolver s) {

@@ -25,7 +25,6 @@ package org.sat4j.moco.problem;
 import java.lang.Math;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
-import org.sat4j.core.LiteralsUtils;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBFactory;
@@ -52,9 +51,9 @@ import org.sat4j.specs.ContradictionException;
      // private ConstrID topConstraint = null;
 
      /** 
-      * Current top limits for all objective functions
+      * Current top limits dK for all objective functions
       */
-     private int[] currentKs = null;
+     private int[] currentKDs = null;
 
      private Instance instance = null;
      private PBSolver solver = null;
@@ -66,13 +65,26 @@ import org.sat4j.specs.ContradictionException;
      * @param rhs The constraint's right-hand side.
      */
 
+
      public SeqEncoder(Instance instance, PBSolver solver) {
 
    	 this.instance = instance;	
 	 this.solver = solver;
+
 	 this.initializeIdsS();
 	 this.initializeIdsB();
-	 this.currentKs = new int[this.instance.nObjs()];	
+
+	 this.currentKDs = new int[this.instance.nObjs()];
+	 for(int i = 0; i < this.instance.nObjs(); ++i){
+	     this.currentKDs[i] = -1;
+	 }
+
+	 for(int i = 0; i < this.instance.nObjs(); ++i){
+	 this.ExtendTopIdsBInK(i, 0);
+	 this.ExtendTopIdsSInK(i, 0);
+	 this.currentKDs[i]=0;
+	 }
+
 	 this.ClausesIndependentOfK();
 
     }
@@ -83,7 +95,7 @@ import org.sat4j.specs.ContradictionException;
 	this.idsB = new int[this.instance.nObjs()][];
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
 	    Objective ithObj = instance.getObj(iObj);
-	    this.idsB[iObj] = new int[ithObj.getTotalWeight()];
+	    this.idsB[iObj] = new int[ithObj.getWeightDiff()];
 
 	}
      }
@@ -96,58 +108,59 @@ import org.sat4j.specs.ContradictionException;
 	for(int i = 0;i< instance.nObjs(); ++i){
  	    Objective ithObj = instance.getObj(i);
 	    this.idsS[i] = new int[ithObj.getTotalLits()][];
-	    for(int k = 0; k < ithObj.getTotalLits();++k)
-		this.idsS[i][k] = new int[ithObj.getTotalWeight()];
+	    for(int kD = 0; kD < ithObj.getTotalLits();++kD){
+		int[] array = new int[ithObj.getWeightDiff()];
+		this.idsS[i][kD] = array;
+	    }
 	}
      }
 
      /**
-      * Get the ithObj, ith Literal ith K S variable
+      * Get the ithObj, ithX obj, kD S variable ID.
       */
 
-     public int getS(int iObj, int iX, int iK){
-	 return	 this.idsS[iObj][iX][iK];
+     public int getS(int iObj, int iX, int kD){
+	 return	 this.idsS[iObj][iX][kD];
      }
 
      /**
-      * Set the ithObj, ith Literal ith K S variable to 
+      * Set the ithObj, ith Literal ith kD S variable to 
       * */
 
-     public void setS(int iObj, int iX, int iK, int id){
-	 this.idsS[iObj][iX][iK] = id;
+     public void setS(int iObj, int iX, int iKD, int id){
+	 this.idsS[iObj][iX][iKD] = id;
 
      }
 
      /**
-      * Get the ithObj, ith K B variable
+      * Get the ithObj, ith kD B variable
       * */
 
-     public int getB(int iObj, int iK){
-	 return	 this.idsB[iObj][iK];
+     public int getB(int iObj, int iKD){
+	 return	 this.idsB[iObj][iKD];
      }
 
 
 
      /**
-      * Set the ithObj, ith K B variable to d
+      * Set the ithObj, ith kD B variable to d
       * */
 
-     public void setB(int iObj, int iK, int id){
-	 this.idsB[iObj][iK] = id;
+     public void setB(int iObj, int iKD, int id){
+	 this.idsB[iObj][iKD] = id;
 
      }
 
-     private void AddClause(IVecInt setOfPositiveNegativeIds){
-	 int idsN = setOfPositiveNegativeIds.size();
-	 IVecInt setOfLiterals = new VecInt(idsN);
-	 for(int i = 0; i< idsN; ++i ){
-            setOfLiterals.push(org.sat4j.core.LiteralsUtils.toInternal(setOfPositiveNegativeIds.get(i)));
-	    try{
-		this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
-	    }
-	    catch (ContradictionException e) {
-		return;
-	    }
+     private void AddClause(IVecInt setOfLiterals){
+	 try{
+	     this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
+	 }
+	 catch (ContradictionException e) {
+	     System.out.println("contradiction when adding clause: ");
+	     for(int j = 0; j < setOfLiterals.size(); ++j)
+		 System.out.print(" " + setOfLiterals.get(j) + " " );
+	     System.out.println();
+	     return;
 	 }
      }
     /**
@@ -161,14 +174,14 @@ import org.sat4j.specs.ContradictionException;
     
     public void SequentialEncoderUpdateK(int iObj , int afterK ){
 
-	assert this.currentKs[iObj] < afterK;
+	assert this.currentKDs[iObj] < afterK;
 	ExtendTopIdsSInK(iObj, afterK);
 	ExtendTopIdsBInK(iObj, afterK);
 	IfLessAlsoMore(iObj, afterK);
 	IfLessAndIthXAtLeastIthW(iObj, afterK);
 	blockingVariableB(iObj, afterK);
 	IfLowNotX(iObj, afterK);
-	this.currentKs[iObj] = afterK;
+	this.currentKDs[iObj] = afterK;
 
     }
 
@@ -178,27 +191,31 @@ import org.sat4j.specs.ContradictionException;
       * Add Clauses of type 4 in "On Using Incremental Encodings in..'"
       */
      private void ClausesIndependentOfK(){
-
 	 for(int iObj = 0;iObj< this.instance.nObjs(); ++iObj){
 	     Objective ithObj = this.instance.getObj(iObj);
+	     ExtendTopIdsSInK(iObj, ithObj.getMaxCoeff());
 	     int ithObjNLit = ithObj.getTotalLits();
 	     ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
 	     ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
-	     assert ithObjNLit ==ithObjLits.size();
-	     for (int iX = 0 ; iX < ithObjNLit-1; ++iX){
+	     //	     assert ithObjNLit ==ithObjLits.size();
+	     for (int iX = 0 ; iX < ithObjNLit; ++iX){
 		 int ithXW = Math.round(ithObjCoeffs.get(iX).asInt());
-		 for (int k  = 1;  k < ithXW ; ++k){
-
-		 IVecInt clauseSet = new VecInt(2);
-		 clauseSet.push(ithObjLits.get(iX));
-		 clauseSet.push(this.getS(iObj, iX, k));
+		 int sign = (ithXW > 0)? 1: -1;
+		 ithXW = sign * ithXW;
+		 int x =  sign * ithObjLits.get(iX);
+		 for (int kD  = this.currentKDs[iObj];  kD < ithXW; ++kD){
+		     int s = this.getS(iObj, iX, kD);
+		     IVecInt clauseSet = new VecInt(2);
+		     clauseSet.push(-x);
+		     clauseSet.push(s);
 		     this.AddClause(clauseSet);
 		 }
 	     }
-	     
 	 }
+	 
+     }
 
-}
+
 
      /**
       * Clause of type 8 in "On Using Incremental Encodings in..'"
@@ -207,11 +224,13 @@ import org.sat4j.specs.ContradictionException;
 
 	int nLit = this.instance.getObj(iObj).getTotalLits();
 	 for (int iX = 1 ; iX < nLit-1; ++iX){
-	     for (int k  = this.currentKs[iObj];  k < afterK; ++k){
+	     for (int kD  = this.currentKDs[iObj];  kD < afterK; ++kD){
 		 IVecInt clauseSet = new VecInt(2);
-		 clauseSet.push(-this.getS(iObj, iX-1, k));
-		 clauseSet.push(this.getS(iObj, iX, k));
-		     this.AddClause(clauseSet);
+		 int s1 = this.getS(iObj, iX-1, kD);
+		 int s2 = this.getS(iObj, iX, kD);
+		 clauseSet.push(-s1);
+		 clauseSet.push(s2);
+		 this.AddClause(clauseSet);
 	     }
 	 }
      }
@@ -226,14 +245,20 @@ import org.sat4j.specs.ContradictionException;
 	 ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
 	 assert ithObjNLit ==ithObjLits.size();
 
-	 for (int iX = 1 ; iX < ithObjNLit-1; ++iX){
-	     int ithXW = Math.round(ithObjCoeffs.get(iX).asInt());
-	     for (int k  = this.currentKs[iObj]- ithXW;  k <= afterK - ithXW; ++k){
+	 for (int iX = 1 ; iX < ithObjNLit; ++iX){
+	     int ithXW = ithObjCoeffs.get(iX).asInt();
+	     int sign = (ithXW > 0)? 1: -1;
+	     ithXW = sign * ithXW;
+	     int x = sign * ithObjLits.get(iX);
+	     if(this.currentKDs[iObj]- ithXW >= 0)
+	     for (int kD  = this.currentKDs[iObj]- ithXW;  kD <= afterK - ithXW ; ++kD){
 		 IVecInt clauseSet = new VecInt(3);
-		 clauseSet.push(-this.getS(iObj, iX-1, k));
-		 clauseSet.push(-ithObjLits.get(iX));
-		 clauseSet.push(this.getS(iObj, iX, k + ithXW));
-		     this.AddClause(clauseSet);
+		 int s1 = -this.getS(iObj, iX-1, kD);
+		 int s2 = this.getS(iObj, iX, kD + ithXW);
+		 clauseSet.push(s1);
+		 clauseSet.push(x);
+		 clauseSet.push(s2);
+		 this.AddClause(clauseSet);
 	     }
 	 }
      }
@@ -250,14 +275,20 @@ import org.sat4j.specs.ContradictionException;
 	 ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
 	 assert ithObjNLit ==ithObjLits.size();
 
-	 for (int iX = 1 ; iX < ithObjNLit-1; ++iX){
-	     int ithXW = Math.round(ithObjCoeffs.get(iX).asInt());
-		 IVecInt clauseSet = new VecInt(3);
-
-		 clauseSet.push(this.getB(iObj, afterK));
-		 clauseSet.push(-this.getS(iObj, iX-1, afterK + 1 - ithXW));
-		 clauseSet.push(-ithObjLits.get(iX));
-		     this.AddClause(clauseSet);
+	 for (int iX = 1 ; iX < ithObjNLit; ++iX){
+	     int ithXW = ithObjCoeffs.get(iX).asInt();
+	     int sign = (ithXW > 0)? 1: -1;
+	     ithXW = sign * ithXW;
+	     if( afterK + 1 - ithXW > 0){
+	     IVecInt clauseSet = new VecInt(3);
+	     int b = this.getB(iObj, afterK);
+	     int s = this.getS(iObj, iX-1, afterK + 1 - ithXW);
+	     int x = ithObjLits.get(iX);
+	     clauseSet.push(b);
+	     clauseSet.push(-s);
+	     clauseSet.push(- sign * x);
+	     this.AddClause(clauseSet);
+	     }
 	 }
      }
 
@@ -265,7 +296,7 @@ import org.sat4j.specs.ContradictionException;
       * Clause of type 11 in "On Using Incremental Encodings in..'"
       */
      private void blockingVariableB(int iObj,int afterK){
-	 int beforeK = this.currentKs[iObj];
+	 int beforeK = this.currentKDs[iObj];
 	     IVecInt clauseSet = new VecInt(1);
 	 clauseSet.push(this.getB(iObj, beforeK));
 	     this.AddClause(clauseSet);
@@ -278,9 +309,9 @@ import org.sat4j.specs.ContradictionException;
 
 private void ExtendTopIdsBInK(int iObj, int afterK){
 
-	     for(int k = this.currentKs[iObj]; k < afterK; ++k){
+	     for(int kD = this.currentKDs[iObj]+1; kD < afterK + 1; ++kD){
 	     this.solver.newVars(1);
-	     this.setB(iObj, k, this.solver.nVars());	     
+	     this.setB(iObj, kD, this.solver.nVars());	     
 	 }
 	 
      }
@@ -292,12 +323,12 @@ private void ExtendTopIdsBInK(int iObj, int afterK){
 
 
      private void ExtendTopIdsSInK(int iObj, int afterK){
-	 this.solver.newVars(1);
+	 
 	 int nLit = this.instance.getObj(iObj).getTotalLits();
-	 for (int iX = 0 ; iX < nLit-1; ++iX){
-	     for(int k = this.currentKs[iObj]; k < afterK; ++k){
-	     this.solver.newVars(1);
-	     this.setS(iObj, iX, k, this.solver.nVars());	     
+	 for (int iX = 0 ; iX < nLit; ++iX){
+	     for(int kD = this.currentKDs[iObj]+1; kD < afterK +1 ; ++kD){
+		 this.solver.newVars(1);
+		 this.setS(iObj, iX, kD, this.solver.nVars());	     
 	     }
 	 }
 	 

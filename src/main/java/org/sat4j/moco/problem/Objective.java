@@ -87,21 +87,73 @@ public abstract class Objective {
 	return total;
     }
 
-    /**
-     * get the Total Weight of an objective
-     *@param o The objective
+    /** Added by Joao Cortes at Wed 23 Oct 16:22:19 WEST 2019
+     * get the Max Weight of an objective.
+     * This only works well for integer weights
      */
-    public int getTotalWeight(){
+    public int getMaxWeight(){
 
 	int total = 0;
 	for (int i = 0; i < this.nSubObj() ; ++i){
 	    ReadOnlyVec<Real> ithCoeffs =  this.getSubObjCoeffs(i);
-	    int ithCeoffsN = ithCoeffs.size();
-	    for(int  k = 0; k < ithCeoffsN;++k)
-		total += ithCoeffs.get(k).asInt();
+	    int ithCoeffsN = ithCoeffs.size();
+	    for(int  k = 0; k < ithCoeffsN;++k)
+		if(ithCoeffs.get(k).isPositive())
+		    total += ithCoeffs.get(k).asInt();
 	}
 	return total;
     }
+
+
+    /**
+     * get the Min Weight of an objective
+     *@param o The objective
+     */
+    public int getMinWeight(){
+
+	int total = 0;
+	for (int i = 0; i < this.nSubObj() ; ++i){
+	    ReadOnlyVec<Real> ithCoeffs =  this.getSubObjCoeffs(i);
+	    int ithCoeffsN = ithCoeffs.size();
+	    for(int  k = 0; k < ithCoeffsN;++k)
+		if(ithCoeffs.get(k).isNegative())
+		    total += ithCoeffs.get(k).asInt();
+	}
+	return total;
+    }
+
+    /**
+     * get the Min Weight of an objective
+     *@param o The objective
+     */
+    public int getWeightDiff(){
+	int result = this.getMaxWeight() - this.getMinWeight();
+	if(result > 0)
+	    return result;
+	return -result;
+    }
+
+    /**
+     * get the greatest of all coeffs
+     *@param o The objective
+     */
+    public int getMaxCoeff(){
+
+	int max = 0;
+	for (int i = 0; i < this.nSubObj() ; ++i){
+	    ReadOnlyVec<Real> ithCoeffs =  this.getSubObjCoeffs(i);
+	    int ithCoeffsN = ithCoeffs.size();
+	    for(int  k = 0; k < ithCoeffsN;++k){
+		int ithKthCoeff = ithCoeffs.get(k).asInt();
+		ithKthCoeff = (ithKthCoeff > 0)? ithKthCoeff: -ithKthCoeff;
+		if( ithKthCoeff > max)
+		    max = ithKthCoeff;
+	    }	}
+	return max;
+    }
+
+
+
 
     public ReadOnlyVec<Real> getSubObjCoeffs(int i) { return getSubObj(i).getCoeffs(); }
     
