@@ -137,7 +137,7 @@ public abstract class Objective {
      * get the greatest of all coeffs
      *@param o The objective
      */
-    public int getMaxCoeff(){
+    public int getMaxAbsCoeff(){
 
 	int max = 0;
 	for (int i = 0; i < this.nSubObj() ; ++i){
@@ -148,7 +148,8 @@ public abstract class Objective {
 		ithKthCoeff = (ithKthCoeff > 0)? ithKthCoeff: -ithKthCoeff;
 		if( ithKthCoeff > max)
 		    max = ithKthCoeff;
-	    }	}
+	    }
+	}
 	return max;
     }
 

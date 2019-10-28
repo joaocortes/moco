@@ -55,13 +55,13 @@ public class Launcher {
         /**
          * The algorithm being executed.
          */
-        private ParetoMCS solver;
+        private unsatSat solver;
         
         /**
          * Creates an instance of the shutdown handler.
          * @param solver The algorithm being executed.
          */
-        public ShutdownHandler(ParetoMCS solver) {
+        public ShutdownHandler(unsatSat solver) {
             super();
             this.solver = solver;
         }
@@ -74,12 +74,8 @@ public class Launcher {
         }
         
     }
-    
-    /**
-     * Adds a shutdown hook that logs the best result found by a given algorithm.
-     * @param solver The algorithm being executed.
-     */
-    private static void setShutdownHandler(ParetoMCS solver) {
+
+    private static void setShutdownHandler(unsatSat solver) {
         Runtime.getRuntime().addShutdownHook(new ShutdownHandler(solver));
     }
     
@@ -146,7 +142,6 @@ public class Launcher {
             Instance moco = readMOCO(cl);
             unsatSat solver = new unsatSat(moco);
             setShutdownHandler(solver);
-            solver.updtParams(params);
             solver.solve();
         }
         catch (ParseException e) {

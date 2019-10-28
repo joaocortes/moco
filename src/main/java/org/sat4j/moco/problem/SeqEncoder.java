@@ -69,12 +69,12 @@ import org.sat4j.specs.ContradictionException;
      /**
       *The inverse index map for the S variables
       */
-     private Hashtable<Integer,int[]> sVariablesInverseIndex  = new Hashtable<Integer, int[]>();
+     // private Hashtable<Integer,int[]> sVariablesInverseIndex  = new Hashtable<Integer, int[]>();
 
      /**
       *The inverse index map for the blocking variables
       */
-     private Hashtable<Integer, Integer> bVariablesInverseIndex  = new Hashtable<Integer, Integer>();
+     // private Hashtable<Integer, Integer> bVariablesInverseIndex  = new Hashtable<Integer, Integer>();
 
      /**
      * Creates an Instance of the sequential encoder
@@ -149,12 +149,12 @@ import org.sat4j.specs.ContradictionException;
       * Set the ithObj, ith Literal ith kD S variable to
       *@param iObj, the index of the objective
       *@param iX, the index of the literal from the objective
-      *@param iKD, the index of the current differential k
+      *@param iDK, the index of the current differential k
       *@param id, the id of the variable S created
       * */
 
-     public void setS(int iObj, int iX, int iKD, int id){
-	 this.idsS[iObj][iX][iKD] = id;
+     public void setS(int iObj, int iX, int iDK, int id){
+	 this.idsS[iObj][iX][iDK] = id;
 	 // this.sVariablesInverseIndex.put(this.solver.nVars(), new int[] {iObj,iK});
      }
 
@@ -163,7 +163,7 @@ import org.sat4j.specs.ContradictionException;
       * Get the ithObj, ithX obj, kD Y variable ID.
       *@param iObj, the index of the objective
       *@param iX, the index of the literal from the objective
-      *@param iKD, the index of the current differential k
+      *@param iDK, the index of the current differential k
       */
 
      public int getY(int iObj, int kD){
@@ -174,18 +174,29 @@ import org.sat4j.specs.ContradictionException;
      /**
       * Set the ithObj,  ith kD Y variable to
       *@param iObj, the index of the objective
-      *@param iKD, the index of the current differential k
+      *@param iDK, the index of the current differential k
       *@param id, the id of the variable Y
       * */
 
-     public void setY(int iObj, int iKD, int id){
-	 this.yVariablesInverseIndex.put(id, new int[] {iObj,iK});
+     public void setY(int iObj, int iDK, int id){
+	 this.yVariablesInverseIndex.put(id, new int[] {iObj,iDK});
+     }
+
+
+     /**
+      * Get the ithObj current upper limit on the initialized differential k
+      *@param iObj, the index of the objective
+      *@return  ithObj 
+      */
+
+     public int getCurrentUpperDK(int iObj){
+	 return	 this.currentDKs[iObj];
      }
 
      /**
       * Set the ithObj,  ith kD upper differential k
       *@param iObj, the index of the objective
-      *@param iKD, the index of the current differential k
+      *@param iDK, the index of the current differential k
       * */
 
      public void setCurrentUpperDK(int iObj, int kD){
@@ -195,35 +206,24 @@ import org.sat4j.specs.ContradictionException;
      /**
       * Get the ithObj, ith differential k, Blocking  variable
       *@param iObj, the index of the objective
-      *@param iKD, the index of the current differential k
+      *@param iDK, the index of the current differential k
       * */
 
-     public int getB(int iObj, int iKD){
-	 return	 this.idsB[iObj][iKD];
+     public int getB(int iObj, int iDK){
+	 return	 this.idsB[iObj][iDK];
      }
 
      /**
       * Set the ithObj, ith kD id of a blocking variable to id
       *@param iObj, the index of the objective
-      *@param iKD, the index of the current differential k
+      *@param iDK, the index of the current differential k
       *@param the new blocking variable id
       **/
 
-     public void setB(int iObj, int iKD, int id){
-	 this.idsB[iObj][iKD] = id;
+     public void setB(int iObj, int iDK, int id){
+	 this.idsB[iObj][iDK] = id;
 
      }
-
-
-     /**
-      * Get the ithObj current top dK
-      * @param iObj, the objective function
-      */
-
-     public int getDK(int iObj){
-	 return this.currentDKs[iObj];
-     }
-
 
 
 
@@ -261,16 +261,6 @@ import org.sat4j.specs.ContradictionException;
 
     }
 
-     /**
-      * Generate the upper limit assumptions
-      */
-    public IVecInt generateUpperBoundAssumptions( ){
-	IVecInt assumptions = new VecInt(new int[]{});
-	for(int iObj = 0; iObj < instance.nObjs(); ++iObj){
-	    assumptions.push(-this.getY(iObj, this.currentDKs[iObj] + 1));
-	}
-	return assumptions;
-    }
      
      /**
       * Add Clauses of type 4 in "On Using Incremental Encodings in..'"
@@ -278,7 +268,7 @@ import org.sat4j.specs.ContradictionException;
      private void ClausesIndependentOfK(){
 	 for(int iObj = 0;iObj< this.instance.nObjs(); ++iObj){
 	     Objective ithObj = this.instance.getObj(iObj);
-	     extendUpperIdsSInK(iObj, ithObj.getMaxCoeff());
+	     extendUpperIdsSInK(iObj, ithObj.getMaxAbsCoeff());
 	     int ithObjNLit = ithObj.getTotalLits();
 	     ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
 	     ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
@@ -412,25 +402,30 @@ import org.sat4j.specs.ContradictionException;
       */
 
      public void extendUpperIdsSInK(int iObj, int afterDK){
-	 
+	 if(this.getCurrentUpperDK(iObj)< afterDK){
 	 int nLit = this.instance.getObj(iObj).getTotalLits();
 	 for (int iX = 0 ; iX < nLit; ++iX){
 	     for(int dK = this.currentDKs[iObj]+1; dK < afterDK +1 ; ++dK){
 		 this.setS(iObj, iX, dK, this.newVar());
 	     }
 	 }
+	 this.setCurrentUpperDK(iObj, afterDK);
 	 extendUpperIdsYinK(iObj, afterDK);	 
+	 }
 }
 
 
      /** 
-      * extend the S variables in the differential k index
+      * extend the Y variables in the differential k index until afterDK. Assumes
+      * the S variables are already extended accordingly
+      * @param iObj
+      * @param afterDK
       */
 
 private void extendUpperIdsYinK(int iObj, int afterDK){
 	 int nLit = this.instance.getObj(iObj).getTotalLits();
 	     for(int dK = this.currentDKs[iObj]+1; dK < afterDK +1 ; ++dK){
-		 this.setY(iObj, dK, this.getS(iObj, nLit, afterDK ));
+		 this.setY(iObj, dK, this.getS(iObj, nLit-1, afterDK ));
 	 }
      }
 
@@ -483,7 +478,7 @@ private void extendUpperIdsYinK(int iObj, int afterDK){
 	 for(int i = 0; i < newSolution.size(); ++i){
 	     int literal = newSolution.get(i);
 	     if(this.isY(literal) && this.literalIsTrue(literal))
-		 newHardClause.push(literal);
+		 newHardClause.push(-literal);
 	 }
 	 this.AddClause(newHardClause);
      }
