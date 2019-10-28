@@ -32,7 +32,7 @@ import java.util.Vector;
 import org.sat4j.core.VecInt;
 // import org.sat4j.moco.Params;
 import org.sat4j.moco.pb.ConstrID;
-// import org.sat4j.moco.analysis.Result;
+import org.sat4j.moco.analysis.Result;
 // import org.sat4j.moco.mcs.IModelListener;
 // import org.sat4j.moco.mcs.MCSExtractor;
 // import org.sat4j.moco.pb.PBExpr;
@@ -98,7 +98,6 @@ public class unsatSat {
 	this.problem = m;
 	try {
             this.solver = buildSolver();
-	    System.out.println(this.solver.nVars());
         }
         catch (ContradictionException e) {
             Log.comment(3, "Contradiction in ParetoMCS.buildSolver");
@@ -123,32 +122,33 @@ public class unsatSat {
 	IVecInt currentAssumptions = new VecInt(new int[] {});
 	Vector<IVecInt> models = new Vector<IVecInt>();
 	ConstrID lastLessThan1 = null;
-
+	this.UpperDK =  new int[(this.problem.nObjs())];
         // if (this.result.isParetoFront()) {
         //     Log.comment(1, "unsatSat.solve called on already solved instance");
         //     return;
         // }
         Log.comment(3, "in unsatSat.solve");
-
-
 	while(true){
 	    this.preAssumptionsExtend();
 	    currentAssumptions = this.generateUpperBoundAssumptions();
 	    solver.check(currentAssumptions);
 	    if(solver.isSat()){
-		models.add(this.getSemiFilteredModel());
-		this.seqEncoder.blockDominatedRegion(models.lastElement());
+		models.add(this.getFullModel());
+		System.out.println("Blocking dominated region");
+		if(! this.blockDominatedRegion(models.lastElement()))
+		    break;
 	    }else{
 		currentExplanation  = solver.unsatExplanation();
 		if(currentExplanation.size() == 0){
-		    this.printModels(models);
-		    return;
+		    break;
 		}
 		this.updateUpperBound(currentExplanation);
 		lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
 	    }
 	}
-	
+	this.printModels(models);
+	// this.seqEncoder.printS();
+	return;
     }
     
     /**
@@ -178,7 +178,7 @@ public class unsatSat {
     private void preAssumptionsExtend(){
 	int objN = this.problem.nObjs();
 	for(int iObj = 0; iObj < objN ; ++iObj){
-	    if(this.seqEncoder.getCurrentUpperDK(iObj) <= this.getUpperDK(iObj) + 1)
+	    if(this.seqEncoder.getInitializedDK(iObj) <= this.getUpperDK(iObj) + 1)
 		this.seqEncoder.extendUpperIdsSInK(iObj, this.getUpperDK(iObj) + 1);
 	}
     }
@@ -351,11 +351,25 @@ public class unsatSat {
 	IVecInt model = new VecInt(new int[] {});
 	for(int id = 1; id <= this.solver.nVars();++id){
 	    int literal = (this.solver.modelValue(id))? id: -id;
-	    if(id <= this.realVariablesN)
+	    if(id <= this.realVariablesN && id >= 1)
 		model.push(literal);
 	    else
 		if(this.seqEncoder.isY(id))
 		    model.push(literal);
+	}
+	return model;
+    }
+    /**
+     *returns the model in DIMACS format, including only the real
+     *variables and the Y variables of the sequential encoder
+     *@return a filtered model
+     */
+
+    public IVecInt getFullModel(){
+	IVecInt model = new VecInt(new int[] {});
+	for(int id = 1; id <= this.solver.nVars();++id){
+	    int literal = (this.solver.modelValue(id))? id: -id;
+	    model.push(literal);
 	}
 	return model;
     }
@@ -364,11 +378,42 @@ public class unsatSat {
      * @param p The parameters object.
      */
     public void printModels(Vector<IVecInt> models) {
-	for(int i = 0; i <models.size(); ++i)
+	for(int i = 0; i <models.size(); ++i){
+	    System.out.println("Model " + i);
 	    for(int j = 0; j <models.get(i).size(); ++j)
-		System.out.print(models.get(i).get(j) + " ");
+		this.seqEncoder.prettyPrintVariable(models.get(i).get(j));
+	}
+	System.out.println();
 	return;
     }
     
+
+
+    public boolean blockDominatedRegion(IVecInt newSolution){
+	IVecInt newHardClause = new VecInt(new int[] {});
+	for(int i = 0; i < newSolution.size(); ++i){
+	    int literal = newSolution.get(i);
+	    if(this.seqEncoder.isY(literal) && literal > 0)
+		newHardClause.push(-literal);
+	}
+	return this.AddClause(newHardClause);
+    }
+    
+    private boolean AddClause(IVecInt setOfLiterals){
+	try{
+	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
+	}
+	catch (ContradictionException e) {
+	    System.out.println("contradiction when adding clause: ");
+	    for(int j = 0; j < setOfLiterals.size(); ++j)
+		System.out.print(" " + setOfLiterals.get(j) + " " );
+	    System.out.println();
+	    return false;
+	}
+	return true;
+    }
+    public Result getResult(){
+	return null;
+    }    
 }
 
