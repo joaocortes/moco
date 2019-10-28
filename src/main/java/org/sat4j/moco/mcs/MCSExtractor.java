@@ -71,7 +71,7 @@ public class MCSExtractor {
     private int part_max_confl = 200000;
     
     /**
-     * Stratified MCS extraction parameter that controls the number of trivially solved partitions that can
+     * Stratified MCS exrtaction parameter that controls the number of trivially solved partitions that can
      * occur in a row before merging the remaining ones.
      */
     private int trivial_thres = 20;

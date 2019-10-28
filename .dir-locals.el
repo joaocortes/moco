@@ -2,4 +2,4 @@
 ;;; For more information see (info "(emacs) Directory Variables")
 
 ((nil
-  (projectile-project-run-cmd . "cd ./AIproject1/; python3 ./ruagomesfreiregame1v2.py")))
+  (projectile-project-run-cmd . "mvn exec:java -Dexec.mainClass=org.sat4j.moco.Launcher -Dexec.args=example1.opb")))

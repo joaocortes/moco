@@ -23,6 +23,7 @@
 package org.sat4j.moco.algorithm;
 
 import java.util.Arrays;
+import java.util.Vector;
 
 import org.moeaframework.core.PRNG;
 import org.sat4j.core.ReadOnlyVec;
@@ -47,18 +48,12 @@ import org.sat4j.specs.IVec;
 import org.sat4j.specs.IVecInt;
 
 /**
- * Class that implements the Pareto-MCS based algorithm for MOCO, proposed in:<br>
- *      Terra-Neves, M., Lynce, I., & Manquinho, V. (2017, August).
- *      Introducing Pareto minimal correction subsets. In International Conference on Theory and Applications
- *      of Satisfiability Testing (pp. 195-211). Springer, Cham.<br>
- * Includes MOCO stratification, proposed in:<br>
- *      Terra-Neves, M., Lynce, I., & Manquinho, V. M. (2018).
-  *      Stratification for Constraint-Based Multi-Objective Combinatorial Optimization. In IJCAI
- *      (pp. 1376-1382).
- * @author Miguel Terra-Neves
+ * Class that implements unsatSat
+ * @author João Cortes
  */
-public class ParetoMCS {
-    
+
+public class unsatSat {
+
     /**
      * An instance of a MOCO problem to be solved.
      */
@@ -74,11 +69,7 @@ public class ParetoMCS {
      */
     private PBSolver solver = null;
     
-    /**
-     * Stores the MCS extractor to be used by the Pareto-MCS algorithm.
-     */
-    private MCSExtractor extractor = null;
-    
+
     /**
      * IDs of the variables used int the sequential encoder. The first
      * index is the goal, the second is the first index of s from " On
@@ -88,12 +79,10 @@ public class ParetoMCS {
 
     private SeqEncoder seqEncoder = null;
 
-
     /**
-     * Constraints ids of the clauses to remove while incrementing the
-     * goal function cap. This must be done in order to remove the
-     * clauses of type 7 in " On using Incremental Encodings..."
+     *  Last id of real, non auxiliary,  variables 
      */  
+    private int realVariablesN = 0;
 
 
     /**
@@ -101,10 +90,9 @@ public class ParetoMCS {
      * that applies the Pareto-MCS algorithm.
      * @param m The MOCO instance.
      */
-    public ParetoMCS(Instance m) {
+    public unsatSat(Instance m) {
 	this.problem = m;
         this.result = new Result(m);
-        
 	try {
             this.solver = buildSolver();
 	    System.out.println(this.solver.nVars());
@@ -114,58 +102,82 @@ public class ParetoMCS {
             this.result.setParetoFrontFound();
             return;
         }
+	this.realVariablesN = this.solver.nVars();
 	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
-	
-        this.extractor = new MCSExtractor(this.solver);
-        this.extractor.setModelListener(new IModelListener() {
-		public void onModel(PBSolver s) {
-                result.saveModel(s);
-            }
-        };
+
+
     }
+
+    
     
     /**
-     * Retrieves the result of the last call to {@link #solve()}.
-     * @return The result.
-     */
-    public Result getResult() { return this.result; }
-    
-    /**
-     * Applies the Pareto-MCS algorithm to the MOCO instance provided
+     * Applies the unsatSat algorithm to the MOCO instance provided
       * in {@link #ParetoMCS(Instance)}.  If the instance has already
       * been solved, nothing happens.
      */
+
     public void solve() {
+	IVecInt currentExplanation = new VecInt(new int[] {});
+	IVecInt currentAssumptions = new VecInt(new int[] {});
+	Vector<IVecInt> models = new Vector<IVecInt>();
+	ConstrID lastLessThan1 = null;
+
         if (this.result.isParetoFront()) {
-            Log.comment(1, "ParetoMCS.solve called on already solved instance");
+            Log.comment(1, "unsatSat.solve called on already solved instance");
             return;
         }
-        Log.comment(3, "in ParetoMCS.solve");
-        int nmcs = 0;
-        initUndefFmls();
-        IVec<IVecInt> undef_fmls = buildUndefFmls();
-        extractor.extract(undef_fmls);
-        while (extractor.isSolved() && extractor.foundMCS()) {
-            ++nmcs;
-            if (extractor.getMSS().isEmpty()) { break; }    // if MSS is empty, then only 1 MCS exists
-            try {
-                solver.addConstr(PBFactory.instance().mkClause(extractor.getMCS()));
-                if (this.stratify) { undef_fmls = buildUndefFmls(); }
-                extractor.extract(undef_fmls);
-            }
-            catch (ContradictionException e) {
-                Log.comment(3, "contradiction blocking MCS");
-                break;
-            }
-        }
-        Log.comment(1, ":mcs-found " + nmcs);
-        if (extractor.isSolved()) {
-            this.result.setParetoFrontFound();
-        }
-        else {
-            Log.comment(1, "MCS extraction timeout");
-        }
-        Log.comment(3, "out ParetoMCS.solve");
+        Log.comment(3, "in unsatSat.solve");
+
+	this.initialExtend();
+	while(true){
+	    currentAssumptions = this.seqEncoder.generateUpperBoundAssumptions();
+	    solver.check(currentAssumptions);
+	    if(solver.isSat()){
+		models.add(this.getSemiFilteredModel());
+		this.seqEncoder.blockDominatedRegion(models.lastElement());
+	    }else{
+		currentExplanation  = solver.unsatExplanation();
+		if(currentExplanation.size() == 0){
+		    this.printModels(models);
+		    return;
+		}
+		this.updateUpperBound(currentExplanation);
+		lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
+	    }
+	}
+		
+    }
+
+    /**
+     *Initial extend. Extends the S (and Y) variables of the
+     *sequential encoder, in order to allow the construction of the
+     *first set of assumptions
+     */
+
+    private void initialExtend(){
+	int objN = this.problem.nObjs();
+	for(int iObj = 0; iObj < objN ; ++iObj){
+	this.seqEncoder.extendUpperIdsSInK(iObj, 1);
+	}
+    }
+
+
+    /**
+     * Updates the current upperBound on the differential k, according
+     * to the unsatExplanation
+     * @param current explanation of unsatisfiability
+     */
+    private void updateUpperBound(IVecInt currentExplanation){
+	for(int i = 0; i < currentExplanation.size(); ++i){
+	    int ithLiteral = currentExplanation.get(i);
+	    assert this.seqEncoder.isY(ithLiteral);
+	    if(currentExplanation.get(ithLiteral) > 0){
+		int jObj = this.seqEncoder.getObjFromYVariable(ithLiteral);
+		int dK = this.seqEncoder.getDKfromYVariable(ithLiteral);
+		this.seqEncoder.setCurrentUpperDK(jObj, dK);
+		// necessary for the construction of the next set of assumptions
+		this.seqEncoder.extendUpperIdsSInK(jObj, dK + 1);
+	    }}
     }
     
     /**
@@ -183,6 +195,17 @@ public class ParetoMCS {
         }
         Log.comment(3, "out ParetoMCS.buildSolver");
         return solver;
+    }
+
+    private ConstrID swapLessThan1Clause(ConstrID lastLessThan1){
+	IVecInt literals = new VecInt(new int[]{});
+	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+	    int nLitsIthObj =   this.problem.getObj(iObj).getTotalLits();
+	    literals.push(this.seqEncoder.getY(iObj,
+					      this.seqEncoder.getDK(iObj)));
+	}
+	if(lastLessThan1 != null) this.solver.removeConstr(lastLessThan1);
+	return this.solver.addRemovableConstr(PBFactory.instance().mkLE(literals, 1));
     }
 
 
@@ -274,114 +297,14 @@ public class ParetoMCS {
         
     }
     
-    /**
-     * Stores each objective's individual literal partition sequence.
-     */
-    private IVec<IVec<IVecInt>> undef_parts = null;
+    
     
     /**
-     * Boolean indicating if stratification is to be used.
-     */
-    private boolean stratify = false;
-    
-    /**
-     * Stratification parameter that controls the literal-weight ratio used in the objective literals
-     * partitioning process.
-     */
-    private double lwr = 15.0;
-
-
-    /**
-     * Initializes the objective literal partition sequences.
-     * If stratification is disabled, a single partition is created with all objective literals for all
-     * objective functions.
-     * If stratification is enabled, an individual partition sequence is built for each objective function,
-     * to later be mixed in during the search process.
-     * @see #buildUndefFmls()
-     */
-    private void initUndefFmls() {
-        Log.comment(3, "in ParetoMCS.initUndefFmls");
-        this.undef_parts = new Vec<IVec<IVecInt>>();
-        for (int i = 0; i < this.problem.nObjs(); ++i) {
-            Objective o = this.problem.getObj(i);
-            if (this.stratify) {
-                this.undef_parts.push(partition(o));
-            }
-            else if (this.undef_parts.isEmpty()) {
-                this.undef_parts.push(new Vec<IVecInt>());
-                this.undef_parts.get(0).push(singlePartition(o));
-            }
-            else {
-                singlePartition(o).copyTo(this.undef_parts.get(0).get(0));
-            }
-        }
-        logPartitions();
-        Log.comment(3, "out ParetoMCS.initUndefFmls");
-    }
-    
-    /**
-     * Logs the number of partitions for each objective function and partition sizes.
-     */
-    private void logPartitions() {
-        for (int i = 0; i < this.undef_parts.size(); ++i) {
-            IVec<IVecInt> obj_parts = this.undef_parts.get(i);
-            Log.comment(1, ":obj-idx " + i + " :partitions " + obj_parts.size());
-            for (int j = 0; j < obj_parts.size(); ++j) {
-                Log.comment(1, ":part-idx " + j + " :part-size " + obj_parts.get(j).size());
-            }
-        }
-    }
-    
-    /**
-     * Builds a literal partition sequence for a given objective.
+     * Retrieves the literals and respective coefficients in an
+     * objective function as a vector of weighted literals.
      * @param o The objective.
-     * @return A partition sequence for objective {@code o}.
-     */
-    private IVec<IVecInt> partition(Objective o) {
-        IVec<IVecInt> parts = new Vec<IVecInt>();
-        IVec<WeightedLit> w_lits = getWeightedLits(o);
-        WeightedLit[] w_lits_array = new WeightedLit[w_lits.size()];
-        w_lits.copyTo(w_lits_array);
-        Arrays.sort(w_lits_array);
-        IVecInt part = new VecInt();
-        int w_count = 0;
-        for (int i = w_lits_array.length-1; i >= 0; --i) {
-            if (    i < w_lits_array.length-1 &&
-                    !w_lits_array[i].getWeight().equals(w_lits_array[i+1].getWeight()) &&
-                    (double)part.size() / w_count > this.lwr) {
-                parts.push(part);
-                part = new VecInt();
-                w_count = 0;
-            }
-            part.push(-w_lits_array[i].getLit());
-            if (w_count == 0 || !w_lits_array[i].getWeight().equals(w_lits_array[i+1].getWeight())) {
-                w_count++;
-            }
-        }
-        assert(!part.isEmpty());
-        parts.push(part);
-        return parts;
-    }
-    
-    /**
-     * Builds a single partition for a given objective containing all of the objective's literals.
-     * @param o The objective.
-     * @return A partition with all of objective {@code o}'s literals.
-     */
-    private IVecInt singlePartition(Objective o) {
-        IVec<WeightedLit> w_lits = getWeightedLits(o);
-        IVecInt part = new VecInt(w_lits.size());
-        for (int i = 0; i < w_lits.size(); ++i) {
-            part.unsafePush(-w_lits.get(i).getLit());
-        }
-        return part;
-    }
-    
-    /**
-     * Retrieves the literals and respective coefficients in an objective function as a vector of weighted
+     * @return The objective's literals and coefficients as weighted
      * literals.
-     * @param o The objective.
-     * @return The objective's literals and coefficients as weighted literals.
      */
     private IVec<WeightedLit> getWeightedLits(Objective o) {
         IVec<WeightedLit> w_lits = new Vec<WeightedLit>();
@@ -405,21 +328,38 @@ public class ParetoMCS {
         return w_lits;
     }
 
-
-
-
     /**
+     *returns the model in DIMACS format, including only the real
+     *variables and the Y variables of the sequential encoder
+     *@return a filtered model
+     */
+
+    public IVecInt getSemiFilteredModel(){
+	IVecInt model = new VecInt(new int[] {});
+	for(int id = 1; id <= this.solver.nVars();++id){
+	    int literal = (this.solver.modelValue(id))? id: -id;
+	    if(id <= this.realVariablesN)
+		model.push(literal);
+	    else
+		if(this.seqEncoder.isY(id))
+		    model.push(literal);
+	}
+	return model;
+    }
+    /** 
      * Sets the algorithm configuration to the one stored in a given set of parameters.
      * @param p The parameters object.
      */
-    public void updtParams(Params p) {
-        this.stratify = p.getStratify();
-        Log.comment(":stratify " + this.stratify);
-        if (this.stratify) {
-            this.lwr = p.getLWR();
-            Log.comment(":lwr " + this.lwr);
-        }
-        this.extractor.updtParams(p);
+    public void printModels(Vector<IVecInt> models) {
+	for(int i = 0; i <models.size(); ++i)
+	    for(int j = 0; j <models.get(i).size(); ++j)
+		System.out.print(models.get(i).get(j) + " ");
+	return;
     }
     
 }
+    /**
+     * Retrieves the result of the last call to {@link #solve()}.
+     * @return The result.
+     */
+    public Result getResult() { return this.result; }

@@ -31,6 +31,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.sat4j.moco.algorithm.ParetoMCS;
+import org.sat4j.moco.algorithm.unsatSat;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.parsing.OPBReader;
 import org.sat4j.moco.problem.Instance;
@@ -143,7 +144,7 @@ public class Launcher {
             Real.updtParams(params);
             Clock.instance().updtParams(params);
             Instance moco = readMOCO(cl);
-            ParetoMCS solver = new ParetoMCS(moco);
+            unsatSat solver = new unsatSat(moco);
             setShutdownHandler(solver);
             solver.updtParams(params);
             solver.solve();
