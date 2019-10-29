@@ -105,8 +105,6 @@ public class unsatSat {
         }
 	this.realVariablesN = this.solver.nVars();
 	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
-
-
     }
 
     
@@ -128,12 +126,13 @@ public class unsatSat {
         //     return;
         // }
         Log.comment(3, "in unsatSat.solve");
+
 	while(true){
 	    this.preAssumptionsExtend();
 	    currentAssumptions = this.generateUpperBoundAssumptions();
 	    solver.check(currentAssumptions);
 	    if(solver.isSat()){
-		models.add(this.getFullModel());
+		models.add(this.getSemiFilteredModel());
 		System.out.println("Blocking dominated region");
 		if(! this.blockDominatedRegion(models.lastElement()))
 		    break;
@@ -178,8 +177,7 @@ public class unsatSat {
     private void preAssumptionsExtend(){
 	int objN = this.problem.nObjs();
 	for(int iObj = 0; iObj < objN ; ++iObj){
-	    if(this.seqEncoder.getInitializedDK(iObj) <= this.getUpperDK(iObj) + 1)
-		this.seqEncoder.extendUpperIdsSInK(iObj, this.getUpperDK(iObj) + 1);
+	    this.seqEncoder.UpdateCurrentK(iObj, this.getUpperDK(iObj) + 1);
 	}
     }
 
@@ -192,10 +190,11 @@ public class unsatSat {
     private void updateUpperBound(IVecInt currentExplanation){
 	for(int i = 0; i < currentExplanation.size(); ++i){
 	    int ithLiteral = currentExplanation.get(i);
+	    int id = (ithLiteral>0)? ithLiteral: -ithLiteral;
 	    assert this.seqEncoder.isY(ithLiteral);
-	    if(currentExplanation.get(ithLiteral) > 0){
+	    if(ithLiteral > 0){
 		int jObj = this.seqEncoder.getObjFromYVariable(ithLiteral);
-		int dK = this.seqEncoder.getDKfromYVariable(ithLiteral);
+		int dK = this.seqEncoder.getDKFromYVariable(ithLiteral);
 		//TODO only if dK is not initialized already
 		this.setUpperDK(jObj, dK);
 	    }}
@@ -218,8 +217,8 @@ public class unsatSat {
      *@param iObj
      */
     private void setUpperDK(int iObj, int newDK){
-	if(this.seqEncoder.getCurrentUpperDK(iObj) < newDK)
-	    this.seqEncoder.SequentialEncoderUpdateK(iObj, newDK);
+	if(this.seqEncoder.getCurrentDK(iObj) < newDK)
+	    this.seqEncoder.UpdateCurrentK(iObj, newDK);
 	this.UpperDK[iObj] = newDK;
     }
 
@@ -244,7 +243,7 @@ public class unsatSat {
 	IVecInt literals = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    literals.push(this.seqEncoder.getY(iObj,
-					      this.seqEncoder.getDK(iObj)));
+					      this.getUpperDK(iObj)));
 	}
 	if(lastLessThan1 != null) this.solver.removeConstr(lastLessThan1);
 	try{	return this.solver.addRemovableConstr(PBFactory.instance().mkLE(literals, 1));
