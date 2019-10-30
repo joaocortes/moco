@@ -53,7 +53,7 @@ public class SeqEncoder {
      * IDs of the B(locking) variables used to allow incrementality
      */
 
-    private int[][] idsB = null;
+    private ConstrID[] idsB = null;
     // private ConstrID topConstraint = null;
 
     /** 
@@ -84,7 +84,7 @@ public class SeqEncoder {
      *The inverse index map for the blocking variables
      */
 
-    private Hashtable<ConstrID, Integer> bVariablesInverseIndex  = new Hashtable<Integer, int[]>();
+    private Hashtable<ConstrID, Integer> bVariablesInverseIndex  = new Hashtable<ConstrID, Integer>();
 
     /**
      *First solver variable that pertains to the sequential encoding
@@ -124,10 +124,9 @@ public class SeqEncoder {
      */
      
     private void initializeIdsB(){
-	this.idsB = new int[this.instance.nObjs()][];
+	this.idsB = new ConstrID[this.instance.nObjs()];
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
-	    Objective ithObj = instance.getObj(iObj);
-	    this.idsB[iObj] = new int[ithObj.getWeightDiff() + 1];
+	    this.idsB[iObj] = null;
 	}
     }
 
@@ -242,8 +241,8 @@ public class SeqEncoder {
      *@param iDK, the index of the current differential k
      * */
 
-    public int getB(int iObj, int iDK){
-	return	 this.idsB[iObj][iDK];
+    public ConstrID getB(int iObj){
+	return this.idsB[iObj];
     }
 
     /**
@@ -253,9 +252,11 @@ public class SeqEncoder {
      *@param the new blocking variable id
      **/
 
-    public void setB(int iObj, int id){
-	this.idsB[iObj][dK] = id;
-	this.bVariablesInverseIndex.put(id, new int[] {iObj});
+    public void setB(int iObj, ConstrID id){
+	if(id != null){
+	    this.idsB[iObj] = id;
+	    this.bVariablesInverseIndex.put(id, iObj);
+	}
     }
 
 
@@ -442,9 +443,8 @@ public class SeqEncoder {
      * Clause of type 11 in "On Using Incremental Encodings in..'"
      */
     private void blockingVariableB(int iObj,int afterK){
-	int beforeK = this.currentDKs[iObj];
-	IVecInt clauseSet = new VecInt(1);
-	this.solver.removeConstr(this.idsB);
+	if(this.idsB[iObj] != null)
+	    this.solver.removeConstr(this.idsB[iObj]);
     }
 
     private int newVar(){
@@ -461,7 +461,7 @@ public class SeqEncoder {
 
 	for(int kD = this.getInitializedDK(iObj)+1; kD < afterK + 1; ++kD){
 	    this.solver.newVars(1);
-	    this.setB(iObj, kD, this.solver.nVars());	     
+	    this.setB(iObj, this.solver.nVars());	     
 	}
 	 
     }
@@ -551,20 +551,13 @@ public class SeqEncoder {
     public int getObjFromBVariable(int literal){
 	assert this.isB(literal);
 	literal = (literal>0)? literal: -literal;
-	return this.bVariablesInverseIndex.get(literal)[0] ;
+	return this.bVariablesInverseIndex.get(literal) ;
     }
 
     /**
      * return the value of the differential k from an B variable
      * @param literal
      */
-
-    public int getDKFromBVariable(int literal){
-	assert this.isS(literal);
-	literal = (literal>0)? literal: -literal;
-	return this.bVariablesInverseIndex.get(literal)[1] ;
-
-    }
 
     /**
      * return the value of the literal index
@@ -633,8 +626,7 @@ public class SeqEncoder {
 	}
 	if(this.isB(id)){
 	    int iObj = this.getObjFromBVariable(id);
-	    int dK = this.getDKFromBVariable(id);
-	    System.out.print(id + "->" + "B[" + iObj + ", " + dK +"] ");
+	    System.out.print(id + "->" + "B[" + ", " + iObj +"] ");
 	    return;
 	}
 	if(id < this.firstVariable){
