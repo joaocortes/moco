@@ -82,7 +82,7 @@ public class unsatSat {
     /**
      * Last explored differential k, for each objective function.
      */
-    private int[] UpperDK = null;
+    private int[] UpperKD = null;
     /**
      *  Last id of the real, non auxiliary,  variables 
      */  
@@ -105,8 +105,6 @@ public class unsatSat {
         }
 	this.realVariablesN = this.solver.nVars();
 	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
-
-
     }
 
     
@@ -122,18 +120,19 @@ public class unsatSat {
 	IVecInt currentAssumptions = new VecInt(new int[] {});
 	Vector<IVecInt> models = new Vector<IVecInt>();
 	ConstrID lastLessThan1 = null;
-	this.UpperDK =  new int[(this.problem.nObjs())];
+	this.UpperKD =  new int[(this.problem.nObjs())];
         // if (this.result.isParetoFront()) {
         //     Log.comment(1, "unsatSat.solve called on already solved instance");
         //     return;
         // }
         Log.comment(3, "in unsatSat.solve");
+
 	while(true){
 	    this.preAssumptionsExtend();
 	    currentAssumptions = this.generateUpperBoundAssumptions();
 	    solver.check(currentAssumptions);
 	    if(solver.isSat()){
-		models.add(this.getFullModel());
+		models.add(this.getSemiFilteredModel());
 		System.out.println("Blocking dominated region");
 		if(! this.blockDominatedRegion(models.lastElement()))
 		    break;
@@ -163,7 +162,7 @@ public class unsatSat {
     public IVecInt generateUpperBoundAssumptions( ){
 	IVecInt assumptions = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    assumptions.push(-this.seqEncoder.getY(iObj, this.getUpperDK(iObj) + 1));
+	    assumptions.push(-this.seqEncoder.getY(iObj, this.getUpperKD(iObj) + 1));
 	}
 	return assumptions;
     }
@@ -178,8 +177,7 @@ public class unsatSat {
     private void preAssumptionsExtend(){
 	int objN = this.problem.nObjs();
 	for(int iObj = 0; iObj < objN ; ++iObj){
-	    if(this.seqEncoder.getInitializedDK(iObj) <= this.getUpperDK(iObj) + 1)
-		this.seqEncoder.extendUpperIdsSInK(iObj, this.getUpperDK(iObj) + 1);
+	    this.seqEncoder.UpdateCurrentK(iObj, this.getUpperKD(iObj) + 1);
 	}
     }
 
@@ -192,12 +190,13 @@ public class unsatSat {
     private void updateUpperBound(IVecInt currentExplanation){
 	for(int i = 0; i < currentExplanation.size(); ++i){
 	    int ithLiteral = currentExplanation.get(i);
+	    int id = (ithLiteral>0)? ithLiteral: -ithLiteral;
 	    assert this.seqEncoder.isY(ithLiteral);
-	    if(currentExplanation.get(ithLiteral) > 0){
+	    if(ithLiteral > 0){
 		int jObj = this.seqEncoder.getObjFromYVariable(ithLiteral);
-		int dK = this.seqEncoder.getDKfromYVariable(ithLiteral);
-		//TODO only if dK is not initialized already
-		this.setUpperDK(jObj, dK);
+		int kd = this.seqEncoder.getKDFromYVariable(ithLiteral);
+		//TODO only if kd is not initialized already
+		this.setUpperKD(jObj, kd);
 	    }}
     }
     
@@ -207,20 +206,20 @@ public class unsatSat {
      *@param iObj
      */
     
-    private int getUpperDK(int iObj){
-	return this.UpperDK[iObj];
+    private int getUpperKD(int iObj){
+	return this.UpperKD[iObj];
     }
 
     /**
      *Sets the current upper limit of the explored value of the
-     *differential k of the ithOjective to newDK
-     *@param newDK
+     *differential k of the ithOjective to newKD
+     *@param newKD
      *@param iObj
      */
-    private void setUpperDK(int iObj, int newDK){
-	if(this.seqEncoder.getCurrentUpperDK(iObj) < newDK)
-	    this.seqEncoder.SequentialEncoderUpdateK(iObj, newDK);
-	this.UpperDK[iObj] = newDK;
+    private void setUpperKD(int iObj, int newKD){
+	if(this.seqEncoder.getCurrentKD(iObj) < newKD)
+	    this.seqEncoder.UpdateCurrentK(iObj, newKD);
+	this.UpperKD[iObj] = newKD;
     }
 
     /**
@@ -244,7 +243,7 @@ public class unsatSat {
 	IVecInt literals = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    literals.push(this.seqEncoder.getY(iObj,
-					      this.seqEncoder.getDK(iObj)));
+					      this.getUpperKD(iObj)));
 	}
 	if(lastLessThan1 != null) this.solver.removeConstr(lastLessThan1);
 	try{	return this.solver.addRemovableConstr(PBFactory.instance().mkLE(literals, 1));

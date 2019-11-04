@@ -25,7 +25,6 @@ package org.sat4j.moco.problem;
 import java.lang.Math;
 import java.util.Hashtable;
 import java.util.Set;
-
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.VecInt;
@@ -43,79 +42,113 @@ import org.sat4j.specs.ContradictionException;
 
  public class SeqEncoder {
 
-     /** 
-      * IDs of the S(equential) variables used to enforce the semantics of the sequential encoder
-      */
-     private int[][][] idsS = null;
+    /** 
+     * IDs of the S(equential) variables used to enforce the semantics of the sequential encoder
+     */
+    private int[][][] idsS = null;
 
      /** 
       * IDs of the B(locking) variables used to allow incrementality
       */
      private int[][] idsB = null;
-     // private ConstrID topConstraint = null;
+     
+    // private ConstrID topConstraint = null;
 
-     /** 
-      * Current top initialized differential k's for all objective functions
-      */
-     private int[] currentDKs = null;
-     /** 
-      * Current top differential k's for all objective functions
-      */
-     private int[] initializedDKs = null;
+    /** 
+     * Current top initialized differential k's for all objective functions
+     */
 
-     private Instance instance = null;
-     private PBSolver solver = null;
+    private int[] currentKDs = null;
+    /** 
+     * Current top differential k's for all objective functions
+     */
+    private int[] initializedKDs = null;
 
-     /**
-      *The inverse index map for the S variables
-      */
-     private Hashtable<Integer,int[]> yVariablesInverseIndex  = new Hashtable<Integer, int[]>();
+    private Instance instance = null;
 
-     /**
-      *The inverse index map for the S variables
-      */
-     private Hashtable<Integer,int[]> sVariablesInverseIndex  = new Hashtable<Integer, int[]>();
+    private PBSolver solver = null;
 
+    /**
+     *The inverse index map for the S variables
+     */
+    private Hashtable<Integer,int[]> yVariablesInverseIndex  = new Hashtable<Integer, int[]>();
+
+    /**
+     *The inverse index map for the S variables
+     */
+    private Hashtable<Integer,int[]> sVariablesInverseIndex  = new Hashtable<Integer, int[]>();
      /**
       *The inverse index map for the blocking variables
       */
      private Hashtable<Integer, Integer> bVariablesInverseIndex  = new Hashtable<Integer, Integer>();
 
-     private int firstVariable = 0;
+    /**
+     *First solver variable that pertains to the sequential encoding
+     */
 
-     /**
+    private int firstVariable = 0;
+
+    /**
      * Creates an Instance of the sequential encoder
      * @param instance, the pseudo boolean instance
      * @param solver, the solver to be updated
      */
 
-     public SeqEncoder(Instance instance, PBSolver solver) {
+    public SeqEncoder(Instance instance, PBSolver solver) {
 
-   	 this.instance = instance;	
-	 this.solver = solver;
-	 this.firstVariable = solver.nVars() + 1;
-	 this.initializeIdsS();
-	 this.initializeIdsB();
-	 this.initializedDKs = new int[this.instance.nObjs()];
-	 this.currentDKs = new int[this.instance.nObjs()];
-	 for(int i = 0; i < this.instance.nObjs(); ++i){
-	     this.initializedDKs[i] = -1;
-	 }
+	this.instance = instance;	
+	this.solver = solver;
+	this.firstVariable = solver.nVars() + 1;
+	this.initializeIdsS();
+	this.initializeIdsB();
+	this.initializedKDs = new int[this.instance.nObjs()];
+	this.currentKDs = new int[this.instance.nObjs()];
+	for(int i = 0; i < this.instance.nObjs(); ++i){
+	    this.initializedKDs[i] =0;
+	}
+	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
+	    this.UpdateCurrentK(iObj, 0);
+	}
+    }
 
-	 for(int i = 0; i < this.instance.nObjs(); ++i){
-	     this.extendUpperIdsBInK(i, 0);
-	     this.extendUpperIdsSInK(i, 0);
-	 }
 
-	 this.ClausesIndependentOfK();
-
+    /**
+     *My little method. It should add the hard constraints needed for
+     *the sequential encoding, using afterKD as the superior limit for
+     *the differential k. I need to initialize the variables before I
+     *can use them to build clauses.
+     *@param iObj The objective index
+     *@param afterKD The desired max value for the objective 
+     */
+    
+    public void UpdateCurrentK(int iObj , int afterKD ){
+	System.out.println("New kd: " + afterKD);
+	if(this.getInitializedKD(iObj)< afterKD ){
+	    // Y variables are also extended at 
+	    this.extendInitializedIdsSInK(iObj, afterKD); 
+	    this.setInitializedKD(iObj, afterKD);
+	}
+	 
+	if(this.getCurrentKD(iObj) < afterKD){
+	    System.out.println("Clause 4");
+	    this.IfXAtLeastW(iObj, afterKD);
+	    System.out.println("Clause 8");
+	    this.IfLessAlsoMore(iObj, afterKD);
+	    System.out.println("Clause 9");
+	    this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
+	    System.out.println("Clause 10");
+	    this.IfLowNotX(iObj, afterKD);
+	    System.out.println("Blocking old clause 10");
+	    this.blockingVariableB(iObj);
+	    this.setCurrentKD(iObj, afterKD);
+	}
     }
 
 
 
-     /**
-      * Initialize the container of the Blocking variables
-      */
+    /**
+     * Initialize the container of the Blocking variables
+     */
      
      private void initializeIdsB(){
 	this.idsB = new int[this.instance.nObjs()][];
@@ -126,276 +159,292 @@ import org.sat4j.specs.ContradictionException;
        }
      }
 
-     /**
-      * Initialize the container of the Sequential variables
-      */
-
-     private void initializeIdsS(){
-	this.idsS = new int[this.instance.nObjs()][][];
-	for(int i = 0;i< instance.nObjs(); ++i){
- 	    Objective ithObj = instance.getObj(i);
-	    this.idsS[i] = new int[ithObj.getTotalLits()][];
-	    for(int kD = 0; kD < ithObj.getTotalLits();++kD){
-		// + 1 necessary: remember dK is simultaneously a
-		// value and an index
-		int[] array = new int[ithObj.getWeightDiff() + 1];
-		this.idsS[i][kD] = array;
-	    }
-	}
-     }
-
-     /**
-      * Get the ithObj, ithX obj, kD S variable ID.
-      */
-
-     public int getS(int iObj, int iX, int kD){
-	 return	 this.idsS[iObj][iX][kD];
-     }
- 
-
-     /**
-      * Set the ithObj, ith Literal ith kD S variable to
-      *@param iObj, the index of the objective
-      *@param iX, the index of the literal from the objective
-      *@param iDK, the index of the current differential k
-      *@param id, the id of the variable S created
-      * */
-
-     public void setS(int iObj, int iX, int iDK, int id){
-	 this.idsS[iObj][iX][iDK] = id;
-	 this.sVariablesInverseIndex.put(id, new int[] {iObj,iX,iDK});
-     }
-
-
-     /**
-      * Get the ithObj, ithX obj, kD Y variable ID.
-      *@param iObj, the index of the objective
-      *@param iX, the index of the literal from the objective
-      *@param iDK, the index of the current differential k
-      */
-
-     public int getY(int iObj, int kD){
-	 int nLits = this.instance.getObj(iObj).getTotalLits();
-	 return	 this.idsS[iObj][nLits-1][kD];
-     }
-
-     /**
-      * Set the ithObj,  ith kD Y variable to
-      *@param iObj, the index of the objective
-      *@param iDK, the index of the current differential k
-      *@param id, the id of the variable Y
-      * */
-
-     public void setY(int iObj, int iDK, int id){
-	 this.yVariablesInverseIndex.put(id, new int[] {iObj,iDK});
-     }
-
-
-     /**
-      * Get the ithObj current upper limit on the initialized differential k
-      *@param iObj, the index of the objective
-      *@return  ithObj 
-      */
-
-     public int getInitializedDK(int iObj){
-	 return	 this.initializedDKs[iObj];
-     }
-
-     /**
-      * Set the ithObj,  ith kD upper differential k
-      *@param iObj, the index of the objective
-      *@param iDK, the index of the current differential k
-      * */
-
-     public void setInitializedDK(int iObj, int kD){
-	 this.initializedDKs[iObj] = kD;
-     }
-
-     /**
-      * Get the ithObj current upper limit on the initialized differential k
-      *@param iObj, the index of the objective
-      *@return  ithObj 
-      */
-
-     public int getCurrentDK(int iObj){
-	 return	 this.currentDKs[iObj];
-     }
-
-     /**
-      * Set the ithObj,  ith kD upper differential k
-      *@param iObj, the index of the objective
-      *@param iDK, the index of the current differential k
-      * */
-
-     public void setCurrentDK(int iObj, int kD){
-	 this.currentDKs[iObj] = kD;
-     }
-
-     /**
-      * Get the ithObj, ith differential k, Blocking  variable
-      *@param iObj, the index of the objective
-      *@param iDK, the index of the current differential k
-      * */
-
-     public int getB(int iObj, int iDK){
-	 return	 this.idsB[iObj][iDK];
-     }
-
-     /**
-      * Set the ithObj, ith kD id of a blocking variable to id
-      *@param iObj, the index of the objective
-      *@param iDK, the index of the current differential k
-      *@param the new blocking variable id
-      **/
-
-     public void setB(int iObj, int iDK, int id){
-	 this.idsB[iObj][iDK] = id;
-
-     }
-
-
-
-     private void AddClause(IVecInt setOfLiterals){
-	 for(int i = 0; i < setOfLiterals.size(); ++i)
-	     this.prettyPrintVariable(setOfLiterals.get(i));
-	 System.out.println();
-	 try{
-	 this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
-	 } catch (ContradictionException e) {
-	     System.out.println("contradiction when adding clause: ");
-	     for(int j = 0; j < setOfLiterals.size(); ++j)
-		 System.out.print(" " + setOfLiterals.get(j) + " " );
-	     System.out.println();
-	     return;
-	 }
-     }
     /**
-     *My little method. It should add the hard constraints needed for
-     *the sequential encoding. I need to add the variables before I can 
-     *@param iObj The objective index
-     *@param kBefore The previous max value for the objective
-     *@param kNow The desired max value for the objective 
+     * Initialize the container of the Sequential variables
      */
 
-    
-    public void SequentialEncoderUpdateK(int iObj , int afterK ){
-	assert this.initializedDKs[iObj] < afterK;
-	extendUpperIdsSInK(iObj, afterK);
-	extendUpperIdsBInK(iObj, afterK);
-	IfLessAlsoMore(iObj, afterK);
-	IfLessAndIthXAtLeastIthW(iObj, afterK);
-	blockingVariableB(iObj, afterK);
-	IfLowNotX(iObj, afterK);
-	this.initializedDKs[iObj] = afterK;
-
+    private void initializeIdsS(){
+	this.idsS = new int[this.instance.nObjs()][][];
+	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
+ 	    Objective ithObj = instance.getObj(iObj);
+	    this.idsS[iObj] = new int[ithObj.getTotalLits()][];
+	    int nLits = ithObj.getTotalLits();
+	    for(int x = 1; x <= nLits ;++x){
+		// + 1 necessary: remember kd is simultaneously a
+		// value and an index
+		int iX = x - 1;
+		int[] array = new int[ithObj.getWeightDiff()];
+		this.idsS[iObj][iX] = array;
+	    }
+	}
     }
 
+    /**
+     * Get the ithObj, x literal, kD S variable ID.
+     */
+
+    public int getS(int iObj, int x, int kD){
+	int iX = x - 1;
+	int iKD = kD -1;
+	return	 this.idsS[iObj][iX][iKD];
+    }
+ 
+
+    /**
+     * Set the ithObj, ith Literal ith kD S variable to
+     *@param iObj, the index of the objective
+     *@param iX, the index of the literal from the objective
+     *@param iKD, the index of the current differential k
+     *@param id, the id of the variable S created
+     * */
+
+    public void setS(int iObj, int x, int kD, int id){
+	int iX = x - 1;
+	int iKD = kD -1;
+	this.idsS[iObj][iX][iKD] = id;
+	this.sVariablesInverseIndex.put(id, new int[] {iObj,x,kD});
+    }
+
+
+    /**
+     * Get the ithObj, ithX obj, kD Y variable ID.
+     *@param iObj, the index of the objective
+     *@param iX, the index of the literal from the objective
+     *@param iKD, the index of the current differential k
+     */
+
+    public int getY(int iObj, int kD){
+	int nLits = this.instance.getObj(iObj).getTotalLits();
+	return	 this.idsS[iObj][nLits-1][kD];
+    }
+
+    /**
+     * Set the ithObj,  ith kD Y variable to
+     *@param iObj, the index of the objective
+     *@param iKD, the index of the current differential k
+     *@param id, the id of the variable Y
+     * */
+
+    public void setY(int iObj, int iKD, int id){
+	this.yVariablesInverseIndex.put(id, new int[] {iObj,iKD});
+    }
+
+
+    /**
+     * Get the ithObj current upper limit on the initialized differential k
+     *@param iObj, the index of the objective
+     *@return  ithObj 
+     */
+
+    public int getInitializedKD(int iObj){
+	return	 this.initializedKDs[iObj];
+    }
+
+    /**
+     * Set the ithObj,  ith kD upper differential k
+     *@param iObj, the index of the objective
+     *@param iKD, the index of the current differential k
+     * */
+
+    public void setInitializedKD(int iObj, int kD){
+	this.initializedKDs[iObj] = kD;
+    }
+
+    /**
+     * Get the ithObj current upper limit on the initialized differential k
+     *@param iObj, the index of the objective
+     *@return  ithObj 
+     */
+
+    public int getCurrentKD(int iObj){
+	return	 this.currentKDs[iObj];
+    }
+
+    /**
+     * Set the ithObj,  ith kD upper differential k
+     *@param iObj, the index of the objective
+     *@param iKD, the index of the current differential k
+     * */
+
+    public void setCurrentKD(int iObj, int kD){
+	this.currentKDs[iObj] = kD;
+    }
+
+    /**
+     * Get the ithObj, ith differential k, Blocking  variable
+     *@param iObj, the index of the objective
+     *@param iKD, the index of the current differential k
+     * */
+
+     public ConstrID getB(int iObj, int dK){
+	return this.idsB[iObj][dK];
+    }
+
+    /**
+     * Set the ithObj, ith kD id of a blocking variable to id
+     *@param iObj, the index of the objective
+     *@param iKD, the index of the current differential k
+     *@param the new blocking variable id
+     **/
+     public void setB(int iObj, int kD, int id){
+	 this.idsB[iObj][iDK] = id;
+	}
+    }
+
+
+    /**
+     *Adds the conjunction of setOfLiterals
+     *@param setOfliterals
+     */
+
+    private void AddClause(IVecInt setOfLiterals){
+	for(int i = 0; i < setOfLiterals.size(); ++i)
+	    this.prettyPrintVariable(setOfLiterals.get(i));
+	System.out.println();
+	try{
+	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
+	} catch (ContradictionException e) {
+	    System.out.println("contradiction when adding clause: ");
+	    for(int j = 0; j < setOfLiterals.size(); ++j)
+		System.out.print(" " + setOfLiterals.get(j) + " " );
+	    System.out.println();
+	    return;
+	}
+    }
+
+    /**
+     *Adds the conjunctio of setOfLiterals
+     *@param setOfliterals
+     */
+
+    // private ConstrID AddRemovableClause(IVecInt setOfLiterals){
+
+    // 	ConstrID constrainId = null;
+
+    // 	for(int i = 0; i < setOfLiterals.size(); ++i)
+    // 	    this.prettyPrintVariable(setOfLiterals.get(i));
+    // 	System.out.println();
+    // 	try{
+    // 	    constrainId = this.solver.addRemovableConstr(PBFactory.instance().mkClause(setOfLiterals));
+    // 	} catch (ContradictionException e) {
+    // 	    System.out.println("contradiction when adding clause: ");
+    // 	    for(int j = 0; j < setOfLiterals.size(); ++j)
+    // 		System.out.print(" " + setOfLiterals.get(j) + " " );
+    // 	    System.out.println();
+    // 	    return constrainId;
+    // 	}
+    // 	return null;
+    // }
+
      
-     /**
-      * Add Clauses of type 4 in "On Using Incremental Encodings in..'"
-      */
-     private void ClausesIndependentOfK(){
-	 for(int iObj = 0;iObj< this.instance.nObjs(); ++iObj){
-	     Objective ithObj = this.instance.getObj(iObj);
-	     extendUpperIdsSInK(iObj, ithObj.getMaxAbsCoeff());
-	     this.setCurrentDK(iObj, 0);
-	     int ithObjNLit = ithObj.getTotalLits();
-	     ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
-	     ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
-	     //	     assert ithObjNLit ==ithObjLits.size();
-	     for (int iX = 0 ; iX < ithObjNLit; ++iX){
-		 int ithXW = Math.round(ithObjCoeffs.get(iX).asInt());
-		 int sign = (ithXW > 0)? 1: -1;
-		 ithXW = sign * ithXW;
-		 int x =  sign * ithObjLits.get(iX);
-		 for (int kD  = this.getCurrentDK(iObj) ;  kD < ithXW; ++kD){
-		     int s = this.getS(iObj, iX, kD);
-		     IVecInt clauseSet = new VecInt(2);
-		     clauseSet.push(-x);
-		     clauseSet.push(s);
-		     this.AddClause(clauseSet);
-		 }
-	     }
-	 }
+    // /**
+    //  * Add Clauses of type 4 in "On Using Incremental Encodings in..'"
+    //  * deprecated, as of Wed 30 Oct 17:33:23 WET 2019
+    //  */
+    // private void ClausesIndependentOfK(){
+
+    // 	for(int iObj = 0;iObj< this.instance.nObjs(); ++iObj){
+    // 	    Objective ithObj = this.instance.getObj(iObj);
+    // 	    this.extendInitializedIdsSInK(iObj, ithObj.getMaxAbsCoeff());
+    // 	    int ithObjNLit = ithObj.getTotalLits();
+    // 	    ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
+    // 	    ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
+    // 	    //	     assert ithObjNLit ==ithObjLits.size();
+    // 	    for (int iX = 0 ; iX < ithObjNLit-1; ++iX){
+    // 		int ithXW = Math.round(ithObjCoeffs.get(iX).asInt());
+    // 		int sign = (ithXW > 0)? 1: -1;
+    // 		ithXW = sign * ithXW;
+    // 		int x =  sign * ithObjLits.get(iX);
+    // 		for (int kD  = this.getCurrentKD(iObj) ;  kD <= ithXW; ++kD){
+    // 		    int s = this.getS(iObj, iX, kD);
+    // 		    IVecInt clauseSet = new VecInt(2);
+    // 		    clauseSet.push(-x);
+    // 		    clauseSet.push(s);
+    // 		    this.AddClause(clauseSet);
+    // 		}
+    // 	    }
+    // 	}
 	 
-     }
+    // }
+
+    /**
+     * Incrementally add Clauses of type 4 in "On Using Incremental Encodings in..'"
+     */
+    private void IfXAtLeastW(int iObj, int afterKD){
+
+	    Objective ithObj = this.instance.getObj(iObj);
+	    int ithObjNLit = ithObj.getTotalLits();
+	    ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
+	    ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
+	    //	     assert ithObjNLit ==ithObjLits.size();
+	    for (int iX = 1 ; iX < ithObjNLit; ++iX){
+		int ithXW = Math.round(ithObjCoeffs.get(iX-1).asInt());
+		int sign = (ithXW > 0)? 1: -1;
+		ithXW = sign * ithXW;
+		int literal =  sign * ithObjLits.get(iX-1);
+		int upperLimit = ithXW;
+		upperLimit = (upperLimit < afterKD)? upperLimit: afterKD;
+		for (int kD  = this.getCurrentKD(iObj) +1;
+		     kD <= upperLimit; ++kD){
+		    int s = this.getS(iObj, iX, kD);
+		    IVecInt clauseSet = new VecInt(2);
+		    clauseSet.push(-literal);
+		    clauseSet.push(s);
+		    this.AddClause(clauseSet);
+		}
+	    }
+	}
+	 
 
 
 
-     /**
-      * Clause of type 8 in "On Using Incremental Encodings in..'"
-      */
-     private void IfLessAlsoMore(int iObj,int afterK){
+
+    /**
+     * Clause of type 8 in "On Using Incremental Encodings in..'"
+     */
+    private void IfLessAlsoMore(int iObj,int afterKD){
 
 	int nLit = this.instance.getObj(iObj).getTotalLits();
-	 for (int iX = 1 ; iX < nLit-1; ++iX){
-	     for (int kD  = this.initializedDKs[iObj];  kD < afterK; ++kD){
-		 IVecInt clauseSet = new VecInt(2);
-		 int s1 = this.getS(iObj, iX-1, kD);
-		 int s2 = this.getS(iObj, iX, kD);
-		 clauseSet.push(-s1);
-		 clauseSet.push(s2);
-		 this.AddClause(clauseSet);
-	     }
-	 }
-     }
+	for (int x = 2 ; x < nLit; ++x){
+	    for (int kD  = this.currentKDs[iObj]+1;  kD <= afterKD; ++kD){
+		IVecInt clauseSet = new VecInt(2);
+		int s1 = this.getS(iObj, x-1, kD);
+		int s2 = this.getS(iObj, x, kD);
+		clauseSet.push(-s1);
+		clauseSet.push(s2);
+		this.AddClause(clauseSet);
+	    }
+	}
+    }
 
-     /**
-      * Clause of type 9 in "On Using Incremental Encodings in..'"
-      */
-     private void IfLessAndIthXAtLeastIthW(int iObj,int afterK){
+    /**
+     * Clause of type 9 in "On Using Incremental Encodings in..'"
+     */
+    private void IfLessAndIthXAtLeastIthW(int iObj,int afterKD){
 
-	 int ithObjNLit = this.instance.getObj(iObj).getTotalLits();
-	 ReadOnlyVecInt ithObjLits = this.instance.getObj(iObj).getSubObjLits(0);
-	 ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
-	 assert ithObjNLit ==ithObjLits.size();
+	int ithObjNLit = this.instance.getObj(iObj).getTotalLits();
+	ReadOnlyVecInt ithObjLits = this.instance.getObj(iObj).getSubObjLits(0);
+	ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
+	assert ithObjNLit ==ithObjLits.size();
 
-	 for (int iX = 1 ; iX < ithObjNLit; ++iX){
-	     int ithXW = ithObjCoeffs.get(iX).asInt();
-	     int sign = (ithXW > 0)? 1: -1;
-	     ithXW = sign * ithXW;
-	     int x = sign * ithObjLits.get(iX);
-	     if(this.initializedDKs[iObj]- ithXW >= 0)
-	     for (int kD  = this.initializedDKs[iObj]- ithXW;  kD <= afterK - ithXW ; ++kD){
-		 IVecInt clauseSet = new VecInt(3);
-		 int s1 = -this.getS(iObj, iX-1, kD);
-		 int s2 = this.getS(iObj, iX, kD + ithXW);
-		 clauseSet.push(s1);
-		 clauseSet.push(x);
-		 clauseSet.push(s2);
-		 this.AddClause(clauseSet);
-	     }
-	 }
-     }
+	for (int iX = 2 ; iX < ithObjNLit; ++iX){
+	    int ithXW = ithObjCoeffs.get(iX-1).asInt();
+	    int sign = (ithXW > 0)? 1: -1;
+	    ithXW = sign * ithXW;
+	    int literal = sign * ithObjLits.get(iX-1);
+	    int lowerLimit = this.currentKDs[iObj]- ithXW + 1;
+	    lowerLimit = (lowerLimit > 1)? lowerLimit: 1;
+	    int upperLimit = afterKD - ithXW ;
+	    // upperLimit = (upperLimit >= 1)? upperLimit: 1;
+	    for(int kD  = lowerLimit;  kD <= upperLimit ; ++kD){
+		int s1 = this.getS(iObj, iX-1, kD);
+		int s2 = this.getS(iObj, iX, kD + ithXW );
+		IVecInt clauseSet = new VecInt(new int[] {-s1,-literal,s2});
+		this.AddClause(clauseSet);
+	    }
+	}
+    }
 
-
-
-     /**
-      * Clause of type 10 in "On Using Incremental Encodings in..'"
-      */
-     private void IfLowNotX(int iObj,int afterK){
-
-	 int ithObjNLit = this.instance.getObj(iObj).getTotalLits();
-	 ReadOnlyVecInt ithObjLits = this.instance.getObj(iObj).getSubObjLits(0);
-	 ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
-	 assert ithObjNLit ==ithObjLits.size();
-
-	 for (int iX = 1 ; iX < ithObjNLit; ++iX){
-	     int ithXW = ithObjCoeffs.get(iX).asInt();
-	     int sign = (ithXW > 0)? 1: -1;
-	     ithXW = sign * ithXW;
-	     if( afterK + 1 - ithXW > 0){
-	     IVecInt clauseSet = new VecInt(3);
-	     int b = this.getB(iObj, afterK);
-	     int s = this.getS(iObj, iX-1, afterK + 1 - ithXW);
-	     int x = ithObjLits.get(iX);
-	     clauseSet.push(b);
-	     clauseSet.push(-s);
-	     clauseSet.push(- sign * x);
-	     this.AddClause(clauseSet);
-	     }
-	 }
-     }
 
      /**
       * Clause of type 11 in "On Using Incremental Encodings in..'"
@@ -407,183 +456,226 @@ import org.sat4j.specs.ContradictionException;
 	     this.AddClause(clauseSet);
      }
 
+    /**
+     * Clause of type 10 in "On Using Incremental Encodings in..'"
+     */
+    
+    private void IfLowNotX(int iObj,int afterKD){
+	
+	int ithObjNLit = this.instance.getObj(iObj).getTotalLits();
+	ReadOnlyVecInt ithObjLits = this.instance.getObj(iObj).getSubObjLits(0);
+	ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
+	assert ithObjNLit == ithObjLits.size();
 
-     private int newVar(){
-	     this.solver.newVars(1);
-	     return solver.nVars();
-     }
+	for (int iX = 2 ; iX <= ithObjNLit ; ++iX){
+	    int ithXW = ithObjCoeffs.get(iX-1).asInt();
+	    int sign = (ithXW > 0)? 1: -1;
+	    ithXW = sign * ithXW;
+	    int kIndex = afterKD + 1 - ithXW;
+	    if( kIndex >= 1){
+		IVecInt clauseSet = new VecInt(2);
+		int s = this.getS(iObj, iX-1, kIndex);
+		int literal = ithObjLits.get(iX-1);
+		literal = sign * literal;
+		clauseSet.push(-s);
+		clauseSet.push(- sign * literal);
+		this.setB(iObj, this.AddRemovableClause(clauseSet));
+	    }
+	}
+    }
 
 
-     /** 
-      *  extend the B variables in k
-      */
+    /** 
+     *  extend the B variables in k
+     */
 
-     private void extendUpperIdsBInK(int iObj, int afterK){
+    private void extendInitializedIdsBInK(int iObj, int afterKD){
 
-	     for(int kD = this.initializedDKs[iObj]+1; kD < afterK + 1; ++kD){
-	     this.solver.newVars(1);
-	     this.setB(iObj, kD, this.solver.nVars());	     
-	 }
+	for(int kD = this.getInitializedKD(iObj)+1; kD < afterKD + 1; ++kD){
+	    this.solver.newVars(1);
+	    this.setB(iObj,kD , this.solver.nVars());	     
+	}
 	 
-     }
+    }
 
-     /** 
-      * extend the S variables in the differential k index
-      */
+    /** 
+     * extend the S variables in the differential k index
+     */
 
-     public void extendUpperIdsSInK(int iObj, int afterDK){
-	 if(this.getInitializedDK(iObj)< afterDK ){
-	     int nLit = this.instance.getObj(iObj).getTotalLits();
-	     for (int iX = 0 ; iX < nLit; ++iX){
-		 for(int dK = this.initializedDKs[iObj]+1; dK < afterDK +1 ; ++dK){
-		     /* System.out.println(iObj + " " + iX + " " + dK + " " + this.newVar()); */
-		     this.setS(iObj, iX, dK, this.newVar());
-		 }
-	     }
-	     this.setCurrentDK(iObj, afterDK);
-	     this.setInitializedDK(iObj, afterDK);
-	     this.extendUpperIdsYinK(iObj, afterDK);
-	 }
-	 else{
-	     if(this.getCurrentDK(iObj) < afterDK){
-		 this.setCurrentDK(iObj, afterDK);
-		 this.extendUpperIdsYinK(iObj, afterDK);
-	     }
-	 }
-     }
+    public void extendInitializedIdsSInK(int iObj, int afterKD){
+
+	int nLit = this.instance.getObj(iObj).getTotalLits();
+	for(int kd = this.initializedKDs[iObj]+1; kd <= afterKD ; ++kd){
+	    for (int x = 1 ; x <= nLit; ++x){
+		/* System.out.println(iObj + " " + iX + " " + kd + " " + this.newVar()); */
+		this.setS(iObj, x, kd, this.newVar());
+	    }
+	}
+	this.extendInitializedIdsYinK(iObj, afterKD);
+    }
 
 
-     /** 
-      * extend the Y variables in the differential k index until afterDK. Assumes
-      * the S variables are already extended accordingly
-      * @param iObj
-      * @param afterDK
-      */
+    /** 
+     * extend the Y variables in the differential k index until afterKD. Assumes
+     * the S variables are already extended accordingly
+     * @param iObj
+     * @param afterKD
+     */
 
-private void extendUpperIdsYinK(int iObj, int afterDK){
-	 int nLit = this.instance.getObj(iObj).getTotalLits();
-	     for(int dK = this.initializedDKs[iObj]+1; dK < afterDK +1 ; ++dK){
-		 this.setY(iObj, dK, this.getS(iObj, nLit-1, afterDK ));
-	 }
-     }
+    private void extendInitializedIdsYinK(int iObj, int afterKD){
+	int nLit = this.instance.getObj(iObj).getTotalLits();
+	for(int kd = this.initializedKDs[iObj]+1; kd < afterKD +1 ; ++kd){
+	    this.setY(iObj, kd, this.getS(iObj, nLit-1, afterKD ));
+	}
+    }
 
 
 
-     /**
-      * Get the objective from an Y variable
-      * @param literal
-      */
+    /**
+     * Get the objective from an Y variable
+     * @param literal
+     */
 
-     public int getObjFromYVariable(int literal){
-	 assert this.isY(literal);
-	 return this.yVariablesInverseIndex.get(literal)[0] ;
-     }
+    public int getObjFromYVariable(int literal){
+	assert this.isY(literal);
+	literal = (literal>0)? literal: -literal;
+	return this.yVariablesInverseIndex.get(literal)[0] ;
+    }
 
-     /**
-      * return the value of the differential k from an S variable
-      * @param literal
-      */
+    /**
+     * return the value of the differential k from an S variable
+     * @param literal
+     */
 
-     public int getDKFromYVariable(int literal){
-	 assert this.isY(literal);
-	 return this.yVariablesInverseIndex.get(literal)[1] ;
-     }
-     /**
-      * Get the objective from an Y variable
-      * @param literal
-      */
+    public int getKDFromYVariable(int literal){
+	assert this.isY(literal);
+	literal = (literal>0)? literal: -literal;
+	return this.yVariablesInverseIndex.get(literal)[1] ;
+    }
 
-     public int getObjFromSVariable(int literal){
-	 assert this.isS(literal);
-	 return this.sVariablesInverseIndex.get(literal)[0] ;
-     }
+    /**
+     * Get the objective from an Y variable
+     * @param literal
+     */
 
-     /**
-      * return the value of the differential k from an S variable
-      * @param literal
-      */
+    public int getObjFromSVariable(int literal){
+	assert this.isS(literal);
+	literal = (literal>0)? literal: -literal;
+	return this.sVariablesInverseIndex.get(literal)[0] ;
+    }
 
-     public int getDKFromSVariable(int literal){
-	 assert this.isS(literal);
-	 return this.sVariablesInverseIndex.get(literal)[2] ;
-     }
+    /**
+     * return the value of the differential k from an S variable
+     * @param literal
+     */
 
-     /**
-      * return the value of the literal index
-      * @param literal
-      */
+    public int getKDFromSVariable(int literal){
+	assert this.isS(literal);
+	literal = (literal>0)? literal: -literal;
+	return this.sVariablesInverseIndex.get(literal)[2] ;
 
-     public int getXFromSVariable(int literal){
-	 assert this.isS(literal);
-	 return this.sVariablesInverseIndex.get(literal)[1] ;
-     }
+    }
+    /**
+     * Get the objective from an B variable
+     * @param literal
+     */
+
+    public int getObjFromBVariable(int literal){
+	assert this.isB(literal);
+	literal = (literal>0)? literal: -literal;
+	return this.bVariablesInverseIndex.get(literal) ;
+    }
+
+    /**
+     * return the value of the differential k from an B variable
+     * @param literal
+     */
+
+    /**
+     * return the value of the literal index
+     * @param literal
+     */
+
+    public int getXFromSVariable(int literal){
+	assert this.isS(literal);
+	literal = (literal>0)? literal: -literal;
+	return this.sVariablesInverseIndex.get(literal)[1] ;
+    }
 
 
-     /**
-      *Checks if literal is true
-      *@param literal
-      */
-     private boolean literalIsTrue(int i){
-	 if(i > 0)
-	     return true;
-	 return false;
-     }
+    /**
+     *Checks if literal is an Y variable
+     *@param literal
+     */
 
-     /**
-      *Checks if literal is an Y variable
-      *@param literal
-      */
+    public boolean isY(int literal){
+	literal = (literal>0)? literal: -literal;
+	if(this.yVariablesInverseIndex.containsKey(literal))
+	    return true;
+	return false;
+    }
 
-     public boolean isY(int literal){
-	 literal = (literal>0)? literal: -literal;
-	 if(this.yVariablesInverseIndex.containsKey(literal))
-	     return true;
-	 return false;
-     }
+    /**
+     *Checks if literal is an S variable
+     *@param literal
+     */
 
-     /**
-      *Checks if literal is an S variable
-      *@param literal
-      */
+    public boolean isS(int literal){
+	literal = (literal>0)? literal: -literal;
+	if(this.sVariablesInverseIndex.containsKey(literal))
+	    return true;
+	return false;
+    }
+    /**
+     *Checks if literal is an B variable
+     *@param literal
+     */
 
-     public boolean isS(int literal){
-	 literal = (literal>0)? literal: -literal;
-	 if(this.sVariablesInverseIndex.containsKey(literal))
-	     return true;
-	 return false;
-     }
+    public boolean isB(int literal){
+	literal = (literal>0)? literal: -literal;
+	if(this.bVariablesInverseIndex.containsKey(literal))
+	    return true;
+	return false;
+    }
 
-     public void prettyPrintVariable(int id){
-	 if(this.isS(id)){
-	     int iObj = this.getObjFromSVariable(id);
-	     int iX = this.getXFromSVariable(id);
-	     int dK = this.getDKFromSVariable(id);
-	     System.out.print(id + "->" + "S[" + iObj + ", " + iX + ", " + dK +"]");
-	     return;
-	     }
-	 /* if(this.isB(id)){ */
-	 /* 	 int iObj = this.getObjFromSVariable(id); */
-	 /* 	 int iX = this.getXFromSVariable(id); */
-	 /* 	 int dK = this.getDKFromSVariable(id); */
-	 /* 	 System.out.print(id + "->" + "S[" + iObj + ", " + iX + ", " + dK +"]"); */
-	 /* 	 return; */
-	 /*     } */
-	 if(id < this.firstVariable){
-	     System.out.print("X["+id+"] ");
-	 }
-     }
+    public void prettyPrintVariable(int literal){
+	int sign =(literal>0)? 1: -1;
+	int id =  literal * sign;
+	// if(this.isY(id)){
+	//     int iObj = this.getObjFromYVariable(id);
+	//     int kd = this.getKDFromYVariable(id);
+	//     System.out.print(literal + "->" + "Y[" + iObj + ", " + kd +"] ");
+	//     return;
+	// }
+	 
+	if(this.isS(id)){
+	    int iObj = this.getObjFromSVariable(id);
+	    int iX = this.getXFromSVariable(id);
+	    int kd = this.getKDFromSVariable(id);
+	    System.out.print(literal + "->" + "S[" + iObj + ", " + iX + ", " + kd +"] ");
+	    return;
+	}
+	if(this.isB(id)){
+	    int iObj = this.getObjFromBVariable(id);
+	    System.out.print(id + "->" + "B[" + ", " + iObj +"] ");
+	    return;
+	}
+	if(id < this.firstVariable){
+	    System.out.print(sign+"X["+id+"] ");
+	}
+    }
 
-     public void printS(){
-	 for(int i = 0; i < this.sVariablesInverseIndex.size(); ++i){
-	     Set<Integer> keys = this.sVariablesInverseIndex.keySet();
-	     for(Integer IntegerKey: keys){
-		 int key = IntegerKey;
-		 int iObj = this.getObjFromSVariable(key);
-		 int iX = this.getXFromSVariable(key);
-		 int dK = this.getDKFromSVariable(key);
-		 System.out.println(key + "->" + "S[" + iObj + ", " + iX + ", " + dK +"]");
-	     }
-	 }
-     }
- }
+    public void printS(){
+	for(int i = 0; i < this.sVariablesInverseIndex.size(); ++i){
+	    Set<Integer> keys = this.sVariablesInverseIndex.keySet();
+	    for(Integer IntegerKey: keys){
+		int key = IntegerKey;
+		int iObj = this.getObjFromSVariable(key);
+		int iX = this.getXFromSVariable(key);
+		int kd = this.getKDFromSVariable(key);
+		System.out.println(key + "->" + "S[" + iObj + ", " + iX + ", " + kd +"]");
+	    }
+	}
+    }
+}
 
