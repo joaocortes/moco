@@ -80,7 +80,7 @@ import org.sat4j.specs.ContradictionException;
      /**
       *The inverse index map for the blocking variables
       */
-     private Hashtable<Integer, Integer> bVariablesInverseIndex  = new Hashtable<Integer, Integer>();
+     private Hashtable<Integer, int[]> bVariablesInverseIndex  = new Hashtable<Integer, int[]>();
 
     /**
      *First solver variable that pertains to the sequential encoding
@@ -126,10 +126,13 @@ import org.sat4j.specs.ContradictionException;
 	if(this.getInitializedKD(iObj)< afterKD ){
 	    // Y variables are also extended at 
 	    this.extendInitializedIdsSInK(iObj, afterKD); 
+	    this.extendInitializedIdsBInK(iObj, afterKD); 
 	    this.setInitializedKD(iObj, afterKD);
 	}
 	 
 	if(this.getCurrentKD(iObj) < afterKD){
+	    System.out.println("Blocking old clause 10");
+	    this.blockingVariableB(iObj, afterKD);
 	    System.out.println("Clause 4");
 	    this.IfXAtLeastW(iObj, afterKD);
 	    System.out.println("Clause 8");
@@ -138,8 +141,6 @@ import org.sat4j.specs.ContradictionException;
 	    this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
 	    System.out.println("Clause 10");
 	    this.IfLowNotX(iObj, afterKD);
-	    System.out.println("Blocking old clause 10");
-	    this.blockingVariableB(iObj);
 	    this.setCurrentKD(iObj, afterKD);
 	}
     }
@@ -276,7 +277,7 @@ import org.sat4j.specs.ContradictionException;
      *@param iKD, the index of the current differential k
      * */
 
-     public ConstrID getB(int iObj, int dK){
+     public int getB(int iObj, int dK){
 	return this.idsB[iObj][dK];
     }
 
@@ -287,9 +288,9 @@ import org.sat4j.specs.ContradictionException;
      *@param the new blocking variable id
      **/
      public void setB(int iObj, int kD, int id){
-	 this.idsB[iObj][iDK] = id;
+	 this.idsB[iObj][kD] = id;
 	}
-    }
+    
 
 
     /**
@@ -377,7 +378,7 @@ import org.sat4j.specs.ContradictionException;
 	    ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
 	    ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
 	    //	     assert ithObjNLit ==ithObjLits.size();
-	    for (int iX = 1 ; iX < ithObjNLit; ++iX){
+	    for (int iX = 1 ; iX <= ithObjNLit; ++iX){
 		int ithXW = Math.round(ithObjCoeffs.get(iX-1).asInt());
 		int sign = (ithXW > 0)? 1: -1;
 		ithXW = sign * ithXW;
@@ -446,15 +447,6 @@ import org.sat4j.specs.ContradictionException;
     }
 
 
-     /**
-      * Clause of type 11 in "On Using Incremental Encodings in..'"
-      */
-     private void blockingVariableB(int iObj,int afterK){
-	 int beforeK = this.initializedDKs[iObj];
-	     IVecInt clauseSet = new VecInt(1);
-	 clauseSet.push(this.getB(iObj, beforeK));
-	     this.AddClause(clauseSet);
-     }
 
     /**
      * Clause of type 10 in "On Using Incremental Encodings in..'"
@@ -467,22 +459,53 @@ import org.sat4j.specs.ContradictionException;
 	ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
 	assert ithObjNLit == ithObjLits.size();
 
-	for (int iX = 2 ; iX <= ithObjNLit ; ++iX){
+	for (int iX = 1 ; iX <= ithObjNLit ; ++iX){
 	    int ithXW = ithObjCoeffs.get(iX-1).asInt();
 	    int sign = (ithXW > 0)? 1: -1;
 	    ithXW = sign * ithXW;
 	    int kIndex = afterKD + 1 - ithXW;
-	    if( kIndex >= 1){
-		IVecInt clauseSet = new VecInt(2);
+	    if( kIndex >= 1 && iX > 1){
 		int s = this.getS(iObj, iX-1, kIndex);
+		int b = this.getB(iObj, afterKD);
 		int literal = ithObjLits.get(iX-1);
 		literal = sign * literal;
-		clauseSet.push(-s);
-		clauseSet.push(- sign * literal);
-		this.setB(iObj, this.AddRemovableClause(clauseSet));
+		IVecInt clauseSet = new VecInt(new int[]{-s, -literal, b});
+		this.AddClause(clauseSet);
+	    }else{
+		int b = this.getB(iObj, afterKD);
+		int literal = ithObjLits.get(iX-1);
+		literal = sign * literal;
+		IVecInt clauseSet = new VecInt(new int[]{-literal, b});
+		this.AddClause(clauseSet);
+	
 	    }
 	}
     }
+
+     /**
+      * Clause of type 11 in "On Using Incremental Encodings in..'"
+      */
+     
+     private void blockingVariableB(int iObj,int afterK){
+	 int beforeK = this.getCurrentKD(iObj);
+	 if(beforeK >= 1){
+	     IVecInt clauseSet = new VecInt(1);
+	     clauseSet.push(this.getB(iObj, beforeK));
+	     this.AddClause(clauseSet);
+	 }
+     }
+
+
+     /**
+      *Just a wrapper to PBSolver newVar, that returns the new id
+      */
+
+    private int newVar(){
+	this.solver.newVars(1);
+	return solver.nVars();
+    }
+
+
 
 
     /** 
@@ -491,9 +514,8 @@ import org.sat4j.specs.ContradictionException;
 
     private void extendInitializedIdsBInK(int iObj, int afterKD){
 
-	for(int kD = this.getInitializedKD(iObj)+1; kD < afterKD + 1; ++kD){
-	    this.solver.newVars(1);
-	    this.setB(iObj,kD , this.solver.nVars());	     
+	for(int kD = this.getInitializedKD(iObj)+1; kD <= afterKD; ++kD){
+	    this.setB(iObj,kD , this.newVar());	     
 	}
 	 
     }

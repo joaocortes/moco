@@ -141,6 +141,7 @@ public class unsatSat {
 		if(currentExplanation.size() == 0){
 		    break;
 		}
+		System.out.println("Updating upper bound");
 		this.updateUpperBound(currentExplanation);
 		lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
 	    }
@@ -381,8 +382,8 @@ public class unsatSat {
 	    System.out.println("Model " + i);
 	    for(int j = 0; j <models.get(i).size(); ++j)
 		this.seqEncoder.prettyPrintVariable(models.get(i).get(j));
+	    System.out.println();
 	}
-	System.out.println();
 	return;
     }
     
@@ -399,13 +400,16 @@ public class unsatSat {
     }
     
     private boolean AddClause(IVecInt setOfLiterals){
+	for(int i = 0; i < setOfLiterals.size(); ++i)
+	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(i));
+	System.out.println();
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	}
 	catch (ContradictionException e) {
 	    System.out.println("contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		System.out.print(" " + setOfLiterals.get(j) + " " );
+	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(j));
 	    System.out.println();
 	    return false;
 	}
