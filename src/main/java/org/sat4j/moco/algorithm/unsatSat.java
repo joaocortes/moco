@@ -24,6 +24,7 @@ package org.sat4j.moco.algorithm;
 
 // import java.util.Arrays;
 import java.util.Vector;
+import java.util.Hashtable;
 
 // import org.moeaframework.core.PRNG;
 // import org.sat4j.core.ReadOnlyVec;
@@ -78,6 +79,12 @@ public class unsatSat {
      */
 
     private SeqEncoder seqEncoder = null;
+
+    /**
+     *The inverse index map for the S variables
+     */
+    private Hashtable<Integer,int[]> yVariablesInverseIndex  = new Hashtable<Integer, int[]>();
+
 
     /**
      * Last explored differential k, for each objective function.
@@ -173,7 +180,7 @@ public class unsatSat {
     }
     
     /**
-     *Initial extend. Extends the S (and Y) variables of the
+     *Initial extend. Extends the S (and STop) variables of the
      *sequential encoder, in order to allow the construction of the
      *first set of assumptions
      */
@@ -184,7 +191,7 @@ public class unsatSat {
     public IVecInt generateUpperBoundAssumptions( ){
 	IVecInt assumptions = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    assumptions.push(-this.seqEncoder.getY(iObj, this.getUpperKD(iObj) + 1));
+	    assumptions.push(-this.seqEncoder.getSTop(iObj, this.getUpperKD(iObj) + 1));
 	}
 	return assumptions;
     }
@@ -212,9 +219,9 @@ public class unsatSat {
     private void updateUpperBound(IVecInt currentExplanation){
 	for(int i = 0; i < currentExplanation.size(); ++i){
 	    int ithLiteral = currentExplanation.get(i);
-	    assert this.seqEncoder.isY(ithLiteral);
-	    int jObj = this.seqEncoder.getObjFromYVariable(ithLiteral);
-	    int kd = this.seqEncoder.getKDFromYVariable(ithLiteral);
+	    assert this.seqEncoder.isSTop(ithLiteral);
+	    int jObj = this.seqEncoder.getObjFromSTopVariable(ithLiteral);
+	    int kd = this.seqEncoder.getKDFromSTopVariable(ithLiteral);
 	    //TODO only if kd is not initialized already
 	    this.setUpperKD(jObj, kd);
 	    }
@@ -262,7 +269,7 @@ public class unsatSat {
     private ConstrID swapLessThan1Clause(ConstrID lastLessThan1){
 	IVecInt literals = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    literals.push(this.seqEncoder.getY(iObj,
+	    literals.push(this.seqEncoder.getSTop(iObj,
 					      this.getUpperKD(iObj)));
 	}
 	if(lastLessThan1 != null) this.solver.removeConstr(lastLessThan1);
@@ -362,7 +369,7 @@ public class unsatSat {
 
     /**
      *returns the model in DIMACS format, including only the real
-     *variables and the Y variables of the sequential encoder
+     *variables and the STop variables of the sequential encoder
      *@return a filtered model
      */
 
@@ -373,14 +380,14 @@ public class unsatSat {
 	    if(id <= this.realVariablesN && id >= 1)
 		model.push(literal);
 	    else
-		if(this.seqEncoder.isY(id))
+		if(this.seqEncoder.isSTop(id))
 		    model.push(literal);
 	}
 	return model;
     }
     /**
      *returns the model in DIMACS format, including only the real
-     *variables and the Y variables of the sequential encoder
+     *variables and the STop variables of the sequential encoder
      *@return a filtered model
      */
 
@@ -412,8 +419,9 @@ public class unsatSat {
 	IVecInt newHardClause = new VecInt(new int[] {});
 	for(int i = 0; i < newSolution.size(); ++i){
 	    int literal = newSolution.get(i);
-	    if(this.seqEncoder.isY(literal) && literal > 0)
-		newHardClause.push(-literal);
+	    if(this.seqEncoder.isS(literal))
+		if(literal > 0)
+		    newHardClause.push(-literal);
 	}
 	return this.AddClause(newHardClause);
     }
