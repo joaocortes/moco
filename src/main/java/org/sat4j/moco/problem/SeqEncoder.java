@@ -103,13 +103,9 @@ import org.sat4j.specs.ContradictionException;
 	this.initializeIdsB();
 	this.initializedKDs = new int[this.instance.nObjs()];
 	this.currentKDs = new int[this.instance.nObjs()];
-	for(int i = 0; i < this.instance.nObjs(); ++i){
-	    this.initializedKDs[i] =0;
+
 	}
-	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
-	    this.UpdateCurrentK(iObj, 0);
-	}
-    }
+
 
 
     /**
@@ -122,7 +118,6 @@ import org.sat4j.specs.ContradictionException;
      */
     
     public void UpdateCurrentK(int iObj , int afterKD ){
-	System.out.println("New kd: " + afterKD);
 	if(this.getInitializedKD(iObj)< afterKD ){
 	    // Y variables are also extended at 
 	    this.extendInitializedIdsSInK(iObj, afterKD); 
@@ -131,16 +126,14 @@ import org.sat4j.specs.ContradictionException;
 	}
 	 
 	if(this.getCurrentKD(iObj) < afterKD){
-	    System.out.println("Blocking old clause 10");
-	    this.blockingVariableB(iObj, afterKD);
 	    System.out.println("Clause 4");
 	    this.IfXAtLeastW(iObj, afterKD);
 	    System.out.println("Clause 8");
 	    this.IfLessAlsoMore(iObj, afterKD);
 	    System.out.println("Clause 9");
 	    this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
-	    System.out.println("Clause 10");
-	    this.IfLowNotX(iObj, afterKD);
+	    // System.out.println("Clause 10");
+	    // this.IfLowNotX(iObj, afterKD);
 	    this.setCurrentKD(iObj, afterKD);
 	}
     }
@@ -216,7 +209,7 @@ import org.sat4j.specs.ContradictionException;
 
     public int getY(int iObj, int kD){
 	int nLits = this.instance.getObj(iObj).getTotalLits();
-	return	 this.idsS[iObj][nLits-1][kD];
+	return 	this.getS(iObj, nLits, kD);
     }
 
     /**
@@ -406,7 +399,7 @@ import org.sat4j.specs.ContradictionException;
     private void IfLessAlsoMore(int iObj,int afterKD){
 
 	int nLit = this.instance.getObj(iObj).getTotalLits();
-	for (int x = 2 ; x < nLit; ++x){
+	for (int x = 2 ; x <= nLit; ++x){
 	    for (int kD  = this.currentKDs[iObj]+1;  kD <= afterKD; ++kD){
 		IVecInt clauseSet = new VecInt(2);
 		int s1 = this.getS(iObj, x-1, kD);
@@ -547,7 +540,7 @@ import org.sat4j.specs.ContradictionException;
     private void extendInitializedIdsYinK(int iObj, int afterKD){
 	int nLit = this.instance.getObj(iObj).getTotalLits();
 	for(int kd = this.initializedKDs[iObj]+1; kd < afterKD +1 ; ++kd){
-	    this.setY(iObj, kd, this.getS(iObj, nLit-1, afterKD ));
+	    this.setY(iObj, kd, this.getS(iObj, nLit, afterKD ));
 	}
     }
 
@@ -659,6 +652,13 @@ import org.sat4j.specs.ContradictionException;
 	    return true;
 	return false;
     }
+
+     public void prettyPrintVecInt(IVecInt vecInt){
+	 for(int j = 0; j < vecInt.size(); ++j)
+	     this.prettyPrintVariable(vecInt.get(j));
+	 System.out.println();
+	 return;
+     }
 
     public void prettyPrintVariable(int literal){
 	int sign =(literal>0)? 1: -1;

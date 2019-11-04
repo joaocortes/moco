@@ -130,23 +130,34 @@ public class unsatSat {
 	while(true){
 	    this.preAssumptionsExtend();
 	    currentAssumptions = this.generateUpperBoundAssumptions();
+	    System.out.println("Checking against assumptions:");
+	    this.seqEncoder.prettyPrintVecInt(currentAssumptions);
 	    solver.check(currentAssumptions);
 	    if(solver.isSat()){
 		models.add(this.getSemiFilteredModel());
+		this.printModels(models);
 		System.out.println("Blocking dominated region");
 		if(! this.blockDominatedRegion(models.lastElement()))
 		    break;
 	    }else{
 		currentExplanation  = solver.unsatExplanation();
+
+		System.out.println("Checking against assumptions:");
+		this.seqEncoder.prettyPrintVecInt(currentExplanation);
 		if(currentExplanation.size() == 0){
 		    break;
-		}
-		System.out.println("Updating upper bound");
+		}else{
+
 		this.updateUpperBound(currentExplanation);
+		System.out.print("["+this.getUpperKD(0));
+		for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
+		    System.out.print(", "+this.getUpperKD(iObj));
+		System.out.println("]");
+
 		lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
+		}
 	    }
 	}
-	this.printModels(models);
 	// this.seqEncoder.printS();
 	return;
     }
@@ -191,14 +202,12 @@ public class unsatSat {
     private void updateUpperBound(IVecInt currentExplanation){
 	for(int i = 0; i < currentExplanation.size(); ++i){
 	    int ithLiteral = currentExplanation.get(i);
-	    int id = (ithLiteral>0)? ithLiteral: -ithLiteral;
 	    assert this.seqEncoder.isY(ithLiteral);
-	    if(ithLiteral > 0){
-		int jObj = this.seqEncoder.getObjFromYVariable(ithLiteral);
-		int kd = this.seqEncoder.getKDFromYVariable(ithLiteral);
-		//TODO only if kd is not initialized already
-		this.setUpperKD(jObj, kd);
-	    }}
+	    int jObj = this.seqEncoder.getObjFromYVariable(ithLiteral);
+	    int kd = this.seqEncoder.getKDFromYVariable(ithLiteral);
+	    //TODO only if kd is not initialized already
+	    this.setUpperKD(jObj, kd);
+	    }
     }
     
     /**
