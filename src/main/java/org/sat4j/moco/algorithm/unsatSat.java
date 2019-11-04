@@ -128,33 +128,43 @@ public class unsatSat {
         Log.comment(3, "in unsatSat.solve");
 
 	while(true){
+	    System.out.print("External:");
+	    System.out.print("["+this.getUpperKD(0));
+	    for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
+		System.out.print(", "+this.getUpperKD(iObj));
+	    System.out.println("]");
+
 	    this.preAssumptionsExtend();
 	    currentAssumptions = this.generateUpperBoundAssumptions();
+
 	    System.out.println("Checking against assumptions:");
 	    this.seqEncoder.prettyPrintVecInt(currentAssumptions);
+
 	    solver.check(currentAssumptions);
+
 	    if(solver.isSat()){
 		models.add(this.getSemiFilteredModel());
-		this.printModels(models);
+
+		System.out.println("Model :");
+		this.seqEncoder.prettyPrintVecInt(models.lastElement());
 		System.out.println("Blocking dominated region");
+
 		if(! this.blockDominatedRegion(models.lastElement()))
 		    break;
 	    }else{
 		currentExplanation  = solver.unsatExplanation();
 
-		System.out.println("Checking against assumptions:");
+		System.out.println("Explanation:");
 		this.seqEncoder.prettyPrintVecInt(currentExplanation);
+
 		if(currentExplanation.size() == 0){
 		    break;
 		}else{
+		    System.out.println("UpperBound extend");
+		    this.updateUpperBound(currentExplanation);
+		
 
-		this.updateUpperBound(currentExplanation);
-		System.out.print("["+this.getUpperKD(0));
-		for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
-		    System.out.print(", "+this.getUpperKD(iObj));
-		System.out.println("]");
-
-		lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
+		    lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
 		}
 	    }
 	}

@@ -118,6 +118,12 @@ import org.sat4j.specs.ContradictionException;
      */
     
     public void UpdateCurrentK(int iObj , int afterKD ){
+	System.out.print("Internal:");
+	System.out.print("["+this.getCurrentKD(0));
+	for(int iObj1 = 1; iObj1 < this.instance.nObjs(); ++iObj1)
+	    System.out.print(", "+this.getCurrentKD(iObj1));
+	System.out.println("]");
+
 	if(this.getInitializedKD(iObj)< afterKD ){
 	    // Y variables are also extended at 
 	    this.extendInitializedIdsSInK(iObj, afterKD); 
@@ -126,6 +132,10 @@ import org.sat4j.specs.ContradictionException;
 	}
 	 
 	if(this.getCurrentKD(iObj) < afterKD){
+
+	    this.blockingVariableB(iObj, afterKD);
+	    System.out.println("");
+	    this.ifLowNotX(iObj, afterKD);
 	    System.out.println("Clause 4");
 	    this.IfXAtLeastW(iObj, afterKD);
 	    System.out.println("Clause 8");
@@ -361,8 +371,34 @@ import org.sat4j.specs.ContradictionException;
 	 
     // }
 
+     /**
+      * A literal can contribute positively only if its weight is less
+      * than the current upper differential k value
+      */
+     private void ifLowNotX(int iObj, int afterKD){
+	 Objective ithObj = this.instance.getObj(iObj);
+	 int ithObjNLit = ithObj.getTotalLits();
+	 ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
+	 ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
+	 //	     assert ithObjNLit ==ithObjLits.size();
+	 int b = this.getB(iObj, afterKD);
+	 for (int iX = 1 ; iX <= ithObjNLit; ++iX){
+	     int ithXW = Math.round(ithObjCoeffs.get(iX-1).asInt());
+	     int sign = (ithXW > 0)? 1: -1;
+	     ithXW = sign * ithXW;
+	     if(ithXW > afterKD){
+		 int literal =  sign * ithObjLits.get(iX-1);
+		 this.AddClause(new VecInt(new int[]{-literal, b}));
+	     }}
+     }
+
     /**
-     * Incrementally add Clauses of type 4 in "On Using Incremental Encodings in..'"
+     * If a literal is contributing positively, then the sum must be
+     * at least either the literal's weight or the upper differential
+     * k, whichever is less.
+     * @param iObj, the index of the objective function
+     * @param afterKD, the new upper value of differential k for which
+     * the semantics of the sequential encoding is complete
      */
     private void IfXAtLeastW(int iObj, int afterKD){
 
@@ -394,7 +430,11 @@ import org.sat4j.specs.ContradictionException;
 
 
     /**
-     * Clause of type 8 in "On Using Incremental Encodings in..'"
+     * Encoding that the value of the sum is inductive on the index of
+     * the last literal of the sum
+     * @param iObj, the index of the objective function
+     * @param afterKD, the new upper value of differential k for which
+     * the semantics of the sequential encoding is complete
      */
     private void IfLessAlsoMore(int iObj,int afterKD){
 
@@ -412,7 +452,12 @@ import org.sat4j.specs.ContradictionException;
     }
 
     /**
-     * Clause of type 9 in "On Using Incremental Encodings in..'"
+     * If a given literal is present and the sum until that same
+     * literal is at least k, then the sum including the literal is at
+     * least the known estimative plus the literal's absolute weight
+     * @param iObj, the index of the objective function
+     * @param afterKD, the new upper value of differential k for which
+     * the semantics of the sequential encoding is complete
      */
     private void IfLessAndIthXAtLeastIthW(int iObj,int afterKD){
 
@@ -439,46 +484,9 @@ import org.sat4j.specs.ContradictionException;
 	}
     }
 
-
-
-    /**
-     * Clause of type 10 in "On Using Incremental Encodings in..'"
-     */
-    
-    private void IfLowNotX(int iObj,int afterKD){
-	
-	int ithObjNLit = this.instance.getObj(iObj).getTotalLits();
-	ReadOnlyVecInt ithObjLits = this.instance.getObj(iObj).getSubObjLits(0);
-	ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
-	assert ithObjNLit == ithObjLits.size();
-
-	for (int iX = 1 ; iX <= ithObjNLit ; ++iX){
-	    int ithXW = ithObjCoeffs.get(iX-1).asInt();
-	    int sign = (ithXW > 0)? 1: -1;
-	    ithXW = sign * ithXW;
-	    int kIndex = afterKD + 1 - ithXW;
-	    if( kIndex >= 1 && iX > 1){
-		int s = this.getS(iObj, iX-1, kIndex);
-		int b = this.getB(iObj, afterKD);
-		int literal = ithObjLits.get(iX-1);
-		literal = sign * literal;
-		IVecInt clauseSet = new VecInt(new int[]{-s, -literal, b});
-		this.AddClause(clauseSet);
-	    }else{
-		int b = this.getB(iObj, afterKD);
-		int literal = ithObjLits.get(iX-1);
-		literal = sign * literal;
-		IVecInt clauseSet = new VecInt(new int[]{-literal, b});
-		this.AddClause(clauseSet);
-	
-	    }
-	}
-    }
-
      /**
-      * Clause of type 11 in "On Using Incremental Encodings in..'"
+      *blocks the older non incremental clauses
       */
-     
      private void blockingVariableB(int iObj,int afterK){
 	 int beforeK = this.getCurrentKD(iObj);
 	 if(beforeK >= 1){
