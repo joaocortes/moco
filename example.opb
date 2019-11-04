@@ -1,3 +1,5 @@
-* #variable= 3 #constraint= 2
-1 x1 1 x2 = 1;
-min: 10 x1 1 x2
+* #variable= 4 #constraint= 3
+1 x1 = 1;
+1 x1 1 x2 1 x3 = 1;
+1 x1 1 x4 >= 1;
+min: 1 x1  2 x2 2 x3 -4 x4

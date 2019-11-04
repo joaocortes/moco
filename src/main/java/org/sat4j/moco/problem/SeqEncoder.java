@@ -25,7 +25,6 @@ package org.sat4j.moco.problem;
 import java.lang.Math;
 import java.util.Hashtable;
 import java.util.Set;
-
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.VecInt;
@@ -60,11 +59,11 @@ public class SeqEncoder {
      * Current top initialized differential k's for all objective functions
      */
 
-    private int[] currentDKs = null;
+    private int[] currentKDs = null;
     /** 
      * Current top differential k's for all objective functions
      */
-    private int[] initializedDKs = null;
+    private int[] initializedKDs = null;
 
     private Instance instance = null;
 
@@ -105,16 +104,47 @@ public class SeqEncoder {
 	this.firstVariable = solver.nVars() + 1;
 	this.initializeIdsS();
 	this.initializeIdsB();
-	this.initializedDKs = new int[this.instance.nObjs()];
-	this.currentDKs = new int[this.instance.nObjs()];
+	this.initializedKDs = new int[this.instance.nObjs()];
+	this.currentKDs = new int[this.instance.nObjs()];
 	for(int i = 0; i < this.instance.nObjs(); ++i){
-	    this.initializedDKs[i] = -1;
+	    this.initializedKDs[i] =0;
 	}
-
 	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
-	    this.UpdateCurrentK(iObj, 0);	 
+	    this.UpdateCurrentK(iObj, 0);
 	}
-	this.ClausesIndependentOfK();
+    }
+
+
+    /**
+     *My little method. It should add the hard constraints needed for
+     *the sequential encoding, using afterKD as the superior limit for
+     *the differential k. I need to initialize the variables before I
+     *can use them to build clauses.
+     *@param iObj The objective index
+     *@param afterKD The desired max value for the objective 
+     */
+    
+    public void UpdateCurrentK(int iObj , int afterKD ){
+	System.out.println("New kd: " + afterKD);
+	if(this.getInitializedKD(iObj)< afterKD ){
+	    // Y variables are also extended at 
+	    this.extendInitializedIdsSInK(iObj, afterKD); 
+	    this.setInitializedKD(iObj, afterKD);
+	}
+	 
+	if(this.getCurrentKD(iObj) < afterKD){
+	    System.out.println("Clause 4");
+	    this.IfXAtLeastW(iObj, afterKD);
+	    System.out.println("Clause 8");
+	    this.IfLessAlsoMore(iObj, afterKD);
+	    System.out.println("Clause 9");
+	    this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
+	    System.out.println("Clause 10");
+	    this.IfLowNotX(iObj, afterKD);
+	    System.out.println("Blocking old clause 10");
+	    this.blockingVariableB(iObj);
+	    this.setCurrentKD(iObj, afterKD);
+	}
     }
 
 
@@ -138,22 +168,26 @@ public class SeqEncoder {
 	this.idsS = new int[this.instance.nObjs()][][];
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
  	    Objective ithObj = instance.getObj(iObj);
-	    this.idsS[iObj] = new int[ithObj.getTotalLits()+1][];
-	    for(int iX = 0; iX <= ithObj.getTotalLits();++iX){
-		// + 1 necessary: remember dK is simultaneously a
+	    this.idsS[iObj] = new int[ithObj.getTotalLits()][];
+	    int nLits = ithObj.getTotalLits();
+	    for(int x = 1; x <= nLits ;++x){
+		// + 1 necessary: remember kd is simultaneously a
 		// value and an index
-		int[] array = new int[ithObj.getWeightDiff() + 1];
+		int iX = x - 1;
+		int[] array = new int[ithObj.getWeightDiff()];
 		this.idsS[iObj][iX] = array;
 	    }
 	}
     }
 
     /**
-     * Get the ithObj, ithX obj, kD S variable ID.
+     * Get the ithObj, x literal, kD S variable ID.
      */
 
-    public int getS(int iObj, int iX, int kD){
-	return	 this.idsS[iObj][iX][kD];
+    public int getS(int iObj, int x, int kD){
+	int iX = x - 1;
+	int iKD = kD -1;
+	return	 this.idsS[iObj][iX][iKD];
     }
  
 
@@ -161,13 +195,15 @@ public class SeqEncoder {
      * Set the ithObj, ith Literal ith kD S variable to
      *@param iObj, the index of the objective
      *@param iX, the index of the literal from the objective
-     *@param iDK, the index of the current differential k
+     *@param iKD, the index of the current differential k
      *@param id, the id of the variable S created
      * */
 
-    public void setS(int iObj, int iX, int iDK, int id){
-	this.idsS[iObj][iX][iDK] = id;
-	this.sVariablesInverseIndex.put(id, new int[] {iObj,iX,iDK});
+    public void setS(int iObj, int x, int kD, int id){
+	int iX = x - 1;
+	int iKD = kD -1;
+	this.idsS[iObj][iX][iKD] = id;
+	this.sVariablesInverseIndex.put(id, new int[] {iObj,x,kD});
     }
 
 
@@ -175,7 +211,7 @@ public class SeqEncoder {
      * Get the ithObj, ithX obj, kD Y variable ID.
      *@param iObj, the index of the objective
      *@param iX, the index of the literal from the objective
-     *@param iDK, the index of the current differential k
+     *@param iKD, the index of the current differential k
      */
 
     public int getY(int iObj, int kD){
@@ -186,12 +222,12 @@ public class SeqEncoder {
     /**
      * Set the ithObj,  ith kD Y variable to
      *@param iObj, the index of the objective
-     *@param iDK, the index of the current differential k
+     *@param iKD, the index of the current differential k
      *@param id, the id of the variable Y
      * */
 
-    public void setY(int iObj, int iDK, int id){
-	this.yVariablesInverseIndex.put(id, new int[] {iObj,iDK});
+    public void setY(int iObj, int iKD, int id){
+	this.yVariablesInverseIndex.put(id, new int[] {iObj,iKD});
     }
 
 
@@ -201,18 +237,18 @@ public class SeqEncoder {
      *@return  ithObj 
      */
 
-    public int getInitializedDK(int iObj){
-	return	 this.initializedDKs[iObj];
+    public int getInitializedKD(int iObj){
+	return	 this.initializedKDs[iObj];
     }
 
     /**
      * Set the ithObj,  ith kD upper differential k
      *@param iObj, the index of the objective
-     *@param iDK, the index of the current differential k
+     *@param iKD, the index of the current differential k
      * */
 
-    public void setInitializedDK(int iObj, int kD){
-	this.initializedDKs[iObj] = kD;
+    public void setInitializedKD(int iObj, int kD){
+	this.initializedKDs[iObj] = kD;
     }
 
     /**
@@ -221,24 +257,24 @@ public class SeqEncoder {
      *@return  ithObj 
      */
 
-    public int getCurrentDK(int iObj){
-	return	 this.currentDKs[iObj];
+    public int getCurrentKD(int iObj){
+	return	 this.currentKDs[iObj];
     }
 
     /**
      * Set the ithObj,  ith kD upper differential k
      *@param iObj, the index of the objective
-     *@param iDK, the index of the current differential k
+     *@param iKD, the index of the current differential k
      * */
 
-    public void setCurrentDK(int iObj, int kD){
-	this.currentDKs[iObj] = kD;
+    public void setCurrentKD(int iObj, int kD){
+	this.currentKDs[iObj] = kD;
     }
 
     /**
      * Get the ithObj, ith differential k, Blocking  variable
      *@param iObj, the index of the objective
-     *@param iDK, the index of the current differential k
+     *@param iKD, the index of the current differential k
      * */
 
     public ConstrID getB(int iObj){
@@ -248,7 +284,7 @@ public class SeqEncoder {
     /**
      * Set the ithObj, ith kD id of a blocking variable to id
      *@param iObj, the index of the objective
-     *@param iDK, the index of the current differential k
+     *@param iKD, the index of the current differential k
      *@param the new blocking variable id
      **/
 
@@ -304,32 +340,6 @@ public class SeqEncoder {
 	return null;
     }
 
-    /**
-     *My little method. It should add the hard constraints needed for
-     *the sequential encoding. I need to initialize the variables
-     *before I can use them to build clauses.
-     *@param iObj The objective index
-     *@param kBefore The previous max value for the objective
-     *@param kNow The desired max value for the objective 
-     */
-    
-    public void UpdateCurrentK(int iObj , int afterDK ){
-	System.out.println("New dk: " + afterDK);
-	if(this.getInitializedDK(iObj)< afterDK ){
-	    // Y variables are also extended at 
-	    this.extendInitializedIdsSInK(iObj, afterDK); 
-	    this.setInitializedDK(iObj, afterDK);
-	}
-	 
-	if(this.getCurrentDK(iObj) < afterDK){
-	    this.IfXAtLeastW(iObj, afterDK);
-	    this.IfLessAlsoMore(iObj, afterDK);
-	    this.IfLowNotX(iObj, afterDK);
-	    this.blockingVariableB(iObj);
-	    this.setCurrentDK(iObj, afterDK);
-	}
-    }
-
      
     // /**
     //  * Add Clauses of type 4 in "On Using Incremental Encodings in..'"
@@ -349,7 +359,7 @@ public class SeqEncoder {
     // 		int sign = (ithXW > 0)? 1: -1;
     // 		ithXW = sign * ithXW;
     // 		int x =  sign * ithObjLits.get(iX);
-    // 		for (int kD  = this.getCurrentDK(iObj) ;  kD <= ithXW; ++kD){
+    // 		for (int kD  = this.getCurrentKD(iObj) ;  kD <= ithXW; ++kD){
     // 		    int s = this.getS(iObj, iX, kD);
     // 		    IVecInt clauseSet = new VecInt(2);
     // 		    clauseSet.push(-x);
@@ -364,24 +374,25 @@ public class SeqEncoder {
     /**
      * Incrementally add Clauses of type 4 in "On Using Incremental Encodings in..'"
      */
-    private void IfXAtLeastW(int iObj, int afterDK){
+    private void IfXAtLeastW(int iObj, int afterKD){
 
 	    Objective ithObj = this.instance.getObj(iObj);
 	    int ithObjNLit = ithObj.getTotalLits();
 	    ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
 	    ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
 	    //	     assert ithObjNLit ==ithObjLits.size();
-	    for (int x = 1 ; x < ithObjNLit; ++x){
-		int ithXW = Math.round(ithObjCoeffs.get(x).asInt());
+	    for (int iX = 1 ; iX < ithObjNLit; ++iX){
+		int ithXW = Math.round(ithObjCoeffs.get(iX-1).asInt());
 		int sign = (ithXW > 0)? 1: -1;
 		ithXW = sign * ithXW;
-		int xC =  sign * ithObjLits.get(x-1);
+		int literal =  sign * ithObjLits.get(iX-1);
 		int upperLimit = ithXW;
-		upperLimit = (upperLimit < afterDK)? upperLimit: afterDK;
-		for (int kD  = this.getCurrentDK(iObj) ;  kD < upperLimit; ++kD){
-		    int s = this.getS(iObj, x-1, kD);
+		upperLimit = (upperLimit < afterKD)? upperLimit: afterKD;
+		for (int kD  = this.getCurrentKD(iObj) +1;
+		     kD <= upperLimit; ++kD){
+		    int s = this.getS(iObj, iX, kD);
 		    IVecInt clauseSet = new VecInt(2);
-		    clauseSet.push(-xC);
+		    clauseSet.push(-literal);
 		    clauseSet.push(s);
 		    this.AddClause(clauseSet);
 		}
@@ -395,14 +406,14 @@ public class SeqEncoder {
     /**
      * Clause of type 8 in "On Using Incremental Encodings in..'"
      */
-    private void IfLessAlsoMore(int iObj,int afterK){
+    private void IfLessAlsoMore(int iObj,int afterKD){
 
 	int nLit = this.instance.getObj(iObj).getTotalLits();
-	for (int iX = 1 ; iX < nLit-1; ++iX){
-	    for (int kD  = this.currentDKs[iObj];  kD < afterK; ++kD){
+	for (int x = 2 ; x < nLit; ++x){
+	    for (int kD  = this.currentKDs[iObj]+1;  kD <= afterKD; ++kD){
 		IVecInt clauseSet = new VecInt(2);
-		int s1 = this.getS(iObj, iX-1, kD);
-		int s2 = this.getS(iObj, iX, kD);
+		int s1 = this.getS(iObj, x-1, kD);
+		int s2 = this.getS(iObj, x, kD);
 		clauseSet.push(-s1);
 		clauseSet.push(s2);
 		this.AddClause(clauseSet);
@@ -413,29 +424,26 @@ public class SeqEncoder {
     /**
      * Clause of type 9 in "On Using Incremental Encodings in..'"
      */
-    private void IfLessAndIthXAtLeastIthW(int iObj,int afterK){
+    private void IfLessAndIthXAtLeastIthW(int iObj,int afterKD){
 
 	int ithObjNLit = this.instance.getObj(iObj).getTotalLits();
 	ReadOnlyVecInt ithObjLits = this.instance.getObj(iObj).getSubObjLits(0);
 	ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
 	assert ithObjNLit ==ithObjLits.size();
 
-	for (int iX = 1 ; iX < ithObjNLit - 1; ++iX){
-	    int ithXW = ithObjCoeffs.get(iX).asInt();
+	for (int iX = 2 ; iX < ithObjNLit; ++iX){
+	    int ithXW = ithObjCoeffs.get(iX-1).asInt();
 	    int sign = (ithXW > 0)? 1: -1;
 	    ithXW = sign * ithXW;
-	    int x = sign * ithObjLits.get(iX);
-	    int lowerLimit = this.currentDKs[iObj]- ithXW + 1;
-	    lowerLimit = (lowerLimit >= 0)? lowerLimit: 0;
-	    int upperLimit = afterK - ithXW ;
-	    upperLimit = (upperLimit >= 0)? upperLimit: 0;
-	    for (int kD  = lowerLimit;  kD <= upperLimit ; ++kD){
-		IVecInt clauseSet = new VecInt(3);
-		int s1 = -this.getS(iObj, iX-1, kD);
-		int s2 = this.getS(iObj, iX, kD + ithXW);
-		clauseSet.push(s1);
-		clauseSet.push(x);
-		clauseSet.push(s2);
+	    int literal = sign * ithObjLits.get(iX-1);
+	    int lowerLimit = this.currentKDs[iObj]- ithXW + 1;
+	    lowerLimit = (lowerLimit > 1)? lowerLimit: 1;
+	    int upperLimit = afterKD - ithXW ;
+	    // upperLimit = (upperLimit >= 1)? upperLimit: 1;
+	    for(int kD  = lowerLimit;  kD <= upperLimit ; ++kD){
+		int s1 = this.getS(iObj, iX-1, kD);
+		int s2 = this.getS(iObj, iX, kD + ithXW );
+		IVecInt clauseSet = new VecInt(new int[] {-s1,-literal,s2});
 		this.AddClause(clauseSet);
 	    }
 	}
@@ -446,25 +454,26 @@ public class SeqEncoder {
     /**
      * Clause of type 10 in "On Using Incremental Encodings in..'"
      */
-    private void IfLowNotX(int iObj,int afterK){
+    
+    private void IfLowNotX(int iObj,int afterKD){
 	
 	int ithObjNLit = this.instance.getObj(iObj).getTotalLits();
 	ReadOnlyVecInt ithObjLits = this.instance.getObj(iObj).getSubObjLits(0);
 	ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
 	assert ithObjNLit == ithObjLits.size();
 
-	for (int iX = 1 ; iX < ithObjNLit ; ++iX){
-	    int ithXW = ithObjCoeffs.get(iX).asInt();
+	for (int iX = 2 ; iX <= ithObjNLit ; ++iX){
+	    int ithXW = ithObjCoeffs.get(iX-1).asInt();
 	    int sign = (ithXW > 0)? 1: -1;
 	    ithXW = sign * ithXW;
-	    int kIndex = afterK + 1 - ithXW;
-	    kIndex = (kIndex > 0)? kIndex: 0;
-	    if( afterK + 1 - ithXW > 0){
+	    int kIndex = afterKD + 1 - ithXW;
+	    if( kIndex >= 1){
 		IVecInt clauseSet = new VecInt(2);
 		int s = this.getS(iObj, iX-1, kIndex);
-		int x = ithObjLits.get(iX);
+		int literal = ithObjLits.get(iX-1);
+		literal = sign * literal;
 		clauseSet.push(-s);
-		clauseSet.push(- sign * x);
+		clauseSet.push(- sign * literal);
 		this.setB(iObj, this.AddRemovableClause(clauseSet));
 	    }
 	}
@@ -488,9 +497,9 @@ public class SeqEncoder {
      *  extend the B variables in k
      */
 
-    private void extendInitializedIdsBInK(int iObj, int afterK){
+    private void extendInitializedIdsBInK(int iObj, int afterKD){
 
-	for(int kD = this.getInitializedDK(iObj)+1; kD < afterK + 1; ++kD){
+	for(int kD = this.getInitializedKD(iObj)+1; kD < afterKD + 1; ++kD){
 	    this.solver.newVars(1);
 	    this.setB(iObj, this.solver.nVars());	     
 	}
@@ -501,30 +510,30 @@ public class SeqEncoder {
      * extend the S variables in the differential k index
      */
 
-    public void extendInitializedIdsSInK(int iObj, int afterDK){
+    public void extendInitializedIdsSInK(int iObj, int afterKD){
 
 	int nLit = this.instance.getObj(iObj).getTotalLits();
-	for(int dK = this.initializedDKs[iObj]+1; dK < afterDK +1 ; ++dK){
-	    for (int iX = 0 ; iX < nLit; ++iX){
-		/* System.out.println(iObj + " " + iX + " " + dK + " " + this.newVar()); */
-		this.setS(iObj, iX, dK, this.newVar());
+	for(int kd = this.initializedKDs[iObj]+1; kd <= afterKD ; ++kd){
+	    for (int x = 1 ; x <= nLit; ++x){
+		/* System.out.println(iObj + " " + iX + " " + kd + " " + this.newVar()); */
+		this.setS(iObj, x, kd, this.newVar());
 	    }
 	}
-	this.extendInitializedIdsYinK(iObj, afterDK);
+	this.extendInitializedIdsYinK(iObj, afterKD);
     }
 
 
     /** 
-     * extend the Y variables in the differential k index until afterDK. Assumes
+     * extend the Y variables in the differential k index until afterKD. Assumes
      * the S variables are already extended accordingly
      * @param iObj
-     * @param afterDK
+     * @param afterKD
      */
 
-    private void extendInitializedIdsYinK(int iObj, int afterDK){
+    private void extendInitializedIdsYinK(int iObj, int afterKD){
 	int nLit = this.instance.getObj(iObj).getTotalLits();
-	for(int dK = this.initializedDKs[iObj]+1; dK < afterDK +1 ; ++dK){
-	    this.setY(iObj, dK, this.getS(iObj, nLit-1, afterDK ));
+	for(int kd = this.initializedKDs[iObj]+1; kd < afterKD +1 ; ++kd){
+	    this.setY(iObj, kd, this.getS(iObj, nLit-1, afterKD ));
 	}
     }
 
@@ -546,7 +555,7 @@ public class SeqEncoder {
      * @param literal
      */
 
-    public int getDKFromYVariable(int literal){
+    public int getKDFromYVariable(int literal){
 	assert this.isY(literal);
 	literal = (literal>0)? literal: -literal;
 	return this.yVariablesInverseIndex.get(literal)[1] ;
@@ -568,7 +577,7 @@ public class SeqEncoder {
      * @param literal
      */
 
-    public int getDKFromSVariable(int literal){
+    public int getKDFromSVariable(int literal){
 	assert this.isS(literal);
 	literal = (literal>0)? literal: -literal;
 	return this.sVariablesInverseIndex.get(literal)[2] ;
@@ -640,18 +649,18 @@ public class SeqEncoder {
     public void prettyPrintVariable(int literal){
 	int sign =(literal>0)? 1: -1;
 	int id =  literal * sign;
-	if(this.isY(id)){
-	    int iObj = this.getObjFromYVariable(id);
-	    int dK = this.getDKFromYVariable(id);
-	    System.out.print(literal + "->" + "Y[" + iObj + ", " + dK +"] ");
-	    return;
-	}
+	// if(this.isY(id)){
+	//     int iObj = this.getObjFromYVariable(id);
+	//     int kd = this.getKDFromYVariable(id);
+	//     System.out.print(literal + "->" + "Y[" + iObj + ", " + kd +"] ");
+	//     return;
+	// }
 	 
 	if(this.isS(id)){
 	    int iObj = this.getObjFromSVariable(id);
 	    int iX = this.getXFromSVariable(id);
-	    int dK = this.getDKFromSVariable(id);
-	    System.out.print(literal + "->" + "S[" + iObj + ", " + iX + ", " + dK +"] ");
+	    int kd = this.getKDFromSVariable(id);
+	    System.out.print(literal + "->" + "S[" + iObj + ", " + iX + ", " + kd +"] ");
 	    return;
 	}
 	if(this.isB(id)){
@@ -671,8 +680,8 @@ public class SeqEncoder {
 		int key = IntegerKey;
 		int iObj = this.getObjFromSVariable(key);
 		int iX = this.getXFromSVariable(key);
-		int dK = this.getDKFromSVariable(key);
-		System.out.println(key + "->" + "S[" + iObj + ", " + iX + ", " + dK +"]");
+		int kd = this.getKDFromSVariable(key);
+		System.out.println(key + "->" + "S[" + iObj + ", " + iX + ", " + kd +"]");
 	    }
 	}
     }
