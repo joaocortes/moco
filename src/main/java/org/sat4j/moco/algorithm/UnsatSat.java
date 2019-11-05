@@ -137,7 +137,7 @@ public class UnsatSat {
 		models.add(this.getSemiFilteredModel());
 
 		System.out.println("Model :");
-		this.seqEncoder.prettyPrintVecInt(models.lastElement());
+		this.printModel(models.lastElement());
 		System.out.println("Blocking dominated region");
 
 		if(! this.blockDominatedRegion(models.lastElement()))
@@ -398,10 +398,17 @@ public class UnsatSat {
      * @param models, the obtained models
      */
     public void printModel(IVecInt model) {
-	    System.out.println("Model " + i);
+	    System.out.println("Model ");
+	    System.out.print("j o ");
+	    for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+		Objective ithObj = this.problem.getObj(iObj);
+		System.out.print(this.attainedValue(ithObj, model)+ " " );
+	    }
+	    System.out.println();
 	    for(int j = 0; j <model.size(); ++j)
 		this.seqEncoder.prettyPrintVariable(model.get(j));
 	    System.out.println();
+
 
 	return;
     }
@@ -411,16 +418,18 @@ public class UnsatSat {
 @param model
 @param iObj
      */
-    private void attainedValue(Objective objective , IVecInt model){
-	inte result = 0;
+    private int attainedValue(Objective objective , IVecInt model){
+	int result = 0;
 	    int objectiveNLit = objective.getTotalLits();
 	    ReadOnlyVecInt objectiveLits = objective.getSubObjLits(0);
 	    ReadOnlyVec<Real> objectiveCoeffs = objective.getSubObjCoeffs(0);
-	    for(int iLit = 0; iLit < objectiveNLit; ++iLit  )
+	    for(int iLit = 0; iLit < objectiveNLit; ++iLit  ){
 		int coeff = objectiveCoeffs.get(iLit).asInt();
-		result += this.solver.
-	    
-
+		int literal = objectiveLits.get(iLit);
+		if(this.solver.modelValue(literal))
+		    result += coeff;
+	    }
+	    return result;
     }
 
     public boolean blockDominatedRegion(IVecInt newSolution){
