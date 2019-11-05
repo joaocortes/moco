@@ -439,8 +439,7 @@ public class UnsatSat {
 	    for(int iLit = 0; iLit < objectiveNLit; ++iLit  ){
 		int coeff = objectiveCoeffs.get(iLit).asInt();
 		int literal = objectiveLits.get(iLit);
-		// if(this.isX(literal))
-		    if(literal > 0)
+		if(this.solver.modelValue(literal))
 			result += coeff;
 	    }
 	    return result;
@@ -450,7 +449,7 @@ public class UnsatSat {
 	IVecInt newHardClause = new VecInt(new int[] {});
 	for(int i = 0; i < newSolution.size(); ++i){
 	    int literal = newSolution.get(i);
-	    if(this.seqEncoder.isSTop(literal))
+	    if(this.seqEncoder.isS(literal))
 		if(literal > 0)
 		    newHardClause.push(-literal);
 	}
