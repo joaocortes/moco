@@ -73,12 +73,6 @@ public class UnsatSat {
     private SeqEncoder seqEncoder = null;
 
     /**
-     *The inverse index map for the S variables
-     */
-    private Hashtable<Integer,int[]> yVariablesInverseIndex  = new Hashtable<Integer, int[]>();
-
-
-    /**
      * Last explored differential k, for each objective function.
      */
     private int[] UpperKD = null;
@@ -418,10 +412,13 @@ public class UnsatSat {
 @param iObj
      */
     private void attainedValue(Objective objective , IVecInt model){
-
+	inte result = 0;
 	    int objectiveNLit = objective.getTotalLits();
 	    ReadOnlyVecInt objectiveLits = objective.getSubObjLits(0);
 	    ReadOnlyVec<Real> objectiveCoeffs = objective.getSubObjCoeffs(0);
+	    for(int iLit = 0; iLit < objectiveNLit; ++iLit  )
+		int coeff = objectiveCoeffs.get(iLit).asInt();
+		result += this.solver.
 	    
 
     }
