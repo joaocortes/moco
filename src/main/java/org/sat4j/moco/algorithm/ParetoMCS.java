@@ -30,15 +30,12 @@ import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.Params;
-import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.mcs.IModelListener;
 import org.sat4j.moco.mcs.MCSExtractor;
-import org.sat4j.moco.pb.PBExpr;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
-import org.sat4j.moco.problem.SeqEncoder;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
@@ -53,7 +50,7 @@ import org.sat4j.specs.IVecInt;
  *      of Satisfiability Testing (pp. 195-211). Springer, Cham.<br>
  * Includes MOCO stratification, proposed in:<br>
  *      Terra-Neves, M., Lynce, I., & Manquinho, V. M. (2018).
-  *      Stratification for Constraint-Based Multi-Objective Combinatorial Optimization. In IJCAI
+ *      Stratification for Constraint-Based Multi-Objective Combinatorial Optimization. In IJCAI
  *      (pp. 1376-1382).
  * @author Miguel Terra-Neves
  */
@@ -80,48 +77,26 @@ public class ParetoMCS {
     private MCSExtractor extractor = null;
     
     /**
-     * IDs of the variables used int the sequential encoder. The first
-     * index is the goal, the second is the first index of s from " On
-     * using Incremental Encodings...".Remember that s(i,j) is an
-     * indicator of the propositions of the form x_i>=j.
-     */
-
-    private SeqEncoder seqEncoder = null;
-
-
-    /**
-     * Constraints ids of the clauses to remove while incrementing the
-     * goal function cap. This must be done in order to remove the
-     * clauses of type 7 in " On using Incremental Encodings..."
-     */  
-
-
-    /**
-     * Creates an instance of a MOCO solver, for a given instance,
-     * that applies the Pareto-MCS algorithm.
+     * Creates an instance of a MOCO solver, for a given instance, that applies the Pareto-MCS algorithm.
      * @param m The MOCO instance.
      */
     public ParetoMCS(Instance m) {
-	this.problem = m;
+        this.problem = m;
         this.result = new Result(m);
-        
-	try {
+        try {
             this.solver = buildSolver();
-	    System.out.println(this.solver.nVars());
         }
         catch (ContradictionException e) {
             Log.comment(3, "Contradiction in ParetoMCS.buildSolver");
             this.result.setParetoFrontFound();
             return;
         }
-	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
-	
         this.extractor = new MCSExtractor(this.solver);
         this.extractor.setModelListener(new IModelListener() {
-		public void onModel(PBSolver s) {
+            public void onModel(PBSolver s) {
                 result.saveModel(s);
             }
-        };
+        });
     }
     
     /**
@@ -131,9 +106,8 @@ public class ParetoMCS {
     public Result getResult() { return this.result; }
     
     /**
-     * Applies the Pareto-MCS algorithm to the MOCO instance provided
-      * in {@link #ParetoMCS(Instance)}.  If the instance has already
-      * been solved, nothing happens.
+     * Applies the Pareto-MCS algorithm to the MOCO instance provided in {@link #ParetoMCS(Instance)}.
+     * If the instance has already been solved, nothing happens.
      */
     public void solve() {
         if (this.result.isParetoFront()) {
@@ -171,8 +145,7 @@ public class ParetoMCS {
     /**
      * Creates a PB oracle initialized with the MOCO's constraints.
      * @return The oracle.
-     * @throws ContradictionException if the oracle detects that the
-     * MOCO's constraint set is unsatisfiable.
+     * @throws ContradictionException if the oracle detects that the MOCO's constraint set is unsatisfiable.
      */
     private PBSolver buildSolver() throws ContradictionException {
         Log.comment(3, "in ParetoMCS.buildSolver");
@@ -184,9 +157,7 @@ public class ParetoMCS {
         Log.comment(3, "out ParetoMCS.buildSolver");
         return solver;
     }
-
-
-
+    
     /**
      * Builds a partition sequence of the literals in the objective functions to be used for stratified
      * MCS extraction.
@@ -220,9 +191,8 @@ public class ParetoMCS {
     }
     
     /**
-     * Representation of weighted literals.  Used to store and sort
-     * literals based on their coefficients in some objective
-     * function.
+     * Representation of weighted literals.
+     * Used to store and sort literals based on their coefficients in some objective function.
      * @author Miguel Terra-Neves
      */
     private class WeightedLit implements Comparable<WeightedLit> {
@@ -263,10 +233,9 @@ public class ParetoMCS {
          * Compares the weighted literal to another weighted literal.
          * The weighted literal order is entailed by their weights.
          * @param other The other weighted literal.
-         * @return An integer smaller than 0 if this literal's weight
-         * is smaller than {@code other}'s, 0 if the weight are equal,
-         * an integer greater than 0 if this literal's weight is
-         * larger than {@code other}'s.
+         * @return An integer smaller than 0 if this literal's weight is smaller than {@code other}'s, 0 if
+         * the weight are equal, an integer greater than 0 if this literal's weight is larger than
+         * {@code other}'s.
          */
         public int compareTo(WeightedLit other) {
             return getWeight().compareTo(other.getWeight());
@@ -289,8 +258,7 @@ public class ParetoMCS {
      * partitioning process.
      */
     private double lwr = 15.0;
-
-
+    
     /**
      * Initializes the objective literal partition sequences.
      * If stratification is disabled, a single partition is created with all objective literals for all
@@ -404,10 +372,7 @@ public class ParetoMCS {
         }
         return w_lits;
     }
-
-
-
-
+    
     /**
      * Sets the algorithm configuration to the one stored in a given set of parameters.
      * @param p The parameters object.
