@@ -22,30 +22,18 @@
  *******************************************************************************/
 package org.sat4j.moco.algorithm;
 
-// import java.util.Arrays;
+
 import java.util.Vector;
 import java.util.Hashtable;
-
-// import org.moeaframework.core.PRNG;
-// import org.sat4j.core.ReadOnlyVec;
-// import org.sat4j.core.ReadOnlyVecInt;
-// import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
-// import org.sat4j.moco.Params;
 import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.moco.analysis.Result;
-// import org.sat4j.moco.mcs.IModelListener;
-// import org.sat4j.moco.mcs.MCSExtractor;
-// import org.sat4j.moco.pb.PBExpr;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.SeqEncoder;
-// import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.util.Log;
-// import org.sat4j.moco.util.Real;
 import org.sat4j.specs.ContradictionException;
-// import org.sat4j.specs.IVec;
 import org.sat4j.specs.IVecInt;
 
 /**
@@ -135,7 +123,7 @@ public class unsatSat {
         Log.comment(3, "in unsatSat.solve");
 
 	while(true){
-	    System.out.print("External:");
+	    System.out.print("upper limit:");
 	    System.out.print("["+this.getUpperKD(0));
 	    for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
 		System.out.print(", "+this.getUpperKD(iObj));
@@ -169,7 +157,7 @@ public class unsatSat {
 		}else{
 		    System.out.println("UpperBound extend");
 		    this.updateUpperBound(currentExplanation);
-		
+
 
 		    lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
 		}
@@ -224,7 +212,8 @@ public class unsatSat {
 	    int kd = this.seqEncoder.getKDFromSTopVariable(ithLiteral);
 	    //TODO only if kd is not initialized already
 	    this.setUpperKD(jObj, kd);
-	    }
+	    this.seqEncoder.UpdateCurrentK(jObj, kd);
+	}
     }
     
     /**

@@ -118,12 +118,12 @@ import org.sat4j.specs.ContradictionException;
      */
     
     public void UpdateCurrentK(int iObj , int afterKD ){
-	System.out.print("Internal:");
-	System.out.print("["+this.getCurrentKD(0));
-	for(int iObj1 = 1; iObj1 < this.instance.nObjs(); ++iObj1)
-	    System.out.print(", "+this.getCurrentKD(iObj1));
-	System.out.println("]");
-
+	// System.out.print("Internal:");
+	// System.out.print("["+this.getCurrentKD(0));
+	// for(int iObj1 = 1; iObj1 < this.instance.nObjs(); ++iObj1)
+	//     System.out.print(", "+this.getCurrentKD(iObj1));
+	// System.out.println("]");
+ 
 	if(this.getInitializedKD(iObj)< afterKD ){
 	    // STop variables are also extended at 
 	    this.extendInitializedIdsSInK(iObj, afterKD); 
@@ -134,8 +134,8 @@ import org.sat4j.specs.ContradictionException;
 	if(this.getCurrentKD(iObj) < afterKD){
 
 	    this.blockingVariableB(iObj, afterKD);
-	    System.out.println("");
-	    this.ifLowNotX(iObj, afterKD);
+	    // System.out.println("");
+	    // this.ifLowNotX(iObj, afterKD);
 	    System.out.println("Clause 4");
 	    this.IfXAtLeastW(iObj, afterKD);
 	    System.out.println("Clause 8");
