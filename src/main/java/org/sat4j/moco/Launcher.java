@@ -30,9 +30,8 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.sat4j.moco.algorithm.ParetoMCS;
-import org.sat4j.moco.algorithm.unsatSat;
 import org.sat4j.moco.analysis.Result;
+import org.sat4j.moco.algorithm.UnsatSat;
 import org.sat4j.moco.parsing.OPBReader;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.Clock;
@@ -55,13 +54,13 @@ public class Launcher {
         /**
          * The algorithm being executed.
          */
-        private unsatSat solver;
+        private UnsatSat solver;
         
         /**
          * Creates an instance of the shutdown handler.
          * @param solver The algorithm being executed.
          */
-        public ShutdownHandler(unsatSat solver) {
+        public ShutdownHandler(UnsatSat solver) {
             super();
             this.solver = solver;
         }
@@ -75,7 +74,7 @@ public class Launcher {
         
     }
 
-    private static void setShutdownHandler(unsatSat solver) {
+    private static void setShutdownHandler(UnsatSat solver) {
         Runtime.getRuntime().addShutdownHook(new ShutdownHandler(solver));
     }
     
@@ -140,7 +139,7 @@ public class Launcher {
             Real.updtParams(params);
             Clock.instance().updtParams(params);
             Instance moco = readMOCO(cl);
-            unsatSat solver = new unsatSat(moco);
+            UnsatSat solver = new UnsatSat(moco);
             // setShutdownHandler(solver);
             solver.solve();
         }

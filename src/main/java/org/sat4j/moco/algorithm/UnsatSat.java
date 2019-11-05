@@ -27,21 +27,25 @@ import java.util.Vector;
 import java.util.Hashtable;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.pb.ConstrID;
+import org.sat4j.core.ReadOnlyVec;
+import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
+import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
+import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.problem.SeqEncoder;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
 
 /**
- * Class that implements unsatSat
+ * Class that implements UnsatSat
  * @author João Cortes
  */
 
-public class unsatSat {
+public class UnsatSat {
 
     /**
      * An instance of a MOCO problem to be solved.
@@ -89,7 +93,7 @@ public class unsatSat {
      * that applies the Pareto-MCS algorithm.
      * @param m The MOCO instance.
      */
-    public unsatSat(Instance m) {
+    public UnsatSat(Instance m) {
 	this.problem = m;
 	try {
             this.solver = buildSolver();
@@ -105,9 +109,7 @@ public class unsatSat {
     
     
     /**
-     * Applies the unsatSat algorithm to the MOCO instance provided
-      * in {@link #ParetoMCS(Instance)}.  If the instance has already
-      * been solved, nothing happens.
+     * Applies the UnsatSat algorithm to the MOCO instance provided
      */
 
     public void solve() {
@@ -117,10 +119,10 @@ public class unsatSat {
 	ConstrID lastLessThan1 = null;
 	this.UpperKD =  new int[(this.problem.nObjs())];
         // if (this.result.isParetoFront()) {
-        //     Log.comment(1, "unsatSat.solve called on already solved instance");
+        //     Log.comment(1, "UnsatSat.solve called on already solved instance");
         //     return;
         // }
-        Log.comment(3, "in unsatSat.solve");
+        Log.comment(3, "in UnsatSat.solve");
 
 	while(true){
 	    System.out.print("upper limit:");
@@ -163,15 +165,10 @@ public class unsatSat {
 		}
 	    }
 	}
-	// this.seqEncoder.printS();
+
 	return;
     }
     
-    /**
-     *Initial extend. Extends the S (and STop) variables of the
-     *sequential encoder, in order to allow the construction of the
-     *first set of assumptions
-     */
 
      /**
       * Generate the upper limit assumptions
@@ -201,7 +198,7 @@ public class unsatSat {
 
     /**
      * Updates the current upperBound on the differential k, according
-     * to the unsatExplanation
+     * to the unsatExplanation, and updates the sequentialEncoder Accordingly
      * @param current explanation of unsatisfiability
      */
     private void updateUpperBound(IVecInt currentExplanation){
@@ -245,13 +242,13 @@ public class unsatSat {
      * MOCO's constraint set is unsatisfiable.
      */
     private PBSolver buildSolver() throws ContradictionException {
-        Log.comment(3, "in ParetoMCS.buildSolver");
+        Log.comment(3, "in UnsatSat.buildSolver");
         PBSolver solver = new PBSolver();
         solver.newVars(this.problem.nVars());
         for (int i = 0; i < this.problem.nConstrs(); ++i) {
             solver.addConstr(this.problem.getConstr(i));
         }
-        Log.comment(3, "out ParetoMCS.buildSolver");
+        Log.comment(3, "out UnsatSat.buildSolver");
         return solver;
     }
 
@@ -388,21 +385,46 @@ public class unsatSat {
 	}
 	return model;
     }
+
     /** 
-     * Sets the algorithm configuration to the one stored in a given set of parameters.
-     * @param p The parameters object.
+     * Print the models 
+     * @param models, the obtained models
      */
     public void printModels(Vector<IVecInt> models) {
 	for(int i = 0; i <models.size(); ++i){
 	    System.out.println("Model " + i);
-	    for(int j = 0; j <models.get(i).size(); ++j)
-		this.seqEncoder.prettyPrintVariable(models.get(i).get(j));
+	    this.printModel(models.get(i));
 	    System.out.println();
 	}
 	return;
     }
-    
 
+    /** 
+     * Print a model 
+     * @param models, the obtained models
+     */
+    public void printModel(IVecInt model) {
+	    System.out.println("Model " + i);
+	    for(int j = 0; j <model.size(); ++j)
+		this.seqEncoder.prettyPrintVariable(model.get(j));
+	    System.out.println();
+
+	return;
+    }
+    
+    /**
+     * The attained value of objective  in the interpretation of model 
+@param model
+@param iObj
+     */
+    private void attainedValue(Objective objective , IVecInt model){
+
+	    int objectiveNLit = objective.getTotalLits();
+	    ReadOnlyVecInt objectiveLits = objective.getSubObjLits(0);
+	    ReadOnlyVec<Real> objectiveCoeffs = objective.getSubObjCoeffs(0);
+	    
+
+    }
 
     public boolean blockDominatedRegion(IVecInt newSolution){
 	IVecInt newHardClause = new VecInt(new int[] {});
