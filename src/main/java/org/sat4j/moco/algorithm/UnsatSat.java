@@ -158,7 +158,10 @@ public class UnsatSat {
 		    lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
 		}
 	    }
+
+
 	}
+
 
 	return;
     }
@@ -192,13 +195,12 @@ public class UnsatSat {
 
     /**
      * Updates the current upperBound on the differential k, according
-     * to the unsatExplanation, and updates the sequentialEncoder Accordingly
+     * to the unsatExplanation, and updates the sequentialEncoder accordingly
      * @param current explanation of unsatisfiability
      */
     private void updateUpperBound(IVecInt currentExplanation){
 	for(int i = 0; i < currentExplanation.size(); ++i){
 	    int ithLiteral = currentExplanation.get(i);
-	    assert this.seqEncoder.isSTop(ithLiteral);
 	    int jObj = this.seqEncoder.getObjFromSTopVariable(ithLiteral);
 	    int kd = this.seqEncoder.getKDFromSTopVariable(ithLiteral);
 	    //TODO only if kd is not initialized already

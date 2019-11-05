@@ -148,10 +148,11 @@ public class Comparator {
 	    
             setShutdownHandler(paretoMCSSolver);
             paretoMCSSolver.updtParams(params);
-            paretoMCSSolver.solve();
+
 
 	    UnsatSat unsatSatSolver = new UnsatSat(moco);
 	    unsatSatSolver.solve();
+            paretoMCSSolver.solve();
         }
         catch (ParseException e) {
             printHelpMessage(options);
