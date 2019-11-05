@@ -151,7 +151,7 @@ public class UnsatSat {
 		if(currentExplanation.size() == 0){
 		    goOn = false;
 		}else{
-		    System.out.println("UpperBound extend");
+		    // System.out.println("UpperBound extend");
 		    this.updateUpperBound(currentExplanation);
 		    lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
 		}
@@ -168,9 +168,9 @@ public class UnsatSat {
     }
     
 
-     /**
-      * Generate the upper limit assumptions
-      */
+    /**
+     * Generate the upper limit assumptions
+     */
     public IVecInt generateUpperBoundAssumptions( ){
 	IVecInt assumptions = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
@@ -205,10 +205,13 @@ public class UnsatSat {
 	    int jObj = this.seqEncoder.getObjFromSTopVariable(ithLiteral);
 	    int kd = this.seqEncoder.getKDFromSTopVariable(ithLiteral);
 	    //TODO only if kd is not initialized already
-	    this.setUpperKD(jObj, kd);
-	    this.seqEncoder.UpdateCurrentK(jObj, kd);
+	    assert kd ==this.getUpperKD(jObj);
+
+		this.setUpperKD(jObj, kd);
+		this.seqEncoder.UpdateCurrentK(jObj, kd);
+	    }
 	}
-    }
+    
     
     /**
      *gets the current upper limit of the explored value of the
@@ -253,7 +256,7 @@ public class UnsatSat {
 	IVecInt literals = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    literals.push(this.seqEncoder.getSTop(iObj,
-					      this.getUpperKD(iObj)));
+						  this.getUpperKD(iObj)));
 	}
 	System.out.println("Swaping lessThan1");
 	this.seqEncoder.prettyPrintVecInt(literals);
@@ -403,21 +406,29 @@ public class UnsatSat {
      * @param models, the obtained models
      */
     public void printModel(IVecInt model) {
-	    System.out.println("Model ");
-	    System.out.print("j o ");
-	    for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-		Objective ithObj = this.problem.getObj(iObj);
-		System.out.print(this.attainedValue(ithObj, model)+ " " );
-	    }
-	    System.out.println();
-	    for(int j = 0; j <model.size(); ++j)
-		this.seqEncoder.prettyPrintVariable(model.get(j));
-	    System.out.println();
+	System.out.println("Model ");
+	System.out.print("j o ");
+	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+	    Objective ithObj = this.problem.getObj(iObj);
+	    System.out.print(this.attainedValue(ithObj, model)+ " " );
+	}
+	System.out.println();
+	for(int j = 0; j <model.size(); ++j)
+	    this.seqEncoder.prettyPrintVariable(model.get(j));
+	System.out.println();
 
 
 	return;
     }
     
+ public boolean isYFrontier(int literal){
+     int iObj = this.seqEncoder.getObjFromSTopVariable(literal);
+     int kD = this.seqEncoder.getKDFromSTopVariable(literal);
+     if(kD == this.getUpperKD(iObj))
+	 return true;
+     return false;
+    }
+
     public boolean isX(int literal){
 	int sign = (literal > 0)? 1: -1;
 	if(sign * literal <= this.problem.nVars())
@@ -428,30 +439,34 @@ public class UnsatSat {
 
     /**
      * The attained value of objective  in the interpretation of model 
-@param model
-@param iObj
-     */
+     @param model
+     @param iObj
+    */
     private int attainedValue(Objective objective , IVecInt model){
 	int result = 0;
-	    int objectiveNLit = objective.getTotalLits();
-	    ReadOnlyVecInt objectiveLits = objective.getSubObjLits(0);
-	    ReadOnlyVec<Real> objectiveCoeffs = objective.getSubObjCoeffs(0);
-	    for(int iLit = 0; iLit < objectiveNLit; ++iLit  ){
-		int coeff = objectiveCoeffs.get(iLit).asInt();
-		int literal = objectiveLits.get(iLit);
-		if(this.solver.modelValue(literal))
-			result += coeff;
-	    }
-	    return result;
+	int objectiveNLit = objective.getTotalLits();
+	ReadOnlyVecInt objectiveLits = objective.getSubObjLits(0);
+	ReadOnlyVec<Real> objectiveCoeffs = objective.getSubObjCoeffs(0);
+	for(int iLit = 0; iLit < objectiveNLit; ++iLit  ){
+	    int coeff = objectiveCoeffs.get(iLit).asInt();
+	    int literal = objectiveLits.get(iLit);
+	    if(this.solver.modelValue(literal))
+		result += coeff;
+	}
+	return result;
     }
 
     public boolean blockDominatedRegion(IVecInt newSolution){
 	IVecInt newHardClause = new VecInt(new int[] {});
 	for(int i = 0; i < newSolution.size(); ++i){
 	    int literal = newSolution.get(i);
-	    if(this.seqEncoder.isS(literal))
+	    if(this.seqEncoder.isSTop(literal))
 		if(literal > 0)
-		    newHardClause.push(-literal);
+		    if(this.isYFrontier(literal))
+			newHardClause.push(-literal);
+
+
+
 	}
 	return this.AddClause(newHardClause);
     }
@@ -466,7 +481,7 @@ public class UnsatSat {
 	catch (ContradictionException e) {
 	    System.out.println("contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
-	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(j));
+		this.seqEncoder.prettyPrintVariable(setOfLiterals.get(j));
 	    System.out.println();
 	    return false;
 	}
