@@ -117,8 +117,8 @@ public class UnsatSat {
         //     return;
         // }
         Log.comment(3, "in UnsatSat.solve");
-
-	while(true){
+	boolean goOn = true;
+	while(goOn){
 	    System.out.print("upper limit:");
 	    System.out.print("["+this.getUpperKD(0));
 	    for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
@@ -141,7 +141,7 @@ public class UnsatSat {
 		System.out.println("Blocking dominated region");
 
 		if(! this.blockDominatedRegion(models.lastElement()))
-		    break;
+		    goOn = false;
 	    }else{
 		currentExplanation  = solver.unsatExplanation();
 
@@ -149,18 +149,19 @@ public class UnsatSat {
 		this.seqEncoder.prettyPrintVecInt(currentExplanation);
 
 		if(currentExplanation.size() == 0){
-		    break;
+		    goOn = false;
 		}else{
 		    System.out.println("UpperBound extend");
 		    this.updateUpperBound(currentExplanation);
-
-
 		    lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
 		}
+
+
 	    }
 
 
 	}
+	//	this.printModels(models);
 
 
 	return;
@@ -254,6 +255,8 @@ public class UnsatSat {
 	    literals.push(this.seqEncoder.getSTop(iObj,
 					      this.getUpperKD(iObj)));
 	}
+	System.out.println("Swaping lessThan1");
+	this.seqEncoder.prettyPrintVecInt(literals);
 	if(lastLessThan1 != null) this.solver.removeConstr(lastLessThan1);
 	try{	return this.solver.addRemovableConstr(PBFactory.instance().mkLE(literals, 1));
 	} catch(ContradictionException e){
@@ -415,6 +418,14 @@ public class UnsatSat {
 	return;
     }
     
+    public boolean isX(int literal){
+	int sign = (literal > 0)? 1: -1;
+	if(sign * literal <= this.problem.nVars())
+	    if(1 <= sign * literal)
+		return true;
+	return false;
+    }
+
     /**
      * The attained value of objective  in the interpretation of model 
 @param model
@@ -428,8 +439,9 @@ public class UnsatSat {
 	    for(int iLit = 0; iLit < objectiveNLit; ++iLit  ){
 		int coeff = objectiveCoeffs.get(iLit).asInt();
 		int literal = objectiveLits.get(iLit);
-		if(this.solver.modelValue(literal))
-		    result += coeff;
+		// if(this.isX(literal))
+		    if(literal > 0)
+			result += coeff;
 	    }
 	    return result;
     }
@@ -438,7 +450,7 @@ public class UnsatSat {
 	IVecInt newHardClause = new VecInt(new int[] {});
 	for(int i = 0; i < newSolution.size(); ++i){
 	    int literal = newSolution.get(i);
-	    if(this.seqEncoder.isS(literal))
+	    if(this.seqEncoder.isSTop(literal))
 		if(literal > 0)
 		    newHardClause.push(-literal);
 	}
