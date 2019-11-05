@@ -103,7 +103,9 @@ import org.sat4j.specs.ContradictionException;
 	this.initializeIdsB();
 	this.initializedKDs = new int[this.instance.nObjs()];
 	this.currentKDs = new int[this.instance.nObjs()];
-
+	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
+	    this.setInitializedKD(iObj,-1);
+	}
 	}
 
 
@@ -134,16 +136,13 @@ import org.sat4j.specs.ContradictionException;
 	if(this.getCurrentKD(iObj) < afterKD){
 
 	    this.blockingVariableB(iObj, afterKD);
-	    // System.out.println("");
-	    // this.ifLowNotX(iObj, afterKD);
-	    System.out.println("Clause 4");
+	    if(iObj == 0)
+		System.out.println("Clauses 4 8 9");
 	    this.IfXAtLeastW(iObj, afterKD);
-	    System.out.println("Clause 8");
+	    System.out.println("");
 	    this.IfLessAlsoMore(iObj, afterKD);
-	    System.out.println("Clause 9");
+	    System.out.println("");
 	    this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
-	    // System.out.println("Clause 10");
-	    // this.IfLowNotX(iObj, afterKD);
 	    this.setCurrentKD(iObj, afterKD);
 	}
     }
@@ -177,7 +176,7 @@ import org.sat4j.specs.ContradictionException;
 		// + 1 necessary: remember kd is simultaneously a
 		// value and an index
 		int iX = x - 1;
-		int[] array = new int[ithObj.getWeightDiff()];
+		int[] array = new int[ithObj.getWeightDiff() + 1];
 		this.idsS[iObj][iX] = array;
 	    }
 	}
@@ -189,7 +188,7 @@ import org.sat4j.specs.ContradictionException;
 
     public int getS(int iObj, int x, int kD){
 	int iX = x - 1;
-	int iKD = kD -1;
+	int iKD = kD ;
 	return	 this.idsS[iObj][iX][iKD];
     }
  
@@ -204,7 +203,7 @@ import org.sat4j.specs.ContradictionException;
 
     public void setS(int iObj, int x, int kD, int id){
 	int iX = x - 1;
-	int iKD = kD -1;
+	int iKD = kD;
 	this.idsS[iObj][iX][iKD] = id;
 	this.sVariablesInverseIndex.put(id, new int[] {iObj,x,kD});
     }
