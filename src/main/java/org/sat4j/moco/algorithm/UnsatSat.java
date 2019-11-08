@@ -118,52 +118,52 @@ public class UnsatSat {
         // }
         Log.comment(3, "in UnsatSat.solve");
 	boolean goOn = true;
-	while(goOn){
-	    System.out.print("upper limit:");
-	    System.out.print("["+this.getUpperKD(0));
-	    for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
-		System.out.print(", "+this.getUpperKD(iObj));
-	    System.out.println("]");
+	// while(goOn){
+	//     System.out.print("upper limit:");
+	//     System.out.print("["+this.getUpperKD(0));
+	//     for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
+	// 	System.out.print(", "+this.getUpperKD(iObj));
+	//     System.out.println("]");
 
-	    this.preAssumptionsExtend();
-	    currentAssumptions = this.generateUpperBoundAssumptions();
+	//     this.preAssumptionsExtend();
+	//     currentAssumptions = this.generateUpperBoundAssumptions();
 
-	    System.out.println("Checking against assumptions:");
-	    this.seqEncoder.prettyPrintVecInt(currentAssumptions);
+	//     System.out.println("Checking against assumptions:");
+	//     this.seqEncoder.prettyPrintVecInt(currentAssumptions);
 
-	    solver.check(currentAssumptions);
+	//     solver.check(currentAssumptions);
 
-	    if(solver.isSat()){
-		models.add(this.getSemiFilteredModel());
+	//     if(solver.isSat()){
+	// 	models.add(this.getSemiFilteredModel());
 
-		System.out.println("Model :");
-		this.printModel(models.lastElement());
-		System.out.println("Blocking dominated region");
+	// 	System.out.println("Model :");
+	// 	this.printModel(models.lastElement());
+	// 	System.out.println("Blocking dominated region");
 
-		if(! this.blockDominatedRegion(models.lastElement()))
-		    goOn = false;
-	    }else{
-		currentExplanation  = solver.unsatExplanation();
+	// 	if(! this.blockDominatedRegion(models.lastElement()))
+	// 	    goOn = false;
+	//     }else{
+	// 	currentExplanation  = solver.unsatExplanation();
 
-		System.out.println("Explanation:");
-		this.seqEncoder.prettyPrintVecInt(currentExplanation);
+	// 	System.out.println("Explanation:");
+	// 	this.seqEncoder.prettyPrintVecInt(currentExplanation);
 
-		if(currentExplanation.size() == 0){
-		    goOn = false;
-		}else{
-		    // System.out.println("UpperBound extend");
-		    this.updateUpperBound(currentExplanation);
-		    lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
-		}
-
-
-	    }
+	// 	if(currentExplanation.size() == 0){
+	// 	    goOn = false;
+	// 	}else{
+	// 	    // System.out.println("UpperBound extend");
+	// 	    this.updateUpperBound(currentExplanation);
+	// 	    lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
+	// 	}
 
 
-	}
+	//     }
+
+
+	// }
 	//	this.printModels(models);
 
-
+this.seqEncoder.UpdateCurrentK(0, 3);
 	return;
     }
     

@@ -152,7 +152,7 @@ public class Comparator {
 
 	    UnsatSat unsatSatSolver = new UnsatSat(moco);
 	    unsatSatSolver.solve();
-            paretoMCSSolver.solve();
+            // paretoMCSSolver.solve();
         }
         catch (ParseException e) {
             printHelpMessage(options);
