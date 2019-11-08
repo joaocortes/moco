@@ -22,9 +22,7 @@
  *******************************************************************************/
 package org.sat4j.moco.algorithm;
 
-
 import java.util.Vector;
-import java.util.Hashtable;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.core.ReadOnlyVec;
@@ -206,7 +204,7 @@ public class UnsatSat {
 	    int ithLiteral = currentExplanation.get(i);
 	    int jObj = this.seqEncoder.getObjFromSTopVariable(ithLiteral);
 	    int kd = this.seqEncoder.getKDFromSTopVariable(ithLiteral);
-	    //TODO only if kd is not initialized already
+	    //TODO This is strange, and should not be always true
 	    assert kd ==this.getUpperKD(jObj);
 
 		this.setUpperKD(jObj, kd);
@@ -462,7 +460,7 @@ public class UnsatSat {
      * Block the region dominated by the known models.
      */
 
-    public boolean blockDominatedRegion(IVecInt newSolution){
+    public int[] findUpperLimits(IVecInt newSolution){
 	int[] upperLimits = new int[this.problem.nObjs()];
 	for(int i = 0; i < newSolution.size(); ++i){
 	    int literal = newSolution.get(i);
@@ -475,7 +473,12 @@ public class UnsatSat {
 			upperLimits[iObj] = kDPotencial;
 		}
 	}
+	
+	return upperLimits;
+    }
 
+    public boolean blockDominatedRegion(IVecInt newSolution){
+	int[] upperLimits = this.findUpperLimits(newSolution);
 	int[] literals = new int[this.problem.nObjs()];
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
 	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);

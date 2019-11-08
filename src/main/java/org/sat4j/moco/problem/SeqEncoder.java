@@ -105,7 +105,10 @@ import org.sat4j.specs.ContradictionException;
 	this.currentKDs = new int[this.instance.nObjs()];
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
 	    this.setInitializedKD(iObj,-1);
+	    this.UpdateCurrentK(iObj,0);
 	}
+	 
+	 
 	}
 
 
@@ -132,9 +135,9 @@ import org.sat4j.specs.ContradictionException;
 	    this.extendInitializedIdsBInK(iObj, afterKD); 
 	    this.setInitializedKD(iObj, afterKD);
 	}
-	 
+	if(afterKD == 0)
+	    this.largerThan0(iObj, afterKD);
 	if(this.getCurrentKD(iObj) < afterKD){
-
 	    this.blockingVariableB(iObj, afterKD);
 	    if(iObj == 0)
 		System.out.println("Clauses 4 8 9");
@@ -381,32 +384,27 @@ import org.sat4j.specs.ContradictionException;
     // 	}
 	 
     // }
-
      /**
-      * A literal can contribute positively only if its weight is less
-      * than the current upper differential k value
+      *The sum is always larger or equal than 0
       */
-     private void ifLowNotX(int iObj, int afterKD){
+     private void largerThan0(int iObj, int afterKD){
 	 Objective ithObj = this.instance.getObj(iObj);
 	 int ithObjNLit = ithObj.getTotalLits();
 	 ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
 	 ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
 	 //	     assert ithObjNLit ==ithObjLits.size();
-	 int b = this.getB(iObj, afterKD);
 	 for (int iX = 1 ; iX <= ithObjNLit; ++iX){
-	     int ithXW = Math.round(ithObjCoeffs.get(iX-1).asInt());
-	     int sign = (ithXW > 0)? 1: -1;
-	     ithXW = sign * ithXW;
-	     if(ithXW > afterKD){
-		 int literal =  sign * ithObjLits.get(iX-1);
-		 this.AddClause(new VecInt(new int[]{-literal, b}));
-	     }}
-     }
+	     int s = this.getS(iObj, iX, 0);
+	     this.AddClause(new VecInt(new int[]{s}));
+	 }
+ }
 
-    /**
-     * If a literal is contributing positively, then the sum must be
-     * at least either the literal's weight or the upper differential
-     * k, whichever is less.
+
+
+     /**
+     * Clause 4. If a literal is contributing positively, then the sum
+     * must be at least either the literal's weight or the upper
+     * differential k, whichever is less.
      * @param iObj, the index of the objective function
      * @param afterKD, the new upper value of differential k for which
      * the semantics of the sequential encoding is complete
@@ -441,8 +439,8 @@ import org.sat4j.specs.ContradictionException;
 
 
     /**
-     * Encoding that the value of the sum is inductive on the index of
-     * the last literal of the sum
+     * Clause 8. Encoding that the value of the sum is inductive on
+     * the index of the last literal of the sum
      * @param iObj, the index of the objective function
      * @param afterKD, the new upper value of differential k for which
      * the semantics of the sequential encoding is complete
@@ -463,9 +461,10 @@ import org.sat4j.specs.ContradictionException;
     }
 
     /**
-     * If a given literal is present and the sum until that same
-     * literal is at least k, then the sum including the literal is at
-     * least the known estimative plus the literal's absolute weight
+     * Clause 9. If a given literal is present and the sum until that
+     * same literal is at least k, then the sum including the literal
+     * is at least the known estimative plus the literal's absolute
+     * weight
      * @param iObj, the index of the objective function
      * @param afterKD, the new upper value of differential k for which
      * the semantics of the sequential encoding is complete
