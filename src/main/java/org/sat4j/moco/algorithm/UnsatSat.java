@@ -456,18 +456,27 @@ public class UnsatSat {
 	return result;
     }
 
+    /**
+     * Block the region dominated by the known models.
+     */
+
     public boolean blockDominatedRegion(IVecInt newSolution){
-	IVecInt newHardClause = new VecInt(new int[] {});
+	int[] upperLimits = new int[this.problem.nObjs()];
 	for(int i = 0; i < newSolution.size(); ++i){
 	    int literal = newSolution.get(i);
 	    if(this.seqEncoder.isSTop(literal))
-		if(literal > 0)
-		    if(this.isYFrontier(literal))
-			newHardClause.push(-literal);
-
-
-
+		if(literal > 0){
+		    int iObj = this.seqEncoder.getObjFromSTopVariable(literal);
+		    int kDPotencial = this.seqEncoder.getKDFromSTopVariable(literal);
+		    int kDCurrent = upperLimits[iObj];
+		    if(kDCurrent < kDPotencial)
+			upperLimits[iObj] = kDPotencial;
+		}
 	}
+	int[] literals = new int[this.problem.nObjs()];
+	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
+	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
+	IVecInt newHardClause = new VecInt(literals);
 	return this.AddClause(newHardClause);
     }
     
