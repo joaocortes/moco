@@ -477,7 +477,7 @@ import org.sat4j.specs.ContradictionException;
 	ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
 	assert ithObjNLit ==ithObjLits.size();
 
-	for (int iX = 2 ; iX < ithObjNLit; ++iX){
+	for (int iX = 2 ; iX <= ithObjNLit; ++iX){
 	    int ithXW = ithObjCoeffs.get(iX-1).asInt();
 	    int sign = (ithXW > 0)? 1: -1;
 	    ithXW = sign * ithXW;
