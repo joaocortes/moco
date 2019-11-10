@@ -80,7 +80,7 @@ import org.sat4j.specs.ContradictionException;
      /**
       *The inverse index map for the blocking variables
       */
-     private Hashtable<Integer, int[]> bVariablesInverseIndex  = new Hashtable<Integer, int[]>();
+     private Hashtable<Integer, Integer> bVariablesInverseIndex  = new Hashtable<Integer, Integer>();
 
     /**
      *First solver variable that pertains to the sequential encoding
@@ -390,8 +390,6 @@ import org.sat4j.specs.ContradictionException;
      private void largerThan0(int iObj, int afterKD){
 	 Objective ithObj = this.instance.getObj(iObj);
 	 int ithObjNLit = ithObj.getTotalLits();
-	 ReadOnlyVecInt ithObjLits = ithObj.getSubObjLits(0);
-	 ReadOnlyVec<Real> ithObjCoeffs = ithObj.getSubObjCoeffs(0);
 	 //	     assert ithObjNLit ==ithObjLits.size();
 	 for (int iX = 1 ; iX <= ithObjNLit; ++iX){
 	     int s = this.getS(iObj, iX, 0);
