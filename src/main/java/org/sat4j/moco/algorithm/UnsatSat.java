@@ -129,7 +129,8 @@ public class UnsatSat {
     public void solve() {
 	IVecInt currentExplanation = new VecInt(new int[] {});
 	IVecInt currentAssumptions = new VecInt(new int[] {});
-	Vector<IVecInt> models = new Vector<IVecInt>();
+	Vector<IVecInt> modelsX = new Vector<IVecInt>();
+	Vector<IVecInt> modelsY = new Vector<IVecInt>();
 	ConstrID lastLessThan1 = null;
 	this.UpperKD =  new int[(this.problem.nObjs())];
         // if (this.result.isParetoFront()) {
@@ -149,20 +150,24 @@ public class UnsatSat {
 
 	    this.preAssumptionsExtend();
 	    currentAssumptions = this.generateUpperBoundAssumptions();
-
+	    
 	    System.out.println("Checking against assumptions:");
 	    this.seqEncoder.prettyPrintVecInt(currentAssumptions);
-
+	    
 	    solver.check(currentAssumptions);
 
 	    if(solver.isSat()){
-		models.add(this.getSemiFilteredModel());
+		modelsX.add(this.getXModel());
+		modelsY.add(this.getYModel());
 
-		System.out.println("Model :");
-		this.printModel(models.lastElement());
+		System.out.println("ModelX :");
+		this.printModel(modelsX.lastElement());
+		System.out.println("ModelY :");
+		this.printModel(modelsY.lastElement());
+
 		System.out.println("Blocking dominated region");
 
-		if(! this.blockDominatedRegion(models.lastElement()))
+		if(! this.blockDominatedRegion(modelsY.lastElement()))
 		    goOn = false;
 	    }else{
 		currentExplanation  = solver.unsatExplanation();
@@ -377,6 +382,27 @@ public class UnsatSat {
     //     }
     //     return w_lits;
     // }
+    /**
+     *Checks if literal is an STop variable
+     *@param literal
+     */
+
+    public boolean isYFrontier(int literal){
+	int id  = (literal>0)? literal: -literal;
+	if(this.yFrontierInverseIndex.containsKey(id))
+	    return true;
+	return false;
+    }
+    /**
+     *Checks if literal is an STop variable
+     *@param literal
+     */
+
+    public boolean isX(int literal){
+	int id = (literal>0)? literal: -literal;
+	return id <= this.realVariablesN && id >= 1;
+
+    }
 
     /**
      *returns the model in DIMACS format, including only the real
@@ -384,15 +410,27 @@ public class UnsatSat {
      *@return a filtered model
      */
 
-    public IVecInt getSemiFilteredModel(){
+    public IVecInt getYModel(){
 	IVecInt model = new VecInt(new int[] {});
 	for(int id = 1; id <= this.solver.nVars();++id){
 	    int literal = (this.solver.modelValue(id))? id: -id;
-	    if(id <= this.realVariablesN && id >= 1)
+	    if(this.isYFrontier(literal))
 		model.push(literal);
-	    else
-		if(this.seqEncoder.isSTop(id))
-		    model.push(literal);
+	}
+	return model;
+    }
+    /**
+     *returns the model in DIMACS format, including only the real
+     *variables and the STop variables of the sequential encoder
+     *@return a filtered model
+     */
+
+    public IVecInt getXModel(){
+	IVecInt model = new VecInt(new int[] {});
+	for(int id = 1; id <= this.solver.nVars();++id){
+	    int literal = (this.solver.modelValue(id))? id: -id;
+	    if(this.isX(literal))
+		model.push(literal);
 	}
 	return model;
     }
