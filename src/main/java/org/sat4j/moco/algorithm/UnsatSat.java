@@ -23,6 +23,7 @@
 package org.sat4j.moco.algorithm;
 
 import java.util.Vector;
+import java.util.Hashtable;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.core.ReadOnlyVec;
@@ -79,6 +80,26 @@ public class UnsatSat {
      */  
     private int realVariablesN = 0;
 
+  /**
+     *The inverse index map for the Y frontier variables
+     */
+ 
+    private int[] yFrontier = null;
+
+    private Hashtable<Integer,Integer> yFrontierInverseIndex  = new Hashtable<Integer, Integer>();
+
+    public int getYFrontier(int iObj){
+	//	return	 this.seqEncoder.getSTop(iObj, iKD);
+	return	this.yFrontier[iObj];
+    }
+
+    public void setYFrontier(int iObj, int id){
+	this.yFrontierInverseIndex.put(id, iObj);
+    }
+
+
+
+
 
     /**
      * Creates an instance of a MOCO solver, for a given instance,
@@ -96,6 +117,7 @@ public class UnsatSat {
         }
 	this.realVariablesN = this.solver.nVars();
 	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
+	this.yFrontier = new int[this.problem.nObjs()];
     }
 
     
@@ -267,6 +289,7 @@ public class UnsatSat {
 	return null;
     }
 
+    
 
     
     // /**
