@@ -86,15 +86,15 @@ public class UnsatSat {
  
     private int[] yFrontier = null;
 
-    private Hashtable<Integer,Integer> yFrontierInverseIndex  = new Hashtable<Integer, Integer>();
+    private Hashtable<Integer,int[]> yFrontierInverseIndex  = new Hashtable<Integer, int[]>();
 
     public int getYFrontier(int iObj){
 	//	return	 this.seqEncoder.getSTop(iObj, iKD);
 	return	this.yFrontier[iObj];
     }
 
-    public void setYFrontier(int iObj, int id){
-	this.yFrontierInverseIndex.put(id, iObj);
+    public void setYFrontier(int id, int iObj, int kD){
+	this.yFrontierInverseIndex.put(id, new int[] {iObj, kD});
     }
 
 
@@ -471,7 +471,7 @@ public class UnsatSat {
 	System.out.print("j o ");
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    Objective ithObj = this.problem.getObj(iObj);
-	    System.out.print(this.attainedValue(ithObj, model)+ " " );
+	    System.out.print(this.attainedValue(ithObj)+ " " );
 	}
 	System.out.println();
 	for(int j = 0; j <model.size(); ++j)
@@ -503,7 +503,7 @@ public class UnsatSat {
      @param model
      @param iObj
     */
-    private int attainedValue(Objective objective , IVecInt model){
+    private int attainedValue(Objective objective){
 	int result = 0;
 	int objectiveNLit = objective.getTotalLits();
 	ReadOnlyVecInt objectiveLits = objective.getSubObjLits(0);
