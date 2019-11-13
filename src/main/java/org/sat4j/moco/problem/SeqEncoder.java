@@ -135,7 +135,7 @@ import org.sat4j.specs.ContradictionException;
 	    this.extendInitializedIdsBInK(iObj, afterKD); 
 	    this.setInitializedKD(iObj, afterKD);
 	}
-	if(afterKD == 0)
+	if(afterKD == 0);
 	    this.largerThan0(iObj, afterKD);
 	if(this.getCurrentKD(iObj) < afterKD){
 	    this.blockingVariableB(iObj, afterKD);

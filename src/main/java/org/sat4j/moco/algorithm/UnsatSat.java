@@ -84,20 +84,24 @@ public class UnsatSat {
      *The inverse index map for the Y frontier variables
      */
  
-    private int[] yFrontier = null;
+    private int[] yFrontierID = null;
 
     private Hashtable<Integer,int[]> yFrontierInverseIndex  = new Hashtable<Integer, int[]>();
 
     public int getYFrontier(int iObj){
 	//	return	 this.seqEncoder.getSTop(iObj, iKD);
-	return	this.yFrontier[iObj];
+	return	this.yFrontierID[iObj];
     }
 
     public void setYFrontier(int id, int iObj, int kD){
+	this.yFrontierID[iObj]= id;
 	this.yFrontierInverseIndex.put(id, new int[] {iObj, kD});
     }
 
-
+    private void initializeFrontier(){
+	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
+	    this.setYFrontier(this.seqEncoder.getSTop(iObj, 0), iObj, this.getUpperKD(iObj));
+    }
 
 
 
@@ -117,7 +121,10 @@ public class UnsatSat {
         }
 	this.realVariablesN = this.solver.nVars();
 	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
-	this.yFrontier = new int[this.problem.nObjs()];
+	this.UpperKD =  new int[(this.problem.nObjs())];
+	this.yFrontierID = new int[this.problem.nObjs()];
+	this.initializeFrontier();
+
     }
 
     
@@ -132,7 +139,8 @@ public class UnsatSat {
 	Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	Vector<IVecInt> modelsY = new Vector<IVecInt>();
 	ConstrID lastLessThan1 = null;
-	this.UpperKD =  new int[(this.problem.nObjs())];
+
+
         // if (this.result.isParetoFront()) {
         //     Log.comment(1, "UnsatSat.solve called on already solved instance");
         //     return;
