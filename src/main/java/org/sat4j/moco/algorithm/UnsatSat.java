@@ -489,22 +489,6 @@ public class UnsatSat {
 
 	return;
     }
-    
- public boolean isYFrontier(int literal){
-     int iObj = this.seqEncoder.getObjFromSTopVariable(literal);
-     int kD = this.seqEncoder.getKDFromSTopVariable(literal);
-     if(kD == this.getUpperKD(iObj))
-	 return true;
-     return false;
-    }
-
-    public boolean isX(int literal){
-	int sign = (literal > 0)? 1: -1;
-	if(sign * literal <= this.problem.nVars())
-	    if(1 <= sign * literal)
-		return true;
-	return false;
-    }
 
     /**
      * The attained value of objective  in the interpretation of model 
