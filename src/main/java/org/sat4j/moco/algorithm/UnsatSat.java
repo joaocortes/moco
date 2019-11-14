@@ -177,6 +177,8 @@ public class UnsatSat {
 
 		if(! this.blockDominatedRegion(modelsY.lastElement()))
 		    goOn = false;
+		if(! this.blockModelX(modelsX.lastElement()))
+		    goOn = false;
 	    }else{
 		currentExplanation  = solver.unsatExplanation();
 
@@ -537,6 +539,13 @@ public class UnsatSat {
 	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
 	IVecInt newHardClause = new VecInt(literals);
 	return this.AddClause(newHardClause);
+    }
+
+    public boolean blockModelX(IVecInt modelX){
+	IVecInt notPreviousModel = new VecInt(new int[] {});
+	for(int iX = 0; iX < modelX.size(); ++iX)
+	    notPreviousModel.push(modelX.get(iX));
+	return this.AddClause(notPreviousModel);
     }
     
     private boolean AddClause(IVecInt setOfLiterals){
