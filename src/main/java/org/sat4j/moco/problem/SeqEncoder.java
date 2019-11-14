@@ -122,33 +122,35 @@ import org.sat4j.specs.ContradictionException;
      *@param afterKD The desired max value for the objective 
      */
     
-    public void UpdateCurrentK(int iObj , int afterKD ){
-	// System.out.print("Internal:");
-	// System.out.print("["+this.getCurrentKD(0));
-	// for(int iObj1 = 1; iObj1 < this.instance.nObjs(); ++iObj1)
-	//     System.out.print(", "+this.getCurrentKD(iObj1));
-	// System.out.println("]");
+     public void UpdateCurrentK(int iObj , int afterKD ){
+	 // System.out.print("Internal:");
+	 // System.out.print("["+this.getCurrentKD(0));
+	 // for(int iObj1 = 1; iObj1 < this.instance.nObjs(); ++iObj1)
+	 //     System.out.print(", "+this.getCurrentKD(iObj1));
+	 // System.out.println("]");
  
-	if(this.getInitializedKD(iObj)< afterKD ){
-	    // STop variables are also extended at 
-	    this.extendInitializedIdsSInK(iObj, afterKD); 
-	    this.extendInitializedIdsBInK(iObj, afterKD); 
-	    this.setInitializedKD(iObj, afterKD);
-	}
-	if(afterKD == 0);
-	    this.largerThan0(iObj, afterKD);
-	if(this.getCurrentKD(iObj) < afterKD){
-	    this.blockingVariableB(iObj, afterKD);
-	    if(iObj == 0)
-		System.out.println("Clauses 4 8 9");
-	    this.IfXAtLeastW(iObj, afterKD);
-	    System.out.println("");
-	    this.IfLessAlsoMore(iObj, afterKD);
-	    System.out.println("");
-	    this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
-	    this.setCurrentKD(iObj, afterKD);
-	}
-    }
+	 if(this.getInitializedKD(iObj)< afterKD ){
+	     // STop variables are also extended at 
+	     this.extendInitializedIdsSInK(iObj, afterKD); 
+	     this.extendInitializedIdsBInK(iObj, afterKD); 
+	     this.setInitializedKD(iObj, afterKD);
+	 }
+	 if(afterKD == 0);
+	 this.largerThan0(iObj, afterKD);
+	 if(this.getCurrentKD(iObj) < afterKD){
+	     this.blockingVariableB(iObj, afterKD);
+	     if(iObj == 0)
+		 System.out.println("Clauses -1 4 8 9");
+	     this.ifNotLessNotMore(iObj,afterKD);
+	     System.out.println("");
+	     this.IfXAtLeastW(iObj, afterKD);
+	     System.out.println("");
+	     this.IfLessAlsoMore(iObj, afterKD);
+	     System.out.println("");
+	     this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
+	     this.setCurrentKD(iObj, afterKD);
+	 }
+     }
 
 
 
@@ -433,6 +435,24 @@ import org.sat4j.specs.ContradictionException;
 	}
 	 
 
+    /**
+     * Clause -1. TODO NOT CORRECT Encoding that the value of the sum
+     * is inductive on the index of the last literal of the sum
+     * @param iObj, the index of the objective function
+     * @param afterKD, the new upper value of differential k for which
+     * the semantics of the sequential encoding is complete
+     */
+    private void ifNotLessNotMore(int iObj,int afterKD){
+
+	int nLit = this.instance.getObj(iObj).getTotalLits();
+	int x = nLit;
+	    for (int kD  = this.currentKDs[iObj]+1;  kD <= afterKD; ++kD){
+		int s1 = this.getS(iObj, x, kD-1);
+		int s2 = this.getS(iObj, x, kD);
+		IVecInt clauseSet = new VecInt(new int[] {s1,-s2});
+		this.AddClause(clauseSet);
+	    }
+    }
 
 
 

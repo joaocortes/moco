@@ -170,6 +170,12 @@ public class UnsatSat {
 
 		System.out.println("ModelX :");
 		this.printModel(modelsX.lastElement());
+		System.out.print("j o ");
+		for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+		    Objective ithObj = this.problem.getObj(iObj);
+		    System.out.print(this.attainedValue(ithObj)+ " " );
+		}
+		System.out.println();
 		System.out.println("ModelY :");
 		this.printModel(modelsY.lastElement());
 
@@ -424,7 +430,7 @@ public class UnsatSat {
 	IVecInt model = new VecInt(new int[] {});
 	for(int id = 1; id <= this.solver.nVars();++id){
 	    int literal = (this.solver.modelValue(id))? id: -id;
-	    if(this.isYFrontier(literal))
+	    if(this.seqEncoder.isSTop(literal))
 		model.push(literal);
 	}
 	return model;
@@ -477,13 +483,6 @@ public class UnsatSat {
      * @param models, the obtained models
      */
     public void printModel(IVecInt model) {
-	System.out.println("Model ");
-	System.out.print("j o ");
-	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    Objective ithObj = this.problem.getObj(iObj);
-	    System.out.print(this.attainedValue(ithObj)+ " " );
-	}
-	System.out.println();
 	for(int j = 0; j <model.size(); ++j)
 	    this.seqEncoder.prettyPrintVariable(model.get(j));
 	System.out.println();
@@ -544,7 +543,7 @@ public class UnsatSat {
     public boolean blockModelX(IVecInt modelX){
 	IVecInt notPreviousModel = new VecInt(new int[] {});
 	for(int iX = 0; iX < modelX.size(); ++iX)
-	    notPreviousModel.push(modelX.get(iX));
+	    notPreviousModel.push(-modelX.get(iX));
 	return this.AddClause(notPreviousModel);
     }
     
