@@ -23,7 +23,6 @@
 package org.sat4j.moco.algorithm;
 
 import java.util.Vector;
-import java.util.Hashtable;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.core.ReadOnlyVec;
@@ -80,30 +79,6 @@ public class UnsatSat {
      */  
     private int realVariablesN = 0;
 
-  /**
-     *The inverse index map for the Y frontier variables
-     */
- 
-    private int[] yFrontierID = null;
-
-    private Hashtable<Integer,int[]> yFrontierInverseIndex  = new Hashtable<Integer, int[]>();
-
-    public int getYFrontier(int iObj){
-	//	return	 this.seqEncoder.getSTop(iObj, iKD);
-	return	this.yFrontierID[iObj];
-    }
-
-    public void setYFrontier(int id, int iObj, int kD){
-	this.yFrontierID[iObj]= id;
-	this.yFrontierInverseIndex.put(id, new int[] {iObj, kD});
-    }
-
-    private void initializeFrontier(){
-	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	    this.setYFrontier(this.seqEncoder.getSTop(iObj, 0), iObj, this.getUpperKD(iObj));
-    }
-
-
 
     /**
      * Creates an instance of a MOCO solver, for a given instance,
@@ -122,9 +97,6 @@ public class UnsatSat {
 	this.realVariablesN = this.solver.nVars();
 	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
-	this.yFrontierID = new int[this.problem.nObjs()];
-	this.initializeFrontier();
-
     }
 
     
@@ -310,7 +282,6 @@ public class UnsatSat {
 	return null;
     }
 
-    
 
     
     // /**
