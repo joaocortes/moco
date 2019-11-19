@@ -282,16 +282,13 @@ public class UnsatSat {
 	return null;
     }
 
-
-    
     /**
      *Checks if literal is an STop variable
      *@param literal
      */
 
-    public boolean isYFrontier(int literal){
-	int id  = (literal>0)? literal: -literal;
-	if(this.yFrontierInverseIndex.containsKey(id))
+    public boolean isY(int literal){
+	if(this.seqEncoder.isSTop(literal))
 	    return true;
 	return false;
     }
@@ -316,7 +313,7 @@ public class UnsatSat {
 	IVecInt model = new VecInt(new int[] {});
 	for(int id = 1; id <= this.solver.nVars();++id){
 	    int literal = (this.solver.modelValue(id))? id: -id;
-	    if(this.seqEncoder.isSTop(literal))
+	    if(this.isY(literal))
 		model.push(literal);
 	}
 	return model;
