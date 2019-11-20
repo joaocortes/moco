@@ -140,15 +140,14 @@ import org.sat4j.specs.ContradictionException;
 	 if(this.getCurrentKD(iObj) < afterKD){
 	     this.blockingVariableB(iObj, afterKD);
 	     if(iObj == 0)
-		 System.out.println("Clauses -1 4 (8 9)");
+		 System.out.println("Clauses -1 4 8 9");
 	     this.ifNotLessNotMore(iObj,afterKD);
 	     System.out.println("");
 	     this.IfXAtLeastW(iObj, afterKD);
 	     System.out.println("");
-	     this.inverseImplication(iObj, afterKD);
-	     // this.IfLessAlsoMore(iObj, afterKD);
-	     // System.out.println("");
-	     // this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
+	     this.IfLessAlsoMore(iObj, afterKD);
+	     System.out.println("");
+	     this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
 	     this.setCurrentKD(iObj, afterKD);
 	 }
      }
@@ -467,11 +466,11 @@ import org.sat4j.specs.ContradictionException;
     private void IfLessAlsoMore(int iObj,int afterKD){
 
 	int nLit = this.instance.getObj(iObj).getTotalLits();
-	for (int iX = 2 ; iX <= nLit; ++iX){
+	for (int x = 2 ; x <= nLit; ++x){
 	    for (int kD  = this.currentKDs[iObj]+1;  kD <= afterKD; ++kD){
 		IVecInt clauseSet = new VecInt(2);
-		int s1 = this.getS(iObj, iX-1, kD);
-		int s2 = this.getS(iObj, iX, kD);
+		int s1 = this.getS(iObj, x-1, kD);
+		int s2 = this.getS(iObj, x, kD);
 		clauseSet.push(-s1);
 		clauseSet.push(s2);
 		this.AddClause(clauseSet);
@@ -483,7 +482,7 @@ import org.sat4j.specs.ContradictionException;
      * Clause 9. If a given literal is present and the sum until that
      * same literal is at least k, then the sum including the literal
      * is at least the known estimative plus the literal's absolute
-     * weight. Otherwise, the 
+     * weight
      * @param iObj, the index of the objective function
      * @param afterKD, the new upper value of differential k for which
      * the semantics of the sequential encoding is complete
@@ -512,46 +511,6 @@ import org.sat4j.specs.ContradictionException;
 	    }
 	}
     }
-
-    /**
-     * Clause 8 and 9, with inverse implication
-     * @param iObj, the index of the objective function
-     * @param afterKD, the new upper value of differential k for which
-     * the semantics of the sequential encoding is complete
-     */
-    private void inverseImplication(int iObj,int afterKD){
-
-	int ithObjNLit = this.instance.getObj(iObj).getTotalLits();
-	ReadOnlyVecInt ithObjLits = this.instance.getObj(iObj).getSubObjLits(0);
-	ReadOnlyVec<Real> ithObjCoeffs = this.instance.getObj(iObj).getSubObjCoeffs(0);
-
-	for (int iX = 2 ; iX <= ithObjNLit; ++iX){
-	    int ithXW = ithObjCoeffs.get(iX-1).asInt();
-	    int sign = (ithXW > 0)? 1: -1;
-	    ithXW = sign * ithXW;
-	    int literal = sign * ithObjLits.get(iX-1);
-	    int lowerLimit = this.currentKDs[iObj]- ithXW + 1;
-	    lowerLimit = (lowerLimit > 1)? lowerLimit: 1;
-	    int upperLimit = afterKD - ithXW ;
-	    // upperLimit = (upperLimit >= 1)? upperLimit: 1;
-	    for (int kD  = this.currentKDs[iObj]+1;  kD <= afterKD; ++kD){
-		IVecInt clauseSet = new VecInt(2);
-		int s1 = this.getS(iObj, iX-1, kD);
-		int s2 = this.getS(iObj, iX, kD);
-		clauseSet.push(-s1);
-		clauseSet.push(s2);
-		this.AddClause(clauseSet);
-		if (lowerLimit <= kD)
-		    if (kD <= upperLimit){
-			int s3 = this.getS(iObj, iX-1, kD);
-			int s4 = this.getS(iObj, iX, kD + ithXW );
-			clauseSet = new VecInt(new int[] {-s3,-literal,s4});
-			this.AddClause(clauseSet);
-		    }
-	    }
-	}
-    }
-
 
      /**
       *blocks the older non incremental clauses
