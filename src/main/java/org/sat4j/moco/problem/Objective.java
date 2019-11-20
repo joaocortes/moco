@@ -91,7 +91,7 @@ public abstract class Objective {
      * get the Max Weight of an objective.
      * This only works well for integer weights
      */
-    public int getMaxWeight(){
+    public int getMaxValue(){
 
 	int total = 0;
 	for (int i = 0; i < this.nSubObj() ; ++i){
@@ -109,7 +109,7 @@ public abstract class Objective {
      * get the Min Weight of an objective
      *@param o The objective
      */
-    public int getMinWeight(){
+    public int getMinValue(){
 
 	int total = 0;
 	for (int i = 0; i < this.nSubObj() ; ++i){
@@ -127,7 +127,7 @@ public abstract class Objective {
      *@param o The objective
      */
     public int getWeightDiff(){
-	int result = this.getMaxWeight() - this.getMinWeight();
+	int result = this.getMaxValue() - this.getMinValue();
 	if(result > 0)
 	    return result;
 	return -result;
