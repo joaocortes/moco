@@ -3,3 +3,5 @@ target
 /.settings/org.eclipse.jdt.apt.core.prefs
 *#*#
 *~
+/compilationAfter
+/compilationBefore
