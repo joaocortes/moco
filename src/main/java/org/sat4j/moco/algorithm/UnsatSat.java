@@ -399,18 +399,10 @@ public class UnsatSat {
 
     public int[] findUpperLimits(IVecInt newSolution){
 	int[] upperLimits = new int[this.problem.nObjs()];
-	for(int i = 0; i < newSolution.size(); ++i){
-	    int literal = newSolution.get(i);
-	    if(this.seqEncoder.isSTop(literal))
-		if(literal > 0){
-		    int iObj = this.seqEncoder.getObjFromSTopVariable(literal);
-		    int kDPotencial = this.seqEncoder.getKDFromSTopVariable(literal);
-		    int kDCurrent = upperLimits[iObj];
-		    if(kDCurrent < kDPotencial)
-			upperLimits[iObj] = kDPotencial;
-		}
+	for(int i = 0; i < this.problem.nObjs(); ++i){
+	    upperLimits[i] = this.attainedValue(this.problem.getObj(i));
+	    upperLimits[i]-=this.problem.getObj(i).getMinValue();
 	}
-	
 	return upperLimits;
     }
 
