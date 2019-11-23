@@ -141,8 +141,8 @@ import org.sat4j.specs.ContradictionException;
 	     this.blockingVariableB(iObj, afterKD);
 	     if(iObj == 0)
 		 System.out.println("Clauses -1 4 8 9");
-	     // this.ifNotLessNotMore(iObj,afterKD);
-	     // System.out.println("");
+	     this.ifNotLessNotMore(iObj,afterKD);
+	     System.out.println("");
 	     this.IfXAtLeastW(iObj, afterKD);
 	     System.out.println("");
 	     this.IfLessAlsoMore(iObj, afterKD);
