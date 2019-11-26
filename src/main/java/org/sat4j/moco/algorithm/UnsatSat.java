@@ -53,7 +53,7 @@ public class UnsatSat {
     /**
      * Stores the result (e.g. nondominated solutions) of the execution of the Pareto-MCS algorithm.
      */
-    // private Result result = null;
+    private Result result = null;
     
     /**
      * Stores the PB solver to be used by the Pareto-MCS algorithm.
@@ -85,8 +85,10 @@ public class UnsatSat {
      * that applies the Pareto-MCS algorithm.
      * @param m The MOCO instance.
      */
+    
     public UnsatSat(Instance m) {
 	this.problem = m;
+	this.result = new Result(m);
 	try {
             this.solver = buildSolver();
         }
@@ -135,11 +137,11 @@ public class UnsatSat {
 	    this.seqEncoder.prettyPrintVecInt(currentAssumptions);
 	    
 	    solver.check(currentAssumptions);
-
 	    if(solver.isSat()){
+		Result subResult = new Result(this.problem);
 		modelsX.add(this.getXModel());
 		modelsY.add(this.getYModel());
-
+		subResult.saveModel(this.solver);
 		System.out.println("ModelX :");
 		this.printModel(modelsX.lastElement());
 		System.out.print("j o ");
