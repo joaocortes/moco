@@ -125,22 +125,32 @@ public class UnsatSat {
 	//for testing purposes
 	//	this.seqEncoder.UpdateCurrentK(0, 2);
 	while(goOn){
+	    ///log..
 	    System.out.print("upper limit:");
 	    System.out.print("["+this.getUpperKD(0));
 	    for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
 		System.out.print(", "+this.getUpperKD(iObj));
 	    System.out.println("]");
-
+	    //..log
 	    this.preAssumptionsExtend();
 	    currentAssumptions = this.generateUpperBoundAssumptions();
-	    
+
+	    //log..
 	    System.out.println("Checking against assumptions:");
 	    this.seqEncoder.prettyPrintVecInt(currentAssumptions);
+	    //..log
+
 	    solver.check(currentAssumptions);
+
 	    if(solver.isSat()){
 		subResult.saveModel(this.solver);
+		//log
+		System.out.println(" current subResult size:" + subResult.nSolutions());
+
 		modelsX.add(this.getXModel());
 		modelsY.add(this.getYModel());
+
+		//log..
 		System.out.println("ModelX :");
 		this.printModel(modelsX.lastElement());
 		System.out.print("j o ");
@@ -151,7 +161,9 @@ public class UnsatSat {
 		System.out.println();
 		System.out.println("ModelY :");
 		this.printModel(modelsY.lastElement());
+		//..log
 
+		//log
 		System.out.println("Blocking dominated region");
 
 		if(! this.blockDominatedRegion(modelsY.lastElement()))
@@ -163,12 +175,15 @@ public class UnsatSat {
 		    paretoFront.add(subResult.getAssignment(i));
 		subResult = new Result(this.problem);	    
 		currentExplanation  = solver.unsatExplanation();
+		
+		//log..
 		System.out.println("Explanation:");
 		this.seqEncoder.prettyPrintVecInt(currentExplanation);
+		//..log
+
 		if(currentExplanation.size() == 0){
 		    goOn = false;
 		}else{
-		    // System.out.println("UpperBound extend");
 		    this.updateUpperBound(currentExplanation);
 		}
 
