@@ -112,6 +112,7 @@ public class UnsatSat {
 	IVecInt currentAssumptions = new VecInt(new int[] {});
 	Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	Vector<IVecInt> modelsY = new Vector<IVecInt>();
+	Vector<boolean[]> paretoFront = new Vector <boolean[]>();
 	ConstrID lastLessThan1 = null;
 
 
@@ -159,6 +160,11 @@ public class UnsatSat {
 		    goOn = false;
 		if(! this.blockModelX(modelsX.lastElement()))
 		    goOn = false;
+
+		if(!solver.isSat()){
+		    for(int i = 0; i < subResult.nSolutions(); ++i)
+			paretoFront.add (subResult.getAssignment(i));
+		}
 	    }else{
 		currentExplanation  = solver.unsatExplanation();
 
