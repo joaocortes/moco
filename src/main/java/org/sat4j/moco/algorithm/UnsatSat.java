@@ -113,7 +113,6 @@ public class UnsatSat {
 	Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	Vector<IVecInt> modelsY = new Vector<IVecInt>();
 	Vector<boolean[]> paretoFront = new Vector <boolean[]>();
-	ConstrID lastLessThan1 = null;
 
 
         // if (this.result.isParetoFront()) {
@@ -176,7 +175,6 @@ public class UnsatSat {
 		}else{
 		    // System.out.println("UpperBound extend");
 		    this.updateUpperBound(currentExplanation);
-		    lastLessThan1 = this.swapLessThan1Clause(lastLessThan1);
 		}
 
 
@@ -275,21 +273,7 @@ public class UnsatSat {
         return solver;
     }
 
-    private ConstrID swapLessThan1Clause(ConstrID lastLessThan1){
-	IVecInt literals = new VecInt(new int[]{});
-	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    literals.push(this.seqEncoder.getSTop(iObj,
-						  this.getUpperKD(iObj)));
-	}
-	System.out.println("Swaping lessThan1");
-	this.seqEncoder.prettyPrintVecInt(literals);
-	if(lastLessThan1 != null) this.solver.removeConstr(lastLessThan1);
-	try{	return this.solver.addRemovableConstr(PBFactory.instance().mkLE(literals, 1));
-	} catch(ContradictionException e){
-	    System.out.print("Contradiction when adding the less than 1 restriction");}
-	return null;
-    }
-
+    
     /**
      *Checks if literal is an STop variable
      *@param literal
