@@ -113,6 +113,7 @@ public class UnsatSat {
 	Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	Vector<IVecInt> modelsY = new Vector<IVecInt>();
 	Vector<boolean[]> paretoFront = new Vector <boolean[]>();
+	Result subResult = new Result(this.problem);	    
 
 
         // if (this.result.isParetoFront()) {
@@ -135,7 +136,6 @@ public class UnsatSat {
 	    
 	    System.out.println("Checking against assumptions:");
 	    this.seqEncoder.prettyPrintVecInt(currentAssumptions);
-	    Result subResult = new Result(this.problem);	    
 	    solver.check(currentAssumptions);
 	    if(solver.isSat()){
 		subResult.saveModel(this.solver);
@@ -158,12 +158,10 @@ public class UnsatSat {
 		    goOn = false;
 		if(! this.blockModelX(modelsX.lastElement()))
 		    goOn = false;
-
-		if(!solver.isSat()){
-		    for(int i = 0; i < subResult.nSolutions(); ++i)
-			paretoFront.add (subResult.getAssignment(i));
-		}
 	    }else{
+		for(int i = 0; i < subResult.nSolutions(); ++i)
+		    paretoFront.add(subResult.getAssignment(i));
+		subResult = new Result(this.problem);	    
 		currentExplanation  = solver.unsatExplanation();
 		System.out.println("Explanation:");
 		this.seqEncoder.prettyPrintVecInt(currentExplanation);
