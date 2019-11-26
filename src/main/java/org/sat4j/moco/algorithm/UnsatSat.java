@@ -135,13 +135,12 @@ public class UnsatSat {
 	    
 	    System.out.println("Checking against assumptions:");
 	    this.seqEncoder.prettyPrintVecInt(currentAssumptions);
-	    
+	    Result subResult = new Result(this.problem);	    
 	    solver.check(currentAssumptions);
 	    if(solver.isSat()){
-		Result subResult = new Result(this.problem);
+		subResult.saveModel(this.solver);
 		modelsX.add(this.getXModel());
 		modelsY.add(this.getYModel());
-		subResult.saveModel(this.solver);
 		System.out.println("ModelX :");
 		this.printModel(modelsX.lastElement());
 		System.out.print("j o ");
@@ -166,10 +165,8 @@ public class UnsatSat {
 		}
 	    }else{
 		currentExplanation  = solver.unsatExplanation();
-
 		System.out.println("Explanation:");
 		this.seqEncoder.prettyPrintVecInt(currentExplanation);
-
 		if(currentExplanation.size() == 0){
 		    goOn = false;
 		}else{
@@ -182,9 +179,13 @@ public class UnsatSat {
 
 
 	}
-	//	this.printModels(models);
 
-
+	System.out.println("Pareto Front with "+paretoFront.size());
+	for(int i = 0; i < paretoFront.size();++i){
+	    for(int j = 0 ; j < this.problem.nVars(); ++j)
+		System.out.print(paretoFront.get(i)[j]+" ");
+	    System.out.println();
+}
 	return;
     }
     
