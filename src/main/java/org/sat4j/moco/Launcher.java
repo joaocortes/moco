@@ -140,7 +140,7 @@ public class Launcher {
             Clock.instance().updtParams(params);
             Instance moco = readMOCO(cl);
             UnsatSat solver = new UnsatSat(moco);
-            // setShutdownHandler(solver);
+            setShutdownHandler(solver);
             solver.solve();
         }
         catch (ParseException e) {
