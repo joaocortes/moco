@@ -119,7 +119,8 @@ public class pMinimal {
         Log.comment(3, "in UnsatSat.solve");
 	boolean sat = false;
 	while(sat){
-     PBSolver currentSolver =  this.solver.;
+	    PBSolver currentSolver = new PBSolver();
+	    this.cloneSolverInto(currentSolver);
 	    while(sat){
 		currentSolver.check();
 		if(currentSolver.isSat()){
@@ -137,6 +138,9 @@ public class pMinimal {
 		modelsY.add(this.getYModel());
 	    }
 	}
+    }
+    private boolean cloneSolverInto(PBSolver clone){
+	return true;
     }
     
     private void addClauseY0(PBSolver solver){
