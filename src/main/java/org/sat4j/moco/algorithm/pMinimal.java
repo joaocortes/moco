@@ -111,7 +111,7 @@ public class pMinimal {
     public void solve() {
 	IVecInt currentYModel = new VecInt(new int[] {});
 	IVecInt currentXModel = new VecInt(new int[] {});
-	IVecInt currentAssumptions = new VecInt(new int[] {});
+	IVecInt currentModel = new VecInt(new int[] {});
 	Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	Vector<IVecInt> modelsY = new Vector<IVecInt>();
 	Vector<boolean[]> paretoFront = new Vector <boolean[]>();
@@ -126,19 +126,28 @@ public class pMinimal {
 		if(currentSolver.isSat()){
 		    currentYModel = this.getXModel(currentSolver);
 		    currentXModel = this.getXModel(currentSolver);
-		    if(!this.addClauseY0(currentSolver))
+		    currentModel = this.getFullModel(currentSolver);
+		    if(!this.addClauseY0(currentSolver, currentModel))
 			sat = false;
 		    if(!this.addClauseY1(currentSolver))
 			sat = false;
 		}}
-	
-	    if(solver.isSat()){
-		result.saveModel(this.solver);
-		modelsX.add(this.getXModel(this.solver));
-		modelsY.add(this.getYModel(this.solver));
-	    }
+	    this.saveModel(currentXModel);
+	    sat = this.blockModel(currentXModel);
 	}
     }
+
+
+    private void saveModel(IVecInt currentExplanation){
+	return;
+    }
+
+    private boolean blockModel(IVecInt currentExplanation){
+
+	this.solver.check();
+	return this.solver.isSat();
+    }
+
     private boolean cloneSolverInto(PBSolver clone){
 	return true;
     }
@@ -293,10 +302,10 @@ public class pMinimal {
      *@return a filtered model
      */
 
-    public IVecInt getFullModel(){
+    public IVecInt getFullModel(PBSolver pbSolver){
 	IVecInt model = new VecInt(new int[] {});
-	for(int id = 1; id <= this.solver.nVars();++id){
-	    int literal = (this.solver.modelValue(id))? id: -id;
+	for(int id = 1; id <= pbSolver.nVars();++id){
+	    int literal = (pbSolver.modelValue(id))? id: -id;
 	    model.push(literal);
 	}
 	return model;
