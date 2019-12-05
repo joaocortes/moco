@@ -115,7 +115,6 @@ public class pMinimal {
 	Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	Vector<IVecInt> modelsY = new Vector<IVecInt>();
 	Vector<boolean[]> paretoFront = new Vector <boolean[]>();
-	Result subResult = new Result(this.problem);	    
 
         Log.comment(3, "in UnsatSat.solve");
 	boolean sat = false;
