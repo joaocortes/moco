@@ -87,7 +87,7 @@ public class pMinimal {
      * @param m The MOCO instance.
      */
     
-    public UnsatSat(Instance m) {
+    public pMinimal(Instance m) {
 	this.problem = m;
 	this.result = new Result(m);
 	try {
@@ -133,9 +133,9 @@ public class pMinimal {
 		}}
 	
 	    if(solver.isSat()){
-		subResult.saveModel(this.solver);
-		modelsX.add(this.getXModel());
-		modelsY.add(this.getYModel());
+		result.saveModel(this.solver);
+		modelsX.add(this.getXModel(this.solver));
+		modelsY.add(this.getYModel(this.solver));
 	    }
 	}
     }
@@ -143,8 +143,12 @@ public class pMinimal {
 	return true;
     }
     
-    private void addClauseY0(PBSolver solver){
+    private boolean addClauseY0(PBSolver solver){
+	return true;
+    }
 
+    private boolean addClauseY1(PBSolver solver){
+	return true;
     }
 
     /**
@@ -274,7 +278,7 @@ public class pMinimal {
      *@return a filtered model
      */
 
-    public IVecInt getXModel(     PBSolver solver){
+    public IVecInt getXModel(PBSolver solver){
 	IVecInt model = new VecInt(new int[] {});
 	for(int id = 1; id <= solver.nVars();++id){
 	    int literal = (solver.modelValue(id))? id: -id;
