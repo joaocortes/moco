@@ -111,7 +111,6 @@ public class pMinimal {
 	IVecInt currentYModel = new VecInt(new int[] {});
 	IVecInt currentXModel = new VecInt(new int[] {});
 	IVecInt assumptions = new VecInt(new int[] {});
-	IVecInt topAssumptions = new VecInt(new int[] {});
 	IVecInt currentModel = new VecInt(new int[] {});
 	Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	Vector<IVecInt> modelsY = new Vector<IVecInt>();
@@ -119,7 +118,6 @@ public class pMinimal {
 
         Log.comment(3, "in UnsatSat.solve");
 	boolean sat = true;
-	this.initializeTopAssumptions(topAssumptions);
 	while(sat){
 	    while(sat){		
 		if(this.addClauseY0(this.solver, currentModel))
@@ -142,13 +140,7 @@ public class pMinimal {
     }
 
 
-    private void initializeTopAssumptions(IVecInt topAssumptions){
 
-	for(int iObj = 0, nObj = this.problem.nObjs(); iObj < nObj ; ++iObj){
-	    topAssumptions.push(-this.seqEncoder.getSTop(iObj, this.getUpperKD(iObj) + 1));
-	}
-	return topAssumptions;
-    }
 
     private void setAssumptions(IVecInt assumptions, IVecInt yModel){
 	for(int i = 0, n = yModel.size(); i < n ; ++i)
