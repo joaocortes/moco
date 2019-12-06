@@ -376,21 +376,11 @@ public class pMinimal {
     /**
      * Block the region dominated by the known models.
      */
-
-    public int[] findUpperLimits(IVecInt newSolution){
-	int[] upperLimits = new int[this.problem.nObjs()];
-	for(int i = 0; i < this.problem.nObjs(); ++i){
-	    upperLimits[i] = this.attainedValue(this.problem.getObj(i));
-	    upperLimits[i]-=this.problem.getObj(i).getMinValue();
-	}
-	return upperLimits;
-    }
-
     public boolean blockDominatedRegion(IVecInt newSolution){
-	int[] literals = new int[this.problem.nObjs()];
+	IVecInt newHardClause = new VecInt(new int[]{});
 	for (int iLit = 0, nLit = newSolution.size(); iLit < nLit; ++iLit)
 	    if(newSolution.get(iLit) > 0)
-	IVecInt newHardClause = new VecInt(literals);
+		newHardClause.push(-newSolution.get(iLit));
 	return this.AddClause(newHardClause);
     }
 
