@@ -144,7 +144,7 @@ public class pMinimal {
 
     private void initializeTopAssumptions(IVecInt topAssumptions){
 
-	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+	for(int iObj = 0, nObj = this.problem.nObjs(); iObj < nObj ; ++iObj){
 	    topAssumptions.push(-this.seqEncoder.getSTop(iObj, this.getUpperKD(iObj) + 1));
 	}
 	return topAssumptions;
@@ -235,10 +235,10 @@ public class pMinimal {
     /**
      *Sets the current upper limit of the explored value of the
      *differential k of the ithOjective to newKD
-     *@param newKD
      *@param iObj
      */
-    private void setUpperKD(int iObj, int newKD){
+    private void setUpperKD(int iObj){
+	int newKD = this.problem.getObj(iObj).getWeightDiff();
 	if(this.seqEncoder.getCurrentKD(iObj) < newKD)
 	    this.seqEncoder.UpdateCurrentK(iObj, newKD);
 	this.UpperKD[iObj] = newKD;
