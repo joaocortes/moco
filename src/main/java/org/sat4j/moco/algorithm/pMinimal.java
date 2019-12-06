@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * SAT4J: a SATisfiability library for Java Copyright (C) 2004, 2012 Artois University and CNRS
  *
@@ -388,10 +387,9 @@ public class pMinimal {
     }
 
     public boolean blockDominatedRegion(IVecInt newSolution){
-	int[] upperLimits = this.findUpperLimits(newSolution);
 	int[] literals = new int[this.problem.nObjs()];
-	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
+	for (int iLit = 0, nLit = newSolution.size(); iLit < nLit; ++iLit)
+	    if(newSolution.get(iLit) > 0)
 	IVecInt newHardClause = new VecInt(literals);
 	return this.AddClause(newHardClause);
     }
