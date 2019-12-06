@@ -364,17 +364,28 @@ public class pMinimal {
 	}
 	return result;
     }
-
     /**
      * Block the region dominated by the known models.
      */
+
+    public int[] findUpperLimits(IVecInt newSolution){
+	int[] upperLimits = new int[this.problem.nObjs()];
+	for(int i = 0; i < this.problem.nObjs(); ++i){
+	    upperLimits[i] = this.attainedValue(this.problem.getObj(i));
+	    upperLimits[i]-=this.problem.getObj(i).getMinValue();
+	}
+	return upperLimits;
+    }
+
     public boolean blockDominatedRegion(IVecInt newSolution){
-	IVecInt newHardClause = new VecInt(new int[]{});
-	for (int iLit = 0, nLit = newSolution.size(); iLit < nLit; ++iLit)
-	    if(newSolution.get(iLit) > 0)
-		newHardClause.push(-newSolution.get(iLit));
+	int[] upperLimits = this.findUpperLimits(newSolution);
+	int[] literals = new int[this.problem.nObjs()];
+	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
+	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
+	IVecInt newHardClause = new VecInt(literals);
 	return this.AddClause(newHardClause);
     }
+
 
     public boolean blockModelX(IVecInt modelX){
 	IVecInt notPreviousModel = new VecInt(new int[] {});
