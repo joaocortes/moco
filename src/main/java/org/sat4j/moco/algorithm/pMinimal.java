@@ -105,58 +105,76 @@ public class pMinimal {
     
     
     /**
-     * Applies the UnsatSat algorithm to the MOCO instance provided
+     * Applies the p-minimal algorithm to the MOCO instance provided
      */
 
-    public void solve() {
+    public void solve2() {
 	IVecInt currentYModel = new VecInt(new int[] {});
 	IVecInt currentXModel = new VecInt(new int[] {});
+	IVecInt assumptions = new VecInt(new int[] {});
+	IVecInt topAssumptions = new VecInt(new int[] {});
 	IVecInt currentModel = new VecInt(new int[] {});
 	Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	Vector<IVecInt> modelsY = new Vector<IVecInt>();
 	Vector<boolean[]> paretoFront = new Vector <boolean[]>();
 
         Log.comment(3, "in UnsatSat.solve");
-	boolean sat = false;
+	boolean sat = true;
+	this.initializeTopAssumptions(topAssumptions);
 	while(sat){
-	    PBSolver currentSolver = new PBSolver();
-	    this.cloneSolverInto(currentSolver);
-	    while(sat){
-		currentSolver.check();
-		if(currentSolver.isSat()){
-		    currentYModel = this.getXModel(currentSolver);
-		    currentXModel = this.getXModel(currentSolver);
-		    currentModel = this.getFullModel(currentSolver);
-		    if(!this.addClauseY0(currentSolver, currentModel))
-			sat = false;
-		    if(!this.addClauseY1(currentSolver))
-			sat = false;
-		}}
+	    while(sat){		
+		if(this.addClauseY0(this.solver, currentModel))
+		    if(this.addClauseY1(this.solver, currentModel)){
+			this.solver.check(assumptions);
+			sat = this.solver.isSat();
+		    }else{sat = false;}
+		else{sat = false;}
+		if(sat){
+		    currentYModel = this.getXModel(this.solver);
+		    currentXModel = this.getXModel(this.solver);
+		    currentModel = this.getFullModel(this.solver);
+		    this.setAssumptions(assumptions, currentYModel);
+		    sat = this.blockDominatedRegion(currentYModel);
+		}
+	    }
 	    this.saveModel(currentXModel);
-	    sat = this.blockModel(currentXModel);
+	    sat = this.blockDominatedRegion(currentYModel);
 	}
     }
 
 
-    private void saveModel(IVecInt currentExplanation){
+    private void initializeTopAssumptions(IVecInt topAssumptions){
+
+	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+	    topAssumptions.push(-this.seqEncoder.getSTop(iObj, this.getUpperKD(iObj) + 1));
+	}
+	return topAssumptions;
+    }
+
+    private void setAssumptions(IVecInt assumptions, IVecInt yModel){
+	for(int i = 0, n = yModel.size(); i < n ; ++i)
+	    if(yModel.get(i)> 0)
+		assumptions.push(yModel.get(i));
+    }
+
+    private void saveModel(IVecInt model){
 	return;
     }
 
-    private boolean blockModel(IVecInt currentExplanation){
-
+    private boolean blockModel(IVecInt model){
 	this.solver.check();
 	return this.solver.isSat();
     }
 
-    private boolean cloneSolverInto(PBSolver clone){
-	return true;
-    }
-    
-    private boolean addClauseY0(PBSolver solver){
-	return true;
+    private boolean addClauseY0(PBSolver solver, IVecInt model){
+	int[] literals = new int[this.problem.nObjs()];
+	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
+	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
+	IVecInt newHardClause = new VecInt(literals);
+	return this.AddClause(newHardClause);
     }
 
-    private boolean addClauseY1(PBSolver solver){
+    private boolean addClauseY1(PBSolver solver, IVecInt model){
 	return true;
     }
 
