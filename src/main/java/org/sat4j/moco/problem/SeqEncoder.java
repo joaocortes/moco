@@ -162,7 +162,7 @@ import org.sat4j.specs.ContradictionException;
 	this.idsB = new int[this.instance.nObjs()][];
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
 	    Objective ithObj = instance.getObj(iObj);
-	    this.idsB[iObj] = new int[ithObj.getWeightDiff()];
+	    this.idsB[iObj] = new int[ithObj.getWeightDiff() + 1];
 
        }
      }
@@ -723,7 +723,7 @@ import org.sat4j.specs.ContradictionException;
 	    return;
 	}
 	if(id < this.firstVariable){
-	    System.out.print(sign+"X["+id+"] ");
+	    System.out.print((sign>0? "+":"-")+"X["+id+"] ");
 	}
     }
 
