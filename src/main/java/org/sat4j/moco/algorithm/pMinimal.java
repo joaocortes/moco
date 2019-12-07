@@ -99,6 +99,8 @@ public class pMinimal {
 	this.realVariablesN = this.solver.nVars();
 	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
+	for(int iObj = 0, nObj = this.problem.nObjs(); iObj < nObj; ++iObj)
+	    this.setUpperKD(iObj);
     }
 
     
@@ -107,7 +109,7 @@ public class pMinimal {
      * Applies the p-minimal algorithm to the MOCO instance provided
      */
 
-    public void solve2() {
+    public void solve() {
 	IVecInt currentYModel = new VecInt(new int[] {});
 	IVecInt currentXModel = new VecInt(new int[] {});
 	IVecInt assumptions = new VecInt(new int[] {});
@@ -115,37 +117,40 @@ public class pMinimal {
 	Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	Vector<IVecInt> modelsY = new Vector<IVecInt>();
 	Vector<boolean[]> paretoFront = new Vector <boolean[]>();
+	boolean sat = true;
 
         Log.comment(3, "in UnsatSat.solve");
-	boolean sat = true;
+	int i = 0;
+	this.solver.check(assumptions);
+	sat = this.solver.isSat();
+	currentYModel = this.getYModel();
+	currentXModel = this.getXModel();
+	currentModel = this.getFullModel();
 	while(sat){
 	    while(sat){		
-		if(this.addClauseY0(this.solver, currentModel))
-		    if(this.addClauseY1(this.solver, currentModel)){
-			this.solver.check(assumptions);
-			sat = this.solver.isSat();
-		    }else{sat = false;}
-		else{sat = false;}
-		if(sat){
-		    currentYModel = this.getXModel(this.solver);
-		    currentXModel = this.getXModel(this.solver);
-		    currentModel = this.getFullModel(this.solver);
-		    this.setAssumptions(assumptions, currentYModel);
-		    sat = this.blockDominatedRegion(currentYModel);
-		}
+		i++;
+		System.out.print("lalala: "+ i);
+		this.setAssumptions(assumptions, currentYModel);
+		this.blockModelX(currentXModel);
+		this.blockDominatedRegion();
+		this.solver.check(assumptions);
+		sat = this.solver.isSat();
+		currentYModel = this.getYModel();
+		currentXModel = this.getXModel();
+		currentModel = this.getFullModel();
 	    }
-	    this.saveModel(currentXModel);
-	    sat = this.blockDominatedRegion(currentYModel);
+	    this.blockModelX(currentXModel);
+	    this.blockDominatedRegion();
+	    this.solver.check();
+	    sat = this.solver.isSat();
 	}
     }
 
 
-
-
     private void setAssumptions(IVecInt assumptions, IVecInt yModel){
 	for(int i = 0, n = yModel.size(); i < n ; ++i)
-	    if(yModel.get(i)> 0)
-		assumptions.push(yModel.get(i));
+	    if(yModel.get(i) < 0)
+		assumptions.push(-yModel.get(i));
     }
 
     private void saveModel(IVecInt model){
@@ -281,10 +286,10 @@ public class pMinimal {
      *@return a filtered model
      */
 
-    public IVecInt getYModel(PBSolver solver){
+    public IVecInt getYModel(){
 	IVecInt model = new VecInt(new int[] {});
-	for(int id = 1; id <= solver.nVars();++id){
-	    int literal = (solver.modelValue(id))? id: -id;
+	for(int id = 1; id <= this.solver.nVars();++id){
+	    int literal = (this.solver.modelValue(id))? id: -id;
 	    if(this.isY(literal))
 		model.push(literal);
 	}
@@ -296,10 +301,10 @@ public class pMinimal {
      *@return a filtered model
      */
 
-    public IVecInt getXModel(PBSolver solver){
+    public IVecInt getXModel(){
 	IVecInt model = new VecInt(new int[] {});
-	for(int id = 1; id <= solver.nVars();++id){
-	    int literal = (solver.modelValue(id))? id: -id;
+	for(int id = 1; id <= this.solver.nVars();++id){
+	    int literal = (this.solver.modelValue(id))? id: -id;
 	    if(this.isX(literal))
 		model.push(literal);
 	}
@@ -311,10 +316,10 @@ public class pMinimal {
      *@return a filtered model
      */
 
-    public IVecInt getFullModel(PBSolver pbSolver){
+    public IVecInt getFullModel(){
 	IVecInt model = new VecInt(new int[] {});
-	for(int id = 1; id <= pbSolver.nVars();++id){
-	    int literal = (pbSolver.modelValue(id))? id: -id;
+	for(int id = 1; id <= this.solver.nVars();++id){
+	    int literal = (this.solver.modelValue(id))? id: -id;
 	    model.push(literal);
 	}
 	return model;
@@ -368,7 +373,7 @@ public class pMinimal {
      * Block the region dominated by the known models.
      */
 
-    public int[] findUpperLimits(IVecInt newSolution){
+    public int[] findUpperLimits(){
 	int[] upperLimits = new int[this.problem.nObjs()];
 	for(int i = 0; i < this.problem.nObjs(); ++i){
 	    upperLimits[i] = this.attainedValue(this.problem.getObj(i));
@@ -377,8 +382,8 @@ public class pMinimal {
 	return upperLimits;
     }
 
-    public boolean blockDominatedRegion(IVecInt newSolution){
-	int[] upperLimits = this.findUpperLimits(newSolution);
+    public boolean blockDominatedRegion(){
+	int[] upperLimits = this.findUpperLimits();
 	int[] literals = new int[this.problem.nObjs()];
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
 	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
