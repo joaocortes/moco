@@ -119,7 +119,7 @@ public class pMinimal {
 	Vector<boolean[]> paretoFront = new Vector <boolean[]>();
 	boolean sat = true;
 
-        Log.comment(3, "in UnsatSat.solve");
+        Log.comment(3, "in pMinimal.solve");
 	int i = 0;
 	this.solver.check(assumptions);
 	sat = this.solver.isSat();
