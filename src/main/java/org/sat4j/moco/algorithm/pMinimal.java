@@ -128,21 +128,25 @@ public class pMinimal {
 	currentModel = this.getFullModel();
 	while(sat){
 	    while(sat){		
-		i++;
-		System.out.print("lalala: "+ i);
 		this.setAssumptions(assumptions, currentYModel);
 		this.blockModelX(currentXModel);
 		this.blockDominatedRegion();
 		this.solver.check(assumptions);
 		sat = this.solver.isSat();
-		currentYModel = this.getYModel();
-		currentXModel = this.getXModel();
-		currentModel = this.getFullModel();
+		if(sat){
+		    currentYModel = this.getYModel();
+		    currentXModel = this.getXModel();
+		    currentModel = this.getFullModel();
+		    }
 	    }
-	    this.blockModelX(currentXModel);
-	    this.blockDominatedRegion();
-	    this.solver.check();
-	    sat = this.solver.isSat();
+		i++;
+		System.out.println("lalala: "+ i);
+		this.solver.check();
+		sat = this.solver.isSat();
+		if(sat){
+		    this.blockDominatedRegion();
+		    this.blockModelX(currentXModel);
+		}
 	}
     }
 
