@@ -118,30 +118,27 @@ public class pMinimal {
         Log.comment(3, "in pMinimal.solve");
 	this.solver.check(assumptions);
 	sat = this.solver.isSat();
-	currentYModel = this.getYModel();
-	currentXModel = this.getXModel();
-	this.result.saveModel(this.solver);
 	while(sat){
 	    while(sat){		
+		currentYModel = this.getYModel();
+		currentXModel = this.getXModel();
 		this.setAssumptions(assumptions, currentYModel);
 		this.blockModelX(currentXModel);
 		this.blockDominatedRegion();
 		this.solver.check(assumptions);
 		sat = this.solver.isSat();
-		if(sat){
-		    currentYModel = this.getYModel();
-		    currentXModel = this.getXModel();
-		    this.result.saveModel(this.solver);
-    }
 	    }
-		this.solver.check();
-		sat = this.solver.isSat();
-		if(sat){
-		    this.blockDominatedRegion();
-		    this.blockModelX(currentXModel);
-		}
+	    this.solver.check();
+	    sat = this.solver.isSat();
+	    if(sat){
+		this.result.saveModel(this.solver);
+		this.blockDominatedRegion();
+		this.blockModelX(currentXModel);
+	    }
 	}
     }
+
+
 
 
     private void setAssumptions(IVecInt assumptions, IVecInt yModel){
@@ -150,10 +147,7 @@ public class pMinimal {
 		assumptions.push(-yModel.get(i));
     }
 
-    private void saveModel(IVecInt model){
-	this.result.saveModel(this.solver);
-	return;
-    }
+
 
 
     /**
