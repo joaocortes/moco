@@ -111,30 +111,31 @@ public class pMinimal {
 
     public void solve() {
 	IVecInt currentYModel = new VecInt(new int[] {});
-	IVecInt currentXModel = new VecInt(new int[] {});
+	// IVecInt currentXModel = new VecInt(new int[] {});
+	boolean[] currentXModelValues = new boolean[this.problem.nVars()];
 	IVecInt assumptions = new VecInt(new int[] {});
 	boolean sat = true;
-
         Log.comment(3, "in pMinimal.solve");
 	this.solver.check(assumptions);
 	sat = this.solver.isSat();
 	while(sat){
 	    while(sat){		
 		currentYModel = this.getYModel();
-		currentXModel = this.getXModel();
+		currentXModelValues = this.getXModelValues();
 		this.setAssumptions(assumptions, currentYModel);
-		this.blockModelX(currentXModel);
+		// this.blockModelX(currentXModel);
 		this.blockDominatedRegion();
 		this.solver.check(assumptions);
 		sat = this.solver.isSat();
+	    Log.comment(3, "ali");
 	    }
+	    Log.comment(3, "aqui");
+	    this.result.saveThisModel(currentXModelValues);
 	    this.solver.check();
 	    sat = this.solver.isSat();
-	    if(sat){
-		this.result.saveModel(this.solver);
-		this.blockDominatedRegion();
-		this.blockModelX(currentXModel);
-	    }
+	    if(sat)
+		sat = this.blockDominatedRegion();
+	    // this.blockModelX(currentXModel);
 	}
     }
 
@@ -144,7 +145,7 @@ public class pMinimal {
     private void setAssumptions(IVecInt assumptions, IVecInt yModel){
 	for(int i = 0, n = yModel.size(); i < n ; ++i)
 	    if(yModel.get(i) < 0)
-		assumptions.push(-yModel.get(i));
+		assumptions.push(yModel.get(i));
     }
 
 
@@ -256,6 +257,19 @@ public class pMinimal {
 
     }
 
+    /**
+     *returns the model in DIMACS format, including only the real
+     *variables and the STop variables of the sequential encoder
+     *@return a filtered model
+     */
+
+    public boolean[] getXModelValues(){
+	boolean[] modelValues = new boolean[this.problem.nVars()];
+	for(int id = 1; id <= this.problem.nVars();++id){
+	    modelValues[id - 1] = this.solver.modelValue(id);
+	}
+	return modelValues;
+    }
     /**
      *returns the model in DIMACS format, including only the real
      *variables and the STop variables of the sequential encoder
