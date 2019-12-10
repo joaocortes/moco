@@ -113,19 +113,13 @@ public class pMinimal {
 	IVecInt currentYModel = new VecInt(new int[] {});
 	IVecInt currentXModel = new VecInt(new int[] {});
 	IVecInt assumptions = new VecInt(new int[] {});
-	IVecInt currentModel = new VecInt(new int[] {});
-	Vector<IVecInt> modelsX = new Vector<IVecInt>();
-	Vector<IVecInt> modelsY = new Vector<IVecInt>();
-	Vector<boolean[]> paretoFront = new Vector <boolean[]>();
 	boolean sat = true;
 
         Log.comment(3, "in pMinimal.solve");
-	int i = 0;
 	this.solver.check(assumptions);
 	sat = this.solver.isSat();
 	currentYModel = this.getYModel();
 	currentXModel = this.getXModel();
-	currentModel = this.getFullModel();
 	while(sat){
 	    while(sat){		
 		this.setAssumptions(assumptions, currentYModel);
@@ -136,11 +130,8 @@ public class pMinimal {
 		if(sat){
 		    currentYModel = this.getYModel();
 		    currentXModel = this.getXModel();
-		    currentModel = this.getFullModel();
 		    }
 	    }
-		i++;
-		System.out.println("lalala: "+ i);
 		this.solver.check();
 		sat = this.solver.isSat();
 		if(sat){
