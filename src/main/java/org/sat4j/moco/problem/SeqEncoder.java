@@ -22,6 +22,8 @@
  *******************************************************************************/
 package org.sat4j.moco.problem;
 
+
+import org.sat4j.moco.util.Log;
 import java.lang.Math;
 import java.util.Hashtable;
 import java.util.Set;
@@ -123,11 +125,11 @@ import org.sat4j.specs.ContradictionException;
      */
     
      public void UpdateCurrentK(int iObj , int afterKD ){
-	 // System.out.print("Internal:");
-	 // System.out.print("["+this.getCurrentKD(0));
+	 // Log.comment(3, "Internal:");
+	 // Log.comment(3, "["+this.getCurrentKD(0));
 	 // for(int iObj1 = 1; iObj1 < this.instance.nObjs(); ++iObj1)
-	 //     System.out.print(", "+this.getCurrentKD(iObj1));
-	 // System.out.println("]");
+	 //     Log.comment(3, ", "+this.getCurrentKD(iObj1));
+	 // Log.comment(3, "]");
  
 	 if(this.getInitializedKD(iObj)< afterKD ){
 	     // STop variables are also extended at 
@@ -140,13 +142,13 @@ import org.sat4j.specs.ContradictionException;
 	 if(this.getCurrentKD(iObj) < afterKD){
 	     this.blockingVariableB(iObj, afterKD);
 	     if(iObj == 0)
-		 System.out.println("Clauses -1 4 8 9");
+		 Log.comment(3, "Clauses -1 4 8 9");
 	     this.ifNotLessNotMore(iObj,afterKD);
-	     System.out.println("");
+	     Log.comment(3, "");
 	     this.IfXAtLeastW(iObj, afterKD);
-	     System.out.println("");
+	     Log.comment(3, "");
 	     this.IfLessAlsoMore(iObj, afterKD);
-	     System.out.println("");
+	     Log.comment(3, "");
 	     this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
 	     this.setCurrentKD(iObj, afterKD);
 	 }
@@ -320,14 +322,14 @@ import org.sat4j.specs.ContradictionException;
     private void AddClause(IVecInt setOfLiterals){
 	for(int i = 0; i < setOfLiterals.size(); ++i)
 	    this.prettyPrintVariable(setOfLiterals.get(i));
-	System.out.println();
+	// Log.comment(3, );
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	} catch (ContradictionException e) {
-	    System.out.println("contradiction when adding clause: ");
+	    Log.comment(3, "contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		System.out.print(" " + setOfLiterals.get(j) + " " );
-	    System.out.println();
+		Log.comment(3, " " + setOfLiterals.get(j) + " " );
+	    // Log.comment(3, );
 	    return;
 	}
     }
@@ -343,14 +345,14 @@ import org.sat4j.specs.ContradictionException;
 
     // 	for(int i = 0; i < setOfLiterals.size(); ++i)
     // 	    this.prettyPrintVariable(setOfLiterals.get(i));
-    // 	System.out.println();
+    // 	Log.comment(3, );
     // 	try{
     // 	    constrainId = this.solver.addRemovableConstr(PBFactory.instance().mkClause(setOfLiterals));
     // 	} catch (ContradictionException e) {
-    // 	    System.out.println("contradiction when adding clause: ");
+    // 	    Log.comment(3, "contradiction when adding clause: ");
     // 	    for(int j = 0; j < setOfLiterals.size(); ++j)
-    // 		System.out.print(" " + setOfLiterals.get(j) + " " );
-    // 	    System.out.println();
+    // 		Log.comment(3, " " + setOfLiterals.get(j) + " " );
+    // 	    Log.comment(3, );
     // 	    return constrainId;
     // 	}
     // 	return null;
@@ -558,7 +560,7 @@ import org.sat4j.specs.ContradictionException;
 	int nLit = this.instance.getObj(iObj).getTotalLits();
 	for(int kd = this.initializedKDs[iObj]+1; kd <= afterKD ; ++kd){
 	    for (int x = 1 ; x <= nLit; ++x){
-		/* System.out.println(iObj + " " + iX + " " + kd + " " + this.newVar()); */
+		/* Log.comment(3, iObj + " " + iX + " " + kd + " " + this.newVar()); */
 		this.setS(iObj, x, kd, this.newVar());
 	    }
 	}
@@ -696,7 +698,7 @@ import org.sat4j.specs.ContradictionException;
      public void prettyPrintVecInt(IVecInt vecInt){
 	 for(int j = 0; j < vecInt.size(); ++j)
 	     this.prettyPrintVariable(vecInt.get(j));
-	 System.out.println();
+	 Log.comment(3, );
 	 return;
      }
 
@@ -706,7 +708,7 @@ import org.sat4j.specs.ContradictionException;
 	// if(this.isSTop(id)){
 	//     int iObj = this.getObjFromSTopVariable(id);
 	//     int kd = this.getKDFromSTopVariable(id);
-	//     System.out.print(literal + "->" + "STop[" + iObj + ", " + kd +"] ");
+	//     Log.comment(3, literal + "->" + "STop[" + iObj + ", " + kd +"] ");
 	//     return;
 	// }
 	 
@@ -714,16 +716,16 @@ import org.sat4j.specs.ContradictionException;
 	    int iObj = this.getObjFromSVariable(id);
 	    int iX = this.getXFromSVariable(id);
 	    int kd = this.getKDFromSVariable(id);
-	    System.out.print(literal + "->" + "S[" + iObj + ", " + iX + ", " + kd +"] ");
+	    Log.comment(3, literal + "->" + "S[" + iObj + ", " + iX + ", " + kd +"] ");
 	    return;
 	}
 	if(this.isB(id)){
 	    int iObj = this.getObjFromBVariable(id);
-	    System.out.print(id + "->" + "B[" + ", " + iObj +"] ");
+	    Log.comment(3, id + "->" + "B[" + ", " + iObj +"] ");
 	    return;
 	}
 	if(id < this.firstVariable){
-	    System.out.print((sign>0? "+":"-")+"X["+id+"] ");
+	    Log.comment(3, (sign>0? "+":"-")+"X["+id+"] ");
 	}
     }
 
@@ -735,7 +737,7 @@ import org.sat4j.specs.ContradictionException;
 		int iObj = this.getObjFromSVariable(key);
 		int iX = this.getXFromSVariable(key);
 		int kd = this.getKDFromSVariable(key);
-		System.out.println(key + "->" + "S[" + iObj + ", " + iX + ", " + kd +"]");
+		Log.comment(3, key + "->" + "S[" + iObj + ", " + iX + ", " + kd +"]");
 	    }
 	}
     }
