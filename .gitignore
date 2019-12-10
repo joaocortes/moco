@@ -5,3 +5,5 @@ target
 *~
 /compilationAfter
 /compilationBefore
+/MO2PBMO_v0.1/results/
+*.pyc
