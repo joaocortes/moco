@@ -120,6 +120,7 @@ public class pMinimal {
 	sat = this.solver.isSat();
 	currentYModel = this.getYModel();
 	currentXModel = this.getXModel();
+	this.result.saveModel(this.solver);
 	while(sat){
 	    while(sat){		
 		this.setAssumptions(assumptions, currentYModel);
@@ -130,7 +131,8 @@ public class pMinimal {
 		if(sat){
 		    currentYModel = this.getYModel();
 		    currentXModel = this.getXModel();
-		    }
+		    this.result.saveModel(this.solver);
+    }
 	    }
 		this.solver.check();
 		sat = this.solver.isSat();
@@ -149,25 +151,10 @@ public class pMinimal {
     }
 
     private void saveModel(IVecInt model){
+	this.result.saveModel(this.solver);
 	return;
     }
 
-    private boolean blockModel(IVecInt model){
-	this.solver.check();
-	return this.solver.isSat();
-    }
-
-    private boolean addClauseY0(PBSolver solver, IVecInt model){
-	int[] literals = new int[this.problem.nObjs()];
-	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
-	IVecInt newHardClause = new VecInt(literals);
-	return this.AddClause(newHardClause);
-    }
-
-    private boolean addClauseY1(PBSolver solver, IVecInt model){
-	return true;
-    }
 
     /**
      * Generate the upper limit assumptions
@@ -349,7 +336,6 @@ public class pMinimal {
     /**
      * The attained value of objective  in the interpretation of model 
      @param model
-     @param iObj
     */
     private int attainedValue(Objective objective){
 	int result = 0;
