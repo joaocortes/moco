@@ -698,7 +698,7 @@ import org.sat4j.specs.ContradictionException;
      public void prettyPrintVecInt(IVecInt vecInt){
 	 for(int j = 0; j < vecInt.size(); ++j)
 	     this.prettyPrintVariable(vecInt.get(j));
-	 Log.comment(3, );
+	 // Log.comment(3, );
 	 return;
      }
 

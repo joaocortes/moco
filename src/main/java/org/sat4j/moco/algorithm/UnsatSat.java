@@ -126,17 +126,17 @@ public class UnsatSat {
 	//	this.seqEncoder.UpdateCurrentK(0, 2);
 	while(goOn){
 	    ///log..
-	    System.out.print("upper limit:");
-	    System.out.print("["+this.getUpperKD(0));
+	    Log.comment(3, "upper limit:");
+	    Log.comment(3, "["+this.getUpperKD(0));
 	    for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
-		System.out.print(", "+this.getUpperKD(iObj));
-	    System.out.println("]");
+		Log.comment(3, ", "+this.getUpperKD(iObj));
+	    Log.comment(3, "]");
 	    //..log
 	    this.preAssumptionsExtend();
 	    currentAssumptions = this.generateUpperBoundAssumptions();
 
 	    //log..
-	    System.out.println("Checking against assumptions:");
+	    Log.comment(3, "Checking against assumptions:");
 	    this.seqEncoder.prettyPrintVecInt(currentAssumptions);
 	    //..log
 
@@ -145,26 +145,25 @@ public class UnsatSat {
 	    if(solver.isSat()){
 		subResult.saveModel(this.solver);
 		//log
-		System.out.println(" current subResult size:" + subResult.nSolutions());
+		Log.comment(3, " current subResult size:" + subResult.nSolutions());
 
 		modelsX.add(this.getXModel());
 		modelsY.add(this.getYModel());
 
 		//log..
-		System.out.println("ModelX :");
+		Log.comment(3, "ModelX :");
 		this.printModel(modelsX.lastElement());
-		System.out.print("j o ");
+		Log.comment(3, "j o ");
 		for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 		    Objective ithObj = this.problem.getObj(iObj);
-		    System.out.print(this.attainedValue(ithObj)+ " " );
+		    Log.comment(3, this.attainedValue(ithObj)+ " " );
 		}
-		System.out.println();
-		System.out.println("ModelY :");
+		Log.comment(3, "ModelY :");
 		this.printModel(modelsY.lastElement());
 		//..log
 
 		//log
-		System.out.println("Blocking dominated region");
+		Log.comment(3, "Blocking dominated region");
 
 		if(! this.blockDominatedRegion(modelsY.lastElement()))
 		    goOn = false;
@@ -177,7 +176,7 @@ public class UnsatSat {
 		currentExplanation  = solver.unsatExplanation();
 		
 		//log..
-		System.out.println("Explanation:");
+		Log.comment(3, "Explanation:");
 		this.seqEncoder.prettyPrintVecInt(currentExplanation);
 		//..log
 
@@ -193,11 +192,10 @@ public class UnsatSat {
 
 	}
 
-	System.out.println("Pareto Front with "+paretoFront.size());
+	Log.comment(3, "Pareto Front with "+paretoFront.size());
 	for(int i = 0; i < paretoFront.size();++i){
 	    for(int j = 0 ; j < this.problem.nVars(); ++j)
-		System.out.print(paretoFront.get(i)[j]+" ");
-	    System.out.println();
+		Log.comment(3, paretoFront.get(i)[j]+" ");
 }
 	return;
     }
@@ -360,9 +358,8 @@ public class UnsatSat {
      */
     public void printModels(Vector<IVecInt> models) {
 	for(int i = 0; i <models.size(); ++i){
-	    System.out.println("Model " + i);
+	    Log.comment(3, "Model " + i);
 	    this.printModel(models.get(i));
-	    System.out.println();
 	}
 	return;
     }
@@ -374,7 +371,6 @@ public class UnsatSat {
     public void printModel(IVecInt model) {
 	for(int j = 0; j <model.size(); ++j)
 	    this.seqEncoder.prettyPrintVariable(model.get(j));
-	System.out.println();
 
 
 	return;
@@ -430,15 +426,13 @@ public class UnsatSat {
     private boolean AddClause(IVecInt setOfLiterals){
 	for(int i = 0; i < setOfLiterals.size(); ++i)
 	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(i));
-	System.out.println();
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	}
 	catch (ContradictionException e) {
-	    System.out.println("contradiction when adding clause: ");
+	    Log.comment(3, "contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
 		this.seqEncoder.prettyPrintVariable(setOfLiterals.get(j));
-	    System.out.println();
 	    return false;
 	}
 	return true;
