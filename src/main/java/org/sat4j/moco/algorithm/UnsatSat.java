@@ -383,7 +383,6 @@ public class UnsatSat {
     /**
      * The attained value of objective  in the interpretation of model 
      @param model
-     @param iObj
     */
     private int attainedValue(Objective objective){
 	int result = 0;
