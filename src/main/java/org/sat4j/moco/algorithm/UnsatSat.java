@@ -444,8 +444,12 @@ public class UnsatSat {
 	}
 	return true;
     }
-    public Result getResult(){
-	return null;
-    }    
+
+    /**
+     * Retrieves the result of the last call to {@link #solve()}.
+     * @return The result.
+     */
+    public Result getResult() { return this.result; }
+    
 }
 
