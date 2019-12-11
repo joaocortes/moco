@@ -143,6 +143,7 @@ public class pMinimal {
 	    	sat = this.blockDominatedRegion(currentXModelValues);
 	    // this.blockModelX(currentXModel);
 	}
+	this.result.setParetoFrontFound();
     }
 
 
