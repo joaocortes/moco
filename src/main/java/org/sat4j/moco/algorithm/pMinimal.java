@@ -148,10 +148,21 @@ public class pMinimal {
 
 
 
-    private void setAssumptions(IVecInt assumptions, IVecInt yModel){
-	for(int i = 0, n = yModel.size(); i < n ; ++i)
-	    if(yModel.get(i) < 0)
-		assumptions.push(yModel.get(i));
+    private void setAssumptions(IVecInt assumptions, IVecInt yModel,boolean[] XModelValues){
+	int[] upperLimits = this.findUpperLimits(XModelValues);
+	int literal, id;
+	int currentKD, currentIObj;
+	for(int i = 0, n = yModel.size(); i < n ; ++i){
+	    literal = yModel.get(i);
+	    boolean literalValue = this.solver.isLiteralPositive(literal);
+	    id =  this.solver.idFromLiteral(literal);
+	    if(literalValue){
+		currentKD = this.seqEncoder.getKDFromSTopVariable(literal);
+		currentIObj = this.seqEncoder.getObjFromSTopVariable(literal);
+		if( currentKD < upperLimits[currentIObj])
+		    assumptions.push(-id);
+	    }
+	}
     }
 
 
