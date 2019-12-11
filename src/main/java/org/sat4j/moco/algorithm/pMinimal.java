@@ -125,9 +125,9 @@ public class pMinimal {
 	    while(sat){		
 		currentYModel = this.getYModel();
 		currentXModelValues = this.getXModelValues();
-		this.setAssumptions(assumptions, currentYModel);
+		this.setAssumptions(assumptions, currentYModel, currentXModelValues);
 		// this.blockModelX(currentXModel);
-		this.blockDominatedRegion();
+		this.blockDominatedRegion(currentXModelValues);
 		this.solver.check(assumptions);
 		sat = this.solver.isSat();
 		Log.comment(3, "ali");
@@ -138,8 +138,9 @@ public class pMinimal {
 	    this.solver.check();
 	    sat = this.solver.isSat();
 	    if(sat)
-		sat = this.blockDominatedRegion();
 		Log.comment(3, "Is sat after check with no assumptions");
+	    if(sat)
+	    	sat = this.blockDominatedRegion(currentXModelValues);
 	    // this.blockModelX(currentXModel);
 	}
     }
@@ -350,7 +351,7 @@ public class pMinimal {
      * The attained value of objective  in the interpretation of model 
      @param model
     */
-    private int attainedValue(Objective objective){
+    private int attainedValue(Objective objective, boolean[] XModelValues){
 	Log.comment(5, "In pMinimal.attainedValue");
 	int result = 0;
 	int objectiveNLit = objective.getTotalLits();
@@ -370,19 +371,20 @@ public class pMinimal {
      * Block the region dominated by the known models.
      */
 
-    public int[] findUpperLimits(){
+    public int[] findUpperLimits(boolean[] XModelValues){
+	Log.comment(5, "In pMinimal.findUpperLimits");
 	int[] upperLimits = new int[this.problem.nObjs()];
 	for(int i = 0; i < this.problem.nObjs(); ++i){
-	    upperLimits[i] = this.attainedValue(this.problem.getObj(i));
+	    upperLimits[i] = this.attainedValue(this.problem.getObj(i), XModelValues);
 	    upperLimits[i]-=this.problem.getObj(i).getMinValue();
 	}
 	Log.comment(5, "done");
 	return upperLimits;
     }
 
-    public boolean blockDominatedRegion(){
-	int[] upperLimits = this.findUpperLimits();
+    public boolean blockDominatedRegion(boolean[] XModelValues){
 	Log.comment(5, "in pMinimal.blockDominatedregion");
+	int[] upperLimits = this.findUpperLimits(XModelValues);
 	int[] literals = new int[this.problem.nObjs()];
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
 	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
