@@ -323,14 +323,12 @@ import org.sat4j.specs.ContradictionException;
     private void AddClause(IVecInt setOfLiterals){
 	for(int i = 0; i < setOfLiterals.size(); ++i)
 	    this.prettyPrintVariable(setOfLiterals.get(i));
-	// Log.comment(6, );
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	} catch (ContradictionException e) {
 	    Log.comment(6, "contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
 		Log.comment(6, " " + setOfLiterals.get(j) + " " );
-	    // Log.comment(6, );
 	    return;
 	}
     }
@@ -346,14 +344,12 @@ import org.sat4j.specs.ContradictionException;
 
     // 	for(int i = 0; i < setOfLiterals.size(); ++i)
     // 	    this.prettyPrintVariable(setOfLiterals.get(i));
-    // 	Log.comment(6, );
     // 	try{
     // 	    constrainId = this.solver.addRemovableConstr(PBFactory.instance().mkClause(setOfLiterals));
     // 	} catch (ContradictionException e) {
     // 	    Log.comment(6, "contradiction when adding clause: ");
     // 	    for(int j = 0; j < setOfLiterals.size(); ++j)
     // 		Log.comment(6, " " + setOfLiterals.get(j) + " " );
-    // 	    Log.comment(6, );
     // 	    return constrainId;
     // 	}
     // 	return null;
@@ -699,7 +695,7 @@ import org.sat4j.specs.ContradictionException;
      public void prettyPrintVecInt(IVecInt vecInt){
 	 for(int j = 0; j < vecInt.size(); ++j)
 	     this.prettyPrintVariable(vecInt.get(j));
-	 Log.comment(6, );
+
 	 return;
      }
 
