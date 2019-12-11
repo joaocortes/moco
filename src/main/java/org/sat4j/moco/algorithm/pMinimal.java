@@ -130,18 +130,13 @@ public class pMinimal {
 		this.blockDominatedRegion(currentXModelValues);
 		this.solver.check(assumptions);
 		sat = this.solver.isSat();
-		Log.comment(3, "ali");
 	    }
-	    Log.comment(3, "aqui");
 	    assumptions = new VecInt(new int[] {});
 	    this.result.saveThisModel(currentXModelValues);
 	    this.solver.check();
 	    sat = this.solver.isSat();
 	    if(sat)
-		Log.comment(3, "Is sat after check with no assumptions");
-	    if(sat)
 	    	sat = this.blockDominatedRegion(currentXModelValues);
-	    // this.blockModelX(currentXModel);
 	}
 	this.result.setParetoFrontFound();
     }
@@ -398,7 +393,6 @@ public class pMinimal {
 	Log.comment(5, "In pMinimal.AddClause");
 	for(int i = 0; i < setOfLiterals.size(); ++i)
 	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(i));
-	System.out.println();
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	}
