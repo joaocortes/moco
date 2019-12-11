@@ -167,14 +167,13 @@ public class UnsatSat {
 
 		if(! this.blockDominatedRegion(modelsY.lastElement()))
 		    goOn = false;
-		if(! this.blockModelX(modelsX.lastElement()))
-		    goOn = false;
+		// if(! this.blockModelX(modelsX.lastElement()))
+		//     goOn = false;
 	    }else{
 		for(int i = 0; i < subResult.nSolutions(); ++i)
 		    paretoFront.add(subResult.getAssignment(i));
 		subResult = new Result(this.problem);	    
 		currentExplanation  = solver.unsatExplanation();
-		
 		//log..
 		Log.comment(5, "Explanation:");
 		this.seqEncoder.prettyPrintVecInt(currentExplanation);
@@ -185,11 +184,7 @@ public class UnsatSat {
 		}else{
 		    this.updateUpperBound(currentExplanation);
 		}
-
-
 	    }
-
-
 	}
 
 	Log.comment(5, "Pareto Front with "+paretoFront.size());
