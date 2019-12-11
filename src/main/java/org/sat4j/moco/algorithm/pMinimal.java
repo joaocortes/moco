@@ -133,6 +133,7 @@ public class pMinimal {
 		Log.comment(3, "ali");
 	    }
 	    Log.comment(3, "aqui");
+	    assumptions = new VecInt(new int[] {});
 	    this.result.saveThisModel(currentXModelValues);
 	    this.solver.check();
 	    sat = this.solver.isSat();
