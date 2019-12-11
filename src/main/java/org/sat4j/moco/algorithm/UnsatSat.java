@@ -183,6 +183,7 @@ public class UnsatSat {
 		}
 	    }
 	}
+	this.result.setParetoFrontFound();
 	return;
     }
     
