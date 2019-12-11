@@ -87,6 +87,7 @@ public class pMinimal {
      */
     
     public pMinimal(Instance m) {
+	Log.comment(5, "In pMinimal.pMinimal");
 	this.problem = m;
 	this.result = new Result(m);
 	try {
@@ -94,6 +95,7 @@ public class pMinimal {
         }
         catch (ContradictionException e) {
             Log.comment(3, "Contradiction in ParetoMCS.buildSolver");
+	    Log.comment(5, "done");
             return;
         }
 	this.realVariablesN = this.solver.nVars();
@@ -101,6 +103,7 @@ public class pMinimal {
 	this.UpperKD =  new int[(this.problem.nObjs())];
 	for(int iObj = 0, nObj = this.problem.nObjs(); iObj < nObj; ++iObj)
 	    this.setUpperKD(iObj);
+	    Log.comment(5, "done");
     }
 
     
@@ -127,7 +130,7 @@ public class pMinimal {
 		this.blockDominatedRegion();
 		this.solver.check(assumptions);
 		sat = this.solver.isSat();
-	    Log.comment(3, "ali");
+		Log.comment(3, "ali");
 	    }
 	    Log.comment(3, "aqui");
 	    this.result.saveThisModel(currentXModelValues);
@@ -135,6 +138,7 @@ public class pMinimal {
 	    sat = this.solver.isSat();
 	    if(sat)
 		sat = this.blockDominatedRegion();
+		Log.comment(3, "Is sat after check with no assumptions");
 	    // this.blockModelX(currentXModel);
 	}
     }
@@ -346,6 +350,7 @@ public class pMinimal {
      @param model
     */
     private int attainedValue(Objective objective){
+	Log.comment(5, "In pMinimal.attainedValue");
 	int result = 0;
 	int objectiveNLit = objective.getTotalLits();
 	ReadOnlyVecInt objectiveLits = objective.getSubObjLits(0);
@@ -356,6 +361,8 @@ public class pMinimal {
 	    if(this.solver.modelValue(literal))
 		result += coeff;
 	}
+	Log.comment(3, "attained value:" + result);
+	Log.comment(5, "done");
 	return result;
     }
     /**
@@ -368,15 +375,18 @@ public class pMinimal {
 	    upperLimits[i] = this.attainedValue(this.problem.getObj(i));
 	    upperLimits[i]-=this.problem.getObj(i).getMinValue();
 	}
+	Log.comment(5, "done");
 	return upperLimits;
     }
 
     public boolean blockDominatedRegion(){
 	int[] upperLimits = this.findUpperLimits();
+	Log.comment(5, "in pMinimal.blockDominatedregion");
 	int[] literals = new int[this.problem.nObjs()];
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
 	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
 	IVecInt newHardClause = new VecInt(literals);
+	Log.comment(5, "done");
 	return this.AddClause(newHardClause);
     }
 
@@ -389,6 +399,7 @@ public class pMinimal {
     }
     
     private boolean AddClause(IVecInt setOfLiterals){
+	Log.comment(5, "In pMinimal.AddClause");
 	for(int i = 0; i < setOfLiterals.size(); ++i)
 	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(i));
 	System.out.println();
@@ -400,8 +411,10 @@ public class pMinimal {
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
 		this.seqEncoder.prettyPrintVariable(setOfLiterals.get(j));
 	    System.out.println();
+	    Log.comment(5, "done");
 	    return false;
 	}
+	    Log.comment(5, "done");
 	return true;
     }
 
