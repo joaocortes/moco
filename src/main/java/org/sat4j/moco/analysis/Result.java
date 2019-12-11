@@ -39,22 +39,22 @@ import org.sat4j.moco.util.Log;
  * @author Miguel Terra-Neves
  */
 public class Result {
-    
+
     /**
      * A MOEA framework representation of the MOCO instance.
      */
     private MOCOProblem problem = null;
-    
+
     /**
      * Stores the nondominated solutions found by the solver.
      */
     private NondominatedPopulation solutions = null;
-    
+
     /**
      * Boolean value indicating if the {@link #solutions} set is the Pareto front of the MOCO instance.
      */
     private boolean is_opt = false;
-    
+
     /**
      * Creates an instance of a container for the nondominated solutions found for a given MOCO instance.
      * @param m The instance.
@@ -63,7 +63,7 @@ public class Result {
         this.problem = new MOCOProblem(m);
         this.solutions = new NondominatedPopulation();
     }
-    
+
     /**
      * Extracts and stores the solution that corresponds to a model in a given PB solver.
      * @param solver The solver.
@@ -114,7 +114,7 @@ public class Result {
         }
         return false;
     }
-    
+
     /**
      * Checks if a given solution is weakly dominated by some other solution.
      * @param sol The solution to check.
@@ -130,47 +130,62 @@ public class Result {
         }
         return true;
     }
-    
+
     /**
      * Method used to notify the container that its set of nondominated solutions is the Pareto front of the
      * MOCO instance.
      */
     public void setParetoFrontFound() { this.is_opt = true; }
-    
+
     /**
      * Checks if the set of nondominated solutions stored in the container is the Pareto front of the MOCO
      * instance.
      * @return True if the solution set is the Pareto front, false otherwise.
      */
     public boolean isParetoFront() { return this.is_opt; }
-    
+
     /**
      * Retrieves the number of nondominated solutions in the container.
      * @return The number of nondominated solutions.
      */
     public int nSolutions() { return this.solutions.size(); }
-    
+
     /**
      * Retrieves the nondominated solutions in the container.
      * @return The nondominated solutions.
      */
     NondominatedPopulation getSolutions() { return this.solutions; }
-    
+
     /**
      * Retrieves a given nondominated solution in the container.
      * @param i The solution index.
      * @return The {@code i}-th nondominated solution.
      */
-    Solution getSolution(int i) { return getSolutions().get(i); }
-    
+    public Solution getSolution(int i) { return getSolutions().get(i); }
+
     /**
      * Adds a solution to the container and updates the set of nondominated solutions.
      * If the solution is dominated, it is discarded.
      * If not, it is added to the set and now dominated solutions are discarded.
      * @param s The solution.
      */
-    void addSolution(Solution s) { this.solutions.add(s); }
-    
+     void addSolution(Solution s) { this.solutions.add(s); }
+
+    /**
+     * Adds a solution to the container and updates the set of nondominated solutions.
+     * If the solution is dominated, it is discarded.
+     * If not, it is added to the set and now dominated solutions are discarded.
+     * @param s The solution.
+     */
+    public void addSolutionPublicly(Solution sol) { 
+	     this.problem.evaluate(sol);
+        if (!sol.violatesConstraints() && !isWeaklyDominated(sol, this.solutions)) {
+            this.solutions.add(sol);
+            // Log.costs(sol.getObjectives());
+            // Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
+        }
+	     ; }
+
     /**
      * Retrieves the assignment of a given nondominated solution in the container.
      * @param i The solution index.
@@ -180,7 +195,7 @@ public class Result {
         assert(i < nSolutions());
         return this.problem.getAssignment(this.solutions.get(i));
     }
-    
+
     /**
      * Retrieves the cost vector of a given nondominated solution in the container.
      * @param i The solution index.
@@ -195,5 +210,4 @@ public class Result {
         }
         return c;
     }
-
 }
