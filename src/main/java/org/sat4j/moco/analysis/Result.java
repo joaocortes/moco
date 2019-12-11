@@ -181,8 +181,8 @@ public class Result {
 	     this.problem.evaluate(sol);
         if (!sol.violatesConstraints() && !isWeaklyDominated(sol, this.solutions)) {
             this.solutions.add(sol);
-            Log.costs(sol.getObjectives());
-            Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
+            // Log.costs(sol.getObjectives());
+            // Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
         }
 	     ; }
 
