@@ -49,17 +49,17 @@ public class UnsatSat {
      * An instance of a MOCO problem to be solved.
      */
     private Instance problem = null;
-    
+
     /**
      * Stores the result (e.g. nondominated solutions) of the execution of the Pareto-MCS algorithm.
      */
     private Result result = null;
-    
+
     /**
      * Stores the PB solver to be used by the Pareto-MCS algorithm.
      */
     private PBSolver solver = null;
-    
+
 
     /**
      * IDs of the variables used int the sequential encoder. The first
@@ -75,8 +75,8 @@ public class UnsatSat {
      */
     private int[] UpperKD = null;
     /**
-     *  Last id of the real, non auxiliary,  variables 
-     */  
+     *  Last id of the real, non auxiliary,  variables
+     */
     private int realVariablesN = 0;
 
 
@@ -85,7 +85,7 @@ public class UnsatSat {
      * that applies the Pareto-MCS algorithm.
      * @param m The MOCO instance.
      */
-    
+
     public UnsatSat(Instance m) {
 	this.problem = m;
 	this.result = new Result(m);
@@ -101,8 +101,8 @@ public class UnsatSat {
 	this.UpperKD =  new int[(this.problem.nObjs())];
     }
 
-    
-    
+
+
     /**
      * Applies the UnsatSat algorithm to the MOCO instance provided
      */
@@ -112,7 +112,9 @@ public class UnsatSat {
 	IVecInt currentAssumptions = new VecInt(new int[] {});
 	IVecInt currentYModel = new VecInt(new int[] {});
 	boolean[] currentXModelValues = new boolean[this.problem.nVars()];
-	Result subResult = new Result(this.problem);	    
+	// Vector<IVecInt> modelsX = new Vector<IVecInt>();
+	// Vector<IVecInt> modelsY = new Vector<IVecInt>();
+	Result subResult = new Result(this.problem);
 
 
         // if (this.result.isParetoFront()) {
@@ -148,28 +150,29 @@ public class UnsatSat {
 
 		currentYModel = this.getYModel();
 		currentXModelValues = this.getXModelValues();
+		// modelsY.add(this.getYModel());
 
 		//log..
-		Log.comment(5, "ModelX :");
-		this.printModel(modelsX.lastElement());
-		Log.comment(5, "j o ");
-		for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-		    Objective ithObj = this.problem.getObj(iObj);
-		    Log.comment(5, this.attainedValue(ithObj)+ " " );
-		}
+		// Log.comment(5, "ModelX :");
+		// this.printModel(modelsX.lastElement());
+		// Log.comment(5, "j o ");
+		// for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+		//     Objective ithObj = this.problem.getObj(iObj);
+		//     Log.comment(5, this.attainedValue(ithObj)+ " " );
+		// }
 		Log.comment(5, "ModelY :");
-		this.printModel(modelsY.lastElement());
+		// this.printModel(modelsY.lastElement());
 		//..log
 
 		//log
 		Log.comment(5, "Blocking dominated region");
 
-		if(! this.blockDominatedRegion(modelsY.lastElement()))
+		if(! this.blockDominatedRegion(currentYModel))
 		    goOn = false;
 		// if(! this.blockModelX(modelsX.lastElement()))
 		//     goOn = false;
 	    }else{
-		subResult = new Result(this.problem);	    
+		subResult = new Result(this.problem);
 		currentExplanation  = solver.unsatExplanation();
 		//log..
 		Log.comment(5, "Explanation:");
@@ -186,7 +189,7 @@ public class UnsatSat {
 	this.result.setParetoFrontFound();
 	return;
     }
-    
+
 
     /**
      * Generate the upper limit assumptions
@@ -231,14 +234,14 @@ public class UnsatSat {
 		this.seqEncoder.UpdateCurrentK(jObj, kd);
 	    }
 	}
-    
-    
+
+
     /**
      *gets the current upper limit of the explored value of the
      *differential k of the ithOjective
      *@param iObj
      */
-    
+
     private int getUpperKD(int iObj){
 	return this.UpperKD[iObj];
     }
@@ -272,7 +275,7 @@ public class UnsatSat {
         return solver;
     }
 
-    
+
     /**
      *Checks if literal is an STop variable
      *@param literal
@@ -309,6 +312,22 @@ public class UnsatSat {
 	}
 	return model;
     }
+
+
+    /**
+     *returns the model in DIMACS format, including only the real
+     *variables and the STop variables of the sequential encoder
+     *@return a filtered model
+     */
+
+    public boolean[] getXModelValues(){
+	boolean[] modelValues = new boolean[this.problem.nVars()];
+	for(int id = 1; id <= this.problem.nVars();++id){
+	    modelValues[id - 1] = this.solver.modelValue(id);
+	}
+	return modelValues;
+    }
+
     /**
      *returns the model in DIMACS format, including only the real
      *variables and the STop variables of the sequential encoder
@@ -339,8 +358,8 @@ public class UnsatSat {
 	return model;
     }
 
-    /** 
-     * Print the models 
+    /**
+     * Print the models
      * @param models, the obtained models
      */
     public void printModels(Vector<IVecInt> models) {
@@ -351,8 +370,8 @@ public class UnsatSat {
 	return;
     }
 
-    /** 
-     * Print a model 
+    /**
+     * Print a model
      * @param models, the obtained models
      */
     public void printModel(IVecInt model) {
@@ -364,7 +383,7 @@ public class UnsatSat {
     }
 
     /**
-     * The attained value of objective  in the interpretation of model 
+     * The attained value of objective  in the interpretation of model
      @param model
     */
     private int attainedValue(Objective objective){
@@ -409,7 +428,7 @@ public class UnsatSat {
 	    notPreviousModel.push(-modelX.get(iX));
 	return this.AddClause(notPreviousModel);
     }
-    
+
     private boolean AddClause(IVecInt setOfLiterals){
 	for(int i = 0; i < setOfLiterals.size(); ++i)
 	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(i));
@@ -430,6 +449,5 @@ public class UnsatSat {
      * @return The result.
      */
     public Result getResult() { return this.result; }
-    
-}
 
+}
