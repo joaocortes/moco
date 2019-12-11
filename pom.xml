@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>org.sat4j.moco</groupId>
-    <artifactId>org.sat4j.mocoUnsatSat</artifactId>
+    <artifactId>org.sat4j.moco.UnsatSat</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>SAT4J moco</name>
     <packaging>jar</packaging>
