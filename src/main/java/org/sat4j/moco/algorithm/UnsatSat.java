@@ -172,6 +172,8 @@ public class UnsatSat {
 		// if(! this.blockModelX(modelsX.lastElement()))
 		//     goOn = false;
 	    }else{
+		for(int i = 0; i < subResult.nSolutions(); ++i)
+		    this.result.addSolutionPublicly(subResult.getSolution(i));
 		subResult = new Result(this.problem);
 		currentExplanation  = solver.unsatExplanation();
 		//log..

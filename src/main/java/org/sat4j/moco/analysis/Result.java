@@ -161,7 +161,7 @@ public class Result {
      * @param i The solution index.
      * @return The {@code i}-th nondominated solution.
      */
-    Solution getSolution(int i) { return getSolutions().get(i); }
+    public Solution getSolution(int i) { return getSolutions().get(i); }
 
     /**
      * Adds a solution to the container and updates the set of nondominated solutions.
@@ -169,7 +169,22 @@ public class Result {
      * If not, it is added to the set and now dominated solutions are discarded.
      * @param s The solution.
      */
-    void addSolution(Solution s) { this.solutions.add(s); }
+     void addSolution(Solution s) { this.solutions.add(s); }
+
+    /**
+     * Adds a solution to the container and updates the set of nondominated solutions.
+     * If the solution is dominated, it is discarded.
+     * If not, it is added to the set and now dominated solutions are discarded.
+     * @param s The solution.
+     */
+    public void addSolutionPublicly(Solution sol) { 
+	     this.problem.evaluate(sol);
+        if (!sol.violatesConstraints() && !isWeaklyDominated(sol, this.solutions)) {
+            this.solutions.add(sol);
+            Log.costs(sol.getObjectives());
+            Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
+        }
+	     ; }
 
     /**
      * Retrieves the assignment of a given nondominated solution in the container.
