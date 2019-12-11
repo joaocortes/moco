@@ -371,7 +371,8 @@ public class pMinimal {
 	for(int iLit = 0; iLit < objectiveNLit; ++iLit  ){
 	    int coeff = objectiveCoeffs.get(iLit).asInt();
 	    int literal = objectiveLits.get(iLit);
-	    if(this.solver.modelValue(literal))
+	    int id = this.solver.idFromLiteral(literal);
+	    if(XModelValues[id - 1])
 		result += coeff;
 	}
 	Log.comment(3, "attained value:" + result);
