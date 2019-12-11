@@ -323,5 +323,23 @@ public class PBSolver {
         }
         return new VecInt();
     }
+    /**
+     * Is the literal positive?
+     * @param literal
+     */
+    public boolean isLiteralPositive(int literal){
+	return literal > 0;
+
+}
+    /**
+     * returns the the id of the literal
+     * @param literal
+     * @return id
+     */
+
+    public int idFromLiteral(int literal){
+	int id = this.isLiteralPositive(literal) ? literal: -literal;
+	return id;
+}
     
 }
