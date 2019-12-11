@@ -193,26 +193,6 @@ public class pMinimal {
 	}
     }
 
-
-    /**
-     * Updates the current upperBound on the differential k, according
-     * to the unsatExplanation, and updates the sequentialEncoder accordingly
-     * @param current explanation of unsatisfiability
-     */
-    private void updateUpperBound(IVecInt currentExplanation){
-	for(int i = 0; i < currentExplanation.size(); ++i){
-	    int ithLiteral = currentExplanation.get(i);
-	    int jObj = this.seqEncoder.getObjFromSTopVariable(ithLiteral);
-	    int kd = this.seqEncoder.getKDFromSTopVariable(ithLiteral);
-	    //TODO This is strange, and should not be always true
-	    assert kd ==this.getUpperKD(jObj);
-
-		this.setUpperKD(jObj, kd);
-		this.seqEncoder.UpdateCurrentK(jObj, kd);
-	    }
-	}
-    
-    
     /**
      *gets the current upper limit of the explored value of the
      *differential k of the ithOjective
