@@ -112,7 +112,6 @@ public class UnsatSat {
 	IVecInt currentAssumptions = new VecInt(new int[] {});
 	Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	Vector<IVecInt> modelsY = new Vector<IVecInt>();
-	Vector<boolean[]> paretoFront = new Vector <boolean[]>();
 	Result subResult = new Result(this.problem);	    
 
 
@@ -170,8 +169,6 @@ public class UnsatSat {
 		// if(! this.blockModelX(modelsX.lastElement()))
 		//     goOn = false;
 	    }else{
-		for(int i = 0; i < subResult.nSolutions(); ++i)
-		    paretoFront.add(subResult.getAssignment(i));
 		subResult = new Result(this.problem);	    
 		currentExplanation  = solver.unsatExplanation();
 		//log..
@@ -186,12 +183,6 @@ public class UnsatSat {
 		}
 	    }
 	}
-
-	Log.comment(5, "Pareto Front with "+paretoFront.size());
-	for(int i = 0; i < paretoFront.size();++i){
-	    for(int j = 0 ; j < this.problem.nVars(); ++j)
-		Log.comment(5, paretoFront.get(i)[j]+" ");
-}
 	return;
     }
     
