@@ -43,7 +43,7 @@ import org.sat4j.specs.IVecInt;
  * @author João Cortes
  */
 
-public class pMinimal {
+public class pMinimal implements MySolver {
 
     /**
      * An instance of a MOCO problem to be solved.

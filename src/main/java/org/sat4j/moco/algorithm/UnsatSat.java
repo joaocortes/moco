@@ -43,7 +43,7 @@ import org.sat4j.specs.IVecInt;
  * @author João Cortes
  */
 
-public class UnsatSat {
+public class UnsatSat implements MySolver {
 
     /**
      * An instance of a MOCO problem to be solved.

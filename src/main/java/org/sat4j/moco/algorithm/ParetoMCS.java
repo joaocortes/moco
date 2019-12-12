@@ -54,7 +54,7 @@ import org.sat4j.specs.IVecInt;
  *      (pp. 1376-1382).
  * @author Miguel Terra-Neves
  */
-public class ParetoMCS {
+public class ParetoMCS implements MySolver {
     
     /**
      * An instance of a MOCO problem to be solved.
