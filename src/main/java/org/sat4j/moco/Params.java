@@ -52,6 +52,11 @@ public class Params {
      * Default maximum conflicts allowed before partition merging in stratified algorithms.
      */
     private static final String DEFAULT_PMC = "200000";
+
+    /**
+     * Default algorithm
+     */
+    private static final String DEFAULT_ALGI = "0";
     
     /**
      * Default trivial threshold (number of trivially solved partitions in a row before merging the
@@ -82,6 +87,7 @@ public class Params {
         o.addOption("tt", "trivial-thres", true,
                     "Set the trivial threshold for stratified algorithms (number of trivially solved partitions " +
                     "in a row before merging the remaining ones). Default is " + DEFAULT_TT + ".");
+	o.addOption("alg", "algorithm-index", true, "Choose the algorithm to use. options are 0-paretomcs, 1-unsatsat, 2-pminimal");
         return o;
     }
     
@@ -126,6 +132,10 @@ public class Params {
     private int pmc = 200000;
     
     /**
+     *Stores the algorithm to use.
+     */
+    private int algorithmI = 0;
+    /**
      * Stores the trivial threshold (number of trivially solved partitions in a row before merging the
      * remaining ones) for stratified algorithms.
      */
@@ -154,6 +164,7 @@ public class Params {
         this.lwr = Double.parseDouble(cl.getOptionValue("lwr", DEFAULT_LWR));
         this.pmc = Integer.parseInt(cl.getOptionValue("pmc", DEFAULT_PMC));
         this.tt = Integer.parseInt(cl.getOptionValue("tt", DEFAULT_TT));
+	this.algorithmI = Integer.parseInt(cl.getOptionValue("alg", DEFAULT_ALGI));
         if (cl.hasOption("t")) {
             this.timeout = Integer.parseInt(cl.getOptionValue("t"));
         }
@@ -217,4 +228,8 @@ public class Params {
      */
     public int getTrivialThres() { return this.tt; }
     
+    /**
+     *Returns the algorithm to be used
+     */
+    public int getAlgorithmI(){return this.algorithmI;}
 }
