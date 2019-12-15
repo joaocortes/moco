@@ -1,12 +1,13 @@
 import subprocess
 import os
-os.chdir("../")
-baseDir = "../../moco/"
+
+baseDir = "../../"
+os.chdir(baseDir)
 
 javaJarName = "./target/org.sat4j.moco.threeAlgorithms-0.0."\
         "1-SNAPSHOT-jar-with-dependencies.jar"
 
-testsPath = "./finalResults/instances/"
+testsPath = "./finalResults/convertedInstances/"
 
 
 def test():
@@ -23,4 +24,4 @@ def runSolver(fileName: str, solverI: int):
         "-alg", str(solverI)])
 
 
-test()
+print(list(os.listdir(testsPath)))
