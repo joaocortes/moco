@@ -8,6 +8,4 @@ target
 /MO2PBMO_v0.1/results/
 *.pyc
 /finalResults/multiobjective_cp2016/
-/finalResults/instances/
 *.out
-/finalResults/convertedInstances/
