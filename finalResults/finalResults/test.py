@@ -1,8 +1,8 @@
 import subprocess
 import os
 
-javaJarName = """../target/org.sat4j.moco.threeAlgorithms-
-0.0.1-SNAPSHOT-jar-with-dependencies.jar"""
+javaJarName = ("../target/org.sat4j.moco.threeAlgorithms-"
+               "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
 testsPath = "./convertedInstances/"
 outputPath = "./output/"
 watcherFilePrefix = "watcher_"
@@ -30,19 +30,22 @@ def runSolver(fileName: str, solverI: int, time):
     outputName = os.path.basename(fileName)
     outputName = os.path.splitext(outputName)[0]
     outputName += "_S"+str(solverI)+".out"
-    command = "runsolver  -W " + str(time) + " "
-    command += "  --timestamp "
-    command += "-w " + os.path.join(
-        outputPath, watcherFilePrefix + outputName) + " "
-    command += "-o " + os.path.join(
-        outputPath, solverOutputFilePrefix + outputName) + " "
-    command += " java -jar " + javaJarName + " "
-    command += os.path.join(testsPath, fileName) + " "
-    command += "-v 2 "
-    command += "-alg " + str(solverI)
+
+    command = ("runsolver  "
+               "-W " + str(time) + " "
+               "-M  4096"
+               "  --timestamp "
+               "-w " + os.path.join(
+                   outputPath, watcherFilePrefix + outputName) + " "
+               "-o " + os.path.join(
+                   outputPath, solverOutputFilePrefix + outputName) + " "
+               "java -jar " + javaJarName + " "
+               "" + os.path.join(testsPath, fileName) + " "
+               #  "-v 2 "
+               "-alg " + str(solverI))
 
     # print(command)
     subprocess.call(command, shell=True)
 
 
-test(1)
+test(10)
