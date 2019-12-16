@@ -1,3 +1,4 @@
+
 import subprocess
 import os
 
@@ -7,7 +8,7 @@ testsPath = "./convertedInstances/"
 outputPath = "./output/"
 watcherFilePrefix = "watcher_"
 solverOutputFilePrefix = "solver_"
-
+runSolverPath = "./runsolver"
 
 def absolutize(relativePath):
     return os.path.abspath(relativePath)
@@ -16,6 +17,7 @@ def absolutize(relativePath):
 javaJarName = absolutize(javaJarName)
 testsPath = absolutize(testsPath)
 outputPath = absolutize(outputPath)
+runSolverPath = absolutize(runSolverPath)
 
 
 def test(time: int):
@@ -31,7 +33,7 @@ def runSolver(fileName: str, solverI: int, time):
     outputName = os.path.splitext(outputName)[0]
     outputName += "_S"+str(solverI)+".out"
 
-    command = ("runsolver  "
+    command = (runSolverPath + " "
                "-W " + str(time) + " "
                "-M  4096"
                "  --timestamp "
