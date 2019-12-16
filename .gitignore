@@ -10,3 +10,4 @@ target
 /finalResults/multiobjective_cp2016/
 /finalResults/instances/
 *.out
+/finalResults/convertedInstances/
