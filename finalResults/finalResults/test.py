@@ -46,7 +46,7 @@ class Tester():
 
     def test(self):
         if(self.algorithm < 3):
-            solverRange = range(self.algorithm, alg+1)
+            solverRange = range(self.algorithm, self.algorithm+1)
         else:
             solverRange = range(3)
 
