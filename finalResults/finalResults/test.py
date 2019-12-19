@@ -4,11 +4,34 @@ import subprocess
 import os
 
 
+def readArguments():
+
+    parser = argparse.ArgumentParser(
+        "testing script to compare the 3 algorithms for finding the pareto"
+        "Front."
+        )
+    parser.add_argument("-s", type=str, dest="sandbox", default="1",
+                        help="sandbox results?")
+    parser.add_argument("-alg", type=int, dest="algorithm", default=3,
+                        help="algorithm to run. 0-paretoMCS, 1-unsatSat,\
+                        2-pMinimal, 3-all intercalated")
+    parser.add_argument("-t", type=int, dest="time", default=10,
+                        help="runout time")
+    parser.add_argument("-m", type=int, dest="memoryKB", default=9126000,
+                        help="runout memory, in KB")
+    args = parser.parse_args(sys.argv[1:])
+    print("args: %r\n" % args)
+
+    return args
+
+
 class Tester():
 
     def __init__(self):
         self.time = None
         self.memoryKB = None
+        self.args = None
+        self.algorithm = None
         self.javaJarName = ("../target/org.sat4j.moco.threeAlgorithms-"
                             "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
         self.testsPath = "convertedInstances/"
@@ -17,37 +40,13 @@ class Tester():
         self.solverOutputFilePrefix = "solver_"
         self.runSolverPath = "runsolver"
         self.sandbox = "sandbox"
-    def readArguments(self):
-
-        parser = argparse.ArgumentParser(
-            "testing script to compare the 3 algorithms for finding the pareto"
-            "Front."
-            )
-        parser.add_argument("-s", type=str, dest="sandbox", default="1",
-                            help="sandbox results?")
-        parser.add_argument("-alg", type=int, dest="algorithm", default=3,
-                            help="algorithm to run. 0-paretoMCS, 1-unsatSat,\
-                            2-pMinimal, 3-all intercalated")
-        parser.add_argument("-t", type=int, dest="time", default=10,
-                            help="runout time")
-        parser.add_argument("-m", type=int, dest="memoryKB", default=9126000,
-                            help="runout memory, in KB")
-        args = parser.parse_args(sys.argv[1:])
-        print("args: %r\n" % args)
-
-        if args.sandbox == "1":
-            self.outputPath = os.path.join("./sandbox/", self.outputPath)
-            if not os.path.exists(self.outputPath):
-                os.makedirs(self.outputPath)
-
-        return args.algorithm, args.time, args.memoryKB
 
     # def absolutize(self, relativePath):
     #     return os.path.abspath(relativePath)
 
-    def test(self, alg):
-        if(alg < 3):
-            solverRange = range(alg,alg+1)
+    def test(self):
+        if(self.algorithm < 3):
+            solverRange = range(self.algorithm, alg+1)
         else:
             solverRange = range(3)
 
@@ -102,7 +101,8 @@ class Tester():
 
 
 tester = Tester()
-[algorithm, time, memoryKB] = tester.readArguments()
-tester.memoryKB = memoryKB
-tester.time = time
-tester.test(algorithm)
+args = readArguments()
+tester.memoryKB = args.memoryKB
+tester.time = args.time
+tester.algorithm = args.algorithm
+tester.test()
