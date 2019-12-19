@@ -101,6 +101,10 @@ public class Log {
     }
     
     /**
+     * Logs the total time, and the number of solutions found
+     */
+    public static void numberOfSolutions(int n){write(0, "n " + n);}
+    /**
      * Writes an 'optimum found' entry if logging is enabled.
      */
     public static void optimum() { write(0, "s OPTIMUM"); }
