@@ -40,8 +40,15 @@ class Tester():
         self.solverOutputFilePrefix = "solver_"
         self.runSolverPath = "runsolver"
         self.sandbox = "sandbox"
+        self.useSandbox = None
+
 
     def test(self):
+        if self.useSandbox == "1":
+            self.outputPath = os.path.join("./sandbox/", self.outputPath)
+            if not os.path.exists(self.outputPath):
+                os.makedirs(self.outputPath)
+
         if(self.algorithm < 3):
             solverRange = range(self.algorithm, self.algorithm+1)
         else:
@@ -98,4 +105,5 @@ args = readArguments()
 tester.memoryKB = args.memoryKB
 tester.time = args.time
 tester.algorithm = args.algorithm
+tester.useSandbox = args.useSandbox
 tester.test()
