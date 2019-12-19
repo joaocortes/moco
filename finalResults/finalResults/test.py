@@ -37,6 +37,8 @@ class Tester():
 
         if args.sandbox == "1":
             self.outputPath = os.path.join("./sandbox/", self.outputPath)
+            if not os.path.exists(self.absolutize("./sandbox/")):
+                os.mkdir(self.absolutize("./sandbox/"))
         self.outputPath = self.absolutize(self.outputPath)
 
         return args.algorithm
