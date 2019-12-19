@@ -11,12 +11,12 @@ class Tester():
         self.memoryKB = None
         self.javaJarName = ("../target/org.sat4j.moco.threeAlgorithms-"
                             "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
-        self.testsPath = "./convertedInstances/"
-        self.outputPath = "./output/"
+        self.testsPath = "convertedInstances/"
+        self.outputPath = "output/"
         self.watcherFilePrefix = "watcher_"
         self.solverOutputFilePrefix = "solver_"
-        self.runSolverPath = "./runsolver"
-
+        self.runSolverPath = "runsolver"
+        self.sandbox = "sandbox"
     def readArguments(self):
 
         parser = argparse.ArgumentParser(
@@ -37,13 +37,13 @@ class Tester():
 
         if args.sandbox == "1":
             self.outputPath = os.path.join("./sandbox/", self.outputPath)
-            if not os.path.exists(self.absolutize("./sandbox/")):
-                os.makedirs(self.absolutize("./sandbox/output/"))
+            if not os.path.exists(self.outputPath):
+                os.makedirs(self.outputPath)
 
         return args.algorithm, args.time, args.memoryKB
 
-    def absolutize(self, relativePath):
-        return os.path.abspath(relativePath)
+    # def absolutize(self, relativePath):
+    #     return os.path.abspath(relativePath)
 
     def test(self, alg):
         if(alg < 3):
@@ -62,10 +62,10 @@ class Tester():
         outputName = os.path.splitext(outputName)[0]
         outputName += "_S"+str(solverI)+".out"
 
-        self.javaJarName = self.absolutize(self.javaJarName)
-        self.testsPath = self.absolutize(self.testsPath)
-        self.runSolverPath = self.absolutize(self.runSolverPath)
-        self.outputPath = self.absolutize(self.outputPath)
+        # self.javaJarName = self.absolutize(self.javaJarName)
+        # self.testsPath = self.absolutize(self.testsPath)
+        # self.runSolverPath = self.absolutize(self.runSolverPath)
+        # self.outputPath = self.absolutize(self.outputPath)
 
         command = (self.runSolverPath + " "
                    "-W " + str(self.time) + " "
@@ -97,7 +97,7 @@ class Tester():
                    #  "-v 2 "
                    "-alg " + str(solverI))
 
-        # print(command)
+        print(command)
         subprocess.call(command, shell=True)
 
 
