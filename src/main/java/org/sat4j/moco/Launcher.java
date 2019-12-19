@@ -105,6 +105,7 @@ public class Launcher {
             Log.assignment(r.getAssignment(i));
             Log.costs(r.getCosts(i));
         }
+	Log.numberOfSolutions(r.nSolutions());
     }
     
     /**
