@@ -1,4 +1,3 @@
-
 import subprocess
 import os
 
@@ -10,6 +9,7 @@ watcherFilePrefix = "watcher_"
 solverOutputFilePrefix = "solver_"
 runSolverPath = "./runsolver"
 
+
 def absolutize(relativePath):
     return os.path.abspath(relativePath)
 
@@ -20,23 +20,23 @@ outputPath = absolutize(outputPath)
 runSolverPath = absolutize(runSolverPath)
 
 
-def test(time: int):
+def test(time: int, memoryKB: int):
     for fileName in os.listdir(testsPath):
         print("fileName:" + fileName)
         for solverI in range(3):
             # print(os.path.join(testsPath, fileName))
-            runSolver(fileName, solverI, time)
+            runSolver(fileName, solverI, time, memoryKB)
 
 
-def runSolver(fileName: str, solverI: int, time):
+def runSolver(fileName: str, solverI: int, time: int, memoryKB: int):
     outputName = os.path.basename(fileName)
     outputName = os.path.splitext(outputName)[0]
     outputName += "_S"+str(solverI)+".out"
 
     command = (runSolverPath + " "
                "-W " + str(time) + " "
-               "-M  4096"
-               "  --timestamp "
+               "-M " + str(memoryKB) + " "
+               "--timestamp "
                "-w " + os.path.join(
                    outputPath, watcherFilePrefix + outputName) + " "
                "-o " + os.path.join(
@@ -46,8 +46,8 @@ def runSolver(fileName: str, solverI: int, time):
                #  "-v 2 "
                "-alg " + str(solverI))
 
-    # print(command)
+    print(command)
     subprocess.call(command, shell=True)
 
 
-test(10)
+test(600, 9126000)
