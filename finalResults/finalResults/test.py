@@ -10,7 +10,7 @@ def readArguments():
         "testing script to compare the 3 algorithms for finding the pareto"
         "Front."
         )
-    parser.add_argument("-s", type=str, dest="sandbox", default="1",
+    parser.add_argument("-s", type=str, dest="useSandbox", default="1",
                         help="sandbox results?")
     parser.add_argument("-alg", type=int, dest="algorithm", default=3,
                         help="algorithm to run. 0-paretoMCS, 1-unsatSat,\
