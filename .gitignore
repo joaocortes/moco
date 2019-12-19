@@ -10,3 +10,4 @@ target
 /finalResults/multiobjective_cp2016/
 *.out
 /finalResults/runsolver
+/finalResults/MO2PBMO_v0.1/results/
