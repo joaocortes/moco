@@ -41,9 +41,6 @@ class Tester():
         self.runSolverPath = "runsolver"
         self.sandbox = "sandbox"
 
-    # def absolutize(self, relativePath):
-    #     return os.path.abspath(relativePath)
-
     def test(self):
         if(self.algorithm < 3):
             solverRange = range(self.algorithm, self.algorithm+1)
@@ -57,14 +54,10 @@ class Tester():
                 self.runSolver(fileName, solverI)
 
     def runSolver(self, fileName: str, solverI: int):
+
         outputName = os.path.basename(fileName)
         outputName = os.path.splitext(outputName)[0]
         outputName += "_S"+str(solverI)+".out"
-
-        # self.javaJarName = self.absolutize(self.javaJarName)
-        # self.testsPath = self.absolutize(self.testsPath)
-        # self.runSolverPath = self.absolutize(self.runSolverPath)
-        # self.outputPath = self.absolutize(self.outputPath)
 
         command = (self.runSolverPath + " "
                    "-W " + str(self.time) + " "
