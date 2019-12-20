@@ -38,7 +38,8 @@ class Tester():
         self.outputPath = "output/"
         self.watcherFilePrefix = "watcher_"
         self.solverOutputFilePrefix = "solver_"
-        self.runSolverPath = "runsolver"
+        # do not remove the "./" from the runsolver pathname, otherwise
+        self.runSolverPath = "./runsolver"
         self.sandbox = "sandbox"
         self.useSandbox = None
 
