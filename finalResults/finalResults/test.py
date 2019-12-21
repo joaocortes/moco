@@ -2,6 +2,7 @@ import argparse
 import sys
 import subprocess
 import os
+from datetime import datetime
 
 
 def readArguments():
@@ -19,9 +20,10 @@ def readArguments():
                         help="runout time")
     parser.add_argument("-m", type=int, dest="memoryKB", default=9126000,
                         help="runout memory, in KB")
+    parser.add_argument("-p", type=int, dest="part",
+                        help="part of the instances to run. 0 or 1")
     args = parser.parse_args(sys.argv[1:])
     print("args: %r\n" % args)
-
     return args
 
 
@@ -42,7 +44,10 @@ class Tester():
         self.runSolverPath = "./runsolver"
         self.sandbox = "sandbox"
         self.useSandbox = None
-
+        self.tablePath = os.path.join(self.outputPath,
+                                      "table_"+str(datetime.timestamp(
+                                          datetime.now()))+".txt")
+        self.part = None
 
     def test(self):
         if self.useSandbox == "1":
@@ -54,6 +59,9 @@ class Tester():
             solverRange = range(self.algorithm, self.algorithm+1)
         else:
             solverRange = range(3)
+
+        self.testsPath = os.path.join(self.testsPath,
+                                      "part" + str(self.part))
 
         for fileName in os.listdir(self.testsPath):
             print("fileName: " + fileName)
@@ -82,23 +90,14 @@ class Tester():
                    #  "-v 2 "
                    "-alg " + str(solverI))
 
-        command = (self.runSolverPath + " "
-                   "-W " + str(self.time) + " "
-                   "-M " + str(self.memoryKB) + " "
-                   "--timestamp "
-                   "-w " + os.path.join(
-                       self.outputPath,
-                       self.watcherFilePrefix + outputName) + " "
-                   "-o " + os.path.join(
-                       self.outputPath,
-                       self.solverOutputFilePrefix + outputName) + " "
-                   "java -jar " + self.javaJarName + " "
-                   "" + os.path.join(self.testsPath, fileName) + " "
-                   #  "-v 2 "
-                   "-alg " + str(solverI))
-
         print(command)
         subprocess.call(command, shell=True)
+
+    def tabulize(self):
+        os.chdir(self.outputPath)
+        for fileName in os.listdir("./"):
+            line = subprocess.check_output(['tail', '-1', fileName])
+            print(line)
 
 
 tester = Tester()
@@ -107,4 +106,6 @@ tester.memoryKB = args.memoryKB
 tester.time = args.time
 tester.algorithm = args.algorithm
 tester.useSandbox = args.useSandbox
+tester.part = args.part
 tester.test()
+# tester.tabulize()
