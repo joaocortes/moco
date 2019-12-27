@@ -109,7 +109,7 @@ import org.sat4j.specs.ContradictionException;
 	    this.setInitializedKD(iObj,-1);
 	    this.UpdateCurrentK(iObj,0);
 	}
-nnn	Log.comment(5, "done");
+	Log.comment(5, "done");
 	}
 
 
