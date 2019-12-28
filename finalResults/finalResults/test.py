@@ -28,6 +28,10 @@ def readArguments():
 def sshServer(command: str, server: str):
     return "ssh " + "\"" + command + "\""
 
+
+servers = ("centaurus", "scutum", "octans")
+
+
 class Tester():
 
     def __init__(self):
@@ -51,7 +55,6 @@ class Tester():
         self.tablePath = os.path.join(self.outputPath,
                                       "table_"+str(datetime.timestamp(
                                           datetime.now()))+".txt")
-
 
     def test(self):
         if self.useSandbox == "1":
