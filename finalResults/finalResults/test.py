@@ -19,8 +19,7 @@ def readArguments():
                         help="runout time")
     parser.add_argument("-m", type=int, dest="memoryKB", default=10000000,
                         help="runout memory, in KB")
-    parser.add_argument("-mac", type=int, dest="machine", default=0,
-                        help="server to use, default is centaurus")
+
     args = parser.parse_args(sys.argv[1:])
     print("args: %r\n" % args)
     return args
