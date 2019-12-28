@@ -5,8 +5,8 @@ import os
 from datetime import datetime
 
 
-def readArguments():
 
+def readArguments():
     parser = argparse.ArgumentParser(
         "testing script to compare the 3 algorithms for finding the pareto"
         "Front."
@@ -18,10 +18,12 @@ def readArguments():
                         2-pMinimal, 3-all intercalated")
     parser.add_argument("-t", type=int, dest="time", default=10,
                         help="runout time")
-    parser.add_argument("-m", type=int, dest="memoryKB", default=9126000,
+    parser.add_argument("-m", type=int, dest="memoryKB", default=10000000,
                         help="runout memory, in KB")
     parser.add_argument("-p", type=int, dest="part",
                         help="part of the instances to run. 0 or 1")
+    parser.add_argument("-mac", type=int, dest="machine", default=0,
+                        help="server to use, default is centaurus")
     args = parser.parse_args(sys.argv[1:])
     print("args: %r\n" % args)
     return args
@@ -34,6 +36,10 @@ class Tester():
         self.memoryKB = None
         self.args = None
         self.algorithm = None
+        self.machine = None
+        self.useSandbox = None
+        self.part = None
+
         self.javaJarName = ("../target/org.sat4j.moco.threeAlgorithms-"
                             "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
         self.testsPath = "convertedInstances/"
@@ -43,11 +49,10 @@ class Tester():
         # do not remove the "./" from the runsolver pathname, otherwise
         self.runSolverPath = "./runsolver"
         self.sandbox = "sandbox"
-        self.useSandbox = None
         self.tablePath = os.path.join(self.outputPath,
                                       "table_"+str(datetime.timestamp(
                                           datetime.now()))+".txt")
-        self.part = None
+
 
     def test(self):
         if self.useSandbox == "1":
@@ -65,6 +70,7 @@ class Tester():
 
         for fileName in os.listdir(self.testsPath):
             print("fileName: " + fileName)
+            assert(os.path.exists(fileName))
             for solverI in solverRange:
                 # print(os.path.join(testsPath, fileName))
                 self.runSolver(fileName, solverI)
@@ -93,12 +99,6 @@ class Tester():
         print(command)
         subprocess.call(command, shell=True)
 
-    def tabulize(self):
-        os.chdir(self.outputPath)
-        for fileName in os.listdir("./"):
-            line = subprocess.check_output(['tail', '-1', fileName])
-            print(line)
-
 
 tester = Tester()
 args = readArguments()
@@ -107,5 +107,5 @@ tester.time = args.time
 tester.algorithm = args.algorithm
 tester.useSandbox = args.useSandbox
 tester.part = args.part
+tester.machine = args.machine
 tester.test()
-# tester.tabulize()
