@@ -5,7 +5,6 @@ import os
 from datetime import datetime
 
 
-
 def readArguments():
     parser = argparse.ArgumentParser(
         "testing script to compare the 3 algorithms for finding the pareto"
@@ -20,14 +19,15 @@ def readArguments():
                         help="runout time")
     parser.add_argument("-m", type=int, dest="memoryKB", default=10000000,
                         help="runout memory, in KB")
-    parser.add_argument("-p", type=int, dest="part",
-                        help="part of the instances to run. 0 or 1")
     parser.add_argument("-mac", type=int, dest="machine", default=0,
                         help="server to use, default is centaurus")
     args = parser.parse_args(sys.argv[1:])
     print("args: %r\n" % args)
     return args
 
+
+def sshServer(command: str, server: str):
+    return "ssh " + "\"" + command + "\""
 
 class Tester():
 
@@ -65,39 +65,44 @@ class Tester():
         else:
             solverRange = range(3)
 
-        self.testsPath = os.path.join(self.testsPath,
-                                      "part" + str(self.part))
+        listFiles = os.listdir(self.testsPath)
+        numberFiles = len(listFiles)
+        listFilesPart1 = listFiles[:numberFiles//2]
+        listFilesPart2 = listFiles[numberFiles//2:]
+        machine = 0
+        for solverI in solverRange:
+            # print(os.path.join(testsPath, fileName))
+            self.runSolver(listFilesPart1, solverI, machine)
+            self.runSolver(listFilesPart2, solverI, machine)
 
-        for fileName in os.listdir(self.testsPath):
+    def runSolver(self, listFiles: list, solverI: int, machine: int):
+
+        for fileName in listFiles:
             print("fileName: " + fileName)
             assert(os.path.exists(fileName))
-            for solverI in solverRange:
-                # print(os.path.join(testsPath, fileName))
-                self.runSolver(fileName, solverI)
+            outputName = os.path.basename(fileName)
+            outputName = os.path.splitext(outputName)[0]
+            outputName += "_S"+str(solverI)+".out"
 
-    def runSolver(self, fileName: str, solverI: int):
+            command = (self.runSolverPath + " "
+                       "-W " + str(self.time) + " "
+                       "-M " + str(self.memoryKB) + " "
+                       "--timestamp "
+                       "-w " + os.path.join(
+                           self.outputPath,
+                           self.watcherFilePrefix + outputName) + " "
+                       "-o " + os.path.join(
+                           self.outputPath,
+                           self.solverOutputFilePrefix + outputName) + " "
+                       "java -jar " + self.javaJarName + " "
+                       "" + os.path.join(self.testsPath, fileName) + " "
+                       #  "-v 2 "
+                       "-alg " + str(solverI))
 
-        outputName = os.path.basename(fileName)
-        outputName = os.path.splitext(outputName)[0]
-        outputName += "_S"+str(solverI)+".out"
+            print(command)
+            command = sshServer(command, "aquila")
 
-        command = (self.runSolverPath + " "
-                   "-W " + str(self.time) + " "
-                   "-M " + str(self.memoryKB) + " "
-                   "--timestamp "
-                   "-w " + os.path.join(
-                       self.outputPath,
-                       self.watcherFilePrefix + outputName) + " "
-                   "-o " + os.path.join(
-                       self.outputPath,
-                       self.solverOutputFilePrefix + outputName) + " "
-                   "java -jar " + self.javaJarName + " "
-                   "" + os.path.join(self.testsPath, fileName) + " "
-                   #  "-v 2 "
-                   "-alg " + str(solverI))
-
-        print(command)
-        subprocess.call(command, shell=True)
+            subprocess.call(command, shell=True)
 
 
 tester = Tester()
@@ -106,6 +111,5 @@ tester.memoryKB = args.memoryKB
 tester.time = args.time
 tester.algorithm = args.algorithm
 tester.useSandbox = args.useSandbox
-tester.part = args.part
 tester.machine = args.machine
 tester.test()
