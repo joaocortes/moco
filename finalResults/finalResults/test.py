@@ -1,8 +1,23 @@
-import argparse
 import sys
+import argparse
 import subprocess
 import os
 from datetime import datetime
+import socket
+from interface import sshServer
+from interface import servers
+
+javaJarName = ("../target/org.sat4j.moco.threeAlgorithms-"
+               "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
+testsPath = "convertedInstancesSC/"
+outputPath = "output/"
+watcherFilePrefix = "watcher_"
+solverOutputFilePrefix = "solver_"
+runSolverPath = "./runsolver"
+sandbox = "sandbox"
+tablePath = os.path.join(outputPath,
+                         "table_"+str(datetime.timestamp(
+                             datetime.now()))+".txt")
 
 
 def readArguments():
@@ -25,51 +40,36 @@ def readArguments():
     return args
 
 
-def sshServer(command: str, server: str):
-    command = "ssh " + server + " -F /dev/null " + " \\\"" + command + "\\\""
-    command = "ssh " + "aquila " + "\"" + command + "\""
-    return command
-
-
-servers = ("centaurus", "scutum", "octans")
-
-nada = "sh -c \" sh -c \\\"echo \"nada\" \\\"\""
-
 class Tester():
 
     def __init__(self):
         self.time = None
         self.memoryKB = None
-        self.args = None
         self.algorithm = None
         self.useSandbox = None
         self.part = None
+        self.commands = []
+        self.args = None
 
-        self.javaJarName = ("../target/org.sat4j.moco.threeAlgorithms-"
-                            "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
-        self.testsPath = "convertedInstancesSC/"
-        self.outputPath = "output/"
-        self.watcherFilePrefix = "watcher_"
-        self.solverOutputFilePrefix = "solver_"
-        # do not remove the "./" from the runsolver pathname, otherwise
-        self.runSolverPath = "./runsolver"
-        self.sandbox = "sandbox"
-        self.tablePath = os.path.join(self.outputPath,
-                                      "table_"+str(datetime.timestamp(
-                                          datetime.now()))+".txt")
+    def fillParameters(self):
+        self.args = readArguments()
+        self.memoryKB = self.args.memoryKB
+        self.time = self.args.time
+        self.algorithm = self.args.algorithm
+        self.useSandbox = self.args.useSandbox
 
     def test(self):
         if self.useSandbox == "1":
-            self.outputPath = os.path.join("./sandbox/", self.outputPath)
-            if not os.path.exists(self.outputPath):
-                os.makedirs(self.outputPath)
+            completeOutputPath = os.path.join("./sandbox/", outputPath)
+            if not os.path.exists(completeOutputPath):
+                os.makedirs(completeOutputPath)
 
         if(self.algorithm < 3):
             solverRange = range(self.algorithm, self.algorithm+1)
         else:
             solverRange = range(3)
 
-        listFiles = os.listdir(self.testsPath)
+        listFiles = os.listdir(testsPath)
         numberFiles = len(listFiles)
         listFilesPart1 = listFiles[:numberFiles//2]
         listFilesPart2 = listFiles[numberFiles//2:]
@@ -82,7 +82,7 @@ class Tester():
             process1.wait()
             process2.wait()
 
-        print("done")
+        print("done!")
 
     def runSolver(self, listFiles: list, solverI: int, serverI: int):
         command = "cd moco/finalResults;"
@@ -91,18 +91,18 @@ class Tester():
             outputName = os.path.basename(fileName)
             outputName = os.path.splitext(outputName)[0]
             outputName += "_S"+str(solverI)+".out"
-            command += (self.runSolverPath + " "
+            command += (runSolverPath + " "
                         "-W " + str(self.time) + " "
                         "-M " + str(self.memoryKB) + " "
                         "--timestamp "
                         "-w " + os.path.join(
-                            self.outputPath,
-                            self.watcherFilePrefix + outputName) + " "
+                            outputPath,
+                            watcherFilePrefix + outputName) + " "
                         "-o " + os.path.join(
-                            self.outputPath,
-                            self.solverOutputFilePrefix + outputName) + " "
-                        "java -jar " + self.javaJarName + " "
-                        "" + os.path.join(self.testsPath, fileName) + " "
+                            outputPath,
+                            solverOutputFilePrefix + outputName) + " "
+                        "java -jar " + javaJarName + " "
+                        "" + os.path.join(testsPath, fileName) + " "
                         #  "-v 2 "
                         "-alg " + str(solverI))
             command += " && "
@@ -117,10 +117,8 @@ class Tester():
         return process
 
 
+# hostname = socket.gethostname()
+# assert servers.count(hostname) > 0
 tester = Tester()
-args = readArguments()
-tester.memoryKB = args.memoryKB
-tester.time = args.time
-tester.algorithm = args.algorithm
-tester.useSandbox = args.useSandbox
+tester.fillParameters()
 tester.test()
