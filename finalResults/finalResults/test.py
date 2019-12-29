@@ -26,11 +26,14 @@ def readArguments():
 
 
 def sshServer(command: str, server: str):
-    return "ssh " + "\"" + command + "\""
+    command = "ssh " + server + " -F /dev/null " + " \\\"" + command + "\\\""
+    command = "ssh " + "aquila " + "\"" + command + "\""
+    return command
 
 
 servers = ("centaurus", "scutum", "octans")
 
+nada = "sh -c \" sh -c \\\"echo \"nada\" \\\"\""
 
 class Tester():
 
@@ -39,13 +42,12 @@ class Tester():
         self.memoryKB = None
         self.args = None
         self.algorithm = None
-        self.machine = None
         self.useSandbox = None
         self.part = None
 
         self.javaJarName = ("../target/org.sat4j.moco.threeAlgorithms-"
                             "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
-        self.testsPath = "convertedInstances/"
+        self.testsPath = "convertedInstancesSC/"
         self.outputPath = "output/"
         self.watcherFilePrefix = "watcher_"
         self.solverOutputFilePrefix = "solver_"
@@ -71,40 +73,48 @@ class Tester():
         numberFiles = len(listFiles)
         listFilesPart1 = listFiles[:numberFiles//2]
         listFilesPart2 = listFiles[numberFiles//2:]
-        machine = 0
         for solverI in solverRange:
-            # print(os.path.join(testsPath, fileName))
-            self.runSolver(listFilesPart1, solverI, machine)
-            self.runSolver(listFilesPart2, solverI, machine)
+            serverI = solverI
 
-    def runSolver(self, listFiles: list, solverI: int, machine: int):
+            process1 = self.runSolver(listFilesPart1, solverI, serverI)
+            process2 = self.runSolver(listFilesPart2, solverI, serverI)
 
+            process1.wait()
+            process2.wait()
+
+        print("done")
+
+    def runSolver(self, listFiles: list, solverI: int, serverI: int):
+        command = "cd moco/finalResults;"
         for fileName in listFiles:
             print("fileName: " + fileName)
-            assert(os.path.exists(fileName))
             outputName = os.path.basename(fileName)
             outputName = os.path.splitext(outputName)[0]
             outputName += "_S"+str(solverI)+".out"
+            command += (self.runSolverPath + " "
+                        "-W " + str(self.time) + " "
+                        "-M " + str(self.memoryKB) + " "
+                        "--timestamp "
+                        "-w " + os.path.join(
+                            self.outputPath,
+                            self.watcherFilePrefix + outputName) + " "
+                        "-o " + os.path.join(
+                            self.outputPath,
+                            self.solverOutputFilePrefix + outputName) + " "
+                        "java -jar " + self.javaJarName + " "
+                        "" + os.path.join(self.testsPath, fileName) + " "
+                        #  "-v 2 "
+                        "-alg " + str(solverI))
+            command += " && "
 
-            command = (self.runSolverPath + " "
-                       "-W " + str(self.time) + " "
-                       "-M " + str(self.memoryKB) + " "
-                       "--timestamp "
-                       "-w " + os.path.join(
-                           self.outputPath,
-                           self.watcherFilePrefix + outputName) + " "
-                       "-o " + os.path.join(
-                           self.outputPath,
-                           self.solverOutputFilePrefix + outputName) + " "
-                       "java -jar " + self.javaJarName + " "
-                       "" + os.path.join(self.testsPath, fileName) + " "
-                       #  "-v 2 "
-                       "-alg " + str(solverI))
+        command += ":"
+        print(command)
+        # command = re.escape(command)
+        command = sshServer(command, servers[serverI])
+        print(command)
+        process = subprocess.Popen(command, shell=True)
 
-            print(command)
-            command = sshServer(command, "aquila")
-
-            subprocess.call(command, shell=True)
+        return process
 
 
 tester = Tester()
@@ -113,5 +123,4 @@ tester.memoryKB = args.memoryKB
 tester.time = args.time
 tester.algorithm = args.algorithm
 tester.useSandbox = args.useSandbox
-tester.machine = args.machine
 tester.test()
