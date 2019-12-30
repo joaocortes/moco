@@ -94,7 +94,7 @@ class Tester():
         return processes
 
     def generateCommands(self, listFiles: list, solverI: int):
-        command = "cd moco/finalResults;"
+        command = "cd ~/moco/finalResults;"
         for fileName in listFiles:
             print("fileName: " + fileName)
             outputName = os.path.basename(fileName)
