@@ -3,8 +3,9 @@ import argparse
 import subprocess
 import os
 from datetime import datetime
-from sshInterface import sshServer
-from sshInterface import servers
+import shellInterface
+from shellInterface import sshServer
+from shellInterface import servers
 
 javaJarName = ("../target/org.sat4j.moco.threeAlgorithms-"
                "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
@@ -83,7 +84,14 @@ class Tester():
     def distributeCommands(self):
         commandI = 0
         for command in self.commands:
-            command = sshServer(command, servers[commandI // 2])
+            server = servers[commandI // 2]
+            if server == 0:
+                location = "."
+            else:
+                location = "./moco/finalResults"
+            command = sshServer(command, server, location)
+            self.commands[commandI] = command
+            # print(command)
             commandI += 1
 
     def runCommands(self):
@@ -94,30 +102,29 @@ class Tester():
         return processes
 
     def generateCommands(self, listFiles: list, solverI: int):
-        command = "cd ~/moco/finalResults;"
+        command = ""
         for fileName in listFiles:
             print("fileName: " + fileName)
             outputName = os.path.basename(fileName)
             outputName = os.path.splitext(outputName)[0]
-            outputName += "_S"+str(solverI)+".out"
-            command += (runSolverPath + " "
-                        "-W " + str(self.time) + " "
-                        "-M " + str(self.memoryKB) + " "
-                        "--timestamp "
-                        "-w " + os.path.join(
-                            outputPath,
-                            watcherFilePrefix + outputName) + " "
-                        "-o " + os.path.join(
-                            outputPath,
-                            solverOutputFilePrefix + outputName) + " "
-                        "java -jar " + javaJarName + " "
-                        "" + os.path.join(testsPath, fileName) + " "
-                        #  "-v 2 "
-                        "-alg " + str(solverI))
-            command += " && "
+            outputName += "_S"+str(solverI)+".txt"
 
-        command += ":"
-        print(command)
+            tokens = [runSolverPath,
+                      "-W ", str(self.time),
+                      "-M ", str(self.memoryKB),
+                      "--timestamp "
+                      "-w ", os.path.join(
+                          outputPath,
+                          watcherFilePrefix + outputName),
+                      "-o ", os.path.join(
+                          outputPath,
+                          solverOutputFilePrefix + outputName),
+                      "java -jar ", javaJarName,
+                      "", os.path.join(testsPath, fileName),
+                      #  "-v 2 "
+                      "-alg ", str(solverI), ";"]
+            command += shellInterface.buildCommand(tokens)
+
         # command = re.escape(command)
         self.commands.append(command)
 
