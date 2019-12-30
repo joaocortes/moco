@@ -3,9 +3,8 @@ import argparse
 import subprocess
 import os
 from datetime import datetime
-import socket
-from interface import sshServer
-from interface import servers
+from sshInterface import sshServer
+from sshInterface import servers
 
 javaJarName = ("../target/org.sat4j.moco.threeAlgorithms-"
                "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
@@ -74,17 +73,27 @@ class Tester():
         listFilesPart1 = listFiles[:numberFiles//2]
         listFilesPart2 = listFiles[numberFiles//2:]
         for solverI in solverRange:
-            serverI = solverI
-
-            process1 = self.runSolver(listFilesPart1, solverI, serverI)
-            process2 = self.runSolver(listFilesPart2, solverI, serverI)
-
-            process1.wait()
-            process2.wait()
-
+            self.generateCommands(listFilesPart1, solverI)
+            self.generateCommands(listFilesPart2, solverI)
+        self.distributeCommands()
+        for process in self.runCommands():
+            process.wait()
         print("done!")
 
-    def runSolver(self, listFiles: list, solverI: int, serverI: int):
+    def distributeCommands(self):
+        commandI = 0
+        for command in self.commands:
+            command = sshServer(command, servers[commandI // 2])
+            commandI += 1
+
+    def runCommands(self):
+        processes = []
+        for command in self.commands:
+            print(command)
+            processes.append(subprocess.Popen(command, shell=True))
+        return processes
+
+    def generateCommands(self, listFiles: list, solverI: int):
         command = "cd moco/finalResults;"
         for fileName in listFiles:
             print("fileName: " + fileName)
@@ -110,15 +119,9 @@ class Tester():
         command += ":"
         print(command)
         # command = re.escape(command)
-        command = sshServer(command, servers[serverI])
-        print(command)
-        process = subprocess.Popen(command, shell=True)
-
-        return process
+        self.commands.append(command)
 
 
-# hostname = socket.gethostname()
-# assert servers.count(hostname) > 0
 tester = Tester()
 tester.fillParameters()
 tester.test()
