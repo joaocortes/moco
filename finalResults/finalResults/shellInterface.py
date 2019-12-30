@@ -19,8 +19,8 @@ def buildCommand(tokens):
 
 
 def screenifyCommand(command: str):
-    tokens = ["screen", "-dm", command]
-    command = buildCommand(tokens)
+    # tokens = ["screen", "-dm", "\"", command, "\""]
+    # command = buildCommand(tokens)
     return command
 
 
@@ -28,8 +28,8 @@ def sshServer(command: str, server: str, location: str, screenify=True):
 
     tokens = ["cd", shlex.quote(location), ";", command]
     commandToSend = buildCommand(tokens)
-    if screenify:
-        commandToSend = screenifyCommand(commandToSend)
+    # if screenify:
+    #     commandToSend = screenifyCommand(commandToSend)
     tokens = []
     hostname = socket.gethostname()
     if hostname == superServer:
