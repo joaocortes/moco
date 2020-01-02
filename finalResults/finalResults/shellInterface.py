@@ -33,7 +33,7 @@ def sshServer(command: str, server: str, location: str, screenify=True):
     tokens = []
     hostname = socket.gethostname()
     if hostname == superServer:
-        if not server == hostname:
+        if not hostname == server:
             tokens = ["ssh", server, "-F", "/dev/null", shlex.quote(commandToSend)]
     else:
         tokens1 = ["ssh ", server, "-F", "/dev/null ", shlex.quote(commandToSend)]
