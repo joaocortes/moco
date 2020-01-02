@@ -99,7 +99,17 @@ public class Instance {
                 n = x > n ? x : n;
             }
         }
-        return n;
+	for (int i = 0; i < nObjs(); ++i) {
+	    Objective ithObjective = getObj(i);
+	    for (int k = 0; k < ithObjective.nSubObj(); ++k) {
+		ReadOnlyVecInt lits = ithObjective.getSubObj(k).getLits();
+		for (int j = 0; j < lits.size(); ++j) {
+		    int x = Math.abs(lits.get(j));
+		    n = x > n ? x : n;
+		}
+	    }
+	}
+return n;
     }
     
     /**
