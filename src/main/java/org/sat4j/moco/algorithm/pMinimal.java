@@ -153,8 +153,8 @@ public class pMinimal implements MySolver {
 	    boolean literalValue = this.solver.isLiteralPositive(literal);
 	    id =  this.solver.idFromLiteral(literal);
 	    if(literalValue){
-		currentKD = this.seqEncoder.getKDFromSTopVariable(literal);
-		currentIObj = this.seqEncoder.getObjFromSTopVariable(literal);
+		currentKD = this.seqEncoder.getKDFromY(literal);
+		currentIObj = this.seqEncoder.getIObjFromY(literal);
 		if( currentKD < upperLimits[currentIObj])
 		    assumptions.push(-id);
 	    }
@@ -170,7 +170,7 @@ public class pMinimal implements MySolver {
     public IVecInt generateUpperBoundAssumptions( ){
 	IVecInt assumptions = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    assumptions.push(-this.seqEncoder.getSTop(iObj, this.getUpperKD(iObj) + 1));
+	    assumptions.push(-this.seqEncoder.getY(iObj, this.getUpperKD(iObj) + 1));
 	}
 	return assumptions;
     }
@@ -235,7 +235,7 @@ public class pMinimal implements MySolver {
      */
 
     public boolean isY(int literal){
-	if(this.seqEncoder.isSTop(literal))
+	if(this.seqEncoder.isY(literal))
 	    return true;
 	return false;
     }
@@ -327,7 +327,7 @@ public class pMinimal implements MySolver {
      */
     public void printModel(IVecInt model) {
 	for(int j = 0; j <model.size(); ++j)
-	    this.seqEncoder.prettyPrintVariable(model.get(j));
+	    this.seqEncoder.prettyPrintLiteral(model.get(j));
 	System.out.println();
 
 
@@ -375,7 +375,7 @@ public class pMinimal implements MySolver {
 	int[] upperLimits = this.findUpperLimits(XModelValues);
 	int[] literals = new int[this.problem.nObjs()];
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
+	    literals[iObj] = -this.seqEncoder.getY(iObj, upperLimits[iObj]);
 	IVecInt newHardClause = new VecInt(literals);
 	Log.comment(5, "done");
 	return this.AddClause(newHardClause);
@@ -392,14 +392,14 @@ public class pMinimal implements MySolver {
     private boolean AddClause(IVecInt setOfLiterals){
 	Log.comment(5, "In pMinimal.AddClause");
 	for(int i = 0; i < setOfLiterals.size(); ++i)
-	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(i));
+	    this.seqEncoder.prettyPrintLiteral(setOfLiterals.get(i));
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	}
 	catch (ContradictionException e) {
 	    System.out.println("contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		this.seqEncoder.prettyPrintVariable(setOfLiterals.get(j));
+		this.seqEncoder.prettyPrintLiteral(setOfLiterals.get(j));
 	    System.out.println();
 	    Log.comment(5, "done");
 	    return false;
