@@ -24,7 +24,6 @@ package org.sat4j.moco.algorithm;
 
 import java.util.Vector;
 import org.sat4j.core.VecInt;
-import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
@@ -199,7 +198,7 @@ public class UnsatSat implements MySolver {
     public IVecInt generateUpperBoundAssumptions( ){
 	IVecInt assumptions = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    assumptions.push(-this.seqEncoder.getSTop(iObj, this.getUpperKD(iObj) + 1));
+	    assumptions.push(-this.seqEncoder.getY(iObj, this.getUpperKD(iObj) + 1));
 	}
 	return assumptions;
     }
@@ -227,8 +226,8 @@ public class UnsatSat implements MySolver {
     private void updateUpperBound(IVecInt currentExplanation){
 	for(int i = 0; i < currentExplanation.size(); ++i){
 	    int ithLiteral = currentExplanation.get(i);
-	    int jObj = this.seqEncoder.getObjFromSTopVariable(ithLiteral);
-	    int kd = this.seqEncoder.getKDFromSTopVariable(ithLiteral);
+	    int jObj = this.seqEncoder.getIObjFromY(ithLiteral);
+	    int kd = this.seqEncoder.getKDFromY(ithLiteral);
 	    //TODO This is strange, and should not be always true
 	    assert kd ==this.getUpperKD(jObj);
 
@@ -284,7 +283,7 @@ public class UnsatSat implements MySolver {
      */
 
     public boolean isY(int literal){
-	if(this.seqEncoder.isSTop(literal))
+	if(this.seqEncoder.isY(literal))
 	    return true;
 	return false;
     }
@@ -378,7 +377,7 @@ public class UnsatSat implements MySolver {
      */
     public void printModel(IVecInt model) {
 	for(int j = 0; j <model.size(); ++j)
-	    this.seqEncoder.prettyPrintVariable(model.get(j));
+	    this.seqEncoder.prettyPrintLiteral(model.get(j));
 
 
 	return;
@@ -419,7 +418,7 @@ public class UnsatSat implements MySolver {
 	int[] upperLimits = this.findUpperLimits(newSolution);
 	int[] literals = new int[this.problem.nObjs()];
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
+	    literals[iObj] = -this.seqEncoder.getY(iObj, upperLimits[iObj]);
 	IVecInt newHardClause = new VecInt(literals);
 	return this.AddClause(newHardClause);
     }
@@ -433,14 +432,14 @@ public class UnsatSat implements MySolver {
 
     private boolean AddClause(IVecInt setOfLiterals){
 	for(int i = 0; i < setOfLiterals.size(); ++i)
-	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(i));
+	    this.seqEncoder.prettyPrintLiteral(setOfLiterals.get(i));
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	}
 	catch (ContradictionException e) {
 	    Log.comment(5, "contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		this.seqEncoder.prettyPrintVariable(setOfLiterals.get(j));
+		this.seqEncoder.prettyPrintLiteral(setOfLiterals.get(j));
 	    return false;
 	}
 	return true;
