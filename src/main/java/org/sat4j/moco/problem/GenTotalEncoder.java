@@ -24,8 +24,10 @@ package org.sat4j.moco.problem;
 
 
 import org.sat4j.moco.util.Log;
-import java.lang.Math;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.ArrayList;
 import java.util.Set;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
@@ -42,51 +44,86 @@ import org.sat4j.specs.ContradictionException;
  * @author Joao O'Neill Cortes
  */
 
+
  public class GenTotalEncoder {
 
-    /** 
-     * IDs of the S(equential) variables used to enforce the semantics of the sequential encoder
-     */
-    private int[][][] idsS = null;
 
-     /** 
-      * IDs of the B(locking) variables used to allow incrementality
+
+
+     class SumTree {
+
+	 private int iObj = 0;
+	 private Node parent = null ;
+	 private ArrayList<Node> nodes = new ArrayList<Node>();
+
+	 class Node {
+	     private HashMap<Integer, Integer> nodeVars = null;
+	     private int nodeSum = 0;
+	     private Node left = null;
+	     private Node right = null;
+
+	     public Node(int weight){
+		 this.nodeSum = weight;
+		 this.left = this; 
+		 this.right = this; 
+		 this.nodeVars = new HashMap<Integer, Integer>();
+		 int id = GenTotalEncoder.this.newSVar(this.nodeSum);
+		 this.nodeVars.put(this.nodeSum, id);
+	     }
+
+	     public Node(Node left, Node right){
+		 this.left = left;
+		 this.right = right;
+		 this.nodeSum = left.nodeSum + right.nodeSum;
+		 this.nodeVars =  new HashMap<Integer, Integer>();
+		 HashSet<Integer> values = new HashSet<Integer>() ;
+		 for(Integer valueLeft : left.nodeVars.values())
+		     for(Integer valueRight : right.nodeVars.values())
+			 values.add(valueLeft + valueRight);
+		 for(int value : values) {
+		     int id = GenTotalEncoder.this.newSVar(value);    
+		     this.nodeVars.put(value, id);
+		 }
+	     }
+	 }
+
+	 
+	 public SumTree(Node node){
+	     this.nodes.add(node);
+	     this.parent = node;
+	 }
+
+	 public SumTree(SumTree treeLeft, SumTree treeRight){
+	     this.parent = new Node(treeLeft.parent, treeRight.parent);
+	     this.nodes.add(parent);
+	 }
+     }
+
+     /**
+      *Tree used to encode the goal limits
       */
-     private int[][] idsB = null;
+     private SumTree sumTree = null;
      
-    // private ConstrID topConstraint = null;
+     /**
+      *current upper limits, for each goal
+      */
+     private int[] currentKDs = null;
 
-    /** 
-     * Current top initialized differential k's for all objective functions
-     */
-
-    private int[] currentKDs = null;
-    /** 
-     * Current top differential k's for all objective functions
-     */
-    private int[] initializedKDs = null;
-
+     /**
+      *Acess to the instance to be solved
+      */
     private Instance instance = null;
-
+     /**
+      *Access to the solver being used
+      */
     private PBSolver solver = null;
 
     /**
-     *The inverse index map for the S variables
-     */
-    private Hashtable<Integer,int[]> sTopVariablesInverseIndex  = new Hashtable<Integer, int[]>();
-
-    /**
-     *The inverse index map for the S variables
+     *The inverse index map for the S(um) variables. For each ID, a
+     *value that is an array vector with the value of the goal and the
+     *value of the sum
      */
     private Hashtable<Integer,int[]> sVariablesInverseIndex  = new Hashtable<Integer, int[]>();
-     /**
-      *The inverse index map for the blocking variables
-      */
-     private Hashtable<Integer, Integer> bVariablesInverseIndex  = new Hashtable<Integer, Integer>();
-
-    /**
-     *First solver variable that pertains to the sequential encoding
-     */
 
     private int firstVariable = 0;
 
@@ -97,457 +134,31 @@ import org.sat4j.specs.ContradictionException;
      */
 
     public GenTotalEncoder(Instance instance, PBSolver solver) {
-	Log.comment(5, "in SeqEncoder");
+	Log.comment(5, "in GenTotalEncoder");
 	this.instance = instance;	
 	this.solver = solver;
-	this.firstVariable = solver.nVars() + 1;
-	this.initializeIdsS();
-	this.initializeIdsB();
-	this.initializedKDs = new int[this.instance.nObjs()];
+	this.firstVariable = this.solver.nVars() + 1;
 	this.currentKDs = new int[this.instance.nObjs()];
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
 	    this.setInitializedKD(iObj,-1);
 	    this.UpdateCurrentK(iObj,0);
 	}
 	Log.comment(5, "done");
-	}
-
-
-
-    /**
-     *My little method. It should add the hard constraints needed for
-     *the sequential encoding, using afterKD as the superior limit for
-     *the differential k. I need to initialize the variables before I
-     *can use them to build clauses.
-     *@param iObj The objective index
-     *@param afterKD The desired max value for the objective 
-     */
-    
-     public void UpdateCurrentK(int iObj , int afterKD ){
-	 // Log.comment(6, "Internal:");
-	 // Log.comment(6, "["+this.getCurrentKD(0));
-	 // for(int iObj1 = 1; iObj1 < this.instance.nObjs(); ++iObj1)
-	 //     Log.comment(6, ", "+this.getCurrentKD(iObj1));
-	 // Log.comment(6, "]");
- 	Log.comment(5, "in SeqEncoder.UpdatecurrentK");
-
-	 if(this.getInitializedKD(iObj)< afterKD ){
-	     // STop variables are also extended at 
-	     this.extendInitializedIdsSInK(iObj, afterKD); 
-	     this.extendInitializedIdsBInK(iObj, afterKD); 
-	     this.setInitializedKD(iObj, afterKD);
-	 }
-	 if(afterKD == 0);
-	 this.largerThan0(iObj, afterKD);
-	 if(this.getCurrentKD(iObj) < afterKD){
-	     this.blockingVariableB(iObj, afterKD);
-	     if(iObj == 0)
-		 Log.comment(6, "Clauses -1 4 8 9");
-	     this.ifNotLessNotMore(iObj,afterKD);
-	     Log.comment(6, "");
-	     this.IfXAtLeastW(iObj, afterKD);
-	     Log.comment(6, "");
-	     this.IfLessAlsoMore(iObj, afterKD);
-	     Log.comment(6, "");
-	     this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
-	     this.setCurrentKD(iObj, afterKD);
-	 }
-	 	Log.comment(5, "done");
-     }
-
-
-
-    /**
-     * Initialize the container of the Blocking variables
-     */
-     
-     private void initializeIdsB(){
-	this.idsB = new int[this.instance.nObjs()][];
-	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
-	    Objective ithObj = instance.getObj(iObj);
-	    this.idsB[iObj] = new int[ithObj.getWeightDiff() + 1];
-
-       }
-     }
-
-    /**
-     * Initialize the container of the Sequential variables
-     */
-
-    private void initializeIdsS(){
-	this.idsS = new int[this.instance.nObjs()][][];
-	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
- 	    Objective ithObj = instance.getObj(iObj);
-	    this.idsS[iObj] = new int[ithObj.getTotalLits()][];
-	    int nLits = ithObj.getTotalLits();
-	    for(int x = 1; x <= nLits ;++x){
-		// + 1 necessary: remember kd is simultaneously a
-		// value and an index
-		int iX = x - 1;
-		int[] array = new int[ithObj.getWeightDiff() + 1];
-		this.idsS[iObj][iX] = array;
-	    }
-	}
     }
-
-    /**
-     * Get the ithObj, x literal, kD S variable ID.
-     */
-
-    public int getS(int iObj, int x, int kD){
-	int iX = x - 1;
-	int iKD = kD ;
-	return	 this.idsS[iObj][iX][iKD];
-    }
- 
-
-    /**
-     * Set the ithObj, ith Literal ith kD S variable to
-     *@param iObj, the index of the objective
-     *@param iX, the index of the literal from the objective
-     *@param iKD, the index of the current differential k
-     *@param id, the id of the variable S created
-     * */
-
-    public void setS(int iObj, int x, int kD, int id){
-	int iX = x - 1;
-	int iKD = kD;
-	this.idsS[iObj][iX][iKD] = id;
-	this.sVariablesInverseIndex.put(id, new int[] {iObj,x,kD});
-    }
-
-
-    /**
-     * Get the ithObj, ithX obj, kD STop variable ID.
-     *@param iObj, the index of the objective
-     *@param iX, the index of the literal from the objective
-     *@param iKD, the index of the current differential k
-     */
-
-    public int getSTop(int iObj, int kD){
-	int nLits = this.instance.getObj(iObj).getTotalLits();
-	return 	this.getS(iObj, nLits, kD);
-    }
-
-    /**
-     * Set the ithObj,  ith kD STop variable to
-     *@param iObj, the index of the objective
-     *@param iKD, the index of the current differential k
-     *@param id, the id of the variable STop
-     * */
-
-    public void setSTop(int iObj, int iKD, int id){
-	this.sTopVariablesInverseIndex.put(id, new int[] {iObj,iKD});
-    }
-
-    /**
-     * Pops the ithObj,  ith kD STop variable 
-     *@param iObj, the index of the objective
-     *@param iKD, the index of the current differential k
-     *@param id, the id of the variable STop
-     * */
-
-    public void popSTop(int iObj, int id){
-	return ;
-	// this.sTopVariablesInverseIndex.remove(id);
-    }
-
-
-    /**
-     * Get the ithObj current upper limit on the initialized differential k
-     *@param iObj, the index of the objective
-     *@return  ithObj 
-     */
-
-    public int getInitializedKD(int iObj){
-	return	 this.initializedKDs[iObj];
-    }
-
-    /**
-     * Set the ithObj,  ith kD upper differential k
-     *@param iObj, the index of the objective
-     *@param iKD, the index of the current differential k
-     * */
-
-    public void setInitializedKD(int iObj, int kD){
-	this.initializedKDs[iObj] = kD;
-    }
-
-    /**
-     * Get the ithObj current upper limit on the initialized differential k
-     *@param iObj, the index of the objective
-     *@return  ithObj 
-     */
-
-    public int getCurrentKD(int iObj){
-	return	 this.currentKDs[iObj];
-    }
-
-    /**
-     * Set the ithObj,  ith kD upper differential k
-     *@param iObj, the index of the objective
-     *@param iKD, the index of the current differential k
-     * */
-
-    public void setCurrentKD(int iObj, int kD){
-	this.currentKDs[iObj] = kD;
-    }
-
-    /**
-     * Get the ithObj, ith differential k, Blocking  variable
-     *@param iObj, the index of the objective
-     *@param iKD, the index of the current differential k
-     * */
-
-     public int getB(int iObj, int dK){
-	return this.idsB[iObj][dK];
-    }
-
-    /**
-     * Set the ithObj, ith kD id of a blocking variable to id
-     *@param iObj, the index of the objective
-     *@param iKD, the index of the current differential k
-     *@param the new blocking variable id
-     **/
-     public void setB(int iObj, int kD, int id){
-	 this.idsB[iObj][kD] = id;
-	}
-    
-
-
-    /**
-     *Adds the conjunction of setOfLiterals
-     *@param setOfliterals
-     */
-
-    private void AddClause(IVecInt setOfLiterals){
-	for(int i = 0; i < setOfLiterals.size(); ++i)
-	    this.prettyPrintVariable(setOfLiterals.get(i));
-	try{
-	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
-	} catch (ContradictionException e) {
-	    Log.comment(6, "contradiction when adding clause: ");
-	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		Log.comment(6, " " + setOfLiterals.get(j) + " " );
-	    return;
-	}
-    }
-
-
+     private void setInitializedKD(int iObj, int kD){};
+     private void UpdateCurrentK(int iObj, int kD){};
 
      /**
-      *Just a wrapper to PBSolver newVar, that returns the new id
+      *Return the ID of a freshly solver's variable
       */
-
-    private int newVar(){
-	this.solver.newVars(1);
-	return solver.nVars();
-    }
-
-
-
-
-    /** 
-     *  extend the B variables in k
-     */
-
-    private void extendInitializedIdsBInK(int iObj, int afterKD){
-
-	for(int kD = this.getInitializedKD(iObj)+1; kD <= afterKD; ++kD){
-	    this.setB(iObj,kD , this.newVar());	     
-	}
+     public int newSVar(int sum){
 	 
-    }
-
-    /** 
-     * extend the S variables in the differential k index
-     */
-
-    public void extendInitializedIdsSInK(int iObj, int afterKD){
-
-	int nLit = this.instance.getObj(iObj).getTotalLits();
-	for(int kd = this.initializedKDs[iObj]+1; kd <= afterKD ; ++kd){
-	    for (int x = 1 ; x <= nLit; ++x){
-		/* Log.comment(6, iObj + " " + iX + " " + kd + " " + this.newVar()); */
-		this.setS(iObj, x, kd, this.newVar());
-	    }
-	}
-	this.extendInitializedIdsSTopinK(iObj, afterKD);
-    }
-
-
-    /** 
-     * extend the STop variables in the differential k index until afterKD. Assumes
-     * the S variables are already extended accordingly
-     * @param iObj
-     * @param afterKD
-     */
-
-    private void extendInitializedIdsSTopinK(int iObj, int afterKD){
-	int nLit = this.instance.getObj(iObj).getTotalLits();
-	int beforeKD = this.getCurrentKD(iObj);
-	for(int kd = this.initializedKDs[iObj]+1; kd <= afterKD  ; ++kd){
-	    if( beforeKD != 0)
-		this.popSTop(iObj, this.getS(iObj, nLit, beforeKD));
-	    this.setSTop(iObj, kd, this.getS(iObj, nLit, afterKD ));
-	    
-	}
-    }
-
-
-
-    /**
-     * Get the objective from an STop variable
-     * @param literal
-     */
-
-    public int getObjFromSTopVariable(int literal){
-	assert this.isSTop(literal);
-	literal = (literal>0)? literal: -literal;
-	return this.sTopVariablesInverseIndex.get(literal)[0] ;
-    }
-
-    /**
-     * return the value of the differential k from an S variable
-     * @param literal
-     */
-
-    public int getKDFromSTopVariable(int literal){
-	assert this.isSTop(literal);
-	literal = (literal>0)? literal: -literal;
-	return this.sTopVariablesInverseIndex.get(literal)[1] ;
-    }
-
-    /**
-     * Get the objective from an STop variable
-     * @param literal
-     */
-
-    public int getObjFromSVariable(int literal){
-	assert this.isS(literal);
-	literal = (literal>0)? literal: -literal;
-	return this.sVariablesInverseIndex.get(literal)[0] ;
-    }
-
-    /**
-     * return the value of the differential k from an S variable
-     * @param literal
-     */
-
-    public int getKDFromSVariable(int literal){
-	assert this.isS(literal);
-	literal = (literal>0)? literal: -literal;
-	return this.sVariablesInverseIndex.get(literal)[2] ;
-
-    }
-    /**
-     * Get the objective from an B variable
-     * @param literal
-     */
-
-    public int getObjFromBVariable(int literal){
-	assert this.isB(literal);
-	literal = (literal>0)? literal: -literal;
-	return this.bVariablesInverseIndex.get(literal) ;
-    }
-
-    /**
-     * return the value of the differential k from an B variable
-     * @param literal
-     */
-
-    /**
-     * return the value of the literal index
-     * @param literal
-     */
-
-    public int getXFromSVariable(int literal){
-	assert this.isS(literal);
-	literal = (literal>0)? literal: -literal;
-	return this.sVariablesInverseIndex.get(literal)[1] ;
-    }
-
-
-    /**
-     *Checks if literal is an STop variable
-     *@param literal
-     */
-
-    public boolean isSTop(int literal){
-	literal = (literal>0)? literal: -literal;
-	if(this.sTopVariablesInverseIndex.containsKey(literal))
-	    return true;
-	return false;
-    }
-
-    /**
-     *Checks if literal is an S variable
-     *@param literal
-     */
-
-    public boolean isS(int literal){
-	literal = (literal>0)? literal: -literal;
-	if(this.sVariablesInverseIndex.containsKey(literal))
-	    return true;
-	return false;
-    }
-    /**
-     *Checks if literal is an B variable
-     *@param literal
-     */
-
-    public boolean isB(int literal){
-	literal = (literal>0)? literal: -literal;
-	if(this.bVariablesInverseIndex.containsKey(literal))
-	    return true;
-	return false;
-    }
-
-     public void prettyPrintVecInt(IVecInt vecInt){
-	 for(int j = 0; j < vecInt.size(); ++j)
-	     this.prettyPrintVariable(vecInt.get(j));
-
-	 return;
+	 this.solver.newVar();
+	 int id = this.solver.nVars();
+	 this.sVariablesInverseIndex.put(id, new int[]{sum, this.sumTree.iObj});
+	 return id;
      }
+ }
 
-    public void prettyPrintVariable(int literal){
-	int sign =(literal>0)? 1: -1;
-	int id =  literal * sign;
-	// if(this.isSTop(id)){
-	//     int iObj = this.getObjFromSTopVariable(id);
-	//     int kd = this.getKDFromSTopVariable(id);
-	//     Log.comment(6, literal + "->" + "STop[" + iObj + ", " + kd +"] ");
-	//     return;
-	// }
-	 
-	if(this.isS(id)){
-	    int iObj = this.getObjFromSVariable(id);
-	    int iX = this.getXFromSVariable(id);
-	    int kd = this.getKDFromSVariable(id);
-	    Log.comment(6, literal + "->" + "S[" + iObj + ", " + iX + ", " + kd +"] ");
-	    return;
-	}
-	if(this.isB(id)){
-	    int iObj = this.getObjFromBVariable(id);
-	    Log.comment(6, id + "->" + "B[" + ", " + iObj +"] ");
-	    return;
-	}
-	if(id < this.firstVariable){
-	    Log.comment(6, (sign>0? "+":"-")+"X["+id+"] ");
-	}
-    }
 
-    public void printS(){
-	for(int i = 0; i < this.sVariablesInverseIndex.size(); ++i){
-	    Set<Integer> keys = this.sVariablesInverseIndex.keySet();
-	    for(Integer IntegerKey: keys){
-		int key = IntegerKey;
-		int iObj = this.getObjFromSVariable(key);
-		int iX = this.getXFromSVariable(key);
-		int kd = this.getKDFromSVariable(key);
-		Log.comment(6, key + "->" + "S[" + iObj + ", " + iX + ", " + kd +"]");
-	    }
-	}
-    }
-}
 
