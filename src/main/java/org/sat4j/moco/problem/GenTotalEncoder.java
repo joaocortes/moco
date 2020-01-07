@@ -27,6 +27,7 @@ import org.sat4j.moco.util.Log;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.Set;
 import org.sat4j.core.ReadOnlyVec;
@@ -55,23 +56,26 @@ import org.sat4j.specs.ContradictionException;
 	 private int iObj = 0;
 	 private Node parent = null ;
 	 private ArrayList<Node> nodes = new ArrayList<Node>();
+	 private PriorityQueue<Node> unlinkedNodes = new PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
 
 	 class Node {
 	     private HashMap<Integer, Integer> nodeVars = null;
 	     private int nodeSum = 0;
 	     private Node left = null;
 	     private Node right = null;
-
+	     
 	     public Node(int weight){
 		 this.nodeSum = weight;
-		 this.left = this; 
-		 this.right = this; 
+		 this.left = null; 
+		 this.right = this.left;
 		 this.nodeVars = new HashMap<Integer, Integer>();
 		 int id = GenTotalEncoder.this.newSVar(this.nodeSum);
 		 this.nodeVars.put(this.nodeSum, id);
+		 SumTree.this.unlinkedNodes.add(this);
 	     }
-
+	     
 	     public Node(Node left, Node right){
+		 SumTree.this.unlinkedNodes.add(this);
 		 this.left = left;
 		 this.right = right;
 		 this.nodeSum = left.nodeSum + right.nodeSum;
@@ -96,6 +100,15 @@ import org.sat4j.specs.ContradictionException;
 	 public SumTree(SumTree treeLeft, SumTree treeRight){
 	     this.parent = new Node(treeLeft.parent, treeRight.parent);
 	     this.nodes.add(parent);
+	 }
+	 public boolean linkTree(){
+	     while(!this.unlinkedNodes.isEmpty()){
+		 Node leftNode = unlinkedNodes.poll();
+		 Node rightNode = unlinkedNodes.poll();
+		 Node parentNode = new Node(leftNode, rightNode);
+		 unlinkedNodes.add(parentNode);
+	     }
+	     return true;
 	 }
      }
 
