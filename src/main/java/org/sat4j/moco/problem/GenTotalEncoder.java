@@ -25,103 +25,147 @@ package org.sat4j.moco.problem;
 
 import org.sat4j.moco.util.Log;
 import java.util.HashMap;
+import java.util.Vector;
 import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Hashtable;
 import java.util.PriorityQueue;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.SortedSet;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
+import org.sat4j.moco.problem.GenTotalEncoder.SumTree.Node;
 import org.sat4j.specs.IVecInt;
 import org.sat4j.specs.ContradictionException;
 
 /**
- * Class with the implementation of the sequetial encoder.
+ * Class with the implementation of the generalized totalizor encoder.
  * Notice that the differential is both a value and an index starting at 0
  * @author Joao O'Neill Cortes
  */
 
 
- public class GenTotalEncoder {
-
-
-
+ public class GenTotalEncoder implements GoalDelimeter {
 
      class SumTree {
 
-	 private int iObj = 0;
-	 private Node parent = null ;
+	 private int upperLimit = -1;
+	 private Node parent = null;
 	 private ArrayList<Node> nodes = new ArrayList<Node>();
 	 private PriorityQueue<Node> unlinkedNodes = new PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
 
 	 class Node {
-	     private HashMap<Integer, Integer> nodeVars = null;
+	     class NodeVar {
+		 private int kD;
+		 private int id;
+
+		 public NodeVar(int kD, int upperLimit){
+		     this.setKD(kD, upperLimit);
+		     this.setId(-1);
+		 }
+
+		 public int getId(){return this.id;}
+		 public int getKD(){return this.kD;}
+
+		 public void setKD(int newKD, int upperLimit){
+		     this.kD = newKD;
+		     this.kD = this.cutValue(upperLimit);
+		 }
+		 public void setId(int id){
+		     assert this.id == -1;
+		     // id = GenTotalEncoder.this.newSVar(iObj, kD);
+		     this.id = id;
+		 }
+		 private int cutValue(int upperLimit){
+		     return this.kD > upperLimit + 1? this.kD : upperLimit + 1;
+		 }
+		 public void baptize(int id, int upperLimit){
+		     if(this.getKD()<= upperLimit)
+			 this.setId(id);
+		 }
+	     }
+
+	     private ArrayList<NodeVar> nodeVars = null;
 	     private int nodeSum = 0;
 	     private Node left = null;
 	     private Node right = null;
 	     
-	     public Node(int weight){
+	     public Node(int weight, int upperLimit){
 		 this.nodeSum = weight;
 		 this.left = null; 
-		 this.right = this.left;
-		 this.nodeVars = new HashMap<Integer, Integer>();
-		 int id = GenTotalEncoder.this.newSVar(this.nodeSum);
-		 this.nodeVars.put(this.nodeSum, id);
-		 SumTree.this.unlinkedNodes.add(this);
+		 this.right = null;
+		 this.nodeVars = new ArrayList<NodeVar>();
+		 this.nodeVars.add(new NodeVar(this.nodeSum, upperLimit ));
 	     }
 	     
-	     public Node(Node left, Node right){
-		 SumTree.this.unlinkedNodes.add(this);
+	     public Node(Node left, Node right, int upperLimit){
+
 		 this.left = left;
 		 this.right = right;
+		 this.nodeVars =  new ArrayList<int[]>();
+		 this.generateVars(upperLimit);
 		 this.nodeSum = left.nodeSum + right.nodeSum;
-		 this.nodeVars =  new HashMap<Integer, Integer>();
-		 HashSet<Integer> values = new HashSet<Integer>() ;
-		 for(Integer valueLeft : left.nodeVars.values())
-		     for(Integer valueRight : right.nodeVars.values())
-			 values.add(valueLeft + valueRight);
+	     }
+
+
+	     private void generateVars(int upperLimit){
+		 Vector<Integer> values =  new Vector<Integer>() ;
+		 for( NodeVar nodeVarLeft : left.nodeVars)
+		     for(NodeVar  nodeVarRight : right.nodeVars)
+			 values.add(nodeVarLeft.getKD() + nodeVarRight.getKD());
+		 values.sort(null);
 		 for(int value : values) {
-		     int id = GenTotalEncoder.this.newSVar(value);    
-		     this.nodeVars.put(value, id);
+		     this.nodeVars.add(new NodeVar(value, upperLimit));
 		 }
 	     }
+
+
+
+
 	 }
 
 	 
-	 public SumTree(Node node){
-	     this.nodes.add(node);
-	     this.parent = node;
+	 public SumTree(int[] leafWeights, int upperLimit){
+	     this.upperLimit = upperLimit;
+	     
+	     for(int weight : leafWeights){
+		Node node =  new Node(weight);
+	     this.unlinkedNodes.add(node);
+	     }
+	     linkTree();
+	     this.parent = this.unlinkedNodes.poll();
 	 }
-
-	 public SumTree(SumTree treeLeft, SumTree treeRight){
-	     this.parent = new Node(treeLeft.parent, treeRight.parent);
-	     this.nodes.add(parent);
-	 }
-	 public boolean linkTree(){
-	     while(!this.unlinkedNodes.isEmpty()){
+	 
+	 //TODO what happens if there is only one node left in unlinkedNodes
+	 public void linkTree(){
+	     while(this.unlinkedNodes.poll() != null){
 		 Node leftNode = unlinkedNodes.poll();
+		 this.nodes.add(leftNode);
 		 Node rightNode = unlinkedNodes.poll();
-		 Node parentNode = new Node(leftNode, rightNode);
+		 this.nodes.add(rightNode);
+		 Node parentNode = new Node(leftNode, rightNode, this.upperLimit);
 		 unlinkedNodes.add(parentNode);
 	     }
-	     return true;
 	 }
+
+	 // public void updateUpperKD(int upperKD){
+	 //     this.upperLimit = upperKD;
+	 //     Node currentNode = this.parent;
+
+
+	     
+	 // }
      }
 
      /**
       *Tree used to encode the goal limits
       */
-     private SumTree sumTree = null;
+     private SumTree[] sumTrees = null;
      
-     /**
-      *current upper limits, for each goal
-      */
-     private int[] currentKDs = null;
-
      /**
       *Acess to the instance to be solved
       */
@@ -141,7 +185,7 @@ import org.sat4j.specs.ContradictionException;
     private int firstVariable = 0;
 
     /**
-     * Creates an Instance of the sequential encoder
+     * Creates an Instance of the generalized totalizor encoder
      * @param instance, the pseudo boolean instance
      * @param solver, the solver to be updated
      */
@@ -151,26 +195,110 @@ import org.sat4j.specs.ContradictionException;
 	this.instance = instance;	
 	this.solver = solver;
 	this.firstVariable = this.solver.nVars() + 1;
-	this.currentKDs = new int[this.instance.nObjs()];
+
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
-	    this.setInitializedKD(iObj,-1);
 	    this.UpdateCurrentK(iObj,0);
 	}
 	Log.comment(5, "done");
     }
-     private void setInitializedKD(int iObj, int kD){};
-     private void UpdateCurrentK(int iObj, int kD){};
+
+
 
      /**
-      *Return the ID of a freshly solver's variable
+      *TODO check the second indice
       */
-     public int newSVar(int sum){
+     public int getIObjFromY(int id){
+	 assert this.isY(id);
+	 return this.sVariablesInverseIndex.get(id)[0];
+     }
+
+     /**
+      *TODO check the second indice
+      */
+     public int getKDFromY(int id){
+	 assert this.isY(id);
+	 return this.sVariablesInverseIndex.get(id)[1];
+
+     }
+
+
+     //TODO wrong: the second argument should be kD, not iKD
+     public int getY(int iObj, int iKD){
+	 return this.sumTrees[iObj].parent.nodeVars.get(iKD).getId();
+     }
+
+
+     public boolean isY(int literal){
+	 int id = this.solver.idFromLiteral(literal);
+	 if(this.sVariablesInverseIndex.containsKey(id))
+	     return true;
+	 return false;
+     }
+
+     public void prettyPrintVecInt(IVecInt vecInt){
+	 for(int j = 0; j < vecInt.size(); ++j)
+	     this.prettyPrintLiteral(vecInt.get(j));
+
+	 return;
+     }
+
+    public void prettyPrintLiteral(int literal){
+	int sign =(literal>0)? 1: -1;
+	int id =  literal * sign;
+	// if(this.isY(id)){
+	//     int iObj = this.getIObjFromY(id);
+	//     int kd = this.getKDFromY(id);
+	//     Log.comment(6, literal + "->" + "STop[" + iObj + ", " + kd +"] ");
+	//     return;
+	// }
 	 
+	if(this.isY(id)){
+	    int iObj = this.getIObjFromY(id);
+	    int kd = this.getKDFromY(id);
+	    Log.comment(6, literal + "->" + "Y[" + iObj + ", " + kd +"] ");
+	    return;
+	}
+	if(id < this.firstVariable){
+	    Log.comment(6, (sign>0? "+":"-")+"X["+id+"] ");
+	}
+    }
+
+     public void UpdateCurrentK(int iObj, int kD){
+	 this.sumTrees[iObj].updateUpperKD(kD);
+};
+
+     /**
+      *Return the ID of a freshly created solver's variable
+      */
+     public int newSVar(int sum, int iObj){
 	 this.solver.newVar();
 	 int id = this.solver.nVars();
-	 this.sVariablesInverseIndex.put(id, new int[]{sum, this.sumTree.iObj});
+	 this.sVariablesInverseIndex.put(id, new int[]{sum, iObj});
 	 return id;
      }
+
+     private void baptizeSubTree(SumTree.Node node, int iObj, int newUpperLimit){
+	 Node currentNode = node;
+	 for(SumTree.Node.NodeVar nodeVar : currentNode.nodeVars){
+	     int id  = this.newSVar(nodeVar.getKD(), iObj);
+	     nodeVar.baptize(id, newUpperLimit);
+	 }
+	 
+	 while(currentNode.left != currentNode){
+	     baptizeSubTree(currentNode.left, iObj, newUpperLimit);
+	     baptizeSubTree(currentNode.right, iObj, newUpperLimit);
+	 }
+     }
+     
+     public void baptizeSumTrees(int newUpperLimit){
+
+	 int iObj = 0;
+	 SumTree sumTree = this.sumTrees[iObj];
+	 SumTree.Node currentNode = sumTree.parent;
+	 baptizeSubTree(currentNode, iObj, newUpperLimit);
+     }
+public void updateSolver
+
  }
 
 
