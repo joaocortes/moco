@@ -47,9 +47,10 @@ import org.sat4j.specs.ContradictionException;
  public class SeqEncoder {
 
     /** 
-     * IDs of the S(equential) variables used to enforce the semantics of the sequential encoder
+     * IDs of the S(equential) variables used to enforce the semantics of the sequential encoder.
+     * idsS[iObj][iX][iKD] 
      */
-    private int[][][] idsS = null;
+    private List<ArrayList<ArrayList<Integer>>>  idsS = null;
 
      /** 
       * IDs of the B(locking) variables used to allow incrementality
