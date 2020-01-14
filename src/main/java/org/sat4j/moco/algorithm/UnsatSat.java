@@ -111,7 +111,7 @@ public class UnsatSat implements MySolver {
 	IVecInt currentExplanation = new VecInt(new int[] {});
 	IVecInt currentAssumptions = new VecInt(new int[] {});
 	IVecInt currentYModel = new VecInt(new int[] {});
-	boolean[] currentXModelValues = new boolean[this.problem.nVars()];
+	// boolean[] currentXModelValues = new boolean[this.problem.nVars()];
 	// Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	// Vector<IVecInt> modelsY = new Vector<IVecInt>();
 	Result subResult = new Result(this.problem);
@@ -149,7 +149,7 @@ public class UnsatSat implements MySolver {
 		Log.comment(5, " current subResult size:" + subResult.nSolutions());
 
 		currentYModel = this.getYModel();
-		currentXModelValues = this.getXModelValues();
+		// currentXModelValues = this.getXModelValues();
 		// modelsY.add(this.getYModel());
 
 		//log..
