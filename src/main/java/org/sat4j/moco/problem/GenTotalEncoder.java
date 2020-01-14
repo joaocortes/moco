@@ -291,13 +291,13 @@ import org.sat4j.specs.ContradictionException;
      }
      
      public void baptizeSumTrees(int newUpperLimit){
-
 	 int iObj = 0;
 	 SumTree sumTree = this.sumTrees[iObj];
 	 SumTree.Node currentNode = sumTree.parent;
 	 baptizeSubTree(currentNode, iObj, newUpperLimit);
+
      }
-public void updateSolver
+
 
  }
 
