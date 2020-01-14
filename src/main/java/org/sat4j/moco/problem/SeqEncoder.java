@@ -25,6 +25,8 @@ package org.sat4j.moco.problem;
 
 import org.sat4j.moco.util.Log;
 import java.lang.Math;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Hashtable;
 import java.util.Set;
 import org.sat4j.core.ReadOnlyVec;
