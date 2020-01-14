@@ -218,7 +218,9 @@ import org.sat4j.specs.ContradictionException;
     public void setS(int iObj, int x, int kD, int id){
 	int iX = x - 1;
 	int iKD = kD;
-	this.idsS[iObj][iX][iKD] = id;
+	List<ArrayList<Integer>> arrayX_dK = this.idsS.get(iObj);
+	List<Integer> arrayDK = arrayX_dK.get(iX);
+	arrayDK.set(iKD, id);
 	this.sVariablesInverseIndex.put(id, new int[] {iObj,x,kD});
     }
 
