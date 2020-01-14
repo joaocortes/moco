@@ -220,6 +220,8 @@ import org.sat4j.specs.ContradictionException;
 	int iKD = kD;
 	List<ArrayList<Integer>> arrayX_dK = this.idsS.get(iObj);
 	List<Integer> arrayDK = arrayX_dK.get(iX);
+	while( iKD > arrayDK.size() - 1)
+	    arrayDK.add(0);
 	arrayDK.set(iKD, id);
 	this.sVariablesInverseIndex.put(id, new int[] {iObj,x,kD});
     }
