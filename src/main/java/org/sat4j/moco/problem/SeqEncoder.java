@@ -200,7 +200,10 @@ import org.sat4j.specs.ContradictionException;
     public int getS(int iObj, int x, int kD){
 	int iX = x - 1;
 	int iKD = kD ;
-	return	 this.idsS[iObj][iX][iKD];
+	List<ArrayList<Integer>> arrayX_dK = this.idsS.get(iObj);
+	List<Integer> arrayDK = arrayX_dK.get(iX);
+	int result = arrayDK.get(iKD);
+	return result;
     }
  
 
