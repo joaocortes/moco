@@ -25,6 +25,7 @@ package org.sat4j.moco.problem;
 
 import org.sat4j.moco.util.Log;
 import java.lang.Math;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Hashtable;
@@ -218,10 +219,13 @@ import org.sat4j.specs.ContradictionException;
     public void setS(int iObj, int x, int kD, int id){
 	int iX = x - 1;
 	int iKD = kD;
+
 	List<ArrayList<Integer>> arrayX_dK = this.idsS.get(iObj);
 	List<Integer> arrayDK = arrayX_dK.get(iX);
-	while( iKD > arrayDK.size() - 1)
-	    arrayDK.add(0);
+	if( iKD > arrayDK.size() - 1){
+	    Integer[] graftArray =  new Integer[iKD - arrayDK.size() + 1];
+	    arrayDK.addAll(Arrays.asList(graftArray));
+	}
 	arrayDK.set(iKD, id);
 	this.sVariablesInverseIndex.put(id, new int[] {iObj,x,kD});
     }
