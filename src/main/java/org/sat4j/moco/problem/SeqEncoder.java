@@ -97,7 +97,7 @@ import org.sat4j.specs.ContradictionException;
      */
 
     public SeqEncoder(Instance instance, PBSolver solver) {
-	Log.comment(5, "in SeqEncoder");
+	Log.comment(4, "in SeqEncoder");
 	this.instance = instance;	
 	this.solver = solver;
 	this.firstVariable = solver.nVars() + 1;
@@ -109,7 +109,7 @@ import org.sat4j.specs.ContradictionException;
 	    this.setInitializedKD(iObj,-1);
 	    this.UpdateCurrentK(iObj,0);
 	}
-	Log.comment(5, "done");
+	Log.comment(4, "done");
 	}
 
 
@@ -129,7 +129,7 @@ import org.sat4j.specs.ContradictionException;
 	 // for(int iObj1 = 1; iObj1 < this.instance.nObjs(); ++iObj1)
 	 //     Log.comment(6, ", "+this.getCurrentKD(iObj1));
 	 // Log.comment(6, "]");
- 	Log.comment(5, "in SeqEncoder.UpdatecurrentK");
+ 	Log.comment(4, "in SeqEncoder.UpdatecurrentK");
 
 	 if(this.getInitializedKD(iObj)< afterKD ){
 	     // STop variables are also extended at 
@@ -142,13 +142,13 @@ import org.sat4j.specs.ContradictionException;
 	 if(this.getCurrentKD(iObj) < afterKD){
 	     this.blockingVariableB(iObj, afterKD);
 	     if(iObj == 0)
-		 Log.comment(6, "Clauses -1 4 8 9");
+		 Log.comment(5, "Clauses -1 4 8 9");
 	     this.ifNotLessNotMore(iObj,afterKD);
-	     Log.comment(6, "");
+	     Log.comment(5, "");
 	     this.IfXAtLeastW(iObj, afterKD);
-	     Log.comment(6, "");
+	     Log.comment(5, "");
 	     this.IfLessAlsoMore(iObj, afterKD);
-	     Log.comment(6, "");
+	     Log.comment(5, "");
 	     this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
 	     this.setCurrentKD(iObj, afterKD);
 	 }
