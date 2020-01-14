@@ -178,17 +178,17 @@ import org.sat4j.specs.ContradictionException;
      */
 
     private void initializeIdsS(){
-	this.idsS = new int[this.instance.nObjs()][][];
+	this.idsS = new ArrayList<ArrayList<ArrayList<Integer>>>();
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
  	    Objective ithObj = instance.getObj(iObj);
-	    this.idsS[iObj] = new int[ithObj.getTotalLits()][];
+	    ArrayList<ArrayList<Integer>> arrayX_dK =new ArrayList<ArrayList<Integer>>(ithObj.getTotalLits());
 	    int nLits = ithObj.getTotalLits();
 	    for(int x = 1; x <= nLits ;++x){
 		// + 1 necessary: remember kd is simultaneously a
 		// value and an index
-		int iX = x - 1;
-		int[] array = new int[ithObj.getWeightDiff() + 1];
-		this.idsS[iObj][iX] = array;
+		ArrayList<Integer> arrayDK = new ArrayList<Integer>(ithObj.getWeightDiff() + 1);
+		arrayX_dK.add(arrayDK);
+		this.idsS.add(arrayX_dK);
 	    }
 	}
     }
