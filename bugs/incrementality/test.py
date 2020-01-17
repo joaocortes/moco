@@ -7,7 +7,7 @@ import shellInterface
 from shellInterface import sshServer
 from shellInterface import servers
 
-javaJarName = ("./target/org.sat4j.moco.threeAlgorithms-"
+javaJarName = ("./org.sat4j.moco.threeAlgorithms-"
                "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
 testsPath = "instances/"
 outputPath = "output/"
