@@ -189,8 +189,8 @@ import org.sat4j.specs.ContradictionException;
 		// value and an index
 		ArrayList<Integer> arrayDK = new ArrayList<Integer>(ithObj.getWeightDiff() + 1);
 		arrayX_dK.add(arrayDK);
-		this.idsS.add(arrayX_dK);
 	    }
+		this.idsS.add(arrayX_dK);
 	}
     }
 
