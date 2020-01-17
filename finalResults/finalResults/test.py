@@ -68,7 +68,7 @@ class Tester():
             solverRange = range(self.algorithm, self.algorithm+1)
         else:
             solverRange = range(3)
-
+        self.outputPath += datetime.datetime.now().strftime("%y%b%d_%H_%m")
         listFiles = os.listdir(testsPath)
         numberFiles = len(listFiles)
         listFilesPart1 = listFiles[:numberFiles//2]
