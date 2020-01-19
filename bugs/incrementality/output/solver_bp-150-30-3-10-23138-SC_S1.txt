@@ -1,3 +1,4 @@
-0.00/0.00	exec failed: No such file or directory
-0.00/0.00	Solver command line was: java -jar ../../../target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar instances/bp-150-30-3-10-23138-SC.pbmo -alg 1 
-0.00/0.00	
+0.19/0.13	c :verbosity 0
+0.19/0.13	c :decimal-scale 5
+3822.93/3600.03	s UNKNOWN
+3822.93/3600.03	n 0
