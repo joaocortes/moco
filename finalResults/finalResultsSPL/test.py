@@ -85,7 +85,7 @@ class Tester():
         commandI = -1
         for command in self.commands:
             commandI += 1
-            serverI = commandI % len(servers)
+            serverI = commandI // (len(servers) - 1)
             server = servers[serverI]
             if serverI == 0:
                 location = "."
