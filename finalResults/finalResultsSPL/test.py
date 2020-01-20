@@ -1,3 +1,4 @@
+import math
 import sys
 import argparse
 import subprocess
@@ -85,7 +86,7 @@ class Tester():
         commandI = -1
         for command in self.commands:
             commandI += 1
-            serverI = commandI // (len(servers) - 1)
+            serverI = math.floor(commandI * len(servers) / len(self.commands))
             server = servers[serverI]
             if serverI == 0:
                 location = "."
