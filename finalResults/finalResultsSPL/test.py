@@ -7,7 +7,7 @@ import shellInterface
 from shellInterface import sshServer
 from shellInterface import servers
 
-javaJarName = ("./target/org.sat4j.moco.threeAlgorithms-"
+javaJarName = ("./org.sat4j.moco.threeAlgorithms-"
                "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
 testsPath = "instances/"
 outputPath = "output/"
@@ -90,7 +90,7 @@ class Tester():
             if serverI == 0:
                 location = "."
             else:
-                location = "./moco/finalResults"
+                location = "./moco/finalResults/finalResultsSPL"
             command = sshServer(command, server, location)
             self.commands[commandI] = command
             # print(command)
