@@ -88,10 +88,7 @@ class Tester():
             commandI += 1
             serverI = math.floor(commandI * len(servers) / len(self.commands))
             server = servers[serverI]
-            if serverI == 0:
-                location = "."
-            else:
-                location = "./moco/finalResults/finalResultsSPL"
+            location = "./moco/finalResults/finalResultsSPL"
             command = sshServer(command, server, location)
             self.commands[commandI] = command
             # print(command)
