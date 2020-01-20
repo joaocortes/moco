@@ -1,7 +1,7 @@
 import socket
 import shlex
 
-servers = ("pictor", "pegasus", "octans")
+servers = ("pictor", "octans", "pegasus")
 gateway = "aquila"
 superServer = servers[0]
 me = "JC"
