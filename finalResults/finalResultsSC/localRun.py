@@ -1,0 +1,1 @@
+testsPath = "convertedInstancesSC/"
