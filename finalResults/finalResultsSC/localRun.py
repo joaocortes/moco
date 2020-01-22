@@ -1,1 +1,0 @@
-testsPath = "convertedInstancesSC/"
