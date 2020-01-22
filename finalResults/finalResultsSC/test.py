@@ -6,10 +6,11 @@ from datetime import datetime
 import shellInterface
 from shellInterface import sshServer
 from shellInterface import servers
+from shellInterface import testsPath 
+
 
 javaJarName = ("../target/org.sat4j.moco.threeAlgorithms-"
                "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
-testsPath = "convertedInstancesSC/"
 outputPath = "output/"
 watcherFilePrefix = "watcher_"
 solverOutputFilePrefix = "solver_"
