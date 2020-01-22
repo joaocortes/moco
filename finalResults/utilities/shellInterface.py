@@ -1,6 +1,6 @@
 import socket
 import shlex
-from localRun import servers 
+from localRun import servers
 from localRun import testsPath
 superServer = servers[0]
 
