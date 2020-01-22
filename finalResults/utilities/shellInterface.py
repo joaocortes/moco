@@ -1,11 +1,8 @@
 import socket
 import shlex
-
-servers = ("centaurus", "scutum", "octans")
-gateway = "aquila"
+from localRun import servers 
+from localRun import testsPath
 superServer = servers[0]
-me = "JC"
-
 
 def escapeCommand(command: str):
     tokens = shlex.split(command)
