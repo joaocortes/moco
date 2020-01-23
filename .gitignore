@@ -15,3 +15,6 @@ target/*
 /finalResults/MO2PBMO_v0.1/results/
 /shadow/
 /target/
+/finalResults/finalResultsSC/run1/output/memoryPlot_SPL-5D-2.6.28.6-icse11.6.28.6-icse11.dimacs_S2.txt
+memory*
+time*
