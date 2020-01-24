@@ -21,16 +21,18 @@
 	  (setq result (concat result ", "))
 	  (incf n)
 	  ))
-  (with-temp-file 
-       (replace-regexp-in-string
-	"solver_" "timePlot_"
-	file)
-    (goto-char (point-min))
-    (insert result)
-    (unless (= n 0)
-      (search-backward ",")
-      (kill-line))
-   ))))
+      (let ((plot-name
+	     (replace-regexp-in-string
+	      "solver_" "timePlot_"
+	      file) ))
+	(with-temp-file 
+	    plot-name
+	  (goto-char (point-min))
+	  (insert result)
+	  (unless (= n 0)
+	    (search-backward ",")
+	    (kill-line)))
+	(expand-file-name plot-name)))))
 
 (defun joc-trajectories-memory (&optional file)
   (interactive "P")
@@ -55,7 +57,7 @@
 	  (setq start (point))
 	  (search-forward-regexp  "[0-9]*")
 	  (copy-region-as-kill start (point))
-	  (setq memory (current-kill 0))
+	  (setq memory (number-to-string (truncate (/ (string-to-number (current-kill 0)) 1000000))))
 	  (setq result (append result (list `(,time . ,memory))))
 	  (incf n)))
       (let (result-string result-current)
@@ -65,10 +67,12 @@
 	  (setq result-string
 		(concat result-string
 			time ", " memory "\n")))
-	(with-temp-file 
-	    (replace-regexp-in-string
+(let ((plot-name 
+       (replace-regexp-in-string
 	     "watcher_" "memoryPlot_"
-	     file)
+	     file)))
+  (with-temp-file 
+      plot-name
 	  (erase-buffer)
 	  (goto-char (point-min))
 	  (insert result-string)
@@ -76,4 +80,6 @@
 	    (move-beginning-of-line 1)
 	    (search-backward ",")
 	    (forward-char)
-	    (kill-line)))))))
+	    (kill-line)
+	    ))
+  (expand-file-name plot-name))))))
