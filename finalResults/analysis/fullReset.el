@@ -2,7 +2,7 @@
 (let ((default-directory default-directory))
 (directory-files "../finalResultsSC")
 )
-
+(setq plot-script-path (expand-file-name "./plots.wls "))
 (defun joc-total-recomputation ()
   (let ((default-directory default-directory)
 	(directories '("../finalResultsSC/" "../finalResultsSPL/")))
@@ -14,7 +14,8 @@
 	  (let  ((default-directory
 		   (concat default-directory (file-name-as-directory run) "output/")))
 	    (dolist (solver-file (directory-files "." nil "^solver*"))
-	      (joc-trajectories-time solver-file))
+	      (shell-command (concat plot-script-path (joc-trajectories-time solver-file))))
 	    (dolist (watcher-file (directory-files "." nil "^watcher*"))
-	      (joc-trajectories-memory watcher-file)))
-	  )))))
+	      (shell-command (concat plot-script-path (joc-trajectories-time watcher-file))))))))))
+
+	      (shell-command (concat "./plots.wls " "lala"))
