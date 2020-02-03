@@ -31,7 +31,6 @@ import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.Clock;
 import org.sat4j.moco.util.Log;
-import org.sat4j.moco.analysis.Result;
 
 public class SubResult extends Result {
     /**
@@ -39,7 +38,11 @@ public class SubResult extends Result {
      * a given PB solver, without logging the costs
      * @param solver The solver
      */
-    public void saveModel(PBSolver solver) {
+     public SubResult(Instance problem){
+	 super(problem);
+    }
+
+    @Override public void saveModel(PBSolver solver) {
         Solution sol = this.problem.newSolution();
         for (int lit = 1; lit <= sol.getNumberOfVariables(); ++lit) {
             Variable var = sol.getVariable(lit-1);
@@ -58,7 +61,7 @@ public class SubResult extends Result {
      * a given PB solver, without logging the costs
      * @param solver The solver.
      */
-    public void saveThisModel(boolean[] xModelValues ) {
+    @Override public void saveThisModel(boolean[] xModelValues ) {
         Solution sol = this.problem.newSolution();
         for (int lit = 1; lit <= sol.getNumberOfVariables(); ++lit) {
             Variable var = sol.getVariable(lit-1);
