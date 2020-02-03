@@ -28,6 +28,7 @@ import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
+import org.sat4j.moco.analysis.SubResult;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
@@ -115,7 +116,7 @@ public class UnsatSat implements MySolver {
 	// boolean[] currentXModelValues = new boolean[this.problem.nVars()];
 	// Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	// Vector<IVecInt> modelsY = new Vector<IVecInt>();
-	Result subResult = new Result(this.problem);
+	SubResult subResult = new SubResult(this.problem);
 
 
         // if (this.result.isParetoFront()) {
@@ -177,7 +178,7 @@ public class UnsatSat implements MySolver {
 	    }else{
 		for(int i = 0; i < subResult.nSolutions(); ++i)
 		    this.result.addSolutionPublicly(subResult.getSolution(i));
-		subResult = new Result(this.problem);
+		subResult = new SubResult(this.problem);
 		currentExplanation  = solver.unsatExplanation();
 		//log..
 		Log.comment(5, "Explanation:");
