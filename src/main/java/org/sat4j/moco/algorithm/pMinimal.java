@@ -127,7 +127,6 @@ public class pMinimal implements MySolver {
 		currentXModelValues = this.getXModelValues();
 		this.setAssumptions(assumptions, currentYModel, currentXModelValues);
 		// this.blockModelX(currentXModel);
-		this.blockDominatedRegion(currentXModelValues);
 		this.solver.check(assumptions);
 		sat = this.solver.isSat();
 	    }
