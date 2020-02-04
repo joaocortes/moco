@@ -1,0 +1,2 @@
+testsPath = "instances/"
+servers = ("centaurus")
