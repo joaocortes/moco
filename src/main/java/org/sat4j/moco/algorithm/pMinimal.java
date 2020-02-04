@@ -60,7 +60,6 @@ public class pMinimal implements MySolver {
      */
     private PBSolver solver = null;
     
-
     /**
      * IDs of the variables used int the sequential encoder. The first
      * index is the goal, the second is the first index of s from " On
@@ -125,13 +124,14 @@ public class pMinimal implements MySolver {
 	    while(sat){		
 		currentYModel = this.getYModel();
 		currentXModelValues = this.getXModelValues();
-		this.setAssumptions(assumptions, currentYModel, currentXModelValues);
-		// this.blockModelX(currentXModel);
+		this.setAssumptions(assumptions, currentXModelValues);
 		this.solver.check(assumptions);
 		sat = this.solver.isSat();
 	    }
-	    assumptions = new VecInt(new int[] {});
 	    this.result.saveThisModel(currentXModelValues);
+	    this.seqEncoder.prettyPrintVecInt(currentYModel);
+
+	    assumptions = new VecInt(new int[] {});
 	    this.solver.check();
 	    sat = this.solver.isSat();
 	    if(sat)
@@ -141,23 +141,23 @@ public class pMinimal implements MySolver {
     }
 
 
-
-
-    private void setAssumptions(IVecInt assumptions, IVecInt yModel,boolean[] XModelValues){
+    private void setAssumptions(IVecInt assumptions, boolean[] XModelValues){
 	int[] upperLimits = this.findUpperLimits(XModelValues);
-	int literal, id;
-	int currentKD, currentIObj;
-	for(int i = 0, n = yModel.size(); i < n ; ++i){
-	    literal = yModel.get(i);
-	    boolean literalValue = this.solver.isLiteralPositive(literal);
-	    id =  this.solver.idFromLiteral(literal);
-	    if(literalValue){
-		currentKD = this.seqEncoder.getKDFromSTopVariable(literal);
-		currentIObj = this.seqEncoder.getObjFromSTopVariable(literal);
-		if( currentKD < upperLimits[currentIObj])
-		    assumptions.push(-id);
-	    }
-	}
+	// int literal, id;
+	// int currentKD, currentIObj;
+	for(int iObj = 0, n = this.problem.nObjs(); iObj < n; ++iObj)
+	    assumptions.push(-this.seqEncoder.getSTop(iObj, upperLimits[iObj]));
+	// for(int i = 0, n = yModel.size(); i < n ; ++i){
+	//     literal = yModel.get(i);
+	//     boolean literalValue = this.solver.isLiteralPositive(literal);
+	//     id =  this.solver.idFromLiteral(literal);
+	//     if(literalValue){
+	// 	currentKD = this.seqEncoder.getKDFromSTopVariable(literal);
+	// 	currentIObj = this.seqEncoder.getObjFromSTopVariable(literal);
+	// 	if( currentKD < upperLimits[currentIObj])
+	// 	    assumptions.push(-id);
+	//     }
+	// }
     }
 
 
