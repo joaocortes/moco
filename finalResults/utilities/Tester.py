@@ -41,7 +41,8 @@ def readArguments():
 
 class Tester:
 
-    def __init__(self, servers, gateway):
+    def __init__(self,location , servers, gateway):
+        self.location = location
         self.time = None
         self.memoryKB = None
         self.algorithm = None
@@ -87,7 +88,7 @@ class Tester:
             commandI += 1
             serverI = math.floor(commandI * len(self.shellInterface.servers) / len(self.commands))
             server = self.shellInterface.servers[serverI]
-            location = "./moco/finalResults/finalResultsSPL"
+            location = self.location
             command = self.shellInterface.sshServer(command, server, location)
             self.commands[commandI] = command
             # print(command)

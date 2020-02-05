@@ -3,7 +3,7 @@ import Tester
 testsPath = "instances/"
 servers = ("centaurus",)
 gateway = "aquila"
-
-tester = Tester.Tester(servers, gateway)
+location = "./moco/finalResults/finalResultsSC/run2/"
+tester = Tester.Tester(location, servers, gateway)
 tester.fillParameters()
 tester.test()
