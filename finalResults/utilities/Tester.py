@@ -4,9 +4,7 @@ import argparse
 import subprocess
 import os
 from datetime import datetime
-import shellInterface
-from shellInterface import sshServer
-from shellInterface import servers
+import ShellInterface
 
 javaJarName = ("./org.sat4j.moco.threeAlgorithms-"
                "0.0.1-SNAPSHOT-jar-with-dependencies.jar")
@@ -41,9 +39,9 @@ def readArguments():
     return args
 
 
-class Tester():
+class Tester:
 
-    def __init__(self):
+    def __init__(self, servers, gateway):
         self.time = None
         self.memoryKB = None
         self.algorithm = None
@@ -51,6 +49,7 @@ class Tester():
         self.part = None
         self.commands = []
         self.args = None
+        self.shellInterface = ShellInterface.Interface(servers, gateway)
 
     def fillParameters(self):
         self.args = readArguments()
@@ -86,10 +85,10 @@ class Tester():
         commandI = -1
         for command in self.commands:
             commandI += 1
-            serverI = math.floor(commandI * len(servers) / len(self.commands))
-            server = servers[serverI]
+            serverI = math.floor(commandI * len(self.shellInterface.servers) / len(self.commands))
+            server = self.shellInterface.servers[serverI]
             location = "./moco/finalResults/finalResultsSPL"
-            command = sshServer(command, server, location)
+            command = self.shellInterface.sshServer(command, server, location)
             self.commands[commandI] = command
             # print(command)
 
@@ -122,12 +121,7 @@ class Tester():
                       "", os.path.join(testsPath, fileName),
                       #  "-v 2 "
                       "-alg ", str(solverI), ";"]
-            command += shellInterface.buildCommand(tokens)
+            command += self.shellInterface.buildCommand(tokens)
 
         # command = re.escape(command)
         self.commands.append(command)
-
-
-tester = Tester()
-tester.fillParameters()
-tester.test()
