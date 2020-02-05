@@ -1,7 +1,7 @@
 import socket
 import shlex
 from localRun import servers
-from localRun import testsPath
+from localRun import gateway
 superServer = servers[0]
 
 def escapeCommand(command: str):
