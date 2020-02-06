@@ -41,7 +41,7 @@ def readArguments():
 
 class Tester:
 
-    def __init__(self,location , servers, gateway):
+    def __init__(self,location , servers, gateway, algorithms=(1, 2, 3)):
         self.location = location
         self.time = None
         self.memoryKB = None
@@ -51,6 +51,7 @@ class Tester:
         self.commands = []
         self.args = None
         self.shellInterface = ShellInterface.Interface(servers, gateway)
+        self.solverRange = algorithms
 
     def fillParameters(self):
         self.args = readArguments()
@@ -68,7 +69,7 @@ class Tester:
         if(self.algorithm < 3):
             solverRange = range(self.algorithm, self.algorithm+1)
         else:
-            solverRange = range(3)
+            solverRange = self.solverRange
 
         listFiles = os.listdir(testsPath)
         numberFiles = len(listFiles)
@@ -77,7 +78,7 @@ class Tester:
         for solverI in solverRange:
             self.generateCommands(listFilesPart1, solverI)
             self.generateCommands(listFilesPart2, solverI)
-        self.distributeCommands()
+            self.distributeCommands()
         for process in self.runCommands():
             process.wait()
         print("done!")
