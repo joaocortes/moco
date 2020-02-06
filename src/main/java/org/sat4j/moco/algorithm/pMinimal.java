@@ -28,6 +28,7 @@ import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
+import org.sat4j.moco.analysis.NonCheckedResult;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
@@ -60,7 +61,6 @@ public class pMinimal implements MySolver {
      */
     private PBSolver solver = null;
     
-
     /**
      * IDs of the variables used int the sequential encoder. The first
      * index is the goal, the second is the first index of s from " On
@@ -125,40 +125,40 @@ public class pMinimal implements MySolver {
 	    while(sat){		
 		currentYModel = this.getYModel();
 		currentXModelValues = this.getXModelValues();
-		this.setAssumptions(assumptions, currentYModel, currentXModelValues);
-		// this.blockModelX(currentXModel);
-		this.blockDominatedRegion(currentXModelValues);
+		this.setAssumptions(assumptions, currentXModelValues);
 		this.solver.check(assumptions);
 		sat = this.solver.isSat();
 	    }
-	    assumptions = new VecInt(new int[] {});
 	    this.result.saveThisModel(currentXModelValues);
-	    this.solver.check();
-	    sat = this.solver.isSat();
-	    if(sat)
-	    	sat = this.blockDominatedRegion(currentXModelValues);
+	    sat = this.blockDominatedRegion(currentXModelValues);
+	    this.seqEncoder.prettyPrintVecInt(currentYModel);
+	    if(sat){
+		assumptions = new VecInt(new int[] {});
+		this.solver.check();
+		sat = this.solver.isSat();
+	    }
 	}
 	this.result.setParetoFrontFound();
     }
 
 
-
-
-    private void setAssumptions(IVecInt assumptions, IVecInt yModel,boolean[] XModelValues){
+    private void setAssumptions(IVecInt assumptions, boolean[] XModelValues){
 	int[] upperLimits = this.findUpperLimits(XModelValues);
-	int literal, id;
-	int currentKD, currentIObj;
-	for(int i = 0, n = yModel.size(); i < n ; ++i){
-	    literal = yModel.get(i);
-	    boolean literalValue = this.solver.isLiteralPositive(literal);
-	    id =  this.solver.idFromLiteral(literal);
-	    if(literalValue){
-		currentKD = this.seqEncoder.getKDFromY(literal);
-		currentIObj = this.seqEncoder.getIObjFromY(literal);
-		if( currentKD < upperLimits[currentIObj])
-		    assumptions.push(-id);
-	    }
-	}
+	// int literal, id;
+	// int currentKD, currentIObj;
+	for(int iObj = 0, n = this.problem.nObjs(); iObj < n; ++iObj)
+	    assumptions.push(-this.seqEncoder.getSTop(iObj, upperLimits[iObj]));
+	// for(int i = 0, n = yModel.size(); i < n ; ++i){
+	//     literal = yModel.get(i);
+	//     boolean literalValue = this.solver.isLiteralPositive(literal);
+	//     id =  this.solver.idFromLiteral(literal);
+	//     if(literalValue){
+	// 	currentKD = this.seqEncoder.getKDFromSTopVariable(literal);
+	// 	currentIObj = this.seqEncoder.getObjFromSTopVariable(literal);
+	// 	if( currentKD < upperLimits[currentIObj])
+	// 	    assumptions.push(-id);
+	//     }
+	// }
     }
 
 
@@ -170,7 +170,7 @@ public class pMinimal implements MySolver {
     public IVecInt generateUpperBoundAssumptions( ){
 	IVecInt assumptions = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    assumptions.push(-this.seqEncoder.getY(iObj, this.getUpperKD(iObj) + 1));
+	    assumptions.push(-this.seqEncoder.getSTop(iObj, this.getUpperKD(iObj) + 1));
 	}
 	return assumptions;
     }
@@ -235,7 +235,7 @@ public class pMinimal implements MySolver {
      */
 
     public boolean isY(int literal){
-	if(this.seqEncoder.isY(literal))
+	if(this.seqEncoder.isSTop(literal))
 	    return true;
 	return false;
     }
@@ -327,7 +327,7 @@ public class pMinimal implements MySolver {
      */
     public void printModel(IVecInt model) {
 	for(int j = 0; j <model.size(); ++j)
-	    this.seqEncoder.prettyPrintLiteral(model.get(j));
+	    this.seqEncoder.prettyPrintVariable(model.get(j));
 	System.out.println();
 
 
@@ -375,7 +375,7 @@ public class pMinimal implements MySolver {
 	int[] upperLimits = this.findUpperLimits(XModelValues);
 	int[] literals = new int[this.problem.nObjs()];
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	    literals[iObj] = -this.seqEncoder.getY(iObj, upperLimits[iObj]);
+	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
 	IVecInt newHardClause = new VecInt(literals);
 	Log.comment(5, "done");
 	return this.AddClause(newHardClause);
@@ -392,14 +392,14 @@ public class pMinimal implements MySolver {
     private boolean AddClause(IVecInt setOfLiterals){
 	Log.comment(5, "In pMinimal.AddClause");
 	for(int i = 0; i < setOfLiterals.size(); ++i)
-	    this.seqEncoder.prettyPrintLiteral(setOfLiterals.get(i));
+	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(i));
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	}
 	catch (ContradictionException e) {
 	    System.out.println("contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		this.seqEncoder.prettyPrintLiteral(setOfLiterals.get(j));
+		this.seqEncoder.prettyPrintVariable(setOfLiterals.get(j));
 	    System.out.println();
 	    Log.comment(5, "done");
 	    return false;
