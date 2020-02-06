@@ -25,6 +25,9 @@ package org.sat4j.moco.problem;
 
 import org.sat4j.moco.util.Log;
 import java.lang.Math;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Hashtable;
 import java.util.Set;
 import org.sat4j.core.ReadOnlyVec;
@@ -42,12 +45,13 @@ import org.sat4j.specs.ContradictionException;
  * @author Joao O'Neill Cortes
  */
 
- public class SeqEncoder implements GoalDelimeter{
+ public class SeqEncoder {
 
     /** 
-     * IDs of the S(equential) variables used to enforce the semantics of the sequential encoder
+     * IDs of the S(equential) variables used to enforce the semantics of the sequential encoder.
+     * idsS[iObj][iX][iKD] 
      */
-    private int[][][] idsS = null;
+    private List<ArrayList<ArrayList<Integer>>>  idsS = null;
 
      /** 
       * IDs of the B(locking) variables used to allow incrementality
@@ -97,7 +101,7 @@ import org.sat4j.specs.ContradictionException;
      */
 
     public SeqEncoder(Instance instance, PBSolver solver) {
-	Log.comment(5, "in SeqEncoder");
+	Log.comment(4, "in SeqEncoder");
 	this.instance = instance;	
 	this.solver = solver;
 	this.firstVariable = solver.nVars() + 1;
@@ -109,7 +113,7 @@ import org.sat4j.specs.ContradictionException;
 	    this.setInitializedKD(iObj,-1);
 	    this.UpdateCurrentK(iObj,0);
 	}
-	Log.comment(5, "done");
+	Log.comment(4, "done");
 	}
 
 
@@ -129,7 +133,7 @@ import org.sat4j.specs.ContradictionException;
 	 // for(int iObj1 = 1; iObj1 < this.instance.nObjs(); ++iObj1)
 	 //     Log.comment(6, ", "+this.getCurrentKD(iObj1));
 	 // Log.comment(6, "]");
- 	Log.comment(5, "in SeqEncoder.UpdatecurrentK");
+ 	Log.comment(4, "in SeqEncoder.UpdatecurrentK");
 
 	 if(this.getInitializedKD(iObj)< afterKD ){
 	     // STop variables are also extended at 
@@ -142,13 +146,13 @@ import org.sat4j.specs.ContradictionException;
 	 if(this.getCurrentKD(iObj) < afterKD){
 	     this.blockingVariableB(iObj, afterKD);
 	     if(iObj == 0)
-		 Log.comment(6, "Clauses -1 4 8 9");
+		 Log.comment(5, "Clauses -1 4 8 9");
 	     this.ifNotLessNotMore(iObj,afterKD);
-	     Log.comment(6, "");
+	     Log.comment(5, "");
 	     this.IfXAtLeastW(iObj, afterKD);
-	     Log.comment(6, "");
+	     Log.comment(5, "");
 	     this.IfLessAlsoMore(iObj, afterKD);
-	     Log.comment(6, "");
+	     Log.comment(5, "");
 	     this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
 	     this.setCurrentKD(iObj, afterKD);
 	 }
@@ -175,18 +179,18 @@ import org.sat4j.specs.ContradictionException;
      */
 
     private void initializeIdsS(){
-	this.idsS = new int[this.instance.nObjs()][][];
+	this.idsS = new ArrayList<ArrayList<ArrayList<Integer>>>();
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
  	    Objective ithObj = instance.getObj(iObj);
-	    this.idsS[iObj] = new int[ithObj.getTotalLits()][];
+	    ArrayList<ArrayList<Integer>> arrayX_dK =new ArrayList<ArrayList<Integer>>(ithObj.getTotalLits());
 	    int nLits = ithObj.getTotalLits();
 	    for(int x = 1; x <= nLits ;++x){
 		// + 1 necessary: remember kd is simultaneously a
 		// value and an index
-		int iX = x - 1;
-		int[] array = new int[ithObj.getWeightDiff() + 1];
-		this.idsS[iObj][iX] = array;
+		ArrayList<Integer> arrayDK = new ArrayList<Integer>(ithObj.getWeightDiff() + 1);
+		arrayX_dK.add(arrayDK);
 	    }
+		this.idsS.add(arrayX_dK);
 	}
     }
 
@@ -197,7 +201,10 @@ import org.sat4j.specs.ContradictionException;
     public int getS(int iObj, int x, int kD){
 	int iX = x - 1;
 	int iKD = kD ;
-	return	 this.idsS[iObj][iX][iKD];
+	List<ArrayList<Integer>> arrayX_dK = this.idsS.get(iObj);
+	List<Integer> arrayDK = arrayX_dK.get(iX);
+	int result = arrayDK.get(iKD);
+	return result;
     }
  
 
@@ -212,7 +219,14 @@ import org.sat4j.specs.ContradictionException;
     public void setS(int iObj, int x, int kD, int id){
 	int iX = x - 1;
 	int iKD = kD;
-	this.idsS[iObj][iX][iKD] = id;
+
+	List<ArrayList<Integer>> arrayX_dK = this.idsS.get(iObj);
+	List<Integer> arrayDK = arrayX_dK.get(iX);
+	if( iKD > arrayDK.size() - 1){
+	    Integer[] graftArray =  new Integer[iKD - arrayDK.size() + 1];
+	    arrayDK.addAll(Arrays.asList(graftArray));
+	}
+	arrayDK.set(iKD, id);
 	this.sVariablesInverseIndex.put(id, new int[] {iObj,x,kD});
     }
 
@@ -224,7 +238,7 @@ import org.sat4j.specs.ContradictionException;
      *@param iKD, the index of the current differential k
      */
 
-    public int getY(int iObj, int kD){
+    public int getSTop(int iObj, int kD){
 	int nLits = this.instance.getObj(iObj).getTotalLits();
 	return 	this.getS(iObj, nLits, kD);
     }
@@ -321,8 +335,8 @@ import org.sat4j.specs.ContradictionException;
      */
 
     private void AddClause(IVecInt setOfLiterals){
+	this.prettyPrintVecInt(setOfLiterals);
 	for(int i = 0; i < setOfLiterals.size(); ++i)
-	    this.prettyPrintLiteral(setOfLiterals.get(i));
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	} catch (ContradictionException e) {
@@ -343,7 +357,7 @@ import org.sat4j.specs.ContradictionException;
     // 	ConstrID constrainId = null;
 
     // 	for(int i = 0; i < setOfLiterals.size(); ++i)
-    // 	    this.prettyPrintLiteral(setOfLiterals.get(i));
+    // 	    this.prettyPrintVariable(setOfLiterals.get(i));
     // 	try{
     // 	    constrainId = this.solver.addRemovableConstr(PBFactory.instance().mkClause(setOfLiterals));
     // 	} catch (ContradictionException e) {
@@ -590,8 +604,8 @@ import org.sat4j.specs.ContradictionException;
      * @param literal
      */
 
-    public int getIObjFromY(int literal){
-	assert this.isY(literal);
+    public int getObjFromSTopVariable(int literal){
+	assert this.isSTop(literal);
 	literal = (literal>0)? literal: -literal;
 	return this.sTopVariablesInverseIndex.get(literal)[0] ;
     }
@@ -601,8 +615,8 @@ import org.sat4j.specs.ContradictionException;
      * @param literal
      */
 
-    public int getKDFromY(int literal){
-	assert this.isY(literal);
+    public int getKDFromSTopVariable(int literal){
+	assert this.isSTop(literal);
 	literal = (literal>0)? literal: -literal;
 	return this.sTopVariablesInverseIndex.get(literal)[1] ;
     }
@@ -662,7 +676,7 @@ import org.sat4j.specs.ContradictionException;
      *@param literal
      */
 
-    public boolean isY(int literal){
+    public boolean isSTop(int literal){
 	literal = (literal>0)? literal: -literal;
 	if(this.sTopVariablesInverseIndex.containsKey(literal))
 	    return true;
@@ -692,51 +706,49 @@ import org.sat4j.specs.ContradictionException;
 	return false;
     }
 
-     public void prettyPrintVecInt(IVecInt vecInt){
+     public String prettyFormatVecInt(IVecInt vecInt){
+	 String result = "";
 	 for(int j = 0; j < vecInt.size(); ++j)
-	     this.prettyPrintLiteral(vecInt.get(j));
+	     result += this.prettyFormatVariable(vecInt.get(j));
+	 return result;
+     }
 
+     public void prettyPrintVecInt(IVecInt vecInt){
+	Log.comment(6,prettyFormatVecInt(vecInt));
 	 return;
      }
 
-    public void prettyPrintLiteral(int literal){
+    public void prettyPrintVariable(int literal){
+	Log.comment(6,prettyFormatVariable(literal));
+    }
+
+    public String prettyFormatVariable(int literal){
 	int sign =(literal>0)? 1: -1;
 	int id =  literal * sign;
-	// if(this.isY(id)){
-	//     int iObj = this.getIObjFromY(id);
-	//     int kd = this.getKDFromY(id);
-	//     Log.comment(6, literal + "->" + "STop[" + iObj + ", " + kd +"] ");
-	//     return;
-	// }
+
+	if(this.isSTop(id)){
+	    int iObj = this.getObjFromSTopVariable(id);
+	    int kd = this.getKDFromSTopVariable(id);
+	    return "Y[" + iObj + ", " + kd +"]"+ "::" + literal + " ";
+	}
 	 
 	if(this.isS(id)){
 	    int iObj = this.getObjFromSVariable(id);
 	    int iX = this.getXFromSVariable(id);
 	    int kd = this.getKDFromSVariable(id);
-	    Log.comment(6, literal + "->" + "S[" + iObj + ", " + iX + ", " + kd +"] ");
-	    return;
+	    return  "S[" + iObj + ", " + iX + ", " + kd +"]"+"::" + literal+ " ";
+
 	}
 	if(this.isB(id)){
 	    int iObj = this.getObjFromBVariable(id);
-	    Log.comment(6, id + "->" + "B[" + ", " + iObj +"] ");
-	    return;
+	    return "B[" + ", " + iObj +"]"+ "::" + id + " ";
 	}
 	if(id < this.firstVariable){
-	    Log.comment(6, (sign>0? "+":"-")+"X["+id+"] ");
+	    return (sign>0? "+":"-")+"X["+id+"] ";
 	}
+	return "";
     }
 
-    public void printS(){
-	for(int i = 0; i < this.sVariablesInverseIndex.size(); ++i){
-	    Set<Integer> keys = this.sVariablesInverseIndex.keySet();
-	    for(Integer IntegerKey: keys){
-		int key = IntegerKey;
-		int iObj = this.getObjFromSVariable(key);
-		int iX = this.getXFromSVariable(key);
-		int kd = this.getKDFromSVariable(key);
-		Log.comment(6, key + "->" + "S[" + iObj + ", " + iX + ", " + kd +"]");
-	    }
-	}
-    }
+
 }
 
