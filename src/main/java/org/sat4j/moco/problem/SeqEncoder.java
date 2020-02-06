@@ -335,8 +335,8 @@ import org.sat4j.specs.ContradictionException;
      */
 
     private void AddClause(IVecInt setOfLiterals){
+	this.prettyPrintVecInt(setOfLiterals);
 	for(int i = 0; i < setOfLiterals.size(); ++i)
-	    this.prettyPrintVariable(setOfLiterals.get(i));
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	} catch (ContradictionException e) {
@@ -714,9 +714,7 @@ import org.sat4j.specs.ContradictionException;
      }
 
      public void prettyPrintVecInt(IVecInt vecInt){
-	 for(int j = 0; j < vecInt.size(); ++j)
-	     this.prettyPrintVariable(vecInt.get(j));
-
+	Log.comment(6,prettyFormatVecInt(vecInt));
 	 return;
      }
 
@@ -727,23 +725,23 @@ import org.sat4j.specs.ContradictionException;
     public String prettyFormatVariable(int literal){
 	int sign =(literal>0)? 1: -1;
 	int id =  literal * sign;
-	// if(this.isSTop(id)){
-	//     int iObj = this.getObjFromSTopVariable(id);
-	//     int kd = this.getKDFromSTopVariable(id);
-	//     Log.comment(6, literal + "->" + "STop[" + iObj + ", " + kd +"] ");
-	//     return;
-	// }
+
+	if(this.isSTop(id)){
+	    int iObj = this.getObjFromSTopVariable(id);
+	    int kd = this.getKDFromSTopVariable(id);
+	    return "Y[" + iObj + ", " + kd +"]"+ "::" + literal + " ";
+	}
 	 
 	if(this.isS(id)){
 	    int iObj = this.getObjFromSVariable(id);
 	    int iX = this.getXFromSVariable(id);
 	    int kd = this.getKDFromSVariable(id);
-	    return literal + "->" + "S[" + iObj + ", " + iX + ", " + kd +"] ";
+	    return  "S[" + iObj + ", " + iX + ", " + kd +"]"+"::" + literal+ " ";
 
 	}
 	if(this.isB(id)){
 	    int iObj = this.getObjFromBVariable(id);
-	    return id + "->" + "B[" + ", " + iObj +"] ";
+	    return "B[" + ", " + iObj +"]"+ "::" + id + " ";
 	}
 	if(id < this.firstVariable){
 	    return (sign>0? "+":"-")+"X["+id+"] ";
@@ -751,17 +749,6 @@ import org.sat4j.specs.ContradictionException;
 	return "";
     }
 
-    public void printS(){
-	for(int i = 0; i < this.sVariablesInverseIndex.size(); ++i){
-	    Set<Integer> keys = this.sVariablesInverseIndex.keySet();
-	    for(Integer IntegerKey: keys){
-		int key = IntegerKey;
-		int iObj = this.getObjFromSVariable(key);
-		int iX = this.getXFromSVariable(key);
-		int kd = this.getKDFromSVariable(key);
-		Log.comment(6, key + "->" + "S[" + iObj + ", " + iX + ", " + kd +"]");
-	    }
-	}
-    }
+
 }
 
