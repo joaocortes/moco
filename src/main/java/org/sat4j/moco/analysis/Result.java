@@ -43,18 +43,19 @@ public class Result {
     /**
      * A MOEA framework representation of the MOCO instance.
      */
-    private MOCOProblem problem = null;
+    protected MOCOProblem problem = null;
 
     /**
      * Stores the nondominated solutions found by the solver.
      */
-    private NondominatedPopulation solutions = null;
+    protected NondominatedPopulation solutions = null;
 
     /**
      * Boolean value indicating if the {@link #solutions} set is the Pareto front of the MOCO instance.
      */
-    private boolean is_opt = false;
+    protected boolean is_opt = false;
 
+    public Result(){}
     /**
      * Creates an instance of a container for the nondominated solutions found for a given MOCO instance.
      * @param m The instance.
@@ -106,7 +107,7 @@ public class Result {
      * @param pop The population.
      * @return True if {@code sol} is weakly dominated by some solution in {@code pop}, false otherwise.
      */
-    private boolean isWeaklyDominated(Solution sol, Population pop) {
+    protected boolean isWeaklyDominated(Solution sol, Population pop) {
         for (int i = 0; i < pop.size(); ++i) {
             if (isWeaklyDominated(sol, pop.get(i))) {
                 return true;
@@ -181,10 +182,10 @@ public class Result {
 	     this.problem.evaluate(sol);
         if (!sol.violatesConstraints() && !isWeaklyDominated(sol, this.solutions)) {
             this.solutions.add(sol);
-            // Log.costs(sol.getObjectives());
-            // Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
+            Log.costs(sol.getObjectives());
+            Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
         }
-	     ; }
+	; }
 
     /**
      * Retrieves the assignment of a given nondominated solution in the container.

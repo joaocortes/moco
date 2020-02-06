@@ -1,0 +1,4 @@
+0.19/0.13	c :verbosity 0
+0.19/0.13	c :decimal-scale 5
+3822.93/3600.03	s UNKNOWN
+3822.93/3600.03	n 0
