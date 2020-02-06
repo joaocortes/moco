@@ -706,6 +706,13 @@ import org.sat4j.specs.ContradictionException;
 	return false;
     }
 
+     public String prettyFormatVecInt(IVecInt vecInt){
+	 String result = "";
+	 for(int j = 0; j < vecInt.size(); ++j)
+	     result += this.prettyFormatVariable(vecInt.get(j));
+	 return result;
+     }
+
      public void prettyPrintVecInt(IVecInt vecInt){
 	 for(int j = 0; j < vecInt.size(); ++j)
 	     this.prettyPrintVariable(vecInt.get(j));
@@ -714,6 +721,10 @@ import org.sat4j.specs.ContradictionException;
      }
 
     public void prettyPrintVariable(int literal){
+	Log.comment(6,prettyFormatVariable(literal));
+    }
+
+    public String prettyFormatVariable(int literal){
 	int sign =(literal>0)? 1: -1;
 	int id =  literal * sign;
 	// if(this.isSTop(id)){
@@ -727,17 +738,17 @@ import org.sat4j.specs.ContradictionException;
 	    int iObj = this.getObjFromSVariable(id);
 	    int iX = this.getXFromSVariable(id);
 	    int kd = this.getKDFromSVariable(id);
-	    Log.comment(6, literal + "->" + "S[" + iObj + ", " + iX + ", " + kd +"] ");
-	    return;
+	    return literal + "->" + "S[" + iObj + ", " + iX + ", " + kd +"] ";
+
 	}
 	if(this.isB(id)){
 	    int iObj = this.getObjFromBVariable(id);
-	    Log.comment(6, id + "->" + "B[" + ", " + iObj +"] ");
-	    return;
+	    return id + "->" + "B[" + ", " + iObj +"] ";
 	}
 	if(id < this.firstVariable){
-	    Log.comment(6, (sign>0? "+":"-")+"X["+id+"] ");
+	    return (sign>0? "+":"-")+"X["+id+"] ";
 	}
+	return "";
     }
 
     public void printS(){
