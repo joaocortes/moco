@@ -49,5 +49,24 @@ public class NonCheckedResult extends Result {
         this.solutions = new Population();
 
     }
+    /**
+     * Extracts and stores the solution that corresponds to a model in a given PB solver.
+     * @param solver The solver.
+     */
+
+    @Override public void saveThisModel(boolean[] xModelValues ) {
+        Solution sol = this.problem.newSolution();
+        for (int lit = 1; lit <= sol.getNumberOfVariables(); ++lit) {
+            Variable var = sol.getVariable(lit-1);
+            EncodingUtils.setBoolean(var, xModelValues[lit-1]);
+        }
+        this.problem.evaluate(sol);
+	assert !isWeaklyDominated(sol, this.solutions);
+        if (!sol.violatesConstraints() ) {
+            this.solutions.add(sol);
+            Log.costs(sol.getObjectives());
+            Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
+        }
+    }
 
 }
