@@ -130,13 +130,13 @@ public class pMinimal implements MySolver {
 		sat = this.solver.isSat();
 	    }
 	    this.result.saveThisModel(currentXModelValues);
+	    sat = this.blockDominatedRegion(currentXModelValues);
 	    this.seqEncoder.prettyPrintVecInt(currentYModel);
-
-	    assumptions = new VecInt(new int[] {});
-	    this.solver.check();
-	    sat = this.solver.isSat();
-	    if(sat)
-	    	sat = this.blockDominatedRegion(currentXModelValues);
+	    if(sat){
+		assumptions = new VecInt(new int[] {});
+		this.solver.check();
+		sat = this.solver.isSat();
+	    }
 	}
 	this.result.setParetoFrontFound();
     }
