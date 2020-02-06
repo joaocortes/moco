@@ -94,8 +94,7 @@ public class Result {
             EncodingUtils.setBoolean(var, xModelValues[lit-1]);
         }
         this.problem.evaluate(sol);
-        if (!sol.violatesConstraints() // && !isWeaklyDominated(sol, this.solutions)
-	    ) {
+        if (!sol.violatesConstraints() && !isWeaklyDominated(sol, this.solutions)) {
             this.solutions.add(sol);
             Log.costs(sol.getObjectives());
             Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
