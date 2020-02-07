@@ -99,14 +99,15 @@ import org.sat4j.specs.ContradictionException;
 		 this.left = null; 
 		 this.right = null;
 		 this.nodeVars = new ArrayList<NodeVar>();
+		 this.nodeVars.add(new NodeVar(0, upperLimit ));
 		 this.nodeVars.add(new NodeVar(this.nodeSum, upperLimit ));
 	     }
 	     
 	     public Node(Node left, Node right, int upperLimit){
-
 		 this.left = left;
 		 this.right = right;
-		 this.nodeVars =  new ArrayList<int[]>();
+		 this.nodeVars =  new ArrayList<NodeVar>();
+		 this.nodeVars.add(new NodeVar(0, upperLimit ));
 		 this.generateVars(upperLimit);
 		 this.nodeSum = left.nodeSum + right.nodeSum;
 	     }
@@ -263,9 +264,6 @@ import org.sat4j.specs.ContradictionException;
 	}
     }
 
-     public void UpdateCurrentK(int iObj, int kD){
-	 this.sumTrees[iObj].updateUpperKD(kD);
-};
 
      /**
       *Return the ID of a freshly created solver's variable
@@ -295,6 +293,11 @@ import org.sat4j.specs.ContradictionException;
 	 SumTree sumTree = this.sumTrees[iObj];
 	 SumTree.Node currentNode = sumTree.parent;
 	 baptizeSubTree(currentNode, iObj, newUpperLimit);
+
+     }
+
+     //TODO
+     public void UpdateCurrentK(int iObj, int upperKD){
 
      }
 
