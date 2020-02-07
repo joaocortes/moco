@@ -59,37 +59,55 @@ import org.sat4j.specs.ContradictionException;
 	 private PriorityQueue<Node> unlinkedNodes = new PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
 
 	 class Node {
-	     class NodeVar {
-		 private int kD;
-		 private int id;
+	     class NodeVars{
+		 class NodeVar {
+		     private int kD;
+		     private int id;
 
-		 public NodeVar(int kD, int upperLimit){
-		     this.setKD(kD, upperLimit);
-		     this.setId(-1);
+		     public NodeVar(int kD, int upperLimit){
+			 this.setKD(kD, upperLimit);
+			 this.setId(-1);
+		     }
+
+		     public int getId(){return this.id;}
+		     public int getKD(){return this.kD;}
+
+		     public void setKD(int newKD, int upperLimit){
+			 this.kD = newKD;
+			 this.kD = this.cutValue(upperLimit);
+		     }
+		     public void setId(int id){
+			 assert this.id == -1;
+			 // id = GenTotalEncoder.this.newSVar(iObj, kD);
+			 this.id = id;
+		     }
+		     private int cutValue(int upperLimit){
+			 return this.kD > upperLimit + 1? this.kD : upperLimit + 1;
+		     }
+		     public void baptize(int id, int upperLimit){
+			 if(this.getKD()<= upperLimit)
+			     this.setId(id);
+		     }
+		 }
+		 private int lastClausified = 0;
+		 private HashMap<Integer, NodeVar> container = null;
+
+		 public NodeVars(){
+		     this.container = new HashMap<Integer, NodeVar>();
+		     this.lastClausified = 0;
 		 }
 
-		 public int getId(){return this.id;}
-		 public int getKD(){return this.kD;}
+		 public void add(int kD, int upperLimit){
+		     this.container.putIfAbsent(kD, new NodeVar(kD, upperLimit));
+		 }
 
-		 public void setKD(int newKD, int upperLimit){
-		     this.kD = newKD;
-		     this.kD = this.cutValue(upperLimit);
+		 public void addWhileClausing(int kD, int upperLimit){
+		     this.container.putIfAbsent(kD, new NodeVar(kD, upperLimit));
 		 }
-		 public void setId(int id){
-		     assert this.id == -1;
-		     // id = GenTotalEncoder.this.newSVar(iObj, kD);
-		     this.id = id;
-		 }
-		 private int cutValue(int upperLimit){
-		     return this.kD > upperLimit + 1? this.kD : upperLimit + 1;
-		 }
-		 public void baptize(int id, int upperLimit){
-		     if(this.getKD()<= upperLimit)
-			 this.setId(id);
-		 }
-	     }
 
-	     private ArrayList<NodeVar> nodeVars = null;
+	     }	     
+
+	     NodeVars nodeVars = null;
 	     private int nodeSum = 0;
 	     private Node left = null;
 	     private Node right = null;
@@ -98,9 +116,9 @@ import org.sat4j.specs.ContradictionException;
 		 this.nodeSum = weight;
 		 this.left = null; 
 		 this.right = null;
-		 this.nodeVars = new ArrayList<NodeVar>();
-		 this.nodeVars.add(new NodeVar(0, upperLimit ));
-		 this.nodeVars.add(new NodeVar(this.nodeSum, upperLimit ));
+		 this.nodeVars = new NodeVars();
+		 this.nodeVars.add(0, upperLimit);
+		 this.nodeVars.add(this.nodeSum, upperLimit);
 	     }
 	     
 	     public Node(Node left, Node right, int upperLimit){
