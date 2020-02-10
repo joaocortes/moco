@@ -296,11 +296,11 @@ public class GenTotalEncoder implements GoalDelimeter {
 	 return this.sumTrees[iObj].parent.nodeVars.get(iKD).getId();
      }
 
-
      public boolean isY(int literal){
 	 int id = this.solver.idFromLiteral(literal);
-	 if(this.sVariablesInverseIndex.containsKey(id))
-	     return true;
+	 for(SumTree sumTree: this.sumTrees)
+	     if(sumTree.parent.nodeVars.containerAll.containsKey(id))
+		 return true;
 	 return false;
      }
 
