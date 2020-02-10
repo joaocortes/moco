@@ -141,12 +141,16 @@ import org.sat4j.specs.ContradictionException;
 
 	     private void generateVars(int currentUpperLimit,int newUpperLimit){
 		 Vector<Integer> values =  new Vector<Integer>() ;
-		 for( NodeVar nodeVarLeft : left.nodeVars)
-		     for(NodeVar  nodeVarRight : right.nodeVars)
-			 values.add(nodeVarLeft.getKD() + nodeVarRight.getKD());
+		 Map<Integer, NodeVars.NodeVar> leftNewVars = this.left.nodeVars.containerAll.tailMap(currentUpperLimit);
+		 Map<Integer, NodeVars.NodeVar> rightNewVars = this.right.nodeVars.containerAll.tailMap(currentUpperLimit);
+
+		 for( NodeVars.NodeVar leftNodeVar : leftNewVars.values())
+		     for( NodeVars.NodeVar rightNodeVar : rightNewVars.values())
+			 values.add(leftNodeVar.getKD() + rightNodeVar.getKD());
+		 
 		 values.sort(null);
-		 for(int value : values) {
-		     this.nodeVars.add(new NodeVar(value, upperLimit));
+		 for(int value : values) 
+		     this.nodeVars.add(value, newUpperLimit);
 		 }
 	     }
 
