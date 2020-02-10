@@ -298,11 +298,8 @@ import org.sat4j.specs.ContradictionException;
 	 return id;
      }
 
-     private void baptizeSubTree(SumTree.Node node, int iObj, int newUpperLimit){
-	 Node currentNode = node;
-	 for(SumTree.Node.NodeVar nodeVar : currentNode.nodeVars){
-	     int id  = this.newSVar(nodeVar.getKD(), iObj);
-	     nodeVar.baptize(id, newUpperLimit);
+
+     
 	 }
 	 
 	 while(currentNode.left != currentNode){
