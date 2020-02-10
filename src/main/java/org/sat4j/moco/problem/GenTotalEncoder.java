@@ -139,7 +139,7 @@ import org.sat4j.specs.ContradictionException;
 	     }
 
 
-	     private void generateVars(int upperLimit){
+	     private void generateVars(int currentUpperLimit,int newUpperLimit){
 		 Vector<Integer> values =  new Vector<Integer>() ;
 		 for( NodeVar nodeVarLeft : left.nodeVars)
 		     for(NodeVar  nodeVarRight : right.nodeVars)
