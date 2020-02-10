@@ -33,7 +33,8 @@ import java.util.PriorityQueue;
 import java.util.SortedMap;
 import java.util.ArrayList;
 import java.util.SortedSet;
-import java.util.TreeMap
+import java.util.TreeMap;
+import java.util.Map;
 
 
 import org.sat4j.core.ReadOnlyVec;
