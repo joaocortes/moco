@@ -179,6 +179,34 @@ public class GenTotalEncoder implements GoalDelimeter {
 	    }
 	}
 
+     private void addClausesFirstPartial(Node parent, Node first, Node second, int newUpperLimit){
+
+	 Collection<Node.NodeVars.NodeVar> firstTail =
+	     first.nodeVars.currentTail(newUpperLimit).values();
+
+	 Collection<Node.NodeVars.NodeVar> secondAll =
+	     first.nodeVars.containerAll.values();
+
+	 for(Node.NodeVars.NodeVar firstVar : firstTail){
+	     for(Node.NodeVars.NodeVar secondVar : secondAll ){
+		 Node.NodeVars.NodeVar parentVar =
+		     parent.nodeVars.addWhileClausing(firstVar.kD + secondVar.kD , newUpperLimit);
+		 IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVar.id});
+		 AddClause(clause);
+	     }
+	 }
+}
+
+     private void addClausesSubSumTree(Node parent, int newUpperLimit){
+	 Node left = parent.left;
+	 Node right = parent.right;
+	 addClausesSubSumTree(left, newUpperLimit);
+	 addClausesSubSumTree(right, newUpperLimit);
+
+	 addClausesFirstPartial(parent, left, right, newUpperLimit);    
+	 addClausesFirstPartial(parent, right, left, newUpperLimit);    
+     }
+
 	public SumTree(int[] leafWeights, int upperLimit){
 	    this.upperLimit = upperLimit;
 	    for(int weight : leafWeights){
@@ -318,32 +346,7 @@ public class GenTotalEncoder implements GoalDelimeter {
 
      }
 
-     private void addClausesFirstPartial(Node parent, Node first, Node second, int newUpperLimit){
 
-	 for(SumTree.Node.NodeVars.NodeVar firstVar : first.nodeVars.containerAll.values()){
-	     for(SumTree.Node.NodeVars.NodeVar secondVar : second.nodeVars.containerUnused){
-		 SumTree.Node.NodeVars.NodeVar parentVar =
-		     parent.nodeVars.addWhileClausing(firstVar.kD + secondVar.kD , newUpperLimit);
-		 IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVar.id});
-		 AddClause(clause);
-	     }
-	 }
-}
-
-     private void addClausesSubSumTree(Node parent, int newUpperLimit){
-	 Node left = parent.left;
-	 Node right = parent.right;
-	 addClausesSubSumTree(left, newUpperLimit);
-	 addClausesSubSumTree(right, newUpperLimit);
-
-	 addClausesFirstPartial(parent, left, right, newUpperLimit);    
-	 addClausesFirstPartial(parent, right, left, newUpperLimit);    
-	 for(SumTree.Node.NodeVars.NodeVar nodeVar : parent.nodeVars.containerUnused){
-	 }
-
-
-
-     }
 
 
     /**
