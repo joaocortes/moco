@@ -107,6 +107,11 @@ public class GenTotalEncoder implements GoalDelimeter {
 		    this.containerAll.putIfAbsent(kD, new NodeVar(kD, upperLimit));
 		}
 
+		public NodeVar get(int value){
+		    return this.containerAll.get(value);
+		}
+
+
 		public NodeVar addWhileClausing(int kD, int upperLimit){
 		    NodeVar newNodeVar = new NodeVar(kD, upperLimit);
 		    int effectiveKD = newNodeVar.kD;
