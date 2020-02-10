@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.Map;
+import java.util.Collection;
 
 
 import org.sat4j.core.ReadOnlyVec;
