@@ -30,8 +30,12 @@ import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.Hashtable;
 import java.util.PriorityQueue;
+import java.util.SortedMap;
 import java.util.ArrayList;
 import java.util.SortedSet;
+import java.util.TreeMap
+
+
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.VecInt;
@@ -89,8 +93,9 @@ import org.sat4j.specs.ContradictionException;
 			     this.setId(id);
 		     }
 		 }
-		 private int lastClausified = 0;
-		 private HashMap<Integer, NodeVar> container = null;
+		 private PriorityQueue<Node> containerUsed = new PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
+		 private PriorityQueue containerAll = null;
+		 private ArrayList<NodeVar> containerUnused = null;
 
 		 public NodeVars(){
 		     this.container = new HashMap<Integer, NodeVar>();
