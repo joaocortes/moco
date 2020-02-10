@@ -316,6 +316,26 @@ import org.sat4j.specs.ContradictionException;
 
      }
 
+
+    /**
+     *Adds the conjunction of setOfLiterals
+     *@param setOfliterals
+     */
+
+    private void AddClause(IVecInt setOfLiterals){
+	this.prettyPrintVecInt(setOfLiterals);
+	for(int i = 0; i < setOfLiterals.size(); ++i)
+	try{
+	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
+	} catch (ContradictionException e) {
+	    Log.comment(6, "contradiction when adding clause: ");
+	    for(int j = 0; j < setOfLiterals.size(); ++j)
+		Log.comment(6, " " + setOfLiterals.get(j) + " " );
+	    return;
+	}
+    }
+
+
      //TODO
      public void UpdateCurrentK(int iObj, int upperKD){
 
