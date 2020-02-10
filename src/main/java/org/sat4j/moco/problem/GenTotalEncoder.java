@@ -98,18 +98,23 @@ import org.sat4j.specs.ContradictionException;
 		 private ArrayList<NodeVar> containerUnused = null;
 
 		 public NodeVars(){
-		     this.container = new HashMap<Integer, NodeVar>();
-		     this.lastClausified = 0;
+		     this.containerAll =PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
+		     this.containerUnused = new ArrayList<NodeVar>();
 		 }
 
 		 public void add(int kD, int upperLimit){
-		     this.container.putIfAbsent(kD, new NodeVar(kD, upperLimit));
+		     this.containerAll.putIfAbsent(kD, new NodeVar(kD, upperLimit));
 		 }
 
-		 public void addWhileClausing(int kD, int upperLimit){
-		     this.container.putIfAbsent(kD, new NodeVar(kD, upperLimit));
+		 public NodeVar addWhileClausing(int kD, int upperLimit){
+		     NodeVar newNodeVar = new NodeVar(kD, upperLimit);
+		     int effectiveKD = newNodeVar.kD;
+		     NodeVar existentNodeVar = this.containerAll.putIfAbsent(effectiveKD, newNodeVar);
+		     if(existentNodeVar != null)
+			 return existentNodeVar;
+		     this.containerUnused.add(newNodeVar);
+		     return newNodeVar;
 		 }
-
 	     }	     
 
 	     NodeVars nodeVars = null;
@@ -300,19 +305,37 @@ import org.sat4j.specs.ContradictionException;
 
 
      
-	 }
-	 
-	 while(currentNode.left != currentNode){
-	     baptizeSubTree(currentNode.left, iObj, newUpperLimit);
-	     baptizeSubTree(currentNode.right, iObj, newUpperLimit);
-	 }
+     public void addClausesSumTree(int iObj, int newUpperLimit){
+	 SumTree ithObjSumTree = this.sumTrees[iObj];
+	 addClausesSubSumTree(ithObjSumTree.parent, newUpperLimit);
+
+
      }
-     
-     public void baptizeSumTrees(int newUpperLimit){
-	 int iObj = 0;
-	 SumTree sumTree = this.sumTrees[iObj];
-	 SumTree.Node currentNode = sumTree.parent;
-	 baptizeSubTree(currentNode, iObj, newUpperLimit);
+
+     private void addClausesFirstPartial(Node parent, Node first, Node second, int newUpperLimit){
+
+	 for(SumTree.Node.NodeVars.NodeVar firstVar : first.nodeVars.containerAll.values()){
+	     for(SumTree.Node.NodeVars.NodeVar secondVar : second.nodeVars.containerUnused){
+		 SumTree.Node.NodeVars.NodeVar parentVar =
+		     parent.nodeVars.addWhileClausing(firstVar.kD + secondVar.kD , newUpperLimit);
+		 IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVar.id});
+		 AddClause(clause);
+	     }
+	 }
+}
+     private void addClausesSubSumTree(Node parent, int newUpperLimit){
+
+	 Node left = parent.left;
+	 Node right = parent.right;
+	 addClausesSubSumTree(left, newUpperLimit);
+	 addClausesSubSumTree(right, newUpperLimit);
+
+	 addClausesFirstPartial(parent, left, right, newUpperLimit);    
+	 addClausesFirstPartial(parent, right, left, newUpperLimit);    
+	 for(SumTree.Node.NodeVars.NodeVar nodeVar : parent.nodeVars.containerUnused){
+	 }
+
+
 
      }
 
