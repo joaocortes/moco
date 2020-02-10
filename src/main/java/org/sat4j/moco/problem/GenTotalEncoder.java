@@ -146,10 +146,9 @@ public class GenTotalEncoder implements GoalDelimeter {
 
 
 	    /**
-	     *Generates new variables freed when when updating the
-	     *upper limit from currentUpperLimit to
-	     *newUpperLimit. UpperLimits are the largest possible
-	     *attainable value
+	     *Generates new variables freed by updating the upper
+	     *limit from currentUpperLimit to newUpperLimit. Upper
+	     *limits are the largest possible attainable value
 	     */
 	    private void generateVars(int currentUpperLimit,int newUpperLimit){
 		Vector<Integer> values =  new Vector<Integer>() ;
