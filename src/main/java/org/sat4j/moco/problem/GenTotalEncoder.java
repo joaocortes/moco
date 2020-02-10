@@ -64,6 +64,8 @@ import org.sat4j.specs.ContradictionException;
 
 	 class Node {
 	     class NodeVars{
+		 private TreeMap<Integer, NodeVar> containerAll = null;
+		 
 		 class NodeVar {
 		     private int kD;
 		     private int id;
@@ -93,13 +95,9 @@ import org.sat4j.specs.ContradictionException;
 			     this.setId(id);
 		     }
 		 }
-		 private PriorityQueue<Node> containerUsed = new PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
-		 private PriorityQueue containerAll = null;
-		 private ArrayList<NodeVar> containerUnused = null;
 
 		 public NodeVars(){
-		     this.containerAll =PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
-		     this.containerUnused = new ArrayList<NodeVar>();
+		     this.containerAll = new TreeMap<Integer, NodeVar>();
 		 }
 
 		 public void add(int kD, int upperLimit){
@@ -112,7 +110,6 @@ import org.sat4j.specs.ContradictionException;
 		     NodeVar existentNodeVar = this.containerAll.putIfAbsent(effectiveKD, newNodeVar);
 		     if(existentNodeVar != null)
 			 return existentNodeVar;
-		     this.containerUnused.add(newNodeVar);
 		     return newNodeVar;
 		 }
 	     }	     
