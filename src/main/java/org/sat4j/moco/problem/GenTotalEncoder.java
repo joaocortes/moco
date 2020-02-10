@@ -54,142 +54,140 @@ import org.sat4j.specs.ContradictionException;
  */
 
 
- public class GenTotalEncoder implements GoalDelimeter {
+public class GenTotalEncoder implements GoalDelimeter {
 
-     class SumTree {
+    class SumTree {
 
-	 private int upperLimit = -1;
-	 private Node parent = null;
-	 private ArrayList<Node> nodes = new ArrayList<Node>();
-	 private PriorityQueue<Node> unlinkedNodes = new PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
+	private int upperLimit = -1;
+	private Node parent = null;
+	private ArrayList<Node> nodes = new ArrayList<Node>();
+	private PriorityQueue<Node> unlinkedNodes = new PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
 
-	 class Node {
-	     class NodeVars{
-		 private TreeMap<Integer, NodeVar> containerAll = null;
+	class Node {
+	    class NodeVars{
+			   
+		private TreeMap<Integer, NodeVar> containerAll = null;
 		 
-		 class NodeVar {
-		     private int kD;
-		     private int id;
+		class NodeVar {
+		    private int kD;
+		    private int id;
 
-		     public NodeVar(int kD, int upperLimit){
-			 this.setKD(kD, upperLimit);
-			 this.setId(-1);
-		     }
+		    public NodeVar(int kD, int upperLimit){
+			this.setKD(kD, upperLimit);
+			this.setId(-1);
+		    }
 
-		     public int getId(){return this.id;}
-		     public int getKD(){return this.kD;}
+		    public int getId(){return this.id;}
+		    public int getKD(){return this.kD;}
 
-		     public void setKD(int newKD, int upperLimit){
-			 this.kD = newKD;
-			 this.kD = this.cutValue(upperLimit);
-		     }
-		     public void setId(int id){
-			 assert this.id == -1;
-			 // id = GenTotalEncoder.this.newSVar(iObj, kD);
-			 this.id = id;
-		     }
-		     private int cutValue(int upperLimit){
-			 return this.kD > upperLimit + 1? this.kD : upperLimit + 1;
-		     }
-		     public void baptize(int id, int upperLimit){
-			 if(this.getKD()<= upperLimit)
-			     this.setId(id);
-		     }
-		 }
+		    public void setKD(int newKD, int upperLimit){
+			this.kD = newKD;
+			this.kD = this.cutValue(upperLimit);
+		    }
+		    public void setId(int id){
+			assert this.id == -1;
+			// id = GenTotalEncoder.this.newSVar(iObj, kD);
+			this.id = id;
+		    }
+		    private int cutValue(int upperLimit){
+			return this.kD > upperLimit + 1? this.kD : upperLimit + 1;
+		    }
+		    public void baptize(int id, int upperLimit){
+			if(this.getKD()<= upperLimit)
+			    this.setId(id);
+		    }
+		}
 
-		 public NodeVars(){
-		     this.containerAll = new TreeMap<Integer, NodeVar>();
-		 }
+		public NodeVars(){
+		    this.containerAll = new TreeMap<Integer, NodeVar>();
+		}
 
-		 public void add(int kD, int upperLimit){
-		     this.containerAll.putIfAbsent(kD, new NodeVar(kD, upperLimit));
-		 }
+		public void add(int kD, int upperLimit){
+		    this.containerAll.putIfAbsent(kD, new NodeVar(kD, upperLimit));
+		}
 
-		 public NodeVar addWhileClausing(int kD, int upperLimit){
-		     NodeVar newNodeVar = new NodeVar(kD, upperLimit);
-		     int effectiveKD = newNodeVar.kD;
-		     NodeVar existentNodeVar = this.containerAll.putIfAbsent(effectiveKD, newNodeVar);
-		     if(existentNodeVar != null)
-			 return existentNodeVar;
-		     return newNodeVar;
-		 }
-	     }	     
+		public NodeVar addWhileClausing(int kD, int upperLimit){
+		    NodeVar newNodeVar = new NodeVar(kD, upperLimit);
+		    int effectiveKD = newNodeVar.kD;
+		    NodeVar existentNodeVar = this.containerAll.putIfAbsent(effectiveKD, newNodeVar);
+		    if(existentNodeVar != null)
+			return existentNodeVar;
+		    return newNodeVar;
+		}
 
-	     NodeVars nodeVars = null;
-	     private int nodeSum = 0;
-	     private Node left = null;
-	     private Node right = null;
-	     
-	     public Node(int weight, int upperLimit){
-		 this.nodeSum = weight;
-		 this.left = null; 
-		 this.right = null;
-		 this.nodeVars = new NodeVars();
-		 this.nodeVars.add(0, upperLimit);
-		 this.nodeVars.add(this.nodeSum, upperLimit);
-	     }
-	     
-	     public Node(Node left, Node right, int upperLimit){
-		 this.left = left;
-		 this.right = right;
-		 this.nodeVars =  new NodeVars();
-		 this.nodeVars.add(0, upperLimit);
-		 this.generateVars(upperLimit);
-		 this.nodeSum = left.nodeSum + right.nodeSum;
-	     }
 		public SortedMap<Integer, NodeVars.NodeVar> currentTail(int currentUpperLimit){
 		    return this.containerAll.tailMap(currentUpperLimit);
 }
 
 
-	     private void generateVars(int currentUpperLimit,int newUpperLimit){
-		 Vector<Integer> values =  new Vector<Integer>() ;
-		 Map<Integer, NodeVars.NodeVar> leftNewVars = this.left.nodeVars.containerAll.tailMap(currentUpperLimit);
-		 Map<Integer, NodeVars.NodeVar> rightNewVars = this.right.nodeVars.containerAll.tailMap(currentUpperLimit);
+	    }	     
 
-		 for( NodeVars.NodeVar leftNodeVar : leftNewVars.values())
-		     for( NodeVars.NodeVar rightNodeVar : rightNewVars.values())
-			 values.add(leftNodeVar.getKD() + rightNodeVar.getKD());
-		 
-		 values.sort(null);
-		 for(int value : values) 
-		     this.nodeVars.add(value, newUpperLimit);
-		 }
-	     }
-
-
-
-	 public SumTree(int[] leafWeights, int upperLimit){
-	     this.upperLimit = upperLimit;
-	     for(int weight : leafWeights){
-		 Node node =  new Node(weight, upperLimit);
-		 this.unlinkedNodes.add(node);
-	     }
-	     linkTree();
-	     this.parent = this.unlinkedNodes.poll();
-	 }
-	 
-	 //TODO what happens if there is only one node left in unlinkedNodes
-	 public void linkTree(){
-	     while(this.unlinkedNodes.poll() != null){
-		 Node leftNode = unlinkedNodes.poll();
-		 this.nodes.add(leftNode);
-		 Node rightNode = unlinkedNodes.poll();
-		 this.nodes.add(rightNode);
-		 Node parentNode = new Node(leftNode, rightNode, this.upperLimit);
-		 unlinkedNodes.add(parentNode);
-	     }
-	 }
-
-	 }
-	 // public void updateUpperKD(int upperKD){
-	 //     this.upperLimit = upperKD;
-	 //     Node currentNode = this.parent;
-
-
+	    NodeVars nodeVars = null;
+	    private int nodeSum = 0;
+	    private Node left = null;
+	    private Node right = null;
 	     
-	 // }
-     }
+	    public Node(int weight, int upperLimit){
+		this.nodeSum = weight;
+		this.left = null; 
+		this.right = null;
+		this.nodeVars = new NodeVars();
+		this.nodeVars.add(0, upperLimit);
+		this.nodeVars.add(this.nodeSum, upperLimit);
+	    }
+	     
+	    public Node(Node left, Node right, int upperLimit){
+		this.left = left;
+		this.right = right;
+		this.nodeVars =  new NodeVars();
+		this.nodeVars.add(0, upperLimit);
+		this.generateVars(upperLimit);
+		this.nodeSum = left.nodeSum + right.nodeSum;
+	    }
+
+
+	    private void generateVars(int currentUpperLimit,int newUpperLimit){
+		Vector<Integer> values =  new Vector<Integer>() ;
+		Map<Integer, NodeVars.NodeVar> leftNewVars = this.left.nodeVars.containerAll.tailMap(currentUpperLimit);
+		Map<Integer, NodeVars.NodeVar> rightNewVars = this.right.nodeVars.containerAll.tailMap(currentUpperLimit);
+
+		for( NodeVars.NodeVar leftNodeVar : leftNewVars.values())
+		    for( NodeVars.NodeVar rightNodeVar : rightNewVars.values())
+			values.add(leftNodeVar.getKD() + rightNodeVar.getKD());
+		 
+		values.sort(null);
+		for(int value : values) 
+		    this.nodeVars.add(value, newUpperLimit);
+	    }
+	}
+
+
+
+	//TODO what happens if there is only one node left in unlinkedNodes
+	public void linkTree(){
+	    while(this.unlinkedNodes.poll() != null){
+		Node leftNode = unlinkedNodes.poll();
+		this.nodes.add(leftNode);
+		Node rightNode = unlinkedNodes.poll();
+		this.nodes.add(rightNode);
+		Node parentNode = new Node(leftNode, rightNode, this.upperLimit);
+		unlinkedNodes.add(parentNode);
+	    }
+	}
+
+	public SumTree(int[] leafWeights, int upperLimit){
+	    this.upperLimit = upperLimit;
+	    for(int weight : leafWeights){
+		Node node =  new Node(weight, upperLimit);
+		this.unlinkedNodes.add(node);
+	    }
+	    linkTree();
+	    this.parent = this.unlinkedNodes.poll();
+	}
+	 
+
+
+    }
 
      /**
       *Tree used to encode the goal limits
@@ -231,6 +229,9 @@ import org.sat4j.specs.ContradictionException;
 	}
 	Log.comment(5, "done");
     }
+
+
+
 
 
 
@@ -324,8 +325,8 @@ import org.sat4j.specs.ContradictionException;
 	     }
 	 }
 }
-     private void addClausesSubSumTree(Node parent, int newUpperLimit){
 
+     private void addClausesSubSumTree(Node parent, int newUpperLimit){
 	 Node left = parent.left;
 	 Node right = parent.right;
 	 addClausesSubSumTree(left, newUpperLimit);
