@@ -141,11 +141,17 @@ public class GenTotalEncoder implements GoalDelimeter {
 		this.right = right;
 		this.nodeVars =  new NodeVars();
 		this.nodeVars.add(0, upperLimit);
-		this.generateVars(upperLimit);
+		this.generateVars(0, upperLimit);
 		this.nodeSum = left.nodeSum + right.nodeSum;
 	    }
 
 
+	    /**
+	     *Generates new variables freed when when updating the
+	     *upper limit from currentUpperLimit to
+	     *newUpperLimit. UpperLimits are the largest possible
+	     *attainable value
+	     */
 	    private void generateVars(int currentUpperLimit,int newUpperLimit){
 		Vector<Integer> values =  new Vector<Integer>() ;
 		Map<Integer, NodeVars.NodeVar> leftNewVars = this.left.nodeVars.containerAll.tailMap(currentUpperLimit);
