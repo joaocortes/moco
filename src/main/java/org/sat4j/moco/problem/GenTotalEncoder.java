@@ -178,6 +178,7 @@ import org.sat4j.specs.ContradictionException;
 	     }
 	 }
 
+	 }
 	 // public void updateUpperKD(int upperKD){
 	 //     this.upperLimit = upperKD;
 	 //     Node currentNode = this.parent;
