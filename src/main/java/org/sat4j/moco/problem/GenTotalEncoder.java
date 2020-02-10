@@ -137,6 +137,9 @@ import org.sat4j.specs.ContradictionException;
 		 this.generateVars(upperLimit);
 		 this.nodeSum = left.nodeSum + right.nodeSum;
 	     }
+		public SortedMap<Integer, NodeVars.NodeVar> currentTail(int currentUpperLimit){
+		    return this.containerAll.tailMap(currentUpperLimit);
+}
 
 
 	     private void generateVars(int currentUpperLimit,int newUpperLimit){
