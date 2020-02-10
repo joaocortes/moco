@@ -132,8 +132,8 @@ import org.sat4j.specs.ContradictionException;
 	     public Node(Node left, Node right, int upperLimit){
 		 this.left = left;
 		 this.right = right;
-		 this.nodeVars =  new ArrayList<NodeVar>();
-		 this.nodeVars.add(new NodeVar(0, upperLimit ));
+		 this.nodeVars =  new NodeVars();
+		 this.nodeVars.add(0, upperLimit);
 		 this.generateVars(upperLimit);
 		 this.nodeSum = left.nodeSum + right.nodeSum;
 	     }
