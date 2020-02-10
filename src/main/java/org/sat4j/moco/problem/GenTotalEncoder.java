@@ -156,16 +156,11 @@ import org.sat4j.specs.ContradictionException;
 
 
 
-
-	 }
-
-	 
 	 public SumTree(int[] leafWeights, int upperLimit){
 	     this.upperLimit = upperLimit;
-	     
 	     for(int weight : leafWeights){
-		Node node =  new Node(weight);
-	     this.unlinkedNodes.add(node);
+		 Node node =  new Node(weight, upperLimit);
+		 this.unlinkedNodes.add(node);
 	     }
 	     linkTree();
 	     this.parent = this.unlinkedNodes.poll();
