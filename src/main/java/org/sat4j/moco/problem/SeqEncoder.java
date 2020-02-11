@@ -45,7 +45,7 @@ import org.sat4j.specs.ContradictionException;
  * @author Joao O'Neill Cortes
  */
 
- public class SeqEncoder {
+ public class SeqEncoder extends GoalDelimeter {
 
     /** 
      * IDs of the S(equential) variables used to enforce the semantics of the sequential encoder.
@@ -136,7 +136,7 @@ import org.sat4j.specs.ContradictionException;
  	Log.comment(4, "in SeqEncoder.UpdatecurrentK");
 
 	 if(this.getInitializedKD(iObj)< afterKD ){
-	     // STop variables are also extended at 
+	     // Y variables are also extended at 
 	     this.extendInitializedIdsSInK(iObj, afterKD); 
 	     this.extendInitializedIdsBInK(iObj, afterKD); 
 	     this.setInitializedKD(iObj, afterKD);
@@ -232,36 +232,36 @@ import org.sat4j.specs.ContradictionException;
 
 
     /**
-     * Get the ithObj, ithX obj, kD STop variable ID.
+     * Get the ithObj, ithX obj, kD Y variable ID.
      *@param iObj, the index of the objective
      *@param iX, the index of the literal from the objective
      *@param iKD, the index of the current differential k
      */
 
-    public int getSTop(int iObj, int kD){
+    public int getY(int iObj, int kD){
 	int nLits = this.instance.getObj(iObj).getTotalLits();
 	return 	this.getS(iObj, nLits, kD);
     }
 
     /**
-     * Set the ithObj,  ith kD STop variable to
+     * Set the ithObj,  ith kD Y variable to
      *@param iObj, the index of the objective
      *@param iKD, the index of the current differential k
-     *@param id, the id of the variable STop
+     *@param id, the id of the variable Y
      * */
 
-    public void setSTop(int iObj, int iKD, int id){
+    public void setY(int iObj, int iKD, int id){
 	this.sTopVariablesInverseIndex.put(id, new int[] {iObj,iKD});
     }
 
     /**
-     * Pops the ithObj,  ith kD STop variable 
+     * Pops the ithObj,  ith kD Y variable 
      *@param iObj, the index of the objective
      *@param iKD, the index of the current differential k
-     *@param id, the id of the variable STop
+     *@param id, the id of the variable Y
      * */
 
-    public void popSTop(int iObj, int id){
+    public void popY(int iObj, int id){
 	return ;
 	// this.sTopVariablesInverseIndex.remove(id);
     }
@@ -575,24 +575,24 @@ import org.sat4j.specs.ContradictionException;
 		this.setS(iObj, x, kd, this.newVar());
 	    }
 	}
-	this.extendInitializedIdsSTopinK(iObj, afterKD);
+	this.extendInitializedIdsYinK(iObj, afterKD);
     }
 
 
     /** 
-     * extend the STop variables in the differential k index until afterKD. Assumes
+     * extend the Y variables in the differential k index until afterKD. Assumes
      * the S variables are already extended accordingly
      * @param iObj
      * @param afterKD
      */
 
-    private void extendInitializedIdsSTopinK(int iObj, int afterKD){
+    private void extendInitializedIdsYinK(int iObj, int afterKD){
 	int nLit = this.instance.getObj(iObj).getTotalLits();
 	int beforeKD = this.getCurrentKD(iObj);
 	for(int kd = this.initializedKDs[iObj]+1; kd <= afterKD  ; ++kd){
 	    if( beforeKD != 0)
-		this.popSTop(iObj, this.getS(iObj, nLit, beforeKD));
-	    this.setSTop(iObj, kd, this.getS(iObj, nLit, afterKD ));
+		this.popY(iObj, this.getS(iObj, nLit, beforeKD));
+	    this.setY(iObj, kd, this.getS(iObj, nLit, afterKD ));
 	    
 	}
     }
@@ -600,12 +600,12 @@ import org.sat4j.specs.ContradictionException;
 
 
     /**
-     * Get the objective from an STop variable
+     * Get the objective from an Y variable
      * @param literal
      */
 
-    public int getObjFromSTopVariable(int literal){
-	assert this.isSTop(literal);
+    public int getObjFromYVariable(int literal){
+	assert this.isY(literal);
 	literal = (literal>0)? literal: -literal;
 	return this.sTopVariablesInverseIndex.get(literal)[0] ;
     }
@@ -615,14 +615,14 @@ import org.sat4j.specs.ContradictionException;
      * @param literal
      */
 
-    public int getKDFromSTopVariable(int literal){
-	assert this.isSTop(literal);
+    public int getKDFromYVariable(int literal){
+	assert this.isY(literal);
 	literal = (literal>0)? literal: -literal;
 	return this.sTopVariablesInverseIndex.get(literal)[1] ;
     }
 
     /**
-     * Get the objective from an STop variable
+     * Get the objective from an Y variable
      * @param literal
      */
 
@@ -672,11 +672,11 @@ import org.sat4j.specs.ContradictionException;
 
 
     /**
-     *Checks if literal is an STop variable
+     *Checks if literal is an Y variable
      *@param literal
      */
 
-    public boolean isSTop(int literal){
+    public boolean isY(int literal){
 	literal = (literal>0)? literal: -literal;
 	if(this.sTopVariablesInverseIndex.containsKey(literal))
 	    return true;
@@ -726,9 +726,9 @@ import org.sat4j.specs.ContradictionException;
 	int sign =(literal>0)? 1: -1;
 	int id =  literal * sign;
 
-	if(this.isSTop(id)){
-	    int iObj = this.getObjFromSTopVariable(id);
-	    int kd = this.getKDFromSTopVariable(id);
+	if(this.isY(id)){
+	    int iObj = this.getObjFromYVariable(id);
+	    int kd = this.getKDFromYVariable(id);
 	    return "Y[" + iObj + ", " + kd +"]"+ "::" + literal + " ";
 	}
 	 
