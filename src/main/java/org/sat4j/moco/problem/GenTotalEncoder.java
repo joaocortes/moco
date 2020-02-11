@@ -363,7 +363,7 @@ public class GenTotalEncoder implements GoalDelimeter {
 
 
     /**
-     *Adds the conjunction of setOfLiterals
+     *Adds the disjunction of setOfLiterals
      *@param setOfliterals
      */
 
