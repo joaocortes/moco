@@ -123,7 +123,7 @@ public class GenTotalEncoder implements GoalDelimeter {
 
 		public SortedMap<Integer, NodeVars.NodeVar> currentTail(int currentUpperLimit){
 		    return this.containerAll.tailMap(currentUpperLimit);
-}
+		}
 
 
 	    }	     
@@ -341,7 +341,7 @@ public class GenTotalEncoder implements GoalDelimeter {
 
 
      /**
-      *Return the ID of a freshly auxiliar variable
+      *Return the ID of a freshly created auxiliar variable
       */
      public int newSVar(int sum, int iObj){
 	 this.solver.newVar();
