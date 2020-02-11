@@ -6,7 +6,6 @@ import org.sat4j.specs.IVecInt;
 public abstract class GoalDelimeter{
 
     abstract void UpdateCurrentK(int iObj, int upperKD);
-    abstract void prettyPrintLiteral(int literal);
     abstract boolean isY(int id);
 
     abstract String prettyFormatVariable(int literal);    
