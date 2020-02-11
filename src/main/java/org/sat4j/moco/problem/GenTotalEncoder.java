@@ -203,7 +203,7 @@ public class GenTotalEncoder implements GoalDelimeter {
 	 }
 }
 
-     private void addClausesSubSumTree(Node parent, int newUpperLimit){
+     public void addClausesSubSumTree(Node parent, int newUpperLimit){
 	 Node left = parent.left;
 	 Node right = parent.right;
 	 addClausesSubSumTree(left, newUpperLimit);
