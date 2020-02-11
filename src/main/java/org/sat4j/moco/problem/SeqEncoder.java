@@ -604,7 +604,7 @@ import org.sat4j.specs.ContradictionException;
      * @param literal
      */
 
-    public int getObjFromYVariable(int literal){
+    public int getIObjFromY(int literal){
 	assert this.isY(literal);
 	literal = (literal>0)? literal: -literal;
 	return this.sTopVariablesInverseIndex.get(literal)[0] ;
@@ -615,7 +615,7 @@ import org.sat4j.specs.ContradictionException;
      * @param literal
      */
 
-    public int getKDFromYVariable(int literal){
+    public int getKDFromY(int literal){
 	assert this.isY(literal);
 	literal = (literal>0)? literal: -literal;
 	return this.sTopVariablesInverseIndex.get(literal)[1] ;
@@ -727,8 +727,8 @@ import org.sat4j.specs.ContradictionException;
 	int id =  literal * sign;
 
 	if(this.isY(id)){
-	    int iObj = this.getObjFromYVariable(id);
-	    int kd = this.getKDFromYVariable(id);
+	    int iObj = this.getIObjFromY(id);
+	    int kd = this.getKDFromY(id);
 	    return "Y[" + iObj + ", " + kd +"]"+ "::" + literal + " ";
 	}
 	 
