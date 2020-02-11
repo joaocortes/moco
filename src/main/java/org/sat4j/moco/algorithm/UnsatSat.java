@@ -381,7 +381,7 @@ public class UnsatSat implements MySolver {
      */
     public void printModel(IVecInt model) {
 	for(int j = 0; j <model.size(); ++j)
-	    this.seqEncoder.prettyPrintLiteral(model.get(j));
+	    this.seqEncoder.prettyPrintVariable(model.get(j));
 
 
 	return;
@@ -436,14 +436,14 @@ public class UnsatSat implements MySolver {
 
     private boolean AddClause(IVecInt setOfLiterals){
 	for(int i = 0; i < setOfLiterals.size(); ++i)
-	    this.seqEncoder.prettyPrintLiteral(setOfLiterals.get(i));
+	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(i));
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	}
 	catch (ContradictionException e) {
 	    Log.comment(5, "contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		this.seqEncoder.prettyPrintLiteral(setOfLiterals.get(j));
+		this.seqEncoder.prettyPrintVariable(setOfLiterals.get(j));
 	    return false;
 	}
 	return true;
