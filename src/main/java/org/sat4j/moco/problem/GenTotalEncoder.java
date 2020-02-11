@@ -278,25 +278,22 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 
 
-    public void prettyPrintLiteral(int literal){
+    public String prettyFormatVariable(int literal){
 	int sign =(literal>0)? 1: -1;
 	int id =  literal * sign;
-	// if(this.isY(id)){
-	//     int iObj = this.getIObjFromY(id);
-	//     int kd = this.getKDFromY(id);
-	//     Log.comment(6, literal + "->" + "STop[" + iObj + ", " + kd +"] ");
-	//     return;
-	// }
-	 
+
 	if(this.isY(id)){
 	    int iObj = this.getIObjFromY(id);
 	    int kd = this.getKDFromY(id);
-	    Log.comment(6, literal + "->" + "Y[" + iObj + ", " + kd +"] ");
-	    return;
+	    return "Y[" + iObj + ", " + kd +"]"+ "::" + literal + " ";
 	}
+	 
+	
+	
 	if(id < this.firstVariable){
-	    Log.comment(6, (sign>0? "+":"-")+"X["+id+"] ");
+	    return (sign>0? "+":"-")+"X["+id+"] ";
 	}
+	return "";
     }
 
 
