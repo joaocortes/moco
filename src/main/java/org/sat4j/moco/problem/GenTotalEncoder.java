@@ -25,6 +25,7 @@ package org.sat4j.moco.problem;
 
 import org.sat4j.moco.util.Log;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Vector;
 import java.util.HashSet;
 import java.util.TreeSet;
@@ -55,12 +56,20 @@ import org.sat4j.specs.IVecInt;
 
 public class GenTotalEncoder extends GoalDelimeter {
 
+    /**
+     *The inverse index map for the partial sum variables. For each ID, a
+     *value that is an array vector with the value of the goal and the
+     *value of the sum
+     */
+	protected Hashtable<Integer,int[]> auxVariablesInverseIndex  = new Hashtable<Integer, int[]>();
+
     class SumTree {
 
 	private int upperLimit = -1;
 	private Node parent = null;
 	private ArrayList<Node> nodes = new ArrayList<Node>();
 	private PriorityQueue<Node> unlinkedNodes = new PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
+
 
 	class Node {
 	    class NodeVars{
@@ -173,13 +182,15 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 	//TODO what happens if there is only one node left in unlinkedNodes
 	public void linkTree(){
-	    while(this.unlinkedNodes.poll() != null){
-		Node leftNode = unlinkedNodes.poll();
+	    int size = unlinkedNodes.size();
+	    while(size >=2){
+	 	Node leftNode = unlinkedNodes.poll();
 		this.nodes.add(leftNode);
 		Node rightNode = unlinkedNodes.poll();
 		this.nodes.add(rightNode);
 		Node parentNode = new Node(leftNode, rightNode, this.upperLimit);
 		unlinkedNodes.add(parentNode);
+		size--;
 	    }
 	}
 
@@ -217,8 +228,16 @@ public class GenTotalEncoder extends GoalDelimeter {
 	Log.comment(5, "in GenTotalEncoder");
 	this.instance = instance;	
 	this.solver = solver;
+
 	this.firstVariable = this.solver.nVars() + 1;
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
+	    Objective ithObj = this.instance.getObj(iObj);
+	    ReadOnlyVec<Real> ithObjCoeffsReal = ithObj.getSubObjCoeffs(0);
+	    int[] ithObjCoeffsInt = new int[ithObjCoeffsReal.size()];
+	    for(int iX = 0, n = ithObjCoeffsReal.size(); iX < n; ++iX)
+		ithObjCoeffsInt[iX] = Math.round(ithObjCoeffsReal.get(iX).asInt());
+		
+	    this.sumTrees[iObj] = new SumTree(ithObjCoeffsInt, -1);
 	    this.UpdateCurrentK(iObj,0);
 	}
 	Log.comment(5, "done");
@@ -234,7 +253,7 @@ public class GenTotalEncoder extends GoalDelimeter {
       */
      public int getIObjFromY(int id){
 	 assert this.isY(id);
-	 return this.sVariablesInverseIndex.get(id)[0];
+	 return this.auxVariablesInverseIndex.get(id)[0];
      }
 
      /**
@@ -242,7 +261,7 @@ public class GenTotalEncoder extends GoalDelimeter {
       */
      public int getKDFromY(int id){
 	 assert this.isY(id);
-	 return this.sVariablesInverseIndex.get(id)[1];
+	 return this.auxVariablesInverseIndex.get(id)[1];
 
      }
 
@@ -322,6 +341,15 @@ public class GenTotalEncoder extends GoalDelimeter {
 	sumTree.upperLimit = newUpperLimit;
     }
 
+     /**
+      *Return the ID of a freshly created auxiliar variable
+      */
+     protected int newAuxiliarVar(int sum, int iObj){
+	 this.solver.newVar();
+	 int id = this.solver.nVars();
+	 this.auxVariablesInverseIndex.put(id, new int[]{sum, iObj});
+	 return id;
+     }
 
      //TODO
      public void UpdateCurrentK(int iObj, int upperKD){
