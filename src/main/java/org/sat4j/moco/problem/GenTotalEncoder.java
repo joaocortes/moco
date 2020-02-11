@@ -334,7 +334,7 @@ public class GenTotalEncoder implements GoalDelimeter {
 
 
      /**
-      *Return the ID of a freshly created solver's variable
+      *Return the ID of a freshly auxiliar variable
       */
      public int newSVar(int sum, int iObj){
 	 this.solver.newVar();
