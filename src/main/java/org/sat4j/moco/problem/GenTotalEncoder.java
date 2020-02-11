@@ -351,17 +351,6 @@ public class GenTotalEncoder implements GoalDelimeter {
      }
 
 
-     
-     public void addClausesSumTree(int iObj, int newUpperLimit){
-	 SumTree ithObjSumTree = this.sumTrees[iObj];
-	 addClausesSubSumTree(ithObjSumTree.parent, newUpperLimit);
-
-
-     }
-
-
-
-
     /**
      *Adds the conjunction of setOfLiterals
      *@param setOfliterals
@@ -379,6 +368,17 @@ public class GenTotalEncoder implements GoalDelimeter {
 	    return;
 	}
     }
+
+     
+    public void addClausesSumTree(int iObj, int newUpperLimit){
+	 SumTree ithObjSumTree = this.sumTrees[iObj];
+	 ithObjSumTree.addClausesSubSumTree(ithObjSumTree.parent, newUpperLimit);
+
+
+     }
+
+
+
 
 
      //TODO
