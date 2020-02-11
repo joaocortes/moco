@@ -276,12 +276,7 @@ public class GenTotalEncoder implements GoalDelimeter {
 	 return false;
      }
 
-     public void prettyPrintVecInt(IVecInt vecInt){
-	 for(int j = 0; j < vecInt.size(); ++j)
-	     this.prettyPrintLiteral(vecInt.get(j));
 
-	 return;
-     }
 
     public void prettyPrintLiteral(int literal){
 	int sign =(literal>0)? 1: -1;
