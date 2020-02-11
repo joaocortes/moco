@@ -323,17 +323,14 @@ public class GenTotalEncoder extends GoalDelimeter {
     }
 
 
-
-
-     
-
-
      //TODO
      public void UpdateCurrentK(int iObj, int upperKD){
 	 addClausesSumTree(iObj, upperKD);
      }
 
-
+     public int getCurrentKD(int iObj){
+	 return this.sumTrees[iObj].upperLimit;
+     }
  }
 
 
