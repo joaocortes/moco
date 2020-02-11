@@ -5,11 +5,13 @@ import org.sat4j.specs.IVecInt;
 
 public abstract class GoalDelimeter{
 
-    abstract void UpdateCurrentK(int iObj, int upperKD);
+    abstract public void UpdateCurrentK(int iObj, int upperKD);
     abstract public boolean isY(int id);
 
-    abstract int getIObjFromY(int id);
-    abstract int getKDFromY(int id);
+    abstract public int getCurrentKD(int iObj);
+
+    abstract public int getIObjFromY(int id);
+    abstract public int getKDFromY(int id);
 
     abstract public int getY(int iObj, int iKD);
 
