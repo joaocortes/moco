@@ -34,6 +34,8 @@ import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.problem.SeqEncoder;
+import org.sat4j.moco.problem.GoalDelimeter;
+import org.sat4j.moco.problem.GenTotalEncoder;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
@@ -68,7 +70,7 @@ public class UnsatSat implements MySolver {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private SeqEncoder seqEncoder = null;
+    private GoalDelimeter seqEncoder = null;
 
     /**
      * Last explored differential k, for each objective function.
