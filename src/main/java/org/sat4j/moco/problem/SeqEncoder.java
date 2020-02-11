@@ -22,19 +22,16 @@
  *******************************************************************************/
 package org.sat4j.moco.problem;
 
-
 import org.sat4j.moco.util.Log;
 import java.lang.Math;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Hashtable;
-import java.util.Set;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
-import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.specs.IVecInt;
 import org.sat4j.specs.ContradictionException;
@@ -70,10 +67,6 @@ import org.sat4j.specs.ContradictionException;
      */
     private int[] initializedKDs = null;
 
-    private Instance instance = null;
-
-    private PBSolver solver = null;
-
     /**
      *The inverse index map for the S variables
      */
@@ -82,7 +75,7 @@ import org.sat4j.specs.ContradictionException;
     /**
      *The inverse index map for the S variables
      */
-    private Hashtable<Integer,int[]> sVariablesInverseIndex  = new Hashtable<Integer, int[]>();
+    private Hashtable<Integer,int[]> auxVariablesInverseIndex  = new Hashtable<Integer, int[]>();
      /**
       *The inverse index map for the blocking variables
       */
@@ -227,7 +220,7 @@ import org.sat4j.specs.ContradictionException;
 	    arrayDK.addAll(Arrays.asList(graftArray));
 	}
 	arrayDK.set(iKD, id);
-	this.sVariablesInverseIndex.put(id, new int[] {iObj,x,kD});
+	this.auxVariablesInverseIndex.put(id, new int[] {iObj,x,kD});
     }
 
 
@@ -327,30 +320,6 @@ import org.sat4j.specs.ContradictionException;
 	 this.idsB[iObj][kD] = id;
 	}
     
-
-
-    /**
-     *Adds the conjunction of setOfLiterals
-     *@param setOfliterals
-     */
-
-    private void AddClause(IVecInt setOfLiterals){
-	this.prettyPrintVecInt(setOfLiterals);
-	for(int i = 0; i < setOfLiterals.size(); ++i)
-	try{
-	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
-	} catch (ContradictionException e) {
-	    Log.comment(6, "contradiction when adding clause: ");
-	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		Log.comment(6, " " + setOfLiterals.get(j) + " " );
-	    return;
-	}
-    }
-
-    /**
-     *Adds the conjunctio of setOfLiterals
-     *@param setOfliterals
-     */
 
     // private ConstrID AddRemovableClause(IVecInt setOfLiterals){
 
@@ -629,7 +598,7 @@ import org.sat4j.specs.ContradictionException;
     public int getObjFromSVariable(int literal){
 	assert this.isS(literal);
 	literal = (literal>0)? literal: -literal;
-	return this.sVariablesInverseIndex.get(literal)[0] ;
+	return this.auxVariablesInverseIndex.get(literal)[0] ;
     }
 
     /**
@@ -640,7 +609,7 @@ import org.sat4j.specs.ContradictionException;
     public int getKDFromSVariable(int literal){
 	assert this.isS(literal);
 	literal = (literal>0)? literal: -literal;
-	return this.sVariablesInverseIndex.get(literal)[2] ;
+	return this.auxVariablesInverseIndex.get(literal)[2] ;
 
     }
     /**
@@ -667,7 +636,7 @@ import org.sat4j.specs.ContradictionException;
     public int getXFromSVariable(int literal){
 	assert this.isS(literal);
 	literal = (literal>0)? literal: -literal;
-	return this.sVariablesInverseIndex.get(literal)[1] ;
+	return this.auxVariablesInverseIndex.get(literal)[1] ;
     }
 
 
@@ -690,7 +659,7 @@ import org.sat4j.specs.ContradictionException;
 
     public boolean isS(int literal){
 	literal = (literal>0)? literal: -literal;
-	if(this.sVariablesInverseIndex.containsKey(literal))
+	if(this.auxVariablesInverseIndex.containsKey(literal))
 	    return true;
 	return false;
     }

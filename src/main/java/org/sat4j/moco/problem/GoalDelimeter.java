@@ -2,7 +2,6 @@ package org.sat4j.moco.problem;
 
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.IVecInt;
-import java.util.Hashtable;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.specs.ContradictionException;
@@ -12,18 +11,12 @@ public abstract class GoalDelimeter{
     /**
      *Acess to the instance to be solved
      */
-    private Instance instance = null;
+    protected Instance instance = null;
     /**
      *Access to the solver being used
      */
-    private PBSolver solver = null;
+    protected PBSolver solver = null;
 
-    /**
-     *The inverse index map for the S(um) variables. For each ID, a
-     *value that is an array vector with the value of the goal and the
-     *value of the sum
-     */
-    private Hashtable<Integer,int[]> auxVariablesInverseIndex  = new Hashtable<Integer, int[]>();
 
     abstract public void UpdateCurrentK(int iObj, int upperKD);
     abstract public boolean isY(int id);
@@ -54,15 +47,6 @@ public abstract class GoalDelimeter{
 	Log.comment(6,prettyFormatVariable(literal));
     }
 
-     /**
-      *Return the ID of a freshly created auxiliar variable
-      */
-     protected int newAuxiliarVar(int sum, int iObj){
-	 this.solver.newVar();
-	 int id = this.solver.nVars();
-	 this.auxVariablesInverseIndex.put(id, new int[]{sum, iObj});
-	 return id;
-     }
 
 
     /**
