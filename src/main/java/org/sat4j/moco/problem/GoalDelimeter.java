@@ -23,7 +23,7 @@ public abstract class GoalDelimeter{
      *value that is an array vector with the value of the goal and the
      *value of the sum
      */
-    private Hashtable<Integer,int[]> sVariablesInverseIndex  = new Hashtable<Integer, int[]>();
+    private Hashtable<Integer,int[]> auxVariablesInverseIndex  = new Hashtable<Integer, int[]>();
 
     abstract public void UpdateCurrentK(int iObj, int upperKD);
     abstract public boolean isY(int id);
@@ -60,7 +60,7 @@ public abstract class GoalDelimeter{
      protected int newAuxiliarVar(int sum, int iObj){
 	 this.solver.newVar();
 	 int id = this.solver.nVars();
-	 this.sVariablesInverseIndex.put(id, new int[]{sum, iObj});
+	 this.auxVariablesInverseIndex.put(id, new int[]{sum, iObj});
 	 return id;
      }
 
