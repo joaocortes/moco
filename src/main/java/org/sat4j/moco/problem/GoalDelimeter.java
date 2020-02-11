@@ -1,11 +1,30 @@
 package org.sat4j.moco.problem;
 
+import org.sat4j.moco.util.Log;
 import org.sat4j.specs.IVecInt;
 
-public interface GoalDelimeter{
+public abstract class GoalDelimeter{
 
-    public void prettyPrintVecInt(IVecInt vecInt);
-    public void UpdateCurrentK(int iObj, int upperKD);
-    public void prettyPrintLiteral(int literal);
-    
+    abstract void UpdateCurrentK(int iObj, int upperKD);
+    abstract void prettyPrintLiteral(int literal);
+    abstract boolean isY(int id);
+
+    abstract String prettyFormatVariable(int literal);    
+
+
+     public String prettyFormatVecInt(IVecInt vecInt){
+	 String result = "";
+	 for(int j = 0; j < vecInt.size(); ++j)
+	     result += this.prettyFormatVariable(vecInt.get(j));
+	 return result;
+     }
+
+     public void prettyPrintVecInt(IVecInt vecInt){
+	Log.comment(6,prettyFormatVecInt(vecInt));
+	 return;
+     }
+
+    public void prettyPrintVariable(int literal){
+	Log.comment(6,prettyFormatVariable(literal));
+    }
 }
