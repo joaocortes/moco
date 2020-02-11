@@ -282,7 +282,7 @@ public class UnsatSat implements MySolver {
 
 
     /**
-     *Checks if literal is an STop variable
+     *Checks if literal is an Y variable
      *@param literal
      */
 
@@ -292,7 +292,7 @@ public class UnsatSat implements MySolver {
 	return false;
     }
     /**
-     *Checks if literal is an STop variable
+     *Checks if literal is an Y variable
      *@param literal
      */
 
@@ -304,7 +304,7 @@ public class UnsatSat implements MySolver {
 
     /**
      *returns the model in DIMACS format, including only the real
-     *variables and the STop variables of the sequential encoder
+     *variables and the Y variables of the sequential encoder
      *@return a filtered model
      */
 
@@ -321,7 +321,7 @@ public class UnsatSat implements MySolver {
 
     /**
      *returns the model in DIMACS format, including only the real
-     *variables and the STop variables of the sequential encoder
+     *variables and the Y variables of the sequential encoder
      *@return a filtered model
      */
 
@@ -335,7 +335,7 @@ public class UnsatSat implements MySolver {
 
     /**
      *returns the model in DIMACS format, including only the real
-     *variables and the STop variables of the sequential encoder
+     *variables and the Y variables of the sequential encoder
      *@return a filtered model
      */
 
@@ -350,7 +350,7 @@ public class UnsatSat implements MySolver {
     }
     /**
      *returns the model in DIMACS format, including only the real
-     *variables and the STop variables of the sequential encoder
+     *variables and the Y variables of the sequential encoder
      *@return a filtered model
      */
 
