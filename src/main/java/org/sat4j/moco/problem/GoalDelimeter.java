@@ -8,6 +8,10 @@ public abstract class GoalDelimeter{
     abstract void UpdateCurrentK(int iObj, int upperKD);
     abstract boolean isY(int id);
 
+    abstract int getIObjFromY(int id);
+    abstract int getKDFromY(int id);
+    abstract int getY(int iObj, int iKD);
+
     abstract String prettyFormatVariable(int literal);    
 
 
