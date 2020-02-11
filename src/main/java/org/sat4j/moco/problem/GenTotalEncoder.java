@@ -185,35 +185,6 @@ public class GenTotalEncoder implements GoalDelimeter {
 	    }
 	}
 
-	private void addClausesFirstPartial(Node parent, Node first, Node second, int newUpperLimit){
-
-	    Collection<Node.NodeVars.NodeVar> firstTail =
-		first.nodeVars.currentTail(newUpperLimit).values();
-
-	    Collection<Node.NodeVars.NodeVar> secondAll =
-		first.nodeVars.containerAll.values();
-
-	    for(Node.NodeVars.NodeVar firstVar : firstTail){
-		for(Node.NodeVars.NodeVar secondVar : secondAll ){
-		    Node.NodeVars.NodeVar parentVar =
-			parent.nodeVars.addWhileClausing(firstVar.kD + secondVar.kD , newUpperLimit);
-		    IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVar.id});
-		    AddClause(clause);
-		}
-	    }
-	}
-
-	public void addClausesSubSumTree(Node parent, int newUpperLimit){
-	    Node left = parent.left;
-	    Node right = parent.right;
-	    addClausesSubSumTree(left, newUpperLimit);
-	    addClausesSubSumTree(right, newUpperLimit);
-
-	    addClausesFirstPartial(parent, left, right, newUpperLimit);    
-	    addClausesFirstPartial(parent, right, left, newUpperLimit);    
-	    this.upperLimit = newUpperLimit;
-	}
-
 	public SumTree(int[] leafWeights, int upperLimit){
 	    this.upperLimit = upperLimit;
 	    for(int weight : leafWeights){
@@ -351,6 +322,46 @@ public class GenTotalEncoder implements GoalDelimeter {
      }
 
 
+     
+     public void addClausesSumTree(int iObj, int newUpperLimit){
+	 SumTree ithObjSumTree = this.sumTrees[iObj];
+	 addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, newUpperLimit);
+
+
+     }
+
+
+	private void addClausesFirstPartial(Node parent, Node first, Node second, int newUpperLimit){
+
+	    Collection<Node.NodeVars.NodeVar> firstTail =
+		first.nodeVars.currentTail(newUpperLimit).values();
+
+	    Collection<Node.NodeVars.NodeVar> secondAll =
+		first.nodeVars.containerAll.values();
+
+	    for(Node.NodeVars.NodeVar firstVar : firstTail){
+		for(Node.NodeVars.NodeVar secondVar : secondAll ){
+		    Node.NodeVars.NodeVar parentVar =
+			parent.nodeVars.addWhileClausing(firstVar.kD + secondVar.kD , newUpperLimit);
+		    IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVar.id});
+		    AddClause(clause);
+		}
+	    }
+	}
+
+
+    public void addClausesSubSumTree(SumTree sumTree, Node currentNode, int newUpperLimit){
+	Node left = currentNode.left;
+	Node right = currentNode.right;
+	addClausesSubSumTree(sumTree, left, newUpperLimit);
+	addClausesSubSumTree(sumTree, right, newUpperLimit);
+
+	addClausesFirstPartial(currentNode, left, right, newUpperLimit);    
+	addClausesFirstPartial(currentNode, right, left, newUpperLimit);    
+	sumTree.upperLimit = newUpperLimit;
+    }
+
+
     /**
      *Adds the conjunction of setOfLiterals
      *@param setOfliterals
@@ -370,15 +381,6 @@ public class GenTotalEncoder implements GoalDelimeter {
     }
 
      
-    public void addClausesSumTree(int iObj, int newUpperLimit){
-	 SumTree ithObjSumTree = this.sumTrees[iObj];
-	 ithObjSumTree.addClausesSubSumTree(ithObjSumTree.parent, newUpperLimit);
-
-
-     }
-
-
-
 
 
      //TODO
