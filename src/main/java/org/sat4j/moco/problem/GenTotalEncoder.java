@@ -55,7 +55,7 @@ import org.sat4j.specs.ContradictionException;
  */
 
 
-public class GenTotalEncoder implements GoalDelimeter {
+public class GenTotalEncoder extends GoalDelimeter {
 
     class SumTree {
 
