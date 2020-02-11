@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.HashSet;
 import java.util.TreeSet;
-import java.util.Hashtable;
+
 import java.util.PriorityQueue;
 import java.util.SortedMap;
 import java.util.ArrayList;
@@ -42,11 +42,9 @@ import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
-import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.GenTotalEncoder.SumTree.Node;
 import org.sat4j.specs.IVecInt;
-import org.sat4j.specs.ContradictionException;
 
 /**
  * Class with the implementation of the generalized totalizor encoder.
@@ -205,21 +203,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 
     private SumTree[] sumTrees = null;
      
-    /**
-     *Acess to the instance to be solved
-     */
-    private Instance instance = null;
-    /**
-     *Access to the solver being used
-     */
-    private PBSolver solver = null;
 
-    /**
-     *The inverse index map for the S(um) variables. For each ID, a
-     *value that is an array vector with the value of the goal and the
-     *value of the sum
-     */
-    private Hashtable<Integer,int[]> sVariablesInverseIndex  = new Hashtable<Integer, int[]>();
 
     private int firstVariable = 0;
 
@@ -297,15 +281,6 @@ public class GenTotalEncoder extends GoalDelimeter {
     }
 
 
-     /**
-      *Return the ID of a freshly created auxiliar variable
-      */
-     public int newSVar(int sum, int iObj){
-	 this.solver.newVar();
-	 int id = this.solver.nVars();
-	 this.sVariablesInverseIndex.put(id, new int[]{sum, iObj});
-	 return id;
-     }
 
 
      
@@ -348,23 +323,7 @@ public class GenTotalEncoder extends GoalDelimeter {
     }
 
 
-    /**
-     *Adds the disjunction of setOfLiterals
-     *@param setOfliterals
-     */
 
-    private void AddClause(IVecInt setOfLiterals){
-	this.prettyPrintVecInt(setOfLiterals);
-	for(int i = 0; i < setOfLiterals.size(); ++i)
-	try{
-	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
-	} catch (ContradictionException e) {
-	    Log.comment(6, "contradiction when adding clause: ");
-	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		Log.comment(6, " " + setOfLiterals.get(j) + " " );
-	    return;
-	}
-    }
 
      
 
