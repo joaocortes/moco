@@ -200,11 +200,6 @@ public class GenTotalEncoder implements GoalDelimeter {
     }
 
     /**
-     * current upper limit, aka the last attainable limit 
-     */
-    private int upperLimit = -1;
-
-    /**
      *Tree used to encode the goal limits
      */
 
@@ -239,7 +234,6 @@ public class GenTotalEncoder implements GoalDelimeter {
 	this.instance = instance;	
 	this.solver = solver;
 	this.firstVariable = this.solver.nVars() + 1;
-	this.upperLimit = -1;
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
 	    this.UpdateCurrentK(iObj,0);
 	}
@@ -386,7 +380,6 @@ public class GenTotalEncoder implements GoalDelimeter {
      //TODO
      public void UpdateCurrentK(int iObj, int upperKD){
 	 addClausesSumTree(iObj, upperKD);
-	 this.upperLimit = upperKD;
      }
 
 
