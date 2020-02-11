@@ -383,7 +383,8 @@ public class GenTotalEncoder implements GoalDelimeter {
 
      //TODO
      public void UpdateCurrentK(int iObj, int upperKD){
-
+	 addClausesSumTree(iObj, upperKD);
+	 this.upperLimit = upperKD;
      }
 
 
