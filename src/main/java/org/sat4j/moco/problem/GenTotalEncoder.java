@@ -227,18 +227,24 @@ public class GenTotalEncoder implements GoalDelimeter {
 
     }
 
-     /**
-      *Tree used to encode the goal limits
-      */
-     private SumTree[] sumTrees = null;
+    /**
+     * current upper limit, aka the last attainable limit 
+     */
+    private int upperLimit = -1;
+
+    /**
+     *Tree used to encode the goal limits
+     */
+
+    private SumTree[] sumTrees = null;
      
-     /**
-      *Acess to the instance to be solved
-      */
+    /**
+     *Acess to the instance to be solved
+     */
     private Instance instance = null;
-     /**
-      *Access to the solver being used
-      */
+    /**
+     *Access to the solver being used
+     */
     private PBSolver solver = null;
 
     /**
@@ -261,7 +267,7 @@ public class GenTotalEncoder implements GoalDelimeter {
 	this.instance = instance;	
 	this.solver = solver;
 	this.firstVariable = this.solver.nVars() + 1;
-
+	this.upperLimit = -1;
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
 	    this.UpdateCurrentK(iObj,0);
 	}
