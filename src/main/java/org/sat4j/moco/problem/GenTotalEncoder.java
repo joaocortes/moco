@@ -228,15 +228,16 @@ public class GenTotalEncoder extends GoalDelimeter {
 	Log.comment(5, "in GenTotalEncoder");
 	this.instance = instance;	
 	this.solver = solver;
-
 	this.firstVariable = this.solver.nVars() + 1;
-	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
+	this.sumTrees = new SumTree[this.instance.nObjs()];
+
+	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    Objective ithObj = this.instance.getObj(iObj);
 	    ReadOnlyVec<Real> ithObjCoeffsReal = ithObj.getSubObjCoeffs(0);
 	    int[] ithObjCoeffsInt = new int[ithObjCoeffsReal.size()];
-	    for(int iX = 0, n = ithObjCoeffsReal.size(); iX < n; ++iX)
+	    for(int iX = 0, nX = ithObjCoeffsReal.size(); iX < nX; ++iX)
 		ithObjCoeffsInt[iX] = Math.round(ithObjCoeffsReal.get(iX).asInt());
-		
+
 	    this.sumTrees[iObj] = new SumTree(ithObjCoeffsInt, -1);
 	    this.UpdateCurrentK(iObj,0);
 	}
