@@ -70,7 +70,7 @@ public class UnsatSat implements MySolver {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private GoalDelimeter seqEncoder = null;
+    private GoalDelimeter goalDelimeter = null;
 
     /**
      * Last explored differential k, for each objective function.
@@ -100,7 +100,7 @@ public class UnsatSat implements MySolver {
             return;
         }
 	this.realVariablesN = this.solver.nVars();
-	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
+	this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
     }
 
@@ -127,7 +127,7 @@ public class UnsatSat implements MySolver {
         Log.comment(3, "in UnsatSat.solve");
 	boolean goOn = true;
 	//for testing purposes
-	//	this.seqEncoder.UpdateCurrentK(0, 2);
+	//	this.goalDelimeter.UpdateCurrentK(0, 2);
 	while(goOn){
 	    ///log..
 
@@ -143,7 +143,7 @@ public class UnsatSat implements MySolver {
 
 	    //log..
 	    Log.comment(5, "Checking against assumptions:");
-	    this.seqEncoder.prettyPrintVecInt(currentAssumptions);
+	    this.goalDelimeter.prettyPrintVecInt(currentAssumptions);
 	    //..log
 
 	    solver.check(currentAssumptions);
@@ -183,7 +183,7 @@ public class UnsatSat implements MySolver {
 		currentExplanation  = solver.unsatExplanation();
 		//log..
 		Log.comment(5, "Explanation:");
-		this.seqEncoder.prettyPrintVecInt(currentExplanation);
+		this.goalDelimeter.prettyPrintVecInt(currentExplanation);
 		//..log
 
 		if(currentExplanation.size() == 0){
@@ -204,7 +204,7 @@ public class UnsatSat implements MySolver {
     public IVecInt generateUpperBoundAssumptions( ){
 	IVecInt assumptions = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    assumptions.push(-this.seqEncoder.getY(iObj, this.getUpperKD(iObj) + 1));
+	    assumptions.push(-this.goalDelimeter.getY(iObj, this.getUpperKD(iObj) + 1));
 	}
 	return assumptions;
     }
@@ -219,7 +219,7 @@ public class UnsatSat implements MySolver {
     private void preAssumptionsExtend(){
 	int objN = this.problem.nObjs();
 	for(int iObj = 0; iObj < objN ; ++iObj){
-	    this.seqEncoder.UpdateCurrentK(iObj, this.getUpperKD(iObj) + 1);
+	    this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj) + 1);
 	}
     }
 
@@ -232,13 +232,13 @@ public class UnsatSat implements MySolver {
     private void updateUpperBound(IVecInt currentExplanation){
 	for(int i = 0; i < currentExplanation.size(); ++i){
 	    int ithLiteral = currentExplanation.get(i);
-	    int jObj = this.seqEncoder.getIObjFromY(ithLiteral);
-	    int kd = this.seqEncoder.getKDFromY(ithLiteral);
+	    int jObj = this.goalDelimeter.getIObjFromY(ithLiteral);
+	    int kd = this.goalDelimeter.getKDFromY(ithLiteral);
 	    //TODO This is strange, and should not be always true
 	    assert kd ==this.getUpperKD(jObj);
 
 		this.setUpperKD(jObj, kd);
-		this.seqEncoder.UpdateCurrentK(jObj, kd);
+		this.goalDelimeter.UpdateCurrentK(jObj, kd);
 	    }
 	}
 
@@ -260,8 +260,8 @@ public class UnsatSat implements MySolver {
      *@param iObj
      */
     private void setUpperKD(int iObj, int newKD){
-	if(this.seqEncoder.getCurrentKD(iObj) < newKD)
-	    this.seqEncoder.UpdateCurrentK(iObj, newKD);
+	if(this.goalDelimeter.getCurrentKD(iObj) < newKD)
+	    this.goalDelimeter.UpdateCurrentK(iObj, newKD);
 	this.UpperKD[iObj] = newKD;
     }
 
@@ -289,7 +289,7 @@ public class UnsatSat implements MySolver {
      */
 
     public boolean isY(int literal){
-	if(this.seqEncoder.isY(literal))
+	if(this.goalDelimeter.isY(literal))
 	    return true;
 	return false;
     }
@@ -383,7 +383,7 @@ public class UnsatSat implements MySolver {
      */
     public void printModel(IVecInt model) {
 	for(int j = 0; j <model.size(); ++j)
-	    this.seqEncoder.prettyPrintVariable(model.get(j));
+	    this.goalDelimeter.prettyPrintVariable(model.get(j));
 
 
 	return;
@@ -424,7 +424,7 @@ public class UnsatSat implements MySolver {
 	int[] upperLimits = this.findUpperLimits(newSolution);
 	int[] literals = new int[this.problem.nObjs()];
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	    literals[iObj] = -this.seqEncoder.getY(iObj, upperLimits[iObj]);
+	    literals[iObj] = -this.goalDelimeter.getY(iObj, upperLimits[iObj]);
 	IVecInt newHardClause = new VecInt(literals);
 	return this.AddClause(newHardClause);
     }
@@ -438,14 +438,14 @@ public class UnsatSat implements MySolver {
 
     private boolean AddClause(IVecInt setOfLiterals){
 	for(int i = 0; i < setOfLiterals.size(); ++i)
-	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(i));
+	    this.goalDelimeter.prettyPrintVariable(setOfLiterals.get(i));
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	}
 	catch (ContradictionException e) {
 	    Log.comment(5, "contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		this.seqEncoder.prettyPrintVariable(setOfLiterals.get(j));
+		this.goalDelimeter.prettyPrintVariable(setOfLiterals.get(j));
 	    return false;
 	}
 	return true;
