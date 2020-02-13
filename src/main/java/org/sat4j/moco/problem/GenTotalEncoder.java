@@ -117,15 +117,15 @@ public class GenTotalEncoder extends GoalDelimeter {
 		public NodeVar get(int value){
 		    return this.containerAll.get(value);
 		}
-
-
 		public NodeVar addWhileClausing(int kD, int upperLimit){
-		    NodeVar newNodeVar = new NodeVar(kD, upperLimit);
-		    int effectiveKD = newNodeVar.kD;
-		    NodeVar existentNodeVar = this.containerAll.putIfAbsent(effectiveKD, newNodeVar);
-		    if(existentNodeVar != null)
-			return existentNodeVar;
-		    return newNodeVar;
+		    NodeVar nodeVar = this.containerAll.get(kD);
+		    if(nodeVar == null){
+			NodeVar newNodeVar = new NodeVar(kD, upperLimit);
+			int effectiveKD = newNodeVar.kD;
+			this.containerAll.put(effectiveKD, newNodeVar);
+			nodeVar = newNodeVar;
+		    }
+		    return nodeVar;
 		}
 
 		public SortedMap<Integer, NodeVars.NodeVar> currentTail(int currentUpperLimit){
