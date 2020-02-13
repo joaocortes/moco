@@ -337,13 +337,14 @@ public class GenTotalEncoder extends GoalDelimeter {
     public void addClausesSubSumTree(SumTree sumTree, Node currentNode, int newUpperLimit){
 	Node left = currentNode.left;
 	Node right = currentNode.right;
-	addClausesSubSumTree(sumTree, left, newUpperLimit);
-	addClausesSubSumTree(sumTree, right, newUpperLimit);
+	if(left != null) {
+	    addClausesSubSumTree(sumTree, left, newUpperLimit);
+	    addClausesSubSumTree(sumTree, right, newUpperLimit);
+	    addClausesFirstPartial(currentNode, left, right, newUpperLimit);    
+	    addClausesFirstPartial(currentNode, right, left, newUpperLimit);    
+	}
+	}
 
-	addClausesFirstPartial(currentNode, left, right, newUpperLimit);    
-	addClausesFirstPartial(currentNode, right, left, newUpperLimit);    
-	sumTree.upperLimit = newUpperLimit;
-    }
 
      /**
       *Return the ID of a freshly created auxiliar variable
