@@ -65,6 +65,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 
     class SumTree {
 
+	private int iObj = -1;
 	private int upperLimit = -1;
 	private Node parent = null;
 	private ArrayList<Node> nodes = new ArrayList<Node>();
@@ -194,7 +195,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    }
 	}
 
-	public SumTree(int[] leafWeights, int upperLimit){
+	public SumTree(int iObj, int[] leafWeights, int upperLimit){
 	    this.upperLimit = upperLimit;
 	    for(int weight : leafWeights){
 		Node node =  new Node(weight, upperLimit);
@@ -238,7 +239,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 	    for(int iX = 0, nX = ithObjCoeffsReal.size(); iX < nX; ++iX)
 		ithObjCoeffsInt[iX] = Math.round(ithObjCoeffsReal.get(iX).asInt());
-	    this.sumTrees[iObj] = new SumTree(ithObjCoeffsInt, -1);
+	    this.sumTrees[iObj] = new SumTree(iObj ,ithObjCoeffsInt, -1);
 	}
 
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj)
