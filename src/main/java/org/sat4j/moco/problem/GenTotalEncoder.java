@@ -99,8 +99,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 			this.id = id;
 		    }
 		    private int cutValue(int upperLimit){
-			return this.kD > upperLimit + 1? this.kD : upperLimit + 1;
-		    }
+			return this.kD > upperLimit + 1? upperLimit + 1 : this.kD;
 		    }
 		}
 
