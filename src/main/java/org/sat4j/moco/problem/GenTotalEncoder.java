@@ -313,7 +313,7 @@ public class GenTotalEncoder extends GoalDelimeter {
      }
 
 
-	private void addClausesFirstPartial(Node parent, Node first, Node second, int newUpperLimit){
+    private void addClausesFirstPartial(int iObj, Node parent, Node first, Node second, int newUpperLimit){
 
 	    Collection<Node.NodeVars.NodeVar> firstTail =
 		first.nodeVars.currentTail(newUpperLimit).values();
