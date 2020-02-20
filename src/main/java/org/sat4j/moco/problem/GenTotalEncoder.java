@@ -101,9 +101,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    private int cutValue(int upperLimit){
 			return this.kD > upperLimit + 1? this.kD : upperLimit + 1;
 		    }
-		    public void baptize(int id, int upperLimit){
-			if(this.getKD()<= upperLimit)
-			    this.setId(id);
 		    }
 		}
 
