@@ -114,7 +114,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		public NodeVar get(int value){
 		    return this.containerAll.get(value);
 		}
-		public NodeVar addWhileClausing(int kD, int upperLimit){
+		public NodeVar addParsimoneously(int kD, int upperLimit){
 		    NodeVar nodeVar = this.containerAll.get(kD);
 		    if(nodeVar == null){
 			NodeVar newNodeVar = new NodeVar(kD, upperLimit);
@@ -329,7 +329,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    for(Node.NodeVars.NodeVar firstVar : firstTail){
 		for(Node.NodeVars.NodeVar secondVar : secondAll ){
 		    Node.NodeVars.NodeVar parentVar =
-			parent.nodeVars.addWhileClausing(firstVar.kD + secondVar.kD , newUpperLimit);
+			parent.nodeVars.addParsimoneously(firstVar.kD + secondVar.kD , newUpperLimit);
 		    if(parentVar.getId() == -1)
 			parentVar.setId(newAuxiliarVar(parentVar.getKD(), iObj));
 		    IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVar.id});
@@ -364,6 +364,7 @@ public class GenTotalEncoder extends GoalDelimeter {
      //TODO
      public void UpdateCurrentK(int iObj, int upperKD){
 	 addClausesSumTree(iObj, upperKD);
+	 this.sumTrees[iObj].setUpperLimit(upperKD);
      }
 
      public int getCurrentKD(int iObj){
