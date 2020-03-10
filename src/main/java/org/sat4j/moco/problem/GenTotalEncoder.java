@@ -142,15 +142,15 @@ public class GenTotalEncoder extends GoalDelimeter {
 		this.left = null; 
 		this.right = null;
 		this.nodeVars = new NodeVars();
-		this.nodeVars.add(0, upperLimit);
-		this.nodeVars.add(this.nodeSum, upperLimit);
+		this.nodeVars.addParsimoneously(0, upperLimit);
+		this.nodeVars.addParsimoneously(this.nodeSum, upperLimit);
 	    }
 	     
 	    public Node(Node left, Node right, int upperLimit){
 		this.left = left;
 		this.right = right;
 		this.nodeVars =  new NodeVars();
-		this.nodeVars.add(0, upperLimit);
+		this.nodeVars.addParsimoneously(0, upperLimit);
 		this.nodeSum = left.nodeSum + right.nodeSum;
 	    }
 
