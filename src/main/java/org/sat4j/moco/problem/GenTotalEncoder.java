@@ -175,6 +175,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    }
 	}
 
+	public void setUpperLimit(int newUpperLimit){
+	    this.upperLimit = newUpperLimit;
+	}
 
 
 	//TODO what happens if there is only one node left in unlinkedNodes
