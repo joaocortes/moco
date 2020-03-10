@@ -234,8 +234,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    ReadOnlyVec<Real> ithObjCoeffsReal = ithObj.getSubObjCoeffs(0);
 	    int[] ithObjCoeffsInt = new int[ithObjCoeffsReal.size()];
 
-	    for(int iX = 0, nX = ithObjCoeffsReal.size(); iX < nX; ++iX)
+	    for(int iX = 0, nX = ithObjCoeffsReal.size(); iX < nX; ++iX){
 		ithObjCoeffsInt[iX] = Math.round(ithObjCoeffsReal.get(iX).asInt());
+		ithObjCoeffsInt[iX] = ithObjCoeffsInt[iX] > 0 ? ithObjCoeffsInt[iX]: -ithObjCoeffsInt[iX];
+}
 	    this.sumTrees[iObj] = new SumTree(iObj ,ithObjCoeffsInt, -1);
 	}
 
