@@ -125,6 +125,27 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    return nodeVar;
 		}
 
+		/**
+		 * Given iKD, returns the Id of the ceiling nodevar,
+		 * that is, the id of the entry imediately above iKD.
+		 */
+		public int getCeilingId(int iKD){
+		    return this.containerAll.ceilingEntry(iKD).getValue().id;
+		}
+
+
+		/**
+		 * Given iKD, returns the value of the ceiling
+		 * nodevar, that is, the values of the entry
+		 * imediately above iKD.
+		 * @param iKD
+		 * @return value
+		 */
+
+		public int getCeilingValue (int iKD){
+		    return this.containerAll.ceilingEntry(iKD).getValue().id;
+		}
+
 		public SortedMap<Integer, NodeVars.NodeVar> currentTail(int currentUpperLimit){
 		    return this.containerAll.tailMap(currentUpperLimit);
 		}
@@ -275,7 +296,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 
      //TODO wrong: the second argument should be kD, not iKD
      public int getY(int iObj, int iKD){
-	 return this.sumTrees[iObj].parent.nodeVars.get(iKD).getId();
+	 return this.sumTrees[iObj].parent.nodeVars.getCeilingId(iKD);
      }
 
      public boolean isY(int literal){
