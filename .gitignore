@@ -19,3 +19,4 @@ target/*
 memory*
 time*
 *sandbox*
+/finalResults/finalResultsSC/run1/analysis/
