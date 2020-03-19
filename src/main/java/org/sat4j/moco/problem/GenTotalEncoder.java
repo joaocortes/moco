@@ -81,24 +81,24 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    private int kD;
 		    private int id;
 
-		    public NodeVar(int kD, int upperLimit){
-			this.setKD(kD, upperLimit);
+		    public NodeVar(int kD){
+			this.setKD(kD);
 			this.setId(-1);
 		    }
 
 		    public int getId(){return this.id;}
 		    public int getKD(){return this.kD;}
 
-		    public void setKD(int newKD, int upperLimit){
+		    public void setKD(int newKD){
 			this.kD = newKD;
-			this.kD = this.cutValue(upperLimit);
+			this.kD = this.cutValue();
 		    }
 		    public void setId(int id){
 			assert this.id == -1;
 			// id = GenTotalEncoder.this.newSVar(iObj, kD);
 			this.id = id;
 		    }
-		    private int cutValue(int upperLimit){
+		    private int cutValue(){
 			return this.kD > upperLimit + 1? upperLimit + 1 : this.kD;
 		    }
 		}
@@ -108,16 +108,16 @@ public class GenTotalEncoder extends GoalDelimeter {
 		}
 
 		public void add(int kD, int upperLimit){
-		    this.containerAll.putIfAbsent(kD, new NodeVar(kD, upperLimit));
+		    this.containerAll.putIfAbsent(kD, new NodeVar(kD));
 		}
 
 		public NodeVar get(int value){
 		    return this.containerAll.get(value);
 		}
-		public NodeVar addParsimoneously(int kD, int upperLimit){
+		public NodeVar addParsimoneously(int kD){
 		    NodeVar nodeVar = this.containerAll.get(kD);
 		    if(nodeVar == null){
-			NodeVar newNodeVar = new NodeVar(kD, upperLimit);
+			NodeVar newNodeVar = new NodeVar(kD);
 			int effectiveKD = newNodeVar.kD;
 			this.containerAll.put(effectiveKD, newNodeVar);
 			nodeVar = newNodeVar;
@@ -152,26 +152,25 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 
 	    }	     
-
 	    NodeVars nodeVars = null;
 	    private int nodeSum = 0;
 	    private Node left = null;
 	    private Node right = null;
 	     
-	    public Node(int weight, int upperLimit){
+	    public Node(int weight){
 		this.nodeSum = weight;
 		this.left = null; 
 		this.right = null;
 		this.nodeVars = new NodeVars();
-		this.nodeVars.addParsimoneously(0, upperLimit);
-		this.nodeVars.addParsimoneously(this.nodeSum, upperLimit);
+		this.nodeVars.addParsimoneously(0);
+		this.nodeVars.addParsimoneously(this.nodeSum);
 	    }
 	     
-	    public Node(Node left, Node right, int upperLimit){
+	    public Node(Node left, Node right){
 		this.left = left;
 		this.right = right;
 		this.nodeVars =  new NodeVars();
-		this.nodeVars.addParsimoneously(0, upperLimit);
+		this.nodeVars.addParsimoneously(0);
 		this.nodeSum = left.nodeSum + right.nodeSum;
 	    }
 
@@ -209,7 +208,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		this.nodes.add(leftNode);
 		Node rightNode = unlinkedNodes.poll();
 		this.nodes.add(rightNode);
-		Node parentNode = new Node(leftNode, rightNode, this.upperLimit);
+		Node parentNode = new Node(leftNode, rightNode);
 		unlinkedNodes.add(parentNode);
 		size--;
 	    }
@@ -219,7 +218,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    this.iObj = iObj;
 	    this.upperLimit = upperLimit;
 	    for(int weight : leafWeights){
-		Node node =  new Node(weight, upperLimit);
+		Node node =  new Node(weight);
 		this.unlinkedNodes.add(node);
 	    }
 	    linkTree();
@@ -350,7 +349,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    for(Node.NodeVars.NodeVar firstVar : firstTail){
 		for(Node.NodeVars.NodeVar secondVar : secondAll ){
 		    Node.NodeVars.NodeVar parentVar =
-			parent.nodeVars.addParsimoneously(firstVar.kD + secondVar.kD , newUpperLimit);
+			parent.nodeVars.addParsimoneously(firstVar.kD + secondVar.kD);
 		    if(parentVar.getId() == -1)
 			parentVar.setId(newAuxiliarVar(parentVar.getKD(), iObj));
 		    IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVar.id});
