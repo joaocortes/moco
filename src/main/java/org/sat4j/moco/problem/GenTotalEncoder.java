@@ -80,13 +80,13 @@ public class GenTotalEncoder extends GoalDelimeter {
 		 
 		class NodeVar {
 		    private int kD;
-		    private int id=-1;
+		    private Integer id= null;
 
 		    public NodeVar(int kD){
 			this.setKD(kD);
 		    }
 
-		    public int getId(){return this.id;}
+		    public Integer getId(){return this.id;}
 		    public int getKD(){return this.kD;}
 
 		    public void setKD(int newKD){
@@ -372,7 +372,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		for(Node.NodeVars.NodeVar secondVar : secondAll ){
 		    Node.NodeVars.NodeVar parentVar =
 			parent.nodeVars.addParsimoneously(firstVar.kD + secondVar.kD);
-		    if(parentVar.getId() == -1)
+		    if(parentVar.getId() == null)
 			parentVar.setFreshId();
 		    IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVar.id});
 		    AddClause(clause);
