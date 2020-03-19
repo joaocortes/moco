@@ -163,13 +163,14 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    private Node left = null;
 	    private Node right = null;
 	     
-	    public Node(int weight){
+	    public Node(int weight, int id){
 		this.nodeSum = weight;
 		this.left = null; 
 		this.right = null;
 		this.nodeVars = new NodeVars();
 		this.nodeVars.addParsimoneously(0);
-		this.nodeVars.addParsimoneously(this.nodeSum);
+		NodeVars.NodeVar nodeVar = this.nodeVars.addParsimoneously(this.nodeSum);
+		nodeVar.id = weight > 0 ? id: -id;
 	    }
 	     
 	    public Node(Node left, Node right){
@@ -223,9 +224,11 @@ public class GenTotalEncoder extends GoalDelimeter {
 	public SumTree(int iObj, int[] leafWeights, int upperLimit){
 	    this.iObj = iObj;
 	    this.upperLimit = upperLimit;
+	    int iX = 0;
 	    for(int weight : leafWeights){
-		Node node =  new Node(weight);
+		Node node =  new Node(weight, iX);
 		this.unlinkedNodes.add(node);
+		iX ++;
 	    }
 	    linkTree();
 	    this.parent = this.unlinkedNodes.poll();
