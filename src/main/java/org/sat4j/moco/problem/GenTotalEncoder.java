@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.HashSet;
 import java.util.TreeSet;
+import java.util.Iterator;
 
 import java.util.PriorityQueue;
 import java.util.SortedMap;
@@ -331,22 +332,38 @@ public class GenTotalEncoder extends GoalDelimeter {
 	return "";
     }
 
+    private void addClauseSequential(Node root){
+	boolean first = true;
+	Node.NodeVars.NodeVar past;
+	    Collection<Node.NodeVars.NodeVar> tail =
+		root.nodeVars.currentTail().values();
+	    Iterator<Node.NodeVars.NodeVar> it = tail.iterator();
+	    past = it.next();
+	    for(Node.NodeVars.NodeVar current: tail ){
+		if(first)
+		    first = false;
+		else{
+		    IVecInt clause = new VecInt(new int[] {-current.id, past.id});
+		    AddClause(clause);
+		}
+	    };
+    }
 
-
-
-     
      public void addClausesSumTree(int iObj, int newUpperLimit){
 	 SumTree ithObjSumTree = this.sumTrees[iObj];
 	 addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, newUpperLimit);
-
-
+	 addClauseSequential(ithObjSumTree.parent);
      }
 
 
+    
+
+
+    
     private void addClausesFirstPartial(Node parent, Node first, Node second, int newUpperLimit){
 
 	    Collection<Node.NodeVars.NodeVar> firstTail =
-		first.nodeVars.currentTail(newUpperLimit).values();
+		first.nodeVars.currentTail().values();
 
 	    Collection<Node.NodeVars.NodeVar> secondAll =
 		first.nodeVars.containerAll.values();
