@@ -370,10 +370,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 	if(left != null) {
 	    addClausesSubSumTree(sumTree, left, newUpperLimit);
 	    addClausesSubSumTree(sumTree, right, newUpperLimit);
-	    addClausesFirstPartial(sumTree.iObj, currentNode, left, right, newUpperLimit);    
-	    addClausesFirstPartial(sumTree.iObj, currentNode, right, left, newUpperLimit);    
+	    addClausesFirstPartial(currentNode, left, right, newUpperLimit);    
+	    addClausesFirstPartial(currentNode, right, left, newUpperLimit);    
 	}
-	}
+    }
 
 
 
