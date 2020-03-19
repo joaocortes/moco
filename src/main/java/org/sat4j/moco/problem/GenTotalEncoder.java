@@ -79,11 +79,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 		 
 		class NodeVar {
 		    private int kD;
-		    private int id;
+		    private int id=-1;
 
 		    public NodeVar(int kD){
 			this.setKD(kD);
-			this.setId(-1);
 		    }
 
 		    public int getId(){return this.id;}
@@ -93,13 +92,19 @@ public class GenTotalEncoder extends GoalDelimeter {
 			this.kD = newKD;
 			this.kD = this.cutValue();
 		    }
-		    public void setId(int id){
-			assert this.id == -1;
-			// id = GenTotalEncoder.this.newSVar(iObj, kD);
-			this.id = id;
-		    }
+
 		    private int cutValue(){
 			return this.kD > upperLimit + 1? upperLimit + 1 : this.kD;
+		    }
+
+		    /**
+		     *Return the ID of a freshly created auxiliar variable
+		     */
+		    protected void setFreshId(){
+			assert this.id == -1;
+			solver.newVar();
+			int id = solver.nVars();
+			auxVariablesInverseIndex.put(id, new int[]{kD, iObj});
 		    }
 		}
 
@@ -338,7 +343,7 @@ public class GenTotalEncoder extends GoalDelimeter {
      }
 
 
-    private void addClausesFirstPartial(int iObj, Node parent, Node first, Node second, int newUpperLimit){
+    private void addClausesFirstPartial(Node parent, Node first, Node second, int newUpperLimit){
 
 	    Collection<Node.NodeVars.NodeVar> firstTail =
 		first.nodeVars.currentTail(newUpperLimit).values();
@@ -351,7 +356,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    Node.NodeVars.NodeVar parentVar =
 			parent.nodeVars.addParsimoneously(firstVar.kD + secondVar.kD);
 		    if(parentVar.getId() == -1)
-			parentVar.setId(newAuxiliarVar(parentVar.getKD(), iObj));
+			parentVar.setFreshId();
 		    IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVar.id});
 		    AddClause(clause);
 		}
@@ -371,15 +376,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	}
 
 
-     /**
-      *Return the ID of a freshly created auxiliar variable
-      */
-     protected int newAuxiliarVar(int sum, int iObj){
-	 this.solver.newVar();
-	 int id = this.solver.nVars();
-	 this.auxVariablesInverseIndex.put(id, new int[]{sum, iObj});
-	 return id;
-     }
 
      //TODO
      public void UpdateCurrentK(int iObj, int upperKD){
