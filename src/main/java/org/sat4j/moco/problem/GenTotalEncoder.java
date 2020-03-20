@@ -335,7 +335,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 	return "";
     }
 
-    private void addClauseSequential(Node root){
+    private boolean addClauseSequential(Node root){
+	boolean change = false;
 	boolean first = true;
 	Node.NodeVars.NodeVar past;
 	    Collection<Node.NodeVars.NodeVar> tail =
@@ -348,14 +349,19 @@ public class GenTotalEncoder extends GoalDelimeter {
 		else{
 		    IVecInt clause = new VecInt(new int[] {-current.id, past.id});
 		    AddClause(clause);
+		    change = true;
+		    
 		}
 	    };
+	    return change;
     }
 
-     public void addClausesSumTree(int iObj, int newUpperLimit){
+     public boolean addClausesSumTree(int iObj, int newUpperLimit){
+	 boolean change = false;
 	 SumTree ithObjSumTree = this.sumTrees[iObj];
-	 addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, newUpperLimit);
-	 addClauseSequential(ithObjSumTree.parent);
+	 	    change = change || addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, newUpperLimit);
+		    change = change || addClauseSequential(ithObjSumTree.parent);
+		    return change;
      }
 
 
@@ -363,9 +369,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 
     
-    private void addClausesFirstPartial(Node parent, Node first, Node second, int newUpperLimit){
-
-	    Collection<Node.NodeVars.NodeVar> firstTail =
+    private boolean addClausesFirstPartial(Node parent, Node first, Node second, int newUpperLimit){
+	boolean change = false;
+	Collection<Node.NodeVars.NodeVar> firstTail =
 		first.nodeVars.currentTail().values();
 
 	    Collection<Node.NodeVars.NodeVar> secondAll =
@@ -379,29 +385,36 @@ public class GenTotalEncoder extends GoalDelimeter {
 			parentVar.setFreshId();
 		    IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVar.id});
 		    AddClause(clause);
+		    change = true;
 		}
 	    }
+	    return change;
 	}
 
 
-    public void addClausesSubSumTree(SumTree sumTree, Node currentNode, int newUpperLimit){
+    public boolean addClausesSubSumTree(SumTree sumTree, Node currentNode, int newUpperLimit){
+	boolean change = false;
 	Node left = currentNode.left;
 	Node right = currentNode.right;
 	if(left != null) {
-	    addClausesSubSumTree(sumTree, left, newUpperLimit);
-	    addClausesSubSumTree(sumTree, right, newUpperLimit);
-	    addClausesFirstPartial(currentNode, left, right, newUpperLimit);    
-	    addClausesFirstPartial(currentNode, right, left, newUpperLimit);    
+	    change = change || addClausesSubSumTree(sumTree, left, newUpperLimit);
+	    change = change || addClausesSubSumTree(sumTree, right, newUpperLimit);
+	    change = change || addClausesFirstPartial(currentNode, left, right, newUpperLimit);    
+	    change = change || addClausesFirstPartial(currentNode, right, left, newUpperLimit);    
 	}
+	return change;
     }
 
 
 
-     //TODO
-     public void UpdateCurrentK(int iObj, int upperKD){
-	 addClausesSumTree(iObj, upperKD);
-	 this.sumTrees[iObj].setUpperLimit(upperKD);
-     }
+    public void UpdateCurrentK(int iObj, int upperKD){
+	boolean change = false;
+	while(!change && upperKD < this.instance.getObj(iObj).getWeightDiff()){
+	    change = addClausesSumTree(iObj, upperKD);
+	    upperKD++;
+	}
+	this.sumTrees[iObj].setUpperLimit(upperKD-1);
+    }
 
      public int getCurrentKD(int iObj){
 	 return this.sumTrees[iObj].upperLimit;
