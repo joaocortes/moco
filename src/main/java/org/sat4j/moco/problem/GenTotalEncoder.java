@@ -316,7 +316,12 @@ public class GenTotalEncoder extends GoalDelimeter {
      }
 
 
-
+    public boolean isX(int literal){
+	 int id = this.solver.idFromLiteral(literal);
+	 if(id < this.firstVariable)
+	     return true;
+	 return false;
+    }
     public String prettyFormatVariable(int literal){
 	int sign =(literal>0)? 1: -1;
 	int id =  literal * sign;
