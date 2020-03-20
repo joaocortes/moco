@@ -334,9 +334,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    return "Y[" + iObj + ", " + kd +"]"+ "::" + literal + " ";
 	}
 	 
-	
-	
-	if(id < this.firstVariable){
+	if(isX(literal)){
 	    return (sign>0? "+":"-")+"X["+id+"] ";
 	}
 	return "";
