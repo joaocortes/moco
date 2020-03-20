@@ -224,7 +224,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	public SumTree(int iObj, int[] leafWeights, int upperLimit){
 	    this.iObj = iObj;
 	    this.upperLimit = upperLimit;
-	    int iX = 0;
+	    int iX = 1;
 	    for(int weight : leafWeights){
 		Node node =  new Node(weight, iX);
 		this.unlinkedNodes.add(node);
