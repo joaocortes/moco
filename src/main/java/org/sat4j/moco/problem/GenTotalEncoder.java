@@ -102,9 +102,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 		     *Return the ID of a freshly created auxiliar variable
 		     */
 		    protected void setFreshId(){
-			assert this.id == -1;
+			assert this.id == null;
 			solver.newVar();
-			int id = solver.nVars();
+			this.id = solver.nVars();
 			auxVariablesInverseIndex.put(id, new int[]{kD, iObj});
 		    }
 		}
