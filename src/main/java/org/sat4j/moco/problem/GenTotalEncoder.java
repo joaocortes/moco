@@ -99,7 +99,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 			assert this.id == null;
 			solver.newVar();
 			this.id = solver.nVars();
-			auxVariablesInverseIndex.put(id, new int[]{kD, iObj});
+			auxVariablesInverseIndex.put(this.id, new int[]{kD, iObj});
 		    }
 		}
 
@@ -138,7 +138,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 		/**
 		 * Given iKD, returns the Id of the ceiling nodevar,
-		 * that is, the id of the entry imediately above iKD.
+		 * that is, the id of the entry with a key that is
+		 * larger or equal to iKD.
 		 */
 		public int getCeilingId(int iKD){
 		    return this.containerAll.ceilingEntry(iKD).getValue().id;
