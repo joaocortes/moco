@@ -414,11 +414,14 @@ public class GenTotalEncoder extends GoalDelimeter {
 	boolean change = false;
 	Node left = currentNode.left;
 	Node right = currentNode.right;
-	if(left != null) {
-	    change = change || addClausesSubSumTree(sumTree, left, newUpperLimit);
-	    change = change || addClausesSubSumTree(sumTree, right, newUpperLimit);
-	    change = change || addClausesFirstPartial(currentNode, left, right, newUpperLimit);    
-	    change = change || addClausesFirstPartial(currentNode, right, left, newUpperLimit);    
+	if(currentNode.leafID != 0){
+	    change = currentNode.activateLeafNode();
+	}
+	else{
+	    change = change || addClausesSubSumTree(sumTree, left);
+	    change = change || addClausesSubSumTree(sumTree, right);
+	    change = change || addClausesFirstPartial(currentNode, left, right);    
+	    change = change || addClausesFirstPartial(currentNode, right, left);    
 	}
 	return change;
     }
