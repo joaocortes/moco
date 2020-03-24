@@ -216,7 +216,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 		this.left = null; 
 		this.right = null;
 		this.nodeVars = new NodeVars();
-		this.nodeVars.addParsimoneously(0);
 		this.leafID = iX;
 		// NodeVars.NodeVar nodeVar = this.nodeVars.addParsimoneously(this.nodeSum);
 		// nodeVar.id = weight > 0 ? id: -id;
@@ -228,7 +227,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 		this.left = left;
 		this.right = right;
 		this.nodeVars =  new NodeVars();
-		this.nodeVars.addParsimoneously(0);
 		this.nodeSum = left.nodeSum + right.nodeSum;
 	    }
 
@@ -269,7 +267,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 		iX ++;
 	    }
 	    linkTree();
+
 	    this.parent = this.unlinkedNodes.poll();
+
 	}
 	 
     }
@@ -311,9 +311,11 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    this.sumTrees[iObj] = new SumTree(iObj ,ithObjCoeffsInt, -1);
 	}
 
-	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj)
-	    this.UpdateCurrentK(iObj,0);
-
+	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
+	    for(Node node: this.sumTrees[iObj].nodes)
+		node.nodeVars.addParsimoneously(0);
+	this.UpdateCurrentK(iObj,0);
+	}
 	Log.comment(5, "done");
     }
 
