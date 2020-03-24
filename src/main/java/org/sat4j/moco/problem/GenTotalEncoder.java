@@ -68,6 +68,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 	private int iObj = -1;
 	private int upperLimit = -1;
+	private int olderUpperLimit = -1;
 	private Node parent = null;
 	private ArrayList<Node> nodes = new ArrayList<Node>();
 	private PriorityQueue<Node> unlinkedNodes = new PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
@@ -164,24 +165,40 @@ public class GenTotalEncoder extends GoalDelimeter {
 		}
 
 		public SortedMap<Integer, NodeVars.NodeVar> currentTail(){
-		    return this.containerAll.tailMap(upperLimit);
+		    return this.containerAll.tailMap(olderUpperLimit);
 		}
 
 
 	    }	     
+
 	    NodeVars nodeVars = null;
 	    private int nodeSum = 0;
 	    private Node left = null;
 	    private Node right = null;
+	    private int leafID = 0;
 	     
+	    private boolean activateLeafNode(){
+		if(this.nodeVars.containerAll.size() == 1)
+		    if(this.nodeSum <= upperLimit){
+			NodeVars.NodeVar nodeVar = this.nodeVars.addParsimoneously(this.nodeSum);
+			nodeVar.id = this.nodeSum > 0? this.leafID: - this.leafID;
+			auxVariablesInverseIndex.put(this.leafID, new int[]{nodeVar.kD, iObj});
+			return true;
+		    }
+		return false;
+		}
+
 	    public Node(int weight, int id){
 		this.nodeSum = weight;
 		this.left = null; 
 		this.right = null;
 		this.nodeVars = new NodeVars();
 		this.nodeVars.addParsimoneously(0);
-		NodeVars.NodeVar nodeVar = this.nodeVars.addParsimoneously(this.nodeSum);
-		nodeVar.id = weight > 0 ? id: -id;
+		this.leafID = id;
+		// NodeVars.NodeVar nodeVar = this.nodeVars.addParsimoneously(this.nodeSum);
+		// nodeVar.id = weight > 0 ? id: -id;
+		// auxVariablesInverseIndex.put(id, new int[]{nodeVar.kD, iObj});
+
 	    }
 	     
 	    public Node(Node left, Node right){
@@ -197,6 +214,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	}
 
 	public void setUpperLimit(int newUpperLimit){
+	    this.olderUpperLimit = this.upperLimit;
 	    this.upperLimit = newUpperLimit;
 	}
 
