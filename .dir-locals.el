@@ -7,7 +7,7 @@
   (projectile-project-run-cmd . "mvn exec:java -Dexec.mainClass=org.sat4j.moco.Launcher -Dexec.args=\"examples/example1.opb -alg 1\"")
   (projectile-project-compilation-cmd . "mvn -DskipTests=true package"))
  (java-mode
-  (dap-debug-template-configurations .  (("Run unsatSat on example1" :type "java" :request "launch" :args "examples/example1.opb -alg 1" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
+  (dap-debug-template-configurations .  (("Run unsatSat on example1" :type "java" :request "launch" :args "examples/example1.opb -alg 1 -v 6" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
  :name "Run Configuration" ;; :projectName  "org.sat4j.moco"
  :mainClass  "org.sat4j.moco.Launcher")))
 ))
