@@ -336,14 +336,27 @@ public class GenTotalEncoder extends GoalDelimeter {
 	     return true;
 	 return false;
     }
+
+    /**
+     *Checks if a variable is a true S variable, given a literal.
+     */
+
+
+    public boolean isS(int literal){
+	if(isX(literal) || isY(literal))
+	    return false;
+	return true;
+    }
+
+
     public String prettyFormatVariable(int literal){
 	int sign =(literal>0)? 1: -1;
 	int id =  literal * sign;
 
 	if(this.isY(id)){
 	    int iObj = this.getIObjFromS(id);
-	    int kd = this.getKDFromS(id);
-	    return "Y[" + iObj + ", " + kd +"]"+ "::" + literal + " ";
+	    int kD = this.getKDFromS(id);
+	    return "Y[" + iObj + ", " + kD +"]"+ "::" + literal + " ";
 	}
 	 
 	if(isX(id)){
@@ -353,7 +366,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    {
 	    int iObj = this.getIObjFromS(id);
 	    int kD = this.getKDFromS(id);
-	    return "Y[" + iObj + ", " + kd +"]"+ "::" + literal + " ";
+	    return "S[" + iObj + ", " + kD +"]"+ "::" + literal + " ";
  
 	}
 	return "";
