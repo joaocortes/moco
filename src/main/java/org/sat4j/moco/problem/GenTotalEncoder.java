@@ -356,10 +356,11 @@ public class GenTotalEncoder extends GoalDelimeter {
 	boolean change = false;
 	boolean first = true;
 	Node.NodeVars.NodeVar past;
-	    Collection<Node.NodeVars.NodeVar> tail =
-		root.nodeVars.currentTail().values();
+	Collection<Node.NodeVars.NodeVar> tail =
+	    root.nodeVars.currentTail().values();
 	    Iterator<Node.NodeVars.NodeVar> it = tail.iterator();
-	    past = it.next();
+	    if(it.hasNext())
+		past = it.next();
 	    for(Node.NodeVars.NodeVar current: tail ){
 		if(first)
 		    first = false;
