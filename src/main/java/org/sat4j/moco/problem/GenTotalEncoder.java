@@ -250,9 +250,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    int size = unlinkedNodes.size();
 	    while(size >=2){
 	 	Node leftNode = unlinkedNodes.poll();
-		this.nodes.add(leftNode);
 		Node rightNode = unlinkedNodes.poll();
-		this.nodes.add(rightNode);
 		Node parentNode = new Node(leftNode, rightNode);
 		unlinkedNodes.add(parentNode);
 		size--;
