@@ -391,26 +391,31 @@ public class GenTotalEncoder extends GoalDelimeter {
 	Collection<Node.NodeVars.NodeVar> tail =
 	    root.nodeVars.currentTail().values();
 	    Iterator<Node.NodeVars.NodeVar> it = tail.iterator();
-	    if(it.hasNext())
+	    if(it.hasNext()){
 		past = it.next();
-	    for(Node.NodeVars.NodeVar current: tail ){
-		if(first)
-		    first = false;
-		else{
-		    IVecInt clause = new VecInt(new int[] {-current.id, past.id});
-		    AddClause(clause);
-		    change = true;
-		    past = current;
-		}
-	    };
+		for(Node.NodeVars.NodeVar current: tail ){
+		    if(first){
+			first = false;
+			past = current;
+		    }
+		    else{
+			IVecInt clause = new VecInt(new int[] {-current.id, past.id});
+			AddClause(clause);
+			change = true;
+			past = current;
+		    }
+		};
+	    
+	    }
+	
 	    return change;
     }
 
      public boolean addClausesSumTree(int iObj){
 	 boolean change = false;
 	 SumTree ithObjSumTree = this.sumTrees[iObj];
-	 	    change = change || addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent);
-		    change = change || addClauseSequential(ithObjSumTree.parent);
+	 	    change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent) || change;
+		    change = addClauseSequential(ithObjSumTree.parent) || change;
 		    return change;
      }
 
