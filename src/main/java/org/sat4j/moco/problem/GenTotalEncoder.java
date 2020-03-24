@@ -187,15 +187,15 @@ public class GenTotalEncoder extends GoalDelimeter {
 			return true;
 		    }
 		return false;
-		}
+	    }
 
-	    public Node(int weight, int id){
+	    public Node(int weight, int iX){
 		this.nodeSum = weight;
 		this.left = null; 
 		this.right = null;
 		this.nodeVars = new NodeVars();
 		this.nodeVars.addParsimoneously(0);
-		this.leafID = id;
+		this.leafID = iX;
 		// NodeVars.NodeVar nodeVar = this.nodeVars.addParsimoneously(this.nodeSum);
 		// nodeVar.id = weight > 0 ? id: -id;
 		// auxVariablesInverseIndex.put(id, new int[]{nodeVar.kD, iObj});
