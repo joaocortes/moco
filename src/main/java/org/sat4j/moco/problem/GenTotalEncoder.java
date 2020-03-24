@@ -125,7 +125,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 			assert this.id == null;
 			solver.newVar();
 			this.id = solver.nVars();
-			auxVariablesInverseIndex.put(this.id, new int[]{kD, iObj});
+			auxVariablesInverseIndex.put(this.id, new int[]{kD, iObj, nodeName});
 		    }
 		}
 		public NodeVars(){
@@ -191,7 +191,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    private Node left = null;
 	    private Node right = null;
 	    private int leafID = 0;
-	     
+	    private int nodeName = 0;
 	    
 	    private boolean isActive(){
 		if(this.nodeVars.containerAll.size() == 1)
@@ -205,25 +205,27 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    if(this.nodeSum <= upperLimit){
 			NodeVars.NodeVar nodeVar = this.nodeVars.addParsimoneously(this.nodeSum);
 			nodeVar.id = this.nodeSum > 0? this.leafID: - this.leafID;
-			auxVariablesInverseIndex.put(this.leafID, new int[]{nodeVar.kD, iObj});
+			auxVariablesInverseIndex.put(this.leafID, new int[]{nodeVar.kD, iObj, this.nodeName});
 			return true;
 		    }
 		return false;
 	    }
 
 	    public Node(int weight, int iX){
+		nodes.add(this);
+		this.nodeName = nodes.size()-1;
 		this.nodeSum = weight;
 		this.left = null; 
 		this.right = null;
 		this.nodeVars = new NodeVars();
 		this.leafID = iX;
-		// NodeVars.NodeVar nodeVar = this.nodeVars.addParsimoneously(this.nodeSum);
-		// nodeVar.id = weight > 0 ? id: -id;
-		// auxVariablesInverseIndex.put(id, new int[]{nodeVar.kD, iObj});
+
 
 	    }
 	     
 	    public Node(Node left, Node right){
+		nodes.add(this);
+		this.nodeName = nodes.size()-1;
 		this.left = left;
 		this.right = right;
 		this.nodeVars =  new NodeVars();
@@ -363,6 +365,16 @@ public class GenTotalEncoder extends GoalDelimeter {
     }
 
     /**
+     * get name of the node, from an S variable
+     */
+
+    public int getNameFromS(int id){
+	assert this.isS(id);
+	return this.auxVariablesInverseIndex.get(id)[2];
+    }
+
+
+    /**
      *Tricky. This is not a real getter. Given kD, it returns the id
      *of the variable with a smaller kD, yet larger or equal to kD.
      */
@@ -421,9 +433,13 @@ public class GenTotalEncoder extends GoalDelimeter {
 	if(isX(id)){
 	    return (sign>0? "+":"-")+"X["+id+"] ";
 	}
+	/**
+	 *Then, it is S!
+	 */
 	int iObj = this.getIObjFromS(id);
 	int kD = this.getKDFromS(id);
-	return "S[" + iObj + ", " + kD +"]"+ "::" + literal + " ";
+	int name = this.getNameFromS(id);
+	return "S[" + name +", "+ iObj + ", " + kD +"]"+ "::" + literal + " ";
     }
 
 
