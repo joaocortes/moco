@@ -220,6 +220,7 @@ public class UnsatSat implements MySolver {
 	int objN = this.problem.nObjs();
 	for(int iObj = 0; iObj < objN ; ++iObj){
 	    this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj) + 1);
+	    this.UpperKD[iObj] =  this.goalDelimeter.getCurrentKD(iObj) - 1;
 	}
     }
 
