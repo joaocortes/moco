@@ -111,16 +111,13 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 		    public Integer getId(){return this.id;}
 		    public int getKD(){return this.kD;}
-
 		    public void setKD(int newKD){
 			this.kD = newKD;
 			this.kD = this.cutValue();
 		    }
-
 		    private int cutValue(){
 			return this.kD > upperLimit + 1? upperLimit + 1 : this.kD;
 		    }
-
 		    /**
 		     *Return the ID of a freshly created auxiliar variable
 		     */
@@ -131,19 +128,15 @@ public class GenTotalEncoder extends GoalDelimeter {
 			auxVariablesInverseIndex.put(this.id, new int[]{kD, iObj});
 		    }
 		}
-
 		public NodeVars(){
 		    this.containerAll = new TreeMap<Integer, NodeVar>();
 		}
-
 		public void add(int kD, int upperLimit){
 		    this.containerAll.putIfAbsent(kD, new NodeVar(kD));
 		}
-
 		public NodeVar get(int value){
 		    return this.containerAll.get(value);
 		}
-
 		/**
 		 * Only adds a new nodeVar if there isn't one
 		 * already. The kD value is normalized by the current
@@ -174,7 +167,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    return this.containerAll.ceilingEntry(iKD).getValue().id;
 		}
 
-
 		/**
 		 * Given iKD, returns the value of the ceiling
 		 * nodevar, that is, the values of the entry
@@ -186,11 +178,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 		public int getCeilingValue (int iKD){
 		    return this.containerAll.ceilingEntry(iKD).getValue().id;
 		}
-
 		public SortedMap<Integer, NodeVars.NodeVar> currentTail(){
 		    return this.containerAll.tailMap(olderUpperLimit + 1);
 		}
-
 
 	    }	     
 
@@ -244,15 +234,12 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 	}
 
-
 	public void setOlderUpperLimit(){
 	    this.olderUpperLimit = this.upperLimit;
 	}
-
 	public void setUpperLimit(int newUpperLimit){
 	    this.upperLimit = newUpperLimit;
 	}
-
 	/**
 	 *Links the SumTree, in such a fashion that at any time all
 	 *unlinked nodes are lighter than any linked node.
@@ -270,7 +257,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    }
 	}
 
-
 	public SumTree(int iObj, int[] leafWeights, int upperLimit){
 	    this.iObj = iObj;
 	    this.upperLimit = upperLimit;
@@ -284,8 +270,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    this.parent = this.unlinkedNodes.poll();
 	}
 	 
-
-
     }
 
     /**
@@ -438,6 +422,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	return "S[" + iObj + ", " + kD +"]"+ "::" + literal + " ";
     }
 
+
     /**
      * Add the sequential clauses. This are the clauses of the form v1
      *=> v2,where v2 belongs to the same node and is associated to a
@@ -470,7 +455,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	return change;
     }
 
-
     /**
      * This adds the clause that makes this an GTE. That is, v1 v2 =>
      * v3, where kD of v3 is the (corrected) sum kD of v1 and v2
@@ -497,9 +481,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	}
 	return change;
     }
-
-
-
     /**
      *Adds all clauses, respecting the current upperLimit, that complete the semantics of the GTE 
      */
@@ -510,12 +491,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	change = addClauseSequential(ithObjSumTree.parent) || change;
 	return change;
     }
-
-
-    
-
-
-    
     /**
      *Recursive helper of addClausesSumTree
      */
@@ -535,7 +510,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	}
 	return change;
     }
-    
     /**
      *Updates the semantics, in such a way that everything is valid
      *for any value kD less or equal to upperKD. Notice that it may
@@ -552,8 +526,4 @@ public class GenTotalEncoder extends GoalDelimeter {
 	}
     }
 
-
 }
-
-
-
