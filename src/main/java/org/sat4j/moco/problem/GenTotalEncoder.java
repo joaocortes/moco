@@ -430,7 +430,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		first.nodeVars.currentTail().values();
 
 	    Collection<Node.NodeVars.NodeVar> secondAll =
-		first.nodeVars.containerAll.values();
+		second.nodeVars.containerAll.values();
 
 	    for(Node.NodeVars.NodeVar firstVar : firstTail){
 		for(Node.NodeVars.NodeVar secondVar : secondAll ){
