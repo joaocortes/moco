@@ -55,23 +55,52 @@ public class GenTotalEncoder extends GoalDelimeter {
      *value that is an array vector with the value of the goal and the
      *value of the sum
      */
-	protected Hashtable<Integer,int[]> auxVariablesInverseIndex  = new Hashtable<Integer, int[]>();
+    protected Hashtable<Integer,int[]> auxVariablesInverseIndex  = new Hashtable<Integer, int[]>();
 
     class SumTree {
 
 	private int iObj = -1;
+	/**
+	 *must old the desired upperLimit, at any time. Desired is
+	 *purposefully
+	 */
 	private int upperLimit = -1;
+	/**
+	 *Must old the last but effective upperLimit.
+	 */
 	private int olderUpperLimit = -1;
+	/**
+	 *The root of the SumTree.
+	 */
 	private Node parent = null;
+	/**
+	 *List of nodes. Simple array.
+	 */
 	private ArrayList<Node> nodes = new ArrayList<Node>();
+
+	/**
+	 *List of unlinked nodes. Discardable.
+	 */
 	private PriorityQueue<Node> unlinkedNodes = new PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
 
-
+	/**
+	 *Node of a SumTree.
+	 */
 	class Node {
+
+	    /**
+	     *Container of the variables associated with the SumTree
+	     */
 	    class NodeVars{
-			   
+
+		/**
+		 * Ordered map.<key> is the nodeSum, <value> is the variable.
+		 */
 		private TreeMap<Integer, NodeVar> containerAll = null;
 		 
+		/**
+		 *variable representation. 
+		 */
 		class NodeVar {
 		    private int kD;
 		    private Integer id= null;
@@ -215,6 +244,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 	}
 
+
 	public void setOlderUpperLimit(){
 	    this.olderUpperLimit = this.upperLimit;
 	}
@@ -223,8 +253,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    this.upperLimit = newUpperLimit;
 	}
 
-
-	//TODO what happens if there is only one node left in unlinkedNodes
+	/**
+	 *Links the SumTree, in such a fashion that at any time all
+	 *unlinked nodes are lighter than any linked node.
+	 */
 	public void linkTree(){
 	    int size = unlinkedNodes.size();
 	    while(size >=2){
@@ -237,6 +269,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		size--;
 	    }
 	}
+
 
 	public SumTree(int iObj, int[] leafWeights, int upperLimit){
 	    this.iObj = iObj;
@@ -256,13 +289,15 @@ public class GenTotalEncoder extends GoalDelimeter {
     }
 
     /**
-     *Tree used to encode the goal limits
+     *Trees used to encode the goal limits
      */
 
     private SumTree[] sumTrees = null;
      
 
-
+    /**
+     *index of the first auxiliar variable
+     */
     private int firstVariable = 0;
 
     /**
@@ -286,7 +321,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    for(int iX = 0, nX = ithObjCoeffsReal.size(); iX < nX; ++iX){
 		ithObjCoeffsInt[iX] = Math.round(ithObjCoeffsReal.get(iX).asInt());
 		ithObjCoeffsInt[iX] = ithObjCoeffsInt[iX] > 0 ? ithObjCoeffsInt[iX]: -ithObjCoeffsInt[iX];
-}
+	    }
 	    this.sumTrees[iObj] = new SumTree(iObj ,ithObjCoeffsInt, -1);
 	}
 
@@ -296,76 +331,95 @@ public class GenTotalEncoder extends GoalDelimeter {
 	Log.comment(5, "done");
     }
 
-
-     /**
-      *TODO check the second indice
-      */
-     public int getIObjFromY(int id){
-	 assert this.isY(id);
-	 return this.auxVariablesInverseIndex.get(id)[0];
-     }
-
-     /**
-      *TODO check the second indice
-      */
-     public int getKDFromY(int id){
-	 assert this.isY(id);
-	 return this.auxVariablesInverseIndex.get(id)[1];
-
-     }
-     /**
-      *TODO check the second indice
-      */
-     public int getIObjFromS(int id){
-	 assert this.isS(id);
-	 return this.auxVariablesInverseIndex.get(id)[0];
-     }
-
-     /**
-      *TODO check the second indice
-      */
-     public int getKDFromS(int id){
-	 assert this.isS(id);
-	 return this.auxVariablesInverseIndex.get(id)[1];
-
-     }
+    public int getCurrentKD(int iObj){
+	return this.sumTrees[iObj].upperLimit;
+    }
 
 
-     //TODO wrong: the second argument should be kD, not iKD
-     public int getY(int iObj, int iKD){
-	 return this.sumTrees[iObj].parent.nodeVars.getCeilingId(iKD);
-     }
+    /**
+     * get iObj from an Y variable
+     */
 
-     public boolean isY(int literal){
-	 int id = this.solver.idFromLiteral(literal);
-	 if(isX(literal))
-	     return false;
-	 for(SumTree sumTree: this.sumTrees)
-	     if(sumTree.parent.nodeVars.containerAll.containsKey(id))
-		 return true;
-	 return false;
-     }
-
-
-    public boolean isX(int literal){
-	 int id = this.solver.idFromLiteral(literal);
-	 if(id < this.firstVariable)
-	     return true;
-	 return false;
+    public int getIObjFromY(int id){
+	assert this.isY(id);
+	return this.auxVariablesInverseIndex.get(id)[0];
     }
 
     /**
-     *Checks if a variable is a true S variable, given a literal.
+     * get kD from an Y variable
+     */
+    public int getKDFromY(int id){
+	assert this.isY(id);
+	return this.auxVariablesInverseIndex.get(id)[1];
+
+    }
+
+    /**
+     * get iObj from an S variable
      */
 
+    public int getIObjFromS(int id){
+	assert this.isS(id);
+	return this.auxVariablesInverseIndex.get(id)[0];
+    }
+
+
+    /**
+     * get kD from an S variable
+     */
+
+    public int getKDFromS(int id){
+	assert this.isS(id);
+	return this.auxVariablesInverseIndex.get(id)[1];
+
+    }
+
+    /**
+     *Tricky. This is not a real getter. Given kD, it returns the id
+     *of the variable with a smaller kD, yet larger or equal to kD.
+     */
+    public int getY(int iObj, int kD){
+	return this.sumTrees[iObj].parent.nodeVars.getCeilingId(kD);
+    }
+
+
+    /**
+     *Checks if the variable in the literal is an Y variable.
+     */
+    public boolean isY(int literal){
+
+	int id = this.solver.idFromLiteral(literal);
+	if(!isS(literal))
+	    return false;
+	for(SumTree sumTree: this.sumTrees)
+	    if(sumTree.parent.nodeVars.containerAll.containsKey(id))
+		return true;
+	return false;
+    }
+
+    /**
+     *Checks if a variable is an X(original) variable.
+     */
+    public boolean isX(int literal){
+	int id = this.solver.idFromLiteral(literal);
+	if(id < this.firstVariable)
+	    return true;
+	return false;
+    }
+
+    /**
+     *Checks if a variable is an S variable, given a literal.
+     */
 
     public boolean isS(int literal){
-	if(isX(literal) || isY(literal))
+	if(isX(literal))
 	    return false;
 	return true;
     }
 
-
+    /**
+     *Pretty print the variable in literal. 
+     */
     public String prettyFormatVariable(int literal){
 	int sign =(literal>0)? 1: -1;
 	int id =  literal * sign;
@@ -379,73 +433,92 @@ public class GenTotalEncoder extends GoalDelimeter {
 	if(isX(id)){
 	    return (sign>0? "+":"-")+"X["+id+"] ";
 	}
-	    int iObj = this.getIObjFromS(id);
-	    int kD = this.getKDFromS(id);
-	    return "S[" + iObj + ", " + kD +"]"+ "::" + literal + " ";
+	int iObj = this.getIObjFromS(id);
+	int kD = this.getKDFromS(id);
+	return "S[" + iObj + ", " + kD +"]"+ "::" + literal + " ";
     }
 
+    /**
+     * Add the sequential clauses. This are the clauses of the form v1
+     *=> v2,where v2 belongs to the same node and is associated to a
+     *smaller value kD.
+     */
     private boolean addClauseSequential(Node root){
 	boolean change = false;
 	boolean first = true;
 	Node.NodeVars.NodeVar past;
 	Collection<Node.NodeVars.NodeVar> tail =
 	    root.nodeVars.currentTail().values();
-	    Iterator<Node.NodeVars.NodeVar> it = tail.iterator();
-	    if(it.hasNext()){
-		past = it.next();
-		for(Node.NodeVars.NodeVar current: tail ){
-		    if(first){
-			first = false;
-			past = current;
-		    }
-		    else{
-			IVecInt clause = new VecInt(new int[] {-current.id, past.id});
-			AddClause(clause);
-			change = true;
-			past = current;
-		    }
-		};
+	Iterator<Node.NodeVars.NodeVar> it = tail.iterator();
+	if(it.hasNext()){
+	    past = it.next();
+	    for(Node.NodeVars.NodeVar current: tail ){
+		if(first){
+		    first = false;
+		    past = current;
+		}
+		else{
+		    IVecInt clause = new VecInt(new int[] {-current.id, past.id});
+		    AddClause(clause);
+		    change = true;
+		    past = current;
+		}
+	    };
 	    
-	    }
+	}
 	
-	    return change;
+	return change;
     }
 
-     public boolean addClausesSumTree(int iObj){
-	 boolean change = false;
-	 SumTree ithObjSumTree = this.sumTrees[iObj];
-	 	    change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent) || change;
-		    change = addClauseSequential(ithObjSumTree.parent) || change;
-		    return change;
-     }
 
-
-    
-
-
+    /**
+     * This adds the clause that makes this an GTE. That is, v1 v2 =>
+     * v3, where kD of v3 is the (corrected) sum kD of v1 and v2
+     */
     
     private boolean addClausesFirstPartial(Node parent, Node first, Node second){
 	boolean change = false;
 	Collection<Node.NodeVars.NodeVar> firstTail =
-		first.nodeVars.currentTail().values();
+	    first.nodeVars.currentTail().values();
 
-	    Collection<Node.NodeVars.NodeVar> secondAll =
-		second.nodeVars.containerAll.values();
+	Collection<Node.NodeVars.NodeVar> secondAll =
+	    second.nodeVars.containerAll.values();
 
-	    for(Node.NodeVars.NodeVar firstVar : firstTail){
-		for(Node.NodeVars.NodeVar secondVar : secondAll ){
-		    Node.NodeVars.NodeVar parentVar =
-			parent.nodeVars.addParsimoneously(firstVar.kD + secondVar.kD);
-		    if(parentVar.getId() == null)
-			parentVar.setFreshId();
-		    IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVar.id});
-		    AddClause(clause);
-		    change = true;
-		}
+	for(Node.NodeVars.NodeVar firstVar : firstTail){
+	    for(Node.NodeVars.NodeVar secondVar : secondAll ){
+		Node.NodeVars.NodeVar parentVar =
+		    parent.nodeVars.addParsimoneously(firstVar.kD + secondVar.kD);
+		if(parentVar.getId() == null)
+		    parentVar.setFreshId();
+		IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVar.id});
+		AddClause(clause);
+		change = true;
 	    }
-	    return change;
 	}
+	return change;
+    }
 
+
+
+    /**
+     *Adds all clauses, respecting the current upperLimit, that complete the semantics of the GTE 
+     */
+    public boolean addClausesSumTree(int iObj){
+	boolean change = false;
+	SumTree ithObjSumTree = this.sumTrees[iObj];
+	change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent) || change;
+	change = addClauseSequential(ithObjSumTree.parent) || change;
+	return change;
+    }
+
+
+    
+
+
+    
+    /**
+     *Recursive helper of addClausesSumTree
+     */
 
     public boolean addClausesSubSumTree(SumTree sumTree, Node currentNode){
 	boolean change = false;
@@ -463,6 +536,12 @@ public class GenTotalEncoder extends GoalDelimeter {
 	return change;
     }
     
+    /**
+     *Updates the semantics, in such a way that everything is valid
+     *for any value kD less or equal to upperKD. Notice that it may
+     *well be extend more, depending on the possible sums
+     */
+
     public void UpdateCurrentK(int iObj, int upperKD){
 	boolean change = false;
 	this.sumTrees[iObj].setOlderUpperLimit();
@@ -471,12 +550,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    change = addClausesSumTree(iObj);
 	    upperKD++;
 	}
- }
+    }
 
-     public int getCurrentKD(int iObj){
-	 return this.sumTrees[iObj].upperLimit;
-     }
- }
+
+}
 
 
 
