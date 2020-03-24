@@ -180,7 +180,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    }
 
 	    private boolean activateLeafNode(){
-		if(this.isActive())
+		if(!this.isActive())
 		    if(this.nodeSum <= upperLimit){
 			NodeVars.NodeVar nodeVar = this.nodeVars.addParsimoneously(this.nodeSum);
 			nodeVar.id = this.nodeSum > 0? this.leafID: - this.leafID;
