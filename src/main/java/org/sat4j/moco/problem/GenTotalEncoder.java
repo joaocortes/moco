@@ -120,6 +120,15 @@ public class GenTotalEncoder extends GoalDelimeter {
 		public NodeVar get(int value){
 		    return this.containerAll.get(value);
 		}
+
+		/**
+		 * Only adds a new nodeVar if there isn't one
+		 * already. The kD value is normalized by the current
+		 * upperLimit. A value exceeding the upperLimit is
+		 * mapped to the upperLimit.
+		 * @param kD
+		 */
+
 		public NodeVar addParsimoneously(int kD){
 		    NodeVar nodeVar = this.containerAll.get(kD);
 		    if(nodeVar == null){
@@ -182,24 +191,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    }
 
 
-	    /**
-	     *Generates new variables freed by updating the upper
-	     *limit from currentUpperLimit to newUpperLimit. Upper
-	     *limits are the largest possible attainable value
-	     */
-	    private void generateVars(int currentUpperLimit,int newUpperLimit){
-		Vector<Integer> values =  new Vector<Integer>() ;
-		Map<Integer, NodeVars.NodeVar> leftNewVars = this.left.nodeVars.containerAll.tailMap(currentUpperLimit);
-		Map<Integer, NodeVars.NodeVar> rightNewVars = this.right.nodeVars.containerAll.tailMap(currentUpperLimit);
 
-		for( NodeVars.NodeVar leftNodeVar : leftNewVars.values())
-		    for( NodeVars.NodeVar rightNodeVar : rightNewVars.values())
-			values.add(leftNodeVar.getKD() + rightNodeVar.getKD());
-		 
-		values.sort(null);
-		for(int value : values) 
-		    this.nodeVars.add(value, newUpperLimit);
-	    }
 	}
 
 	public void setUpperLimit(int newUpperLimit){
