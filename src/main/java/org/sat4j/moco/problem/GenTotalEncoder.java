@@ -387,7 +387,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 
     
-    private boolean addClausesFirstPartial(Node parent, Node first, Node second, int newUpperLimit){
+    private boolean addClausesFirstPartial(Node parent, Node first, Node second){
 	boolean change = false;
 	Collection<Node.NodeVars.NodeVar> firstTail =
 		first.nodeVars.currentTail().values();
@@ -410,7 +410,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	}
 
 
-    public boolean addClausesSubSumTree(SumTree sumTree, Node currentNode, int newUpperLimit){
+    public boolean addClausesSubSumTree(SumTree sumTree, Node currentNode){
 	boolean change = false;
 	Node left = currentNode.left;
 	Node right = currentNode.right;
