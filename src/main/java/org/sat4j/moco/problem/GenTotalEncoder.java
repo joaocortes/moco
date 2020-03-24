@@ -368,16 +368,16 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    IVecInt clause = new VecInt(new int[] {-current.id, past.id});
 		    AddClause(clause);
 		    change = true;
-		    
+		    past = current;
 		}
 	    };
 	    return change;
     }
 
-     public boolean addClausesSumTree(int iObj, int newUpperLimit){
+     public boolean addClausesSumTree(int iObj){
 	 boolean change = false;
 	 SumTree ithObjSumTree = this.sumTrees[iObj];
-	 	    change = change || addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, newUpperLimit);
+	 	    change = change || addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent);
 		    change = change || addClauseSequential(ithObjSumTree.parent);
 		    return change;
      }
