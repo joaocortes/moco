@@ -153,10 +153,12 @@ public class GenTotalEncoder extends GoalDelimeter {
 			int effectiveKD = newNodeVar.kD;
 			this.containerAll.put(effectiveKD, newNodeVar);
 			newNodeVar.setFreshId();
+			// The dummy zero clause
+			if(kD == 0)
+			    AddClause( new VecInt(new int[] {newNodeVar.getId()}));
 		    }
 		    return nodeVar;
 		}
-
 
 		/**
 		 * Given iKD, returns the Id of the ceiling nodevar,
