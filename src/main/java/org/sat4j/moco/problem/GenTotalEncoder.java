@@ -293,7 +293,7 @@ public class GenTotalEncoder extends GoalDelimeter {
       *TODO check the second indice
       */
      public int getIObjFromS(int id){
-	 assert this.isY(id);
+	 assert this.isS(id);
 	 return this.auxVariablesInverseIndex.get(id)[0];
      }
 
@@ -301,7 +301,7 @@ public class GenTotalEncoder extends GoalDelimeter {
       *TODO check the second indice
       */
      public int getKDFromS(int id){
-	 assert this.isY(id);
+	 assert this.isS(id);
 	 return this.auxVariablesInverseIndex.get(id)[1];
 
      }
