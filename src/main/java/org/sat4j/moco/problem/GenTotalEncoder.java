@@ -285,10 +285,22 @@ public class GenTotalEncoder extends GoalDelimeter {
     }
 
 
+     /**
+      *TODO check the second indice
+      */
+     public int getIObjFromY(int id){
+	 assert this.isY(id);
+	 return this.auxVariablesInverseIndex.get(id)[0];
+     }
 
+     /**
+      *TODO check the second indice
+      */
+     public int getKDFromY(int id){
+	 assert this.isY(id);
+	 return this.auxVariablesInverseIndex.get(id)[1];
 
-
-
+     }
      /**
       *TODO check the second indice
       */
