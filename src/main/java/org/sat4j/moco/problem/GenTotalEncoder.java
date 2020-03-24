@@ -215,8 +215,11 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 	}
 
-	public void setUpperLimit(int newUpperLimit){
+	public void setOlderUpperLimit(){
 	    this.olderUpperLimit = this.upperLimit;
+	}
+
+	public void setUpperLimit(int newUpperLimit){
 	    this.upperLimit = newUpperLimit;
 	}
 
@@ -447,18 +450,17 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    change = currentNode.activateLeafNode();
 	}
 	else{
-	    change = change || addClausesSubSumTree(sumTree, left);
-	    change = change || addClausesSubSumTree(sumTree, right);
-	    change = change || addClausesFirstPartial(currentNode, left, right);    
-	    change = change || addClausesFirstPartial(currentNode, right, left);    
+	    change = addClausesSubSumTree(sumTree, left) || change;
+	    change = addClausesSubSumTree(sumTree, right) || change;
+	    change = addClausesFirstPartial(currentNode, left, right) || change;    
+	    change = addClausesFirstPartial(currentNode, right, left) || change;    
 	}
 	return change;
     }
-
-
-
+    
     public void UpdateCurrentK(int iObj, int upperKD){
 	boolean change = false;
+	this.sumTrees[iObj].setOlderUpperLimit();
 	while(!change && upperKD < this.instance.getObj(iObj).getWeightDiff()){
 	    this.sumTrees[iObj].setUpperLimit(upperKD);
 	    change = addClausesSumTree(iObj);
