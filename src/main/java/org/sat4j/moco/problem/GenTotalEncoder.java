@@ -367,14 +367,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 	if(isX(id)){
 	    return (sign>0? "+":"-")+"X["+id+"] ";
 	}
-	else
-	    {
 	    int iObj = this.getIObjFromS(id);
 	    int kD = this.getKDFromS(id);
 	    return "S[" + iObj + ", " + kD +"]"+ "::" + literal + " ";
- 
-	}
-	return "";
     }
 
     private boolean addClauseSequential(Node root){
