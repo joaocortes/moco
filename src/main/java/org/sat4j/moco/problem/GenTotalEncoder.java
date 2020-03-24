@@ -299,7 +299,7 @@ public class GenTotalEncoder extends GoalDelimeter {
      /**
       *TODO check the second indice
       */
-     public int getIObjFromY(int id){
+     public int getIObjFromS(int id){
 	 assert this.isY(id);
 	 return this.auxVariablesInverseIndex.get(id)[0];
      }
@@ -307,7 +307,7 @@ public class GenTotalEncoder extends GoalDelimeter {
      /**
       *TODO check the second indice
       */
-     public int getKDFromY(int id){
+     public int getKDFromS(int id){
 	 assert this.isY(id);
 	 return this.auxVariablesInverseIndex.get(id)[1];
 
@@ -341,13 +341,20 @@ public class GenTotalEncoder extends GoalDelimeter {
 	int id =  literal * sign;
 
 	if(this.isY(id)){
-	    int iObj = this.getIObjFromY(id);
-	    int kd = this.getKDFromY(id);
+	    int iObj = this.getIObjFromS(id);
+	    int kd = this.getKDFromS(id);
 	    return "Y[" + iObj + ", " + kd +"]"+ "::" + literal + " ";
 	}
 	 
 	if(isX(id)){
 	    return (sign>0? "+":"-")+"X["+id+"] ";
+	}
+	else
+	    {
+	    int iObj = this.getIObjFromS(id);
+	    int kD = this.getKDFromS(id);
+	    return "Y[" + iObj + ", " + kd +"]"+ "::" + literal + " ";
+ 
 	}
 	return "";
     }
