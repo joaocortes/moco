@@ -166,8 +166,8 @@ public class UnsatSat implements MySolver {
 
 		//log
 		Log.comment(5, "Blocking dominated region");
-
-		if(! this.blockDominatedRegion(currentYModel))
+		int[] upperLimits = this.findUpperLimits(currentYModel);
+		if(! this.blockDominatedRegion(upperLimits))
 		    goOn = false;
 		// if(! this.blockModelX(modelsX.lastElement()))
 		//     goOn = false;
@@ -416,10 +416,6 @@ public class UnsatSat implements MySolver {
 	return result;
     }
 
-    /**
-     * Block the region dominated by the known models.
-     */
-
     public int[] findUpperLimits(IVecInt newSolution){
 	int[] upperLimits = new int[this.problem.nObjs()];
 	for(int i = 0; i < this.problem.nObjs(); ++i){
@@ -429,13 +425,16 @@ public class UnsatSat implements MySolver {
 	return upperLimits;
     }
 
-    public boolean blockDominatedRegion(IVecInt newSolution){
-	int[] upperLimits = this.findUpperLimits(newSolution);
-	int[] literals = new int[this.problem.nObjs()];
-	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	    literals[iObj] = -this.goalDelimeter.getY(iObj, upperLimits[iObj]);
-	IVecInt newHardClause = new VecInt(literals);
-	return this.AddClause(newHardClause);
+    /**
+     * Block the region dominated by the last found model.
+     */
+
+public boolean blockDominatedRegion(int[] upperLimits ){
+    int[] literals = new int[this.problem.nObjs()];
+    for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
+	literals[iObj] = -this.goalDelimeter.getY(iObj, upperLimits[iObj]);
+    IVecInt newHardClause = new VecInt(literals);
+    return this.AddClause(newHardClause);
     }
 
     public boolean blockModelX(IVecInt modelX){
