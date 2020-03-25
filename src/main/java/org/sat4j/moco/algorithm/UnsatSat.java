@@ -70,7 +70,7 @@ public class UnsatSat implements MySolver {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private GoalDelimeter goalDelimeter = null;
+    private GenTotalEncoder goalDelimeter = null;
 
     /**
      * Last explored differential k, for each objective function.
