@@ -161,13 +161,13 @@ public class UnsatSat implements MySolver {
 		//     Log.comment(5, this.attainedValue(ithObj)+ " " );
 		// }
 		Log.comment(5, "ModelY :");
-		// this.printModel(modelsY.lastElement());
+		this.printModel(currentYModel);
 		//..log
 
 		//log
 		Log.comment(5, "Blocking dominated region");
-		int[] attainedValue = this.diffAttainedValue(currentYModel);
-		if(! this.blockDominatedRegion(attainedValue))
+		int[] diffAttainedValue = this.diffAttainedValue();
+		if(! this.blockDominatedRegion(diffAttainedValue))
 		    goOn = false;
 		// if(! this.blockModelX(modelsX.lastElement()))
 		//     goOn = false;
