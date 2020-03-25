@@ -434,7 +434,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 	if(this.isY(id)){
 	    int iObj = this.getIObjFromS(id);
 	    int kD = this.getKDFromS(id);
-	    return "Y[" + iObj + ", " + kD +"]"+ "::" + literal + " ";
+	    int k = kD; // + this.instance.getObj(iObj).getMinValue();
+	    return "Y[" + iObj + ", " + k +"]"+ "::" + literal + " ";
 	}
 	 
 	if(isX(id)){
@@ -445,8 +446,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 	 */
 	int iObj = this.getIObjFromS(id);
 	int kD = this.getKDFromS(id);
+	int k = kD ;// + this.instance.getObj(iObj).getMinValue();
 	int name = this.getNameFromS(id);
-	return "S[" + kD +  ", " + iObj +", "+ name +"]"+ "::" + literal + " ";
+	return "S[" + iObj +  ", " + name  +", "+ k +"]"+ "::" + literal + " ";
     }
 
 
