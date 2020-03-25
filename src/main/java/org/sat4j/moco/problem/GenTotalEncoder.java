@@ -94,7 +94,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    class NodeVars{
 
 		/**
-		 * Ordered map.<key> is the nodeSum, <value> is the variable.
+		 * Ordered map.key is the nodeSum, value is the variable.
 		 */
 		private TreeMap<Integer, NodeVar> containerAll = null;
 		 
@@ -527,7 +527,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	Node left = currentNode.left;
 	Node right = currentNode.right;
 	if(currentNode.leafID != 0){
-	    change = currentNode.activateLeafNode();
+	    currentNode.activateLeafNode();
 	}
 	else{
 	    change = addClausesSubSumTree(sumTree, left) || change;
