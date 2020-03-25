@@ -199,7 +199,7 @@ public class UnsatSat implements MySolver {
     private void logUpperLimit()    {
 	String logUpperLimit = "upper limit: ["+this.getUpperKD(0);
 	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
-	    logUpperLimit +=", "+this.getUpperKD(iObj);
+	    logUpperLimit +=", "+(this.getUpperKD(iObj) + this.problem.getObj(iObj).getMinValue());
 	//..log
 	
 	    logUpperLimit +="]";
