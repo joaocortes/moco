@@ -478,15 +478,15 @@ public class GenTotalEncoder extends GoalDelimeter {
      * v3, where kD of v3 is the (corrected) sum kD of v1 and v2
      */
     
-    private boolean addClausesFirstPartial(Node parent, Node first, Node second){
+    private boolean addSumClauses(Node parent, Node first, Node second){
 	boolean change = false;
-	Collection<Node.NodeVars.NodeVar> firstTail =
-	    first.nodeVars.currentTail().values();
+	Collection<Node.NodeVars.NodeVar> firstAll =
+	    first.nodeVars.containerAll.values();
 
 	Collection<Node.NodeVars.NodeVar> secondAll =
 	    second.nodeVars.containerAll.values();
 
-	for(Node.NodeVars.NodeVar firstVar : firstTail){
+	for(Node.NodeVars.NodeVar firstVar : firstAll){
 	    for(Node.NodeVars.NodeVar secondVar : secondAll ){
 		Node.NodeVars.NodeVar parentVar =
 		    parent.nodeVars.addParsimoneously(firstVar.kD + secondVar.kD);
@@ -523,8 +523,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 	else{
 	    change = addClausesSubSumTree(sumTree, left) || change;
 	    change = addClausesSubSumTree(sumTree, right) || change;
-	    change = addClausesFirstPartial(currentNode, left, right) || change;    
-	    change = addClausesFirstPartial(currentNode, right, left) || change;    
+	    change = addSumClauses(currentNode, left, right) || change;    
+	    // change = addSumClauses(currentNode, right, left) || change;    
 	}
 	return change;
     }
