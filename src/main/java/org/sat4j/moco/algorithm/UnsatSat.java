@@ -131,14 +131,9 @@ public class UnsatSat implements MySolver {
 	while(goOn){
 	    ///log..
 
-	    String logUpperLimit = "upper limit: ["+this.getUpperKD(0);
-	    for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
-		logUpperLimit +=", "+this.getUpperKD(iObj);
-	    //..log
-
-	    logUpperLimit +="]";
-	    Log.comment(5, logUpperLimit );
+	    this.logUpperLimit();
 	    this.preAssumptionsExtend();
+	    this.logUpperLimit();
 	    currentAssumptions = this.generateUpperBoundAssumptions();
 
 	    //log..
@@ -197,7 +192,20 @@ public class UnsatSat implements MySolver {
 	return;
     }
 
+    /**
+     *Log the value of the upperLimit
+     */
 
+    private void logUpperLimit()    {
+	String logUpperLimit = "upper limit: ["+this.getUpperKD(0);
+	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
+	    logUpperLimit +=", "+this.getUpperKD(iObj);
+	//..log
+	
+	    logUpperLimit +="]";
+	    Log.comment(5, logUpperLimit );
+    }
+    
     /**
      * Generate the upper limit assumptions
      */
