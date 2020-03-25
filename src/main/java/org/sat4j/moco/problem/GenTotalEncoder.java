@@ -121,12 +121,19 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    /**
 		     *Return the ID of a freshly created auxiliar variable
 		     */
+		    
 		    protected void setFreshId(){
 			assert this.id == null;
 			solver.newVar();
 			this.id = solver.nVars();
 			auxVariablesInverseIndex.put(this.id, new int[]{kD, iObj, nodeName});
 		    }
+                   protected boolean newVariable(){
+		       if(this.kD > olderUpperLimit)
+			   return true;
+		       return false;
+		    }
+
 		}
 		public NodeVars(){
 		    this.containerAll = new TreeMap<Integer, NodeVar>();
