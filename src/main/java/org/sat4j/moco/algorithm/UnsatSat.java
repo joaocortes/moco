@@ -166,7 +166,7 @@ public class UnsatSat implements MySolver {
 
 		//log
 		Log.comment(5, "Blocking dominated region");
-		int[] attainedValue = this.findAttainedValue(currentYModel);
+		int[] attainedValue = this.diffAttainedValue(currentYModel);
 		if(! this.blockDominatedRegion(attainedValue))
 		    goOn = false;
 		// if(! this.blockModelX(modelsX.lastElement()))
@@ -416,7 +416,7 @@ public class UnsatSat implements MySolver {
 	return result;
     }
 
-    public int[] findAttainedValue(IVecInt newSolution){
+    public int[] diffAttainedValue(IVecInt newSolution){
 	int[] attainedValue = new int[this.problem.nObjs()];
 	for(int i = 0; i < this.problem.nObjs(); ++i){
 	    attainedValue[i] = this.attainedValue(this.problem.getObj(i));
