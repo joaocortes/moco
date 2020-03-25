@@ -410,29 +410,30 @@ public class UnsatSat implements MySolver {
 	for(int iLit = 0; iLit < objectiveNLit; ++iLit  ){
 	    int coeff = objectiveCoeffs.get(iLit).asInt();
 	    int literal = objectiveLits.get(iLit);
+	    System.out.print(this.solver.modelValue(literal) + " ");
 	    if(this.solver.modelValue(literal))
 		result += coeff;
 	}
 	return result;
     }
 
-    public int[] diffAttainedValue(IVecInt newSolution){
-	int[] attainedValue = new int[this.problem.nObjs()];
+    public int[] diffAttainedValue(){
+	int[] diffAttainedValue = new int[this.problem.nObjs()];
 	for(int i = 0; i < this.problem.nObjs(); ++i){
-	    attainedValue[i] = this.attainedValue(this.problem.getObj(i));
-	    attainedValue[i]-=this.problem.getObj(i).getMinValue();
+	    diffAttainedValue[i] = this.attainedValue(this.problem.getObj(i));
+	    diffAttainedValue[i]-=this.problem.getObj(i).getMinValue();
 	}
-	return attainedValue;
+	return diffAttainedValue;
     }
 
     /**
      * Block the region dominated by the last found model.
      */
 
-public boolean blockDominatedRegion(int[] attainedValue ){
+public boolean blockDominatedRegion(int[] diffAttainedValue ){
     int[] literals = new int[this.problem.nObjs()];
     for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	literals[iObj] = -this.goalDelimeter.getY(iObj, attainedValue[iObj]);
+	literals[iObj] = -this.goalDelimeter.getY(iObj, diffAttainedValue[iObj]);
     IVecInt newHardClause = new VecInt(literals);
     return this.AddClause(newHardClause);
     }
