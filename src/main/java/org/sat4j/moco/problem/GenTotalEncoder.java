@@ -394,12 +394,12 @@ public class GenTotalEncoder extends GoalDelimeter {
      *Checks if the variable in the literal is an Y variable.
      */
     public boolean isY(int literal){
-
 	int id = this.solver.idFromLiteral(literal);
 	if(!isS(literal))
 	    return false;
 	for(SumTree sumTree: this.sumTrees)
-	    if(sumTree.parent.nodeVars.containerAll.containsKey(id))
+	    for(SumTree.Node.NodeVars.NodeVar nodeVar: sumTree.parent.nodeVars.containerAll.values())
+		if(nodeVar.getId() == id)
 		return true;
 	return false;
     }
