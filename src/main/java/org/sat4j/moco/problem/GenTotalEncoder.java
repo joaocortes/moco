@@ -113,10 +113,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    public int getKD(){return this.kD;}
 		    public void setKD(int newKD){
 			this.kD = newKD;
-			this.kD = this.cutValue();
 		    }
-		    private int cutValue(){
-			return this.kD > upperLimit + 1? upperLimit + 1 : this.kD;
+		    private void cutValue(){
+			if(this.kD > upperLimit )this.setKD(upperLimit);
+			
 		    }
 		    /**
 		     *Return the ID of a freshly created auxiliar variable
