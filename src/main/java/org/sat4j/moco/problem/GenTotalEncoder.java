@@ -191,7 +191,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    return this.containerAll.ceilingEntry(iKD).getValue().id;
 		}
 		public SortedMap<Integer, NodeVars.NodeVar> currentTail(){
-		    return this.containerAll.tailMap(olderUpperLimit + 1);
+		    return this.containerAll.tailMap(olderUpperLimit);
 		}
 
 	    }	     
