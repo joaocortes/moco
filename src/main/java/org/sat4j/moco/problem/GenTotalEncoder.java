@@ -64,11 +64,11 @@ public class GenTotalEncoder extends GoalDelimeter {
 	 *must old the desired upperLimit, at any time. Desired is
 	 *purposefully
 	 */
-	private int upperLimit = -1;
+	private int upperLimit = 0;
 	/**
 	 *Must old the last but effective upperLimit.
 	 */
-	private int olderUpperLimit = -1;
+	private int olderUpperLimit = 0;
 	/**
 	 *The root of the SumTree.
 	 */
