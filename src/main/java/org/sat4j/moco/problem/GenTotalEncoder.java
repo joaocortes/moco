@@ -297,9 +297,11 @@ public class GenTotalEncoder extends GoalDelimeter {
     private int firstVariable = 0;
 
     /**
-     * Creates an Instance of the generalized totalizor encoder
-     * @param instance, the pseudo boolean instance
-     * @param solver, the solver to be updated
+     * Creates an instance of the generalized totalizor encoder
+     * @param instance
+     * the pseudo boolean instance
+     * @param solver
+     * the solver to be updated
      */
 
     public GenTotalEncoder(Instance instance, PBSolver solver) {
