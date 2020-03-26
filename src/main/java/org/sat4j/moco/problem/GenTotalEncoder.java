@@ -447,6 +447,7 @@ public class GenTotalEncoder extends GoalDelimeter {
      *smaller value kD.
      */
     private boolean addClauseSequential(Node root){
+        Log.comment(5, "in GenTotalEncoder.addClauseSequential");
 	boolean change = false;
 	boolean first = true;
 	Node.NodeVars.NodeVar past;
@@ -469,7 +470,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    };
 	    
 	}
-	
+        Log.comment(5, "done");
 	return change;
     }
 
@@ -479,6 +480,7 @@ public class GenTotalEncoder extends GoalDelimeter {
      */
     
     private boolean addSumClauses(Node parent, Node first, Node second){
+	Log.comment(5, "in GenTotalEncoder.addSumClauses");
 	boolean change = false;
 	Collection<Node.NodeVars.NodeVar> firstAll =
 	    first.nodeVars.containerAll.values();
@@ -497,6 +499,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		}
 	    }
 	}
+        Log.comment(5, "done");
 	return change;
     }
     /**
@@ -538,10 +541,11 @@ public class GenTotalEncoder extends GoalDelimeter {
 	boolean change = false;
 	this.sumTrees[iObj].setOlderUpperLimit();
 	while(!change && upperKD < this.instance.getObj(iObj).getWeightDiff()){
+	    Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
 	    this.sumTrees[iObj].setUpperLimit(upperKD);
 	    change = addClausesSumTree(iObj);
 	    upperKD++;
 	}
+    Log.comment(5, "done");
     }
-
 }
