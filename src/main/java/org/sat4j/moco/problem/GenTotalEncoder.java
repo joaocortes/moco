@@ -138,8 +138,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 		public NodeVars(){
 		    this.containerAll = new TreeMap<Integer, NodeVar>();
 		}
-		public void add(int kD, int upperLimit){
-		    this.containerAll.putIfAbsent(kD, new NodeVar(kD));
+		public void add(int kD){
+		    this.containerAll.put(kD, new NodeVar(kD));
 		}
 		public NodeVar get(int value){
 		    return this.containerAll.get(value);
