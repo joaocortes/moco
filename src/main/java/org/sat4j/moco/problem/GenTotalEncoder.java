@@ -139,9 +139,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    this.containerAll = new TreeMap<Integer, NodeVar>();
 		}
 
-		public NodeVar add(int kD, int id, boolean cutKD){
+		public NodeVar add(int kD, int id, boolean cutKD, boolean clausing){
 		    NodeVar newNodeVar =  new NodeVar(kD);
 		    if(cutKD){ newNodeVar.cutValue(); kD = newNodeVar.getKD();}
+		    if(!clausing || newNodeVar.newValidVariable()){
 		    this.containerAll.put(kD, newNodeVar);
 		    if(id == 0) 
 			newNodeVar.setFreshId();
@@ -167,7 +168,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		public NodeVar addParsimoneously(int kD){
 		    NodeVar nodeVar = this.containerAll.get(kD);
 		    if(nodeVar == null)
-			nodeVar = this.add(kD, 0, true);
+			nodeVar = this.add(kD, 0, true, true);
 		    return nodeVar;
 		}
 
@@ -216,7 +217,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		this.right = null;
 		this.nodeVars = new NodeVars();
 		this.leafID = sign * iX;
-		this.nodeVars.add(this.nodeSum, leafID, false);
+		this.nodeVars.add(this.nodeSum, leafID, false, false);
 		
 
 
@@ -313,7 +314,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    for(Node node: this.sumTrees[iObj].nodes)
-		node.nodeVars.add(0, 0, false);
+		node.nodeVars.add(0, 0, false, false);
 	}
 	Log.comment(5, "done");
     }
