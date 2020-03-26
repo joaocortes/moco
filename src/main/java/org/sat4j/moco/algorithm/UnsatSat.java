@@ -179,6 +179,8 @@ public class UnsatSat implements MySolver {
 		//log..
 		Log.comment(5, "Explanation:");
 		this.goalDelimeter.prettyPrintVecInt(currentExplanation);
+		Log.comment(5, "//");
+
 		//..log
 
 		if(currentExplanation.size() == 0){
@@ -236,19 +238,23 @@ public class UnsatSat implements MySolver {
     /**
      * Updates the current upperBound on the differential k, according
      * to the unsatExplanation, and updates the sequentialEncoder accordingly
-     * @param current explanation of unsatisfiability
+     * @param currentExplanation
+     * current explanation of unsatisfiability
      */
     private void updateUpperBound(IVecInt currentExplanation){
+        Log.comment(5, "in UnsatSat.updateUpperBound");
 	for(int i = 0; i < currentExplanation.size(); ++i){
 	    int ithLiteral = currentExplanation.get(i);
-	    int jObj = this.goalDelimeter.getIObjFromY(ithLiteral);
-	    int kd = this.goalDelimeter.getKDFromY(ithLiteral);
+	    int id = this.solver.idFromLiteral(ithLiteral);
+	    int jObj = this.goalDelimeter.getIObjFromY(id);
+	    int kd = this.goalDelimeter.getKDFromY(id);
 	    //TODO This is strange, and should not be always true
 	    assert kd ==this.getUpperKD(jObj);
 
 		this.setUpperKD(jObj, kd);
 		this.goalDelimeter.UpdateCurrentK(jObj, kd);
 	    }
+        Log.comment(5, "in done");
 	}
 
 
