@@ -200,23 +200,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    private int leafID = 0;
 	    private int nodeName = 0;
 	    
-	    private boolean isActive(){
-		if(this.nodeVars.containerAll.size() == 1)
-		    return false;
-		return true;
-		
-	    }
-
-	    private boolean activateLeafNode(){
-		if(!this.isActive())
-		    if(this.nodeSum <= upperLimit){
-			NodeVars.NodeVar nodeVar = this.nodeVars.addParsimoneously(this.nodeSum);
-			nodeVar.id = this.nodeSum > 0? this.leafID: - this.leafID;
-			auxVariablesInverseIndex.put(this.leafID, new int[]{nodeVar.kD, iObj, this.nodeName});
-			return true;
-		    }
-		return false;
-	    }
 
 	    public Node(int weight, int iX){
 		nodes.add(this);
@@ -229,6 +212,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		this.right = null;
 		this.nodeVars = new NodeVars();
 		this.leafID = sign * iX;
+		this.nodeVars.add(this.nodeSum);
 
 
 	    }
@@ -531,7 +515,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	Node left = currentNode.left;
 	Node right = currentNode.right;
 	if(currentNode.leafID != 0){
-	    currentNode.activateLeafNode();
+	    return false;
 	}
 	else{
 	    change = addClausesSubSumTree(sumTree, left) || change;
