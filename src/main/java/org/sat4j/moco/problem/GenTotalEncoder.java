@@ -127,9 +127,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 			solver.newVar();
 			this.id = solver.nVars();
 		    }
-                   protected boolean newVariable(){
-		       if(this.kD > olderUpperLimit)
-			   return true;
+                   protected boolean newValidVariable(){
+		       if(olderUpperLimit < this.kD)
+			   if(this.kD <= upperLimit)
+			       return true;
 		       return false;
 		    }
 
