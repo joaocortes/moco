@@ -126,7 +126,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 			assert this.id == null;
 			solver.newVar();
 			this.id = solver.nVars();
-			auxVariablesInverseIndex.put(this.id, new int[]{kD, iObj, nodeName});
 		    }
                    protected boolean newVariable(){
 		       if(this.kD > olderUpperLimit)
@@ -138,9 +137,21 @@ public class GenTotalEncoder extends GoalDelimeter {
 		public NodeVars(){
 		    this.containerAll = new TreeMap<Integer, NodeVar>();
 		}
-		public void add(int kD){
-		    this.containerAll.put(kD, new NodeVar(kD));
+
+		public NodeVar add(int kD, int id, boolean cutKD){
+		    NodeVar newNodeVar =  new NodeVar(kD);
+		    if(cutKD){ newNodeVar.cutValue(); kD = newNodeVar.getKD();}
+		    this.containerAll.put(kD, newNodeVar);
+		    if(id == 0) 
+			newNodeVar.setFreshId();
+		    else    newNodeVar.id = id;
+		    auxVariablesInverseIndex.put(newNodeVar.getId(), new int[]{kD, iObj, nodeName});
+		    if(kD == 0)
+			AddClause( new VecInt(new int[] {newNodeVar.getId()}));
+		    return newNodeVar;
 		}
+
+
 		public NodeVar get(int value){
 		    return this.containerAll.get(value);
 		}
@@ -154,16 +165,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 		public NodeVar addParsimoneously(int kD){
 		    NodeVar nodeVar = this.containerAll.get(kD);
-		    if(nodeVar == null){
-			NodeVar newNodeVar = new NodeVar(kD);
-			nodeVar = newNodeVar;
-			int effectiveKD = newNodeVar.kD;
-			this.containerAll.put(effectiveKD, newNodeVar);
-			newNodeVar.setFreshId();
-			// The dummy zero clause
-			if(kD == 0)
-			    AddClause( new VecInt(new int[] {newNodeVar.getId()}));
-		    }
+		    if(nodeVar == null)
+			nodeVar = this.add(kD, 0, true);
 		    return nodeVar;
 		}
 
@@ -212,7 +215,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 		this.right = null;
 		this.nodeVars = new NodeVars();
 		this.leafID = sign * iX;
-		this.nodeVars.add(this.nodeSum);
+		this.nodeVars.add(this.nodeSum, leafID, false);
+		
 
 
 	    }
@@ -308,8 +312,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    for(Node node: this.sumTrees[iObj].nodes)
-		node.nodeVars.addParsimoneously(0);
-	this.UpdateCurrentK(iObj,0);
+		node.nodeVars.add(0, 0, false);
 	}
 	Log.comment(5, "done");
     }
