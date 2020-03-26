@@ -140,6 +140,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		}
 
 		public NodeVar add(int kD, int id, boolean cutKD, boolean clausing){
+		    cutKD = false;
 		    NodeVar newNodeVar =  new NodeVar(kD);
 		    if(cutKD){ newNodeVar.cutValue(); kD = newNodeVar.getKD();}
 		    if(!clausing || newNodeVar.newValidVariable()){
