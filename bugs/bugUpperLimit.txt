@@ -1,0 +1,721 @@
+-*- mode: compilation; default-directory: "~/OneDrive/Documents/escola/doutoramento/office/tools/moco/" -*-
+Compilation started at Fri Mar 27 13:46:55
+
+mvn exec:java -Dexec.mainClass=org.sat4j.moco.Launcher -Dexec.args="examples/example2.opb -alg 1 -v 6"
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------< org.sat4j.moco:org.sat4j.moco.threeAlgorithms >------------
+[INFO] Building SAT4J moco 0.0.1-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:java (default-cli) @ org.sat4j.moco.threeAlgorithms ---
+c :verbosity 6
+c :decimal-scale 5
+c in OPBReader.readMOCO
+c standard constraint builders ready
+c :nvars 4 :constraints 1 :objectives 3
+c out OPBReader.readMOCO
+c :parse-time 0.158061437
+c in UnsatSat constructor
+c in UnsatSat.buildSolver
+c out UnsatSat.buildSolver
+c in GenTotalEncoder
+c var +X[1] 
+c var +X[2] 
+c var +X[3] 
+c var +X[4] 
+c var -X[1] 
+c var +X[2] 
+c var -X[3] 
+c var -X[4] 
+c var +X[1] 
+c var -X[2] 
+c var -X[3] 
+c var S[0, 0, 0]::5 
+p S[0, 0, 0]::5 
+c var S[0, 1, 0]::6 
+p S[0, 1, 0]::6 
+c var S[0, 2, 0]::7 
+p S[0, 2, 0]::7 
+c var S[0, 3, 0]::8 
+p S[0, 3, 0]::8 
+c var S[0, 4, 0]::9 
+p S[0, 4, 0]::9 
+c var S[0, 5, 0]::10 
+p S[0, 5, 0]::10 
+c var Y[0, 0]::11 
+p Y[0, 0]::11 
+c in GenTotalEncoder.bindLeafVariables
+p -X[1] Y[0, 0]::11 
+p -X[2] Y[0, 0]::11 
+p -X[3] Y[0, 0]::11 
+p -X[4] Y[0, 0]::11 
+c done
+c var S[1, 0, 0]::12 
+p S[1, 0, 0]::12 
+c var S[1, 1, 0]::13 
+p S[1, 1, 0]::13 
+c var S[1, 2, 0]::14 
+p S[1, 2, 0]::14 
+c var S[1, 3, 0]::15 
+p S[1, 3, 0]::15 
+c var S[1, 4, 0]::16 
+p S[1, 4, 0]::16 
+c var S[1, 5, 0]::17 
+p S[1, 5, 0]::17 
+c var Y[1, 0]::18 
+p Y[1, 0]::18 
+c in GenTotalEncoder.bindLeafVariables
+p +X[1] Y[1, 0]::18 
+p -X[2] Y[1, 0]::18 
+p +X[3] Y[1, 0]::18 
+p +X[4] Y[1, 0]::18 
+c done
+c var S[2, 0, 0]::19 
+p S[2, 0, 0]::19 
+c var S[2, 1, 0]::20 
+p S[2, 1, 0]::20 
+c var S[2, 2, 0]::21 
+p S[2, 2, 0]::21 
+c var S[2, 3, 0]::22 
+p S[2, 3, 0]::22 
+c var Y[2, 0]::23 
+p Y[2, 0]::23 
+c in GenTotalEncoder.bindLeafVariables
+p -X[1] Y[2, 0]::23 
+p +X[2] Y[2, 0]::23 
+p +X[3] Y[2, 0]::23 
+c done
+c done
+c in UnsatSat.solve
+c diff upper limit: [0, 0, 0]
+c in GenTotalEncoder.UpdateCurrentK of 0 to 1
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 2
+c in GenTotalEncoder.addSumClauses
+c var S[0, 4, 2]::24 
+p -X[1] S[0, 2, 0]::-7 S[0, 4, 2]::24 
+c done
+c in GenTotalEncoder.addSumClauses
+c var S[0, 5, 2]::25 
+p S[0, 3, 0]::-8 S[0, 4, 2]::-24 S[0, 5, 2]::25 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[0, 2]::26 
+p S[0, 1, 0]::-6 S[0, 5, 2]::-25 Y[0, 2]::26 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[0, 2]::-26 Y[0, 0]::11 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p -X[2] Y[0, 2]::26 
+p -X[3] Y[0, 2]::26 
+p -X[4] Y[0, 2]::26 
+c done
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 1
+c in GenTotalEncoder.addSumClauses
+c var S[1, 4, 1]::27 
+p S[1, 2, 0]::-14 +X[4] S[1, 4, 1]::27 
+p +X[3] S[1, 3, 0]::-15 S[1, 4, 1]::27 
+c done
+c in GenTotalEncoder.addSumClauses
+c var S[1, 5, 1]::28 
+p S[1, 4, 1]::-27 S[1, 1, 0]::-13 S[1, 5, 1]::28 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[1, 1]::29 
+p S[1, 5, 1]::-28 S[1, 0, 0]::-12 Y[1, 1]::29 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[1, 1]::-29 Y[1, 0]::18 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p +X[1] Y[1, 1]::29 
+p -X[2] Y[1, 1]::29 
+c done
+c done
+c in GenTotalEncoder.UpdateCurrentK of 2 to 1
+c in GenTotalEncoder.addSumClauses
+c var S[2, 3, 1]::30 
+p S[2, 1, 0]::-20 +X[3] S[2, 3, 1]::30 
+p +X[2] S[2, 2, 0]::-21 S[2, 3, 1]::30 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[2, 1]::31 
+p S[2, 3, 1]::-30 S[2, 0, 0]::-19 Y[2, 1]::31 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[2, 1]::-31 Y[2, 0]::23 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p -X[1] Y[2, 1]::31 
+c done
+c done
+c diff upper limit: [1, 0, 0]
+c Checking against assumptions:
+c Y[0, 2]::-26 Y[1, 1]::-29 Y[2, 1]::-31 
+c Explanation:
+c Y[0, 2]::-26 Y[1, 1]::-29 
+c //
+c in UnsatSat.updateUpperBound
+c in GenTotalEncoder.UpdateCurrentK of 0 to 2
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 3
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 4
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 5
+c in GenTotalEncoder.addSumClauses
+c var S[0, 4, 5]::32 
+p S[0, 0, 0]::-5 -X[3] S[0, 4, 5]::32 
+c done
+c in GenTotalEncoder.addSumClauses
+c var S[0, 5, 5]::33 
+p S[0, 3, 0]::-8 S[0, 4, 5]::-32 S[0, 5, 5]::33 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[0, 5]::34 
+p S[0, 1, 0]::-6 S[0, 5, 5]::-33 Y[0, 5]::34 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[0, 5]::-34 Y[0, 2]::26 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p -X[2] Y[0, 5]::34 
+p -X[4] Y[0, 5]::34 
+c done
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 1
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 2
+c in GenTotalEncoder.addSumClauses
+c var S[1, 4, 2]::35 
+p +X[3] +X[4] S[1, 4, 2]::35 
+c done
+c in GenTotalEncoder.addSumClauses
+c var S[1, 5, 2]::36 
+p S[1, 4, 2]::-35 S[1, 1, 0]::-13 S[1, 5, 2]::36 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[1, 2]::37 
+p S[1, 5, 2]::-36 S[1, 0, 0]::-12 Y[1, 2]::37 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[1, 2]::-37 Y[1, 1]::29 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p +X[1] Y[1, 2]::37 
+p -X[2] Y[1, 2]::37 
+c done
+c done
+c in done
+c diff upper limit: [2, 1, 0]
+c in GenTotalEncoder.UpdateCurrentK of 0 to 3
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 4
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 5
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 6
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 7
+c in GenTotalEncoder.addSumClauses
+c var S[0, 4, 7]::38 
+p -X[1] -X[3] S[0, 4, 7]::38 
+c done
+c in GenTotalEncoder.addSumClauses
+c var S[0, 5, 7]::39 
+p S[0, 3, 0]::-8 S[0, 4, 7]::-38 S[0, 5, 7]::39 
+p -X[4] S[0, 4, 0]::-9 S[0, 5, 7]::39 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[0, 7]::40 
+p S[0, 1, 0]::-6 S[0, 5, 7]::-39 Y[0, 7]::40 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[0, 7]::-40 Y[0, 5]::34 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p -X[2] Y[0, 7]::40 
+c done
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 2
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 3
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var S[1, 5, 3]::41 
+p S[1, 4, 0]::-16 -X[2] S[1, 5, 3]::41 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[1, 3]::42 
+p S[1, 5, 3]::-41 S[1, 0, 0]::-12 Y[1, 3]::42 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[1, 3]::-42 Y[1, 2]::37 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p +X[1] Y[1, 3]::42 
+c done
+c done
+c in GenTotalEncoder.UpdateCurrentK of 2 to 1
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 2 to 2
+c in GenTotalEncoder.addSumClauses
+c var S[2, 3, 2]::43 
+p +X[2] +X[3] S[2, 3, 2]::43 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[2, 2]::44 
+p S[2, 3, 2]::-43 S[2, 0, 0]::-19 Y[2, 2]::44 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[2, 2]::-44 Y[2, 1]::31 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p -X[1] Y[2, 2]::44 
+c done
+c done
+c diff upper limit: [6, 2, 1]
+c Checking against assumptions:
+c Y[0, 7]::-40 Y[1, 3]::-42 Y[2, 2]::-44 
+c Explanation:
+c Y[1, 3]::-42 Y[0, 7]::-40 Y[2, 2]::-44 
+c //
+c in UnsatSat.updateUpperBound
+c in GenTotalEncoder.UpdateCurrentK of 1 to 3
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 4
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var S[1, 5, 4]::45 
+p S[1, 4, 1]::-27 -X[2] S[1, 5, 4]::45 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[1, 4]::46 
+p S[1, 5, 4]::-45 S[1, 0, 0]::-12 Y[1, 4]::46 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[1, 4]::-46 Y[1, 3]::42 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p +X[1] Y[1, 4]::46 
+c done
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 7
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 8
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 9
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var S[0, 5, 9]::47 
+p -X[4] S[0, 4, 2]::-24 S[0, 5, 9]::47 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[0, 9]::48 
+p S[0, 1, 0]::-6 S[0, 5, 9]::-47 Y[0, 9]::48 
+p -X[2] S[0, 5, 0]::-10 Y[0, 9]::48 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[0, 9]::-48 Y[0, 7]::40 
+c done
+c in GenTotalEncoder.bindLeafVariables
+c done
+c done
+c in GenTotalEncoder.UpdateCurrentK of 2 to 2
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 2 to 3
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[2, 3]::49 
+p S[2, 3, 0]::-22 -X[1] Y[2, 3]::49 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[2, 3]::-49 Y[2, 2]::44 
+c done
+c in GenTotalEncoder.bindLeafVariables
+c done
+c done
+c in done
+c diff upper limit: [7, 3, 2]
+c in GenTotalEncoder.UpdateCurrentK of 0 to 8
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 9
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 10
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 11
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[0, 11]::50 
+p -X[2] S[0, 5, 2]::-25 Y[0, 11]::50 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[0, 11]::-50 Y[0, 9]::48 
+c done
+c in GenTotalEncoder.bindLeafVariables
+c done
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 4
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 5
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var S[1, 5, 5]::51 
+p S[1, 4, 2]::-35 -X[2] S[1, 5, 5]::51 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[1, 5]::52 
+p S[1, 5, 5]::-51 S[1, 0, 0]::-12 Y[1, 5]::52 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[1, 5]::-52 Y[1, 4]::46 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p +X[1] Y[1, 5]::52 
+c done
+c done
+c in GenTotalEncoder.UpdateCurrentK of 2 to 3
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 2 to 4
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[2, 4]::53 
+p S[2, 3, 1]::-30 -X[1] Y[2, 4]::53 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[2, 4]::-53 Y[2, 3]::49 
+c done
+c in GenTotalEncoder.bindLeafVariables
+c done
+c done
+c diff upper limit: [10, 4, 3]
+c Checking against assumptions:
+c Y[0, 11]::-50 Y[1, 5]::-52 Y[2, 4]::-53 
+c Explanation:
+c Y[1, 5]::-52 Y[2, 4]::-53 
+c //
+c in UnsatSat.updateUpperBound
+c in GenTotalEncoder.UpdateCurrentK of 1 to 5
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 6
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 7
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 8
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[1, 8]::54 
+p S[1, 5, 0]::-17 +X[1] Y[1, 8]::54 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[1, 8]::-54 Y[1, 5]::52 
+c done
+c in GenTotalEncoder.bindLeafVariables
+c done
+c done
+c in GenTotalEncoder.UpdateCurrentK of 2 to 4
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 2 to 5
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[2, 5]::55 
+p S[2, 3, 2]::-43 -X[1] Y[2, 5]::55 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[2, 5]::-55 Y[2, 4]::53 
+c done
+c in GenTotalEncoder.bindLeafVariables
+c done
+c done
+c in done
+c diff upper limit: [10, 5, 4]
+c in GenTotalEncoder.UpdateCurrentK of 0 to 11
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 12
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var S[0, 5, 12]::56 
+p -X[4] S[0, 4, 5]::-32 S[0, 5, 12]::56 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[0, 12]::57 
+p S[0, 1, 0]::-6 S[0, 5, 12]::-56 Y[0, 12]::57 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[0, 12]::-57 Y[0, 11]::50 
+c done
+c in GenTotalEncoder.bindLeafVariables
+c done
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 6
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 7
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 8
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 1 to 9
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[1, 9]::58 
+p S[1, 5, 1]::-28 +X[1] Y[1, 9]::58 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[1, 9]::-58 Y[1, 8]::54 
+c done
+c in GenTotalEncoder.bindLeafVariables
+c done
+c done
+c in GenTotalEncoder.UpdateCurrentK of 2 to 5
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.bindLeafVariables
+c done
+c done
+c diff upper limit: [11, 8, 4]
+c Checking against assumptions:c 
+Y[0, 12]::-57 Y[1, 9]::-58 Y[2, 5]::-55 
+c :elapsed 2.991508163 :front-size 1
+c  current subResult size:1
+c ModelX :
+c +X[1] 
+c +X[2] 
+c -X[3] 
+c -X[4] 
+c ModelY :
+c Y[0, 0]::11 
+c Y[0, 2]::26 
+c Y[0, 5]::34 
+c Y[0, 7]::40 
+c Y[0, 9]::48 
+c Y[0, 11]::50 
+c Y[0, 12]::-57 
+
+c Y[1, 1]::29 
+c Y[1, 2]::37 
+c Y[1, 3]::42 
+c Y[1, 4]::46 
+c Y[1, 5]::52 
+c Y[1, 8]::54 
+c Y[1, 9]::-58 
+
+c Y[2, 1]::31 
+c Y[2, 2]::44 
+c Y[2, 3]::49 
+c Y[2, 4]::53 
+c Y[2, 5]::-55 
+c Blocking dominated region
+c diff attained value: [11, 5, 5]
+c Blocking clause:
+p Y[0, 11]::-50 Y[1, 5]::-52 Y[2, 5]::-55 
