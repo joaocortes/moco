@@ -162,16 +162,16 @@ public class UnsatSat implements MySolver {
 		//     Objective ithObj = this.problem.getObj(iObj);
 		//     Log.comment(5, this.attainedValue(ithObj)+ " " );
 		// }
-		Log.comment(5, "ModelY :");
-		this.printModelY(currentYModel);
 		Log.comment(5, "ModelX :");
 		this.printModel(this.getXModel());
+		Log.comment(5, "ModelY :");
+		this.printModelY(currentYModel);
 		//..log
 
 		//log
 		Log.comment(5, "Blocking dominated region");
 		int[] diffAttainedValue = this.diffAttainedValue();
-		if(! this.blockDominatedRegion(diffAttainedValue))
+ 		if(! this.blockDominatedRegion(diffAttainedValue))
 		    goOn = false;
 		// if(! this.blockModelX(modelsX.lastElement()))
 		//     goOn = false;
@@ -179,14 +179,12 @@ public class UnsatSat implements MySolver {
 		for(int i = 0; i < subResult.nSolutions(); ++i)
 		    this.result.addSolutionPublicly(subResult.getSolution(i));
 		subResult = new SubResult(this.problem);
-		currentExplanation  = solver.unsatExplanation();
+		currentExplanation = solver.unsatExplanation();
 		//log..
 		Log.comment(5, "Explanation:");
 		this.goalDelimeter.prettyPrintVecInt(currentExplanation);
 		Log.comment(5, "//");
-
-		//..log
-
+		
 		if(currentExplanation.size() == 0){
 		    goOn = false;
 		}else{
@@ -241,7 +239,7 @@ public class UnsatSat implements MySolver {
 
     /**
      * Updates the current upperBound on the differential k, according
-     * to the unsatExplanation, and updates the sequentialEncoder accordingly
+     * to the unsatExplanation, and updates the GoalDelimeter accordingly
      * @param currentExplanation
      * current explanation of unsatisfiability
      */
@@ -454,7 +452,6 @@ public class UnsatSat implements MySolver {
 	for(int iLit = 0; iLit < objectiveNLit; ++iLit  ){
 	    int coeff = objectiveCoeffs.get(iLit).asInt();
 	    int literal = objectiveLits.get(iLit);
-	    System.out.print(this.solver.modelValue(literal) + " ");
 	    if(this.solver.modelValue(literal))
 		result += coeff;
 	}
@@ -488,6 +485,7 @@ public boolean blockDominatedRegion(int[] diffAttainedValue ){
     for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
 	literals[iObj] = -this.goalDelimeter.getY(iObj, diffAttainedValue[iObj]);
     IVecInt newHardClause = new VecInt(literals);
+    Log.comment(6, "Blocking clause:");
     return this.AddClause(newHardClause);
     }
 
