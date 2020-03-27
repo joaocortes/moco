@@ -23,6 +23,8 @@
 package org.sat4j.moco.algorithm;
 
 import java.util.Vector;
+import java.util.Arrays;
+import java.util.Comparator;
 import org.sat4j.core.VecInt;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
