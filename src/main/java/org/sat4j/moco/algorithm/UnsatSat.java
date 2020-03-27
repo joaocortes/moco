@@ -161,7 +161,9 @@ public class UnsatSat implements MySolver {
 		//     Log.comment(5, this.attainedValue(ithObj)+ " " );
 		// }
 		Log.comment(5, "ModelY :");
-		this.printModel(currentYModel);
+		this.printModelY(currentYModel);
+		Log.comment(5, "ModelX :");
+		this.printModel(this.getXModel());
 		//..log
 
 		//log
@@ -392,10 +394,44 @@ public class UnsatSat implements MySolver {
 	return;
     }
 
+    // /**
+    //  * Print an modelY
+    //  * @param model,
+    //  */
+
+    public void printModelY(IVecInt modelY) {
+    	int[][] convertedModel = new int[(modelY.size())][];
+    	for(int i=0, n = modelY.size();i<n;i++){
+    	    int yId = this.solver.idFromLiteral( modelY.get(i));
+    	    int iObj = this.goalDelimeter.getIObjFromY(yId);
+    	    int kD = this.goalDelimeter.getKDFromY(yId);
+    	    convertedModel[i] = new int[]{ modelY.get(i), iObj, kD};
+    	}
+
+    	Arrays.sort(convertedModel, new Comparator<int[]>() {
+    		public int compare(int[] o1, int[] o2) {
+    		    // Intentional: Reverse order for this demo
+		    return o1[1]-o2[1];
+    		}
+    	    });
+
+
+	int  currentIObj = convertedModel[0][1];
+    	for(int i=0, n = convertedModel.length;i<n;i++){
+	    if(convertedModel[i][1] == currentIObj)	 
+    		this.goalDelimeter.prettyPrintVariable(convertedModel[i][0]);
+	    else{
+		System.out.print("\n");
+		currentIObj = convertedModel[i][1];
+	    }
+	}
+    }
+
     /**
      * Print a model
      * @param models, the obtained models
      */
+
     public void printModel(IVecInt model) {
 	for(int j = 0; j <model.size(); ++j)
 	    this.goalDelimeter.prettyPrintVariable(model.get(j));
