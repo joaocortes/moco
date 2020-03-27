@@ -451,6 +451,7 @@ public class GenTotalEncoder extends GoalDelimeter {
      */
 
     private boolean bindLeafVariables(int iObj){
+        Log.comment(5, "in GenTotalEncoder.bindLeafVariables");
 	Node parent = this.sumTrees[iObj].parent;
 	int topId = parent.nodeVars.containerAll.lastEntry().getValue().getId();
 	int upperLimit = this.sumTrees[iObj].upperLimit;
@@ -460,6 +461,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    IVecInt clause = new VecInt(new int[] {-node.leafID, topId});
 		    AddClause(clause);
 		}
+        Log.comment(5, "done");
 	return false;
     }
 
