@@ -499,8 +499,7 @@ public boolean blockDominatedRegion(int[] diffAttainedValue ){
     }
 
     private boolean AddClause(IVecInt setOfLiterals){
-	for(int i = 0; i < setOfLiterals.size(); ++i)
-	    this.goalDelimeter.prettyPrintVariable(setOfLiterals.get(i));
+	this.goalDelimeter.prettyPrintVecInt(setOfLiterals);
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	}
