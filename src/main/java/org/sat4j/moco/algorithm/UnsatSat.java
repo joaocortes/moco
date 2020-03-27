@@ -497,17 +497,7 @@ public boolean blockDominatedRegion(int[] diffAttainedValue ){
     }
 
     private boolean AddClause(IVecInt setOfLiterals){
-	this.goalDelimeter.prettyPrintVecInt(setOfLiterals);
-	try{
-	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
-	}
-	catch (ContradictionException e) {
-	    Log.comment(5, "contradiction when adding clause: ");
-	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		this.goalDelimeter.prettyPrintVariable(setOfLiterals.get(j));
-	    return false;
-	}
-	return true;
+	return this.goalDelimeter.AddClause(setOfLiterals);
     }
 
     /**
