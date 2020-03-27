@@ -62,7 +62,7 @@ public abstract class GoalDelimeter{
 	} catch (ContradictionException e) {
 	    Log.comment(6, "contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		Log.comment(6, " " + setOfLiterals.get(j) + " " );
+		Log.comment(3, " " + setOfLiterals.get(j) + " " );
 	    return;
 	}
     }
