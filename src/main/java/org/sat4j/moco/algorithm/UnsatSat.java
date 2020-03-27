@@ -473,6 +473,15 @@ public class UnsatSat implements MySolver {
      */
 
 public boolean blockDominatedRegion(int[] diffAttainedValue ){
+    
+	String logDiffAttainedValue = "diff attained value: ["+ diffAttainedValue[0];
+	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
+	    logDiffAttainedValue +=", "+ diffAttainedValue[iObj];
+	//..log
+	
+	logDiffAttainedValue +="]";
+	Log.comment(5, logDiffAttainedValue );
+
     int[] literals = new int[this.problem.nObjs()];
     for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
 	literals[iObj] = -this.goalDelimeter.getY(iObj, diffAttainedValue[iObj]);
