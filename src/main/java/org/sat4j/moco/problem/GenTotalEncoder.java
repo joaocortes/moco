@@ -149,6 +149,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 			newNodeVar.setFreshId();
 		    else    newNodeVar.id = id;
 		    auxVariablesInverseIndex.put(newNodeVar.getId(), new int[]{kD, iObj, nodeName});
+		    Log.comment(6, "var " + prettyFormatVariable(newNodeVar.getId()));
 		    if(kD == 0)
 			AddClause( new VecInt(new int[] {newNodeVar.getId()}));
 		    return newNodeVar;
