@@ -319,6 +319,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    for(Node node: this.sumTrees[iObj].nodes)
 		node.nodeVars.add(0, 0, false, false);
+	    this.bindLeafVariables(iObj);
 	}
 	Log.comment(5, "done");
     }
