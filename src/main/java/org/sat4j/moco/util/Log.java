@@ -33,6 +33,10 @@ import org.sat4j.moco.Params;
 public class Log {
 
     /**
+     * comment indent 
+     */
+    private int commentIndent = 0;
+    /**
      * The output stream used by the logger ({@link System#out} by default).
      */
     private static PrintStream out = System.out;
@@ -80,8 +84,10 @@ public class Log {
      * @param lvl The minimum verbosity level for the write to occur.
      * @param s The comment's content.
      */
-    public static void comment(int lvl, String s) { write(lvl, "c " + s); }
+    public static void comment(int lvl, String s  ) { write(lvl, "c " + s); }
     
+    public static void clausing(String clause) { write(6, "p " + clause); }
+
     /**
      * Writes a comment in the log if logging is enabled.
      * @param s The comment's content.
