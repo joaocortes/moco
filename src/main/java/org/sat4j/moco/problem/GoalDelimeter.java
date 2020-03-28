@@ -18,7 +18,7 @@ public abstract class GoalDelimeter{
     protected PBSolver solver = null;
 
 
-    abstract public void UpdateCurrentK(int iObj, int upperKD);
+    abstract public boolean UpdateCurrentK(int iObj, int upperKD);
     abstract public boolean isY(int id);
 
     abstract public int getCurrentKD(int iObj);
