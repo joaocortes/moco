@@ -57,6 +57,11 @@ public class Params {
      * Default algorithm
      */
     private static final String DEFAULT_ALGI = "0";
+
+    /**
+     * default encoding for the goal delimeter
+     */
+    private static final String DEFAULT_ENC = "0";
     
     /**
      * Default trivial threshold (number of trivially solved partitions in a row before merging the
@@ -88,6 +93,7 @@ public class Params {
                     "Set the trivial threshold for stratified algorithms (number of trivially solved partitions " +
                     "in a row before merging the remaining ones). Default is " + DEFAULT_TT + ".");
 	o.addOption("alg", "algorithm-index", true, "Choose the algorithm to use. options are 0-paretomcs, 1-unsatsat, 2-pminimal");
+	o.addOption("enc", "encoding-index", true, "Choose the goal delimeter encoding to use. options are 0-SWE, 1-GTE");
         return o;
     }
     
