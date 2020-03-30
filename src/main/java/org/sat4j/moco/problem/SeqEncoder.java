@@ -120,15 +120,16 @@ import org.sat4j.specs.ContradictionException;
      *@param afterKD The desired max value for the objective 
      */
     
-     public void UpdateCurrentK(int iObj , int afterKD ){
+     public boolean UpdateCurrentK(int iObj , int afterKD ){
 	 // Log.comment(6, "Internal:");
 	 // Log.comment(6, "["+this.getCurrentKD(0));
 	 // for(int iObj1 = 1; iObj1 < this.instance.nObjs(); ++iObj1)
 	 //     Log.comment(6, ", "+this.getCurrentKD(iObj1));
 	 // Log.comment(6, "]");
  	Log.comment(4, "in SeqEncoder.UpdatecurrentK");
-
-	 if(this.getInitializedKD(iObj)< afterKD ){
+	if(this.getInitializedKD(iObj) == this.instance.getObj(iObj).getWeightDiff())
+	    return false;
+	if(this.getInitializedKD(iObj)< afterKD ){
 	     // Y variables are also extended at 
 	     this.extendInitializedIdsSInK(iObj, afterKD); 
 	     this.extendInitializedIdsBInK(iObj, afterKD); 
@@ -149,7 +150,8 @@ import org.sat4j.specs.ContradictionException;
 	     this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
 	     this.setCurrentKD(iObj, afterKD);
 	 }
-	 	Log.comment(5, "done");
+	 Log.comment(5, "done");
+	 return true;
      }
 
 
