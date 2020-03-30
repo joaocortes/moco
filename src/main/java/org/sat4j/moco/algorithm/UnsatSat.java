@@ -216,7 +216,7 @@ public class UnsatSat implements MySolver {
     public IVecInt generateUpperBoundAssumptions( ){
 	IVecInt assumptions = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    if(this.getUpperKD(iObj)  < this.problem.getObj(iObj).getMaxValue())
+	    if(this.getUpperKD(iObj)  < this.problem.getObj(iObj).getWeightDiff())
 		assumptions.push(-this.goalDelimeter.getY(iObj, this.getUpperKD(iObj) + 1));
 	}
 	return assumptions;
