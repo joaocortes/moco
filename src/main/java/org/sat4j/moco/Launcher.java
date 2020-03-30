@@ -153,12 +153,12 @@ public class Launcher {
 		paretoMCSSolver.solve();
 		break;
 	    case 1:
-		UnsatSat unsatSatSolver = new UnsatSat(moco);
+  		UnsatSat unsatSatSolver = new UnsatSat(moco, params.getEncodingGD());
 		setShutdownHandler(unsatSatSolver);
 		unsatSatSolver.solve();
 		break;
 	    case 2:
-		pMinimal pMinimalSolver = new pMinimal(moco);
+		pMinimal pMinimalSolver = new pMinimal(moco, params.getEncodingGD());
 		setShutdownHandler(pMinimalSolver);
 		pMinimalSolver.solve();
 		break;
