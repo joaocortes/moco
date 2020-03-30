@@ -445,8 +445,9 @@ public class UnsatSat implements MySolver {
     }
 
     /**
-     * The attained value of objective  in the interpretation of model
-     @param model
+     * The attained value of objective in the interpretation of the
+     * last found model
+     @param objective
     */
     private int attainedValue(Objective objective){
 	int result = 0;
