@@ -35,7 +35,7 @@ import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.problem.GoalDelimeter;
-// import org.sat4j.moco.problem.SeqEncoder;
+import org.sat4j.moco.problem.SeqEncoder;
 import org.sat4j.moco.problem.GenTotalEncoder;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
@@ -89,7 +89,7 @@ public class UnsatSat implements MySolver {
      * @param m The MOCO instance.
      */
 
-    public UnsatSat(Instance m) {
+    public UnsatSat(Instance m, boolean encodingGD) {
         Log.comment(3, "in UnsatSat constructor");
 	this.problem = m;
 	this.result = new Result(m);
@@ -101,7 +101,10 @@ public class UnsatSat implements MySolver {
             return;
         }
 	this.realVariablesN = this.solver.nVars();
+	if(encodingGD)
 	this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
+	else
+	this.goalDelimeter = new SeqEncoder(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
     }
 
