@@ -31,12 +31,11 @@ import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.analysis.SubResult;
 import org.sat4j.moco.util.Real;
-import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
-import org.sat4j.moco.problem.SeqEncoder;
 import org.sat4j.moco.problem.GoalDelimeter;
+// import org.sat4j.moco.problem.SeqEncoder;
 import org.sat4j.moco.problem.GenTotalEncoder;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
@@ -72,7 +71,7 @@ public class UnsatSat implements MySolver {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private GenTotalEncoder goalDelimeter = null;
+    private GoalDelimeter goalDelimeter = null;
 
     /**
      * Last explored differential k, for each objective function.
