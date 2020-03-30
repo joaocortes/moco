@@ -35,6 +35,8 @@ import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.problem.SeqEncoder;
+import org.sat4j.moco.problem.GenTotalEncoder;
+import org.sat4j.moco.problem.GoalDelimeter;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
@@ -68,7 +70,7 @@ public class pMinimal implements MySolver {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private SeqEncoder seqEncoder = null;
+    private GoalDelimeter goalDelimeter = null;
 
     /**
      * Last explored differential k, for each objective function.
@@ -86,7 +88,7 @@ public class pMinimal implements MySolver {
      * @param m The MOCO instance.
      */
     
-    public pMinimal(Instance m) {
+    public pMinimal(Instance m, boolean encodingGD) {
 	Log.comment(5, "In pMinimal.pMinimal");
 	this.problem = m;
 	this.result = new Result(m);
@@ -99,7 +101,10 @@ public class pMinimal implements MySolver {
             return;
         }
 	this.realVariablesN = this.solver.nVars();
-	this.seqEncoder = new SeqEncoder(this.problem,this.solver);
+	if(encodingGD)
+	this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
+	else
+	this.goalDelimeter = new SeqEncoder(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
 	for(int iObj = 0, nObj = this.problem.nObjs(); iObj < nObj; ++iObj)
 	    this.setUpperKD(iObj);
