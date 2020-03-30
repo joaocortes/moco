@@ -39,7 +39,7 @@ public abstract class GoalDelimeter{
      }
 
     public void prettyPrintVecInt(IVecInt vecInt){
-	Log.comment(prettyFormatVecInt(vecInt));
+	Log.comment(5, prettyFormatVecInt(vecInt));
 	return;
      }
 
