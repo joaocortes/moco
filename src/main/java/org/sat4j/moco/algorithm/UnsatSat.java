@@ -426,7 +426,7 @@ public class UnsatSat implements MySolver {
 	    if(convertedModel[i][1] == currentIObj)	 
     		this.goalDelimeter.prettyPrintVariable(convertedModel[i][0]);
 	    else{
-		System.out.print("\n");
+		Log.comment(5, "\n");
 		currentIObj = convertedModel[i][1];
 	    }
 	}
