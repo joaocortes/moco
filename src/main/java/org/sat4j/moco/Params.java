@@ -179,7 +179,6 @@ public class Params {
         this.pmc = Integer.parseInt(cl.getOptionValue("pmc", DEFAULT_PMC));
         this.tt = Integer.parseInt(cl.getOptionValue("tt", DEFAULT_TT));
 	this.algorithmI = Integer.parseInt(cl.getOptionValue("alg", DEFAULT_ALGI));
-	System.out.print(cl.getOptionValue("enc", DEFAULT_ENC));
 
 	if(cl.getOptionValue("enc", DEFAULT_ENC).equals("GTE")){
 	    this.encodingGD = true;
