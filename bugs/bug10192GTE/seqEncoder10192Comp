@@ -1,0 +1,114 @@
+-*- mode: compilation; default-directory: "~/OneDrive/Documents/escola/doutoramento/office/tools/moco/" -*-
+Compilation started at Mon Mar 30 23:16:54
+
+mvn exec:java -Dexec.mainClass=org.sat4j.moco.Launcher -Dexec.args="finalResults/finalResultsSC/run1/instances/bp-100-20-3-10-10192-SC.pbmo -alg 1 -v 1 -enc "SWC" "
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------< org.sat4j.moco:org.sat4j.moco.threeAlgorithms >------------
+[INFO] Building SAT4J moco 0.0.1-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:java (default-cli) @ org.sat4j.moco.threeAlgorithms ---
+SWCc :verbosity 1
+c :decimal-scale 5
+c :nvars 100 :constraints 20 :objectives 3
+c :parse-time 0.042248644
+c :elapsed 105.602381369 :front-size 1
+o 263.0 259.0 193.0
+c :elapsed 107.78648451 :front-size 1
+c :elapsed 131.436487639 :front-size 1
+o 214.0 250.0 201.0
+c :elapsed 137.626129577 :front-size 2
+c :elapsed 141.931925405 :front-size 1
+o 290.0 261.0 192.0
+c :elapsed 143.50216553 :front-size 3
+c :elapsed 149.232387122 :front-size 1
+o 258.0 268.0 177.0
+c :elapsed 154.362828658 :front-size 4
+c :elapsed 160.518507886 :front-size 1
+o 251.0 269.0 188.0
+c :elapsed 161.843612712 :front-size 5
+c :elapsed 163.48355801 :front-size 1
+o 285.0 270.0 176.0
+c :elapsed 169.553032835 :front-size 6
+c :elapsed 213.594407484 :front-size 1
+c :elapsed 221.113270496 :front-size 1
+o 182.0 276.0 119.0
+c :elapsed 222.710316467 :front-size 7
+c :elapsed 297.01231604 :front-size 1
+o 199.0 196.0 220.0
+c :elapsed 297.608312472 :front-size 8
+c :elapsed 317.769452333 :front-size 1
+o 310.0 242.0 207.0
+c :elapsed 319.445274876 :front-size 9
+c :elapsed 359.655129327 :front-size 1
+o 314.0 253.0 157.0
+c :elapsed 364.516971335 :front-size 10
+c :elapsed 450.325827877 :front-size 1
+o 321.0 249.0 206.0
+c :elapsed 453.513150584 :front-size 11
+c :elapsed 513.023482465 :front-size 1
+o 326.0 243.0 162.0
+c :elapsed 521.301396673 :front-size 12
+c :elapsed 537.555889677 :front-size 1
+o 328.0 238.0 207.0
+c :elapsed 540.131262907 :front-size 13
+c :elapsed 637.320334926 :front-size 1
+o 336.0 241.0 206.0
+c :elapsed 646.253427948 :front-size 14
+c :elapsed 694.970017341 :front-size 1
+o 216.0 316.0 113.0
+c :elapsed 696.648968293 :front-size 15
+c :elapsed 809.744585402 :front-size 1
+o 353.0 245.0 161.0
+c :elapsed 813.807780229 :front-size 16
+c :elapsed 819.863979788 :front-size 1
+o 197.0 330.0 100.0
+c :elapsed 821.173620343 :front-size 17
+c :elapsed 905.015055297 :front-size 1
+o 369.0 328.0 93.0
+c :elapsed 910.351655535 :front-size 18
+c :elapsed 963.660221678 :front-size 1
+o 179.0 357.0 283.0
+c :elapsed 963.992710953 :front-size 19
+c :elapsed 1001.821509053 :front-size 1
+o 392.0 239.0 143.0
+c :elapsed 1005.575185227 :front-size 20
+c :elapsed 1011.932447593 :front-size 1
+o 231.0 370.0 94.0
+c :elapsed 1012.563747993 :front-size 21
+c :elapsed 1024.755043987 :front-size 1
+o 399.0 225.0 175.0
+c :elapsed 1027.388389091 :front-size 22
+c :elapsed 1039.688551031 :front-size 1
+o 292.0 156.0 316.0
+c :elapsed 1040.318903194 :front-size 23
+c :elapsed 1047.362973649 :front-size 1
+o 319.0 383.0 86.0
+c :elapsed 1048.553287732 :front-size 24
+c :elapsed 1055.160553631 :front-size 1
+o 265.0 169.0 322.0
+c :elapsed 1057.046773475 :front-size 25
+c :elapsed 1060.209036043 :front-size 1
+o 412.0 194.0 240.0
+c :elapsed 1063.364002762 :front-size 26
+c :elapsed 1149.124694059 :front-size 1
+o 177.0 422.0 251.0
+c :elapsed 1149.471150097 :front-size 27
+c :elapsed 1258.695622748 :front-size 1
+o 507.0 188.0 293.0
+c :elapsed 1259.474918602 :front-size 28
+c :elapsed 1304.742832183 :front-size 1
+c :elapsed 1305.227469293 :front-size 2
+o 430.0 152.0 475.0
+c :elapsed 1305.623078941 :front-size 29
+o 398.0 154.0 475.0
+c :elapsed 1305.6233927 :front-size 30
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 22:09 min
+[INFO] Finished at: 2020-03-30T23:39:06+01:00
+[INFO] ------------------------------------------------------------------------
+
+Compilation finished at Mon Mar 30 23:39:06
