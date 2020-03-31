@@ -86,7 +86,7 @@ public class Log {
      */
     public static void comment(int lvl, String s  ) { write(lvl, "c " + s); }
     
-    public static void clausing(String clause) { write(6, "p " + clause); }
+    public static void clausing(String clause) { write(2, "p " + clause); }
 
     /**
      * Writes a comment in the log if logging is enabled.
