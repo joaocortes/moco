@@ -136,7 +136,7 @@ public class pMinimal implements MySolver {
 	    }
 	    this.result.saveThisModel(currentXModelValues);
 	    sat = this.blockDominatedRegion(currentXModelValues);
-	    this.seqEncoder.prettyPrintVecInt(currentYModel);
+	    this.goalDelimeter.prettyPrintVecInt(currentYModel);
 	    if(sat){
 		assumptions = new VecInt(new int[] {});
 		this.solver.check();
@@ -152,14 +152,14 @@ public class pMinimal implements MySolver {
 	// int literal, id;
 	// int currentKD, currentIObj;
 	for(int iObj = 0, n = this.problem.nObjs(); iObj < n; ++iObj)
-	    assumptions.push(-this.seqEncoder.getSTop(iObj, upperLimits[iObj]));
+	    assumptions.push(-this.goalDelimeter.getY(iObj, upperLimits[iObj]));
 	// for(int i = 0, n = yModel.size(); i < n ; ++i){
 	//     literal = yModel.get(i);
 	//     boolean literalValue = this.solver.isLiteralPositive(literal);
 	//     id =  this.solver.idFromLiteral(literal);
 	//     if(literalValue){
-	// 	currentKD = this.seqEncoder.getKDFromSTopVariable(literal);
-	// 	currentIObj = this.seqEncoder.getObjFromSTopVariable(literal);
+	// 	currentKD = this.goalDelimeter.getKDFromSTopVariable(literal);
+	// 	currentIObj = this.goalDelimeter.getObjFromSTopVariable(literal);
 	// 	if( currentKD < upperLimits[currentIObj])
 	// 	    assumptions.push(-id);
 	//     }
@@ -175,7 +175,7 @@ public class pMinimal implements MySolver {
     public IVecInt generateUpperBoundAssumptions( ){
 	IVecInt assumptions = new VecInt(new int[]{});
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    assumptions.push(-this.seqEncoder.getSTop(iObj, this.getUpperKD(iObj) + 1));
+	    assumptions.push(-this.goalDelimeter.getY(iObj, this.getUpperKD(iObj) + 1));
 	}
 	return assumptions;
     }
@@ -190,7 +190,7 @@ public class pMinimal implements MySolver {
     private void preAssumptionsExtend(){
 	int objN = this.problem.nObjs();
 	for(int iObj = 0; iObj < objN ; ++iObj){
-	    this.seqEncoder.UpdateCurrentK(iObj, this.getUpperKD(iObj) + 1);
+	    this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj) + 1);
 	}
     }
 
@@ -211,8 +211,8 @@ public class pMinimal implements MySolver {
      */
     private void setUpperKD(int iObj){
 	int newKD = this.problem.getObj(iObj).getWeightDiff();
-	if(this.seqEncoder.getCurrentKD(iObj) < newKD)
-	    this.seqEncoder.UpdateCurrentK(iObj, newKD);
+	if(this.goalDelimeter.getCurrentKD(iObj) < newKD)
+	    this.goalDelimeter.UpdateCurrentK(iObj, newKD);
 	this.UpperKD[iObj] = newKD;
     }
 
@@ -240,7 +240,7 @@ public class pMinimal implements MySolver {
      */
 
     public boolean isY(int literal){
-	if(this.seqEncoder.isSTop(literal))
+	if(this.goalDelimeter.isY(literal))
 	    return true;
 	return false;
     }
@@ -332,7 +332,7 @@ public class pMinimal implements MySolver {
      */
     public void printModel(IVecInt model) {
 	for(int j = 0; j <model.size(); ++j)
-	    this.seqEncoder.prettyPrintVariable(model.get(j));
+	    this.goalDelimeter.prettyPrintVariable(model.get(j));
 	System.out.println();
 
 
@@ -380,7 +380,7 @@ public class pMinimal implements MySolver {
 	int[] upperLimits = this.findUpperLimits(XModelValues);
 	int[] literals = new int[this.problem.nObjs()];
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	    literals[iObj] = -this.seqEncoder.getSTop(iObj, upperLimits[iObj]);
+	    literals[iObj] = -this.goalDelimeter.getY(iObj, upperLimits[iObj]);
 	IVecInt newHardClause = new VecInt(literals);
 	Log.comment(5, "done");
 	return this.AddClause(newHardClause);
@@ -397,14 +397,14 @@ public class pMinimal implements MySolver {
     private boolean AddClause(IVecInt setOfLiterals){
 	Log.comment(5, "In pMinimal.AddClause");
 	for(int i = 0; i < setOfLiterals.size(); ++i)
-	    this.seqEncoder.prettyPrintVariable(setOfLiterals.get(i));
+	    this.goalDelimeter.prettyPrintVariable(setOfLiterals.get(i));
 	try{
 	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
 	}
 	catch (ContradictionException e) {
 	    System.out.println("contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		this.seqEncoder.prettyPrintVariable(setOfLiterals.get(j));
+		this.goalDelimeter.prettyPrintVariable(setOfLiterals.get(j));
 	    System.out.println();
 	    Log.comment(5, "done");
 	    return false;
