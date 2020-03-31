@@ -122,7 +122,9 @@ class Tester:
                       "java -jar ", javaJarName,
                       "", os.path.join(testsPath, fileName),
                       #  "-v 2 "
-                      "-alg ", str(solverI), ";"]
+                      "-alg ", str(solverI),
+                      "-enc " "\"" + self.encoderGD + "\"",
+                      ";"]
             command += self.shellInterface.buildCommand(tokens)
 
         # command = re.escape(command)
