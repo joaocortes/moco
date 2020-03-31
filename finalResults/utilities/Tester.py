@@ -41,11 +41,13 @@ def readArguments():
 
 class Tester:
 
-    def __init__(self,location , servers, gateway, algorithms=(1, 2, 3)):
+    def __init__(self, location, servers, gateway, algorithms=(1, 2, 3),
+                 encoderGD="GTE", time=3600):
         self.location = location
         self.time = None
-        self.memoryKB = None
+        self.memoryKB = 10000000
         self.algorithm = None
+        self.encoderGD = encoderGD
         self.useSandbox = None
         self.part = None
         self.commands = []
