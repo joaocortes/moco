@@ -186,16 +186,27 @@ public class GenTotalEncoder extends GoalDelimeter {
 		}
 
 		/**
+		 * Given iKD, returns the Id of the ceiling nodevar,
+		 * that is, the id of the entry with a key that is
+		 * larger or equal to iKD.
+		 */
+
+		public int getCeilingId (){
+		    return this.containerAll.lastEntry().getValue().id;
+		}
+
+		/**
 		 * Given iKD, returns the value of the ceiling
-		 * nodevar, that is, the values of the entry
+		 * nodevar, that is, the value iKD of the entry
 		 * imediately above iKD.
 		 * @param iKD
 		 * @return value
 		 */
 
-		public int getCeilingValue (int iKD){
-		    return this.containerAll.ceilingEntry(iKD).getValue().id;
+		public int getCeilingKD (int iKD){
+		    return this.containerAll.ceilingEntry(iKD).getValue().getKD();
 		}
+
 		public SortedMap<Integer, NodeVars.NodeVar> currentTail(){
 		    return this.containerAll.tailMap(olderUpperLimit);
 		}
@@ -531,21 +542,55 @@ public class GenTotalEncoder extends GoalDelimeter {
         Log.comment(5, "done");
 	return change;
     }
+
+    /**
+     * This adds the clause that makes this an GTE. That is, v1 v2 =>
+     * v3, where kD of v3 is the (corrected) sum kD of v1 and v2
+     */
+    
+    private boolean addBindingInternal(SumTree ithObjSumTree,Node parent, Node first, Node second){
+	Log.comment(5, "in GenTotalEncoder.addSumClauses");
+	boolean change = false;
+	Collection<Node.NodeVars.NodeVar> firstAll =
+	    first.nodeVars.containerAll.values();
+	
+	Collection<Node.NodeVars.NodeVar> secondAll =
+	    second.nodeVars.containerAll.values();
+	
+	for(Node.NodeVars.NodeVar firstVar : firstAll){
+	    for(Node.NodeVars.NodeVar secondVar : secondAll ){
+		int ghostParentKD = firstVar.getKD() + secondVar.getKD();
+		if(ghostParentKD > ithObjSumTree.upperLimit) 
+		    if(ghostParentKD!=0 ) 
+			{
+			    int parentVarCeilling = parent.nodeVars.getCeilingId();
+			    IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVarCeilling});
+			    AddClause(clause);
+			    change = true;
+			}
+	    }
+	}
+        Log.comment(5, "done");
+	return change;
+    }
+
     /**
      *Adds all clauses, respecting the current upperLimit, that complete the semantics of the GTE 
      */
     public boolean addClausesSumTree(int iObj){
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
-	change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent) || change;
-	change = addClauseSequential(ithObjSumTree.parent) || change;
+	change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, false) || change;
+	if(change)
+	    addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, true);
+	change = addClauseSequential(ithObjSumTree.parent ) || change;
 	return change;
     }
     /**
      *Recursive helper of addClausesSumTree
      */
 
-    public boolean addClausesSubSumTree(SumTree sumTree, Node currentNode){
+    public boolean addClausesSubSumTree(SumTree sumTree, Node currentNode, boolean secondPhase){
 	boolean change = false;
 	Node left = currentNode.left;
 	Node right = currentNode.right;
@@ -553,9 +598,12 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    return false;
 	}
 	else{
-	    change = addClausesSubSumTree(sumTree, left) || change;
-	    change = addClausesSubSumTree(sumTree, right) || change;
-	    change = addSumClauses(currentNode, left, right) || change;    
+	    change = addClausesSubSumTree(sumTree, left, secondPhase) || change;
+	    change = addClausesSubSumTree(sumTree, right, secondPhase) || change;
+	    if(!secondPhase)
+		change = addSumClauses(currentNode, left, right) || change;    
+	    else
+		change = addBindingInternal(sumTree, currentNode, left, right);
 	    // change = addSumClauses(currentNode, right, left) || change;    
 	}
 	return change;
@@ -575,7 +623,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    change = addClausesSumTree(iObj);
 	    upperKD++;
 	}
-	bindLeafVariables(iObj);
+	if(change){
+	    bindLeafVariables(iObj);
+	    
+	}
     Log.comment(5, "done");
     return change;
     }
