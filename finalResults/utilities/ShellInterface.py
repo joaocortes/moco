@@ -28,8 +28,6 @@ class Interface:
 
         tokens = ["cd", shlex.quote(location), ";", command]
         commandToSend = self.buildCommand(tokens)
-        # if screenify:
-        #     commandToSend = screenifyCommand(commandToSend)
         tokens = []
         hostname = socket.gethostname()
         if hostname == self.superServer:
