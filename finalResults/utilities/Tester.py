@@ -40,14 +40,14 @@ def readArguments():
 class Tester:
 
     def __init__(self, location, servers, gateway, algorithms=(1, 2, 3),
-                 encoderGD="GTE", time=10):
+                 encoderGD="GTE", time=10, useSandbox=1):
         self.location = location
         self.time = time
         self.memoryKB = 10000000
         # TODO: algorithm should be sensitive to the user
         self.algorithm = 1
         self.encoderGD = encoderGD
-        self.useSandbox = None
+        self.useSandbox = useSandbox
         self.part = None
         self.commands = []
         self.args = None
