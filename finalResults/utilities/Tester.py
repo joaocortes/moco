@@ -74,11 +74,14 @@ class Tester:
 
         listFiles = os.listdir(testsPath)
         numberFiles = len(listFiles)
-        listFilesPart1 = listFiles[:numberFiles//2]
-        listFilesPart2 = listFiles[numberFiles//2:]
+        parts = len(self.shellInterface.servers)*2
+        listFilesParts = list()
+        for i in range(0, parts):
+            listFilesParts.append(listFiles[i * numberFiles//parts : (i+1)* numberFiles//parts])
+            print(listFilesParts[i])
         for solverI in solverRange:
-            self.generateCommands(listFilesPart1, solverI)
-            self.generateCommands(listFilesPart2, solverI)
+            for i in range(0,parts):
+                self.generateCommands(listFilesParts[i], solverI)
             self.distributeCommands()
         for process in self.runCommands():
             process.wait()
