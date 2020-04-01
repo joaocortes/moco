@@ -1,12 +1,12 @@
 import Tester
 
 testsPath = "instances/"
-servers = ("taurus", "pegasus", "pictor", "scutum", "octans")
+servers = ("taurus", "pictor", "scutum")
 gateway = "aquila"
 location = "./moco/finalResults/finalResultsSC/run3/"
 algorithms = (1,)
 encoder = "GTE"
-time = 10
+time = 1800
 
 
 tester = Tester.Tester(location, servers, gateway, algorithms, encoder, time)
