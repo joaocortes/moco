@@ -1,0 +1,10 @@
+0.19/0.13	c :verbosity 0
+0.19/0.13	c :decimal-scale 5
+696.19/516.29	Exception in thread "main" java.lang.NullPointerException
+696.19/516.29		at org.sat4j.moco.problem.GenTotalEncoder$SumTree$Node$NodeVars.getCeilingId(GenTotalEncoder.java:185)
+696.19/516.29		at org.sat4j.moco.problem.GenTotalEncoder.getY(GenTotalEncoder.java:397)
+696.19/516.29		at org.sat4j.moco.algorithm.UnsatSat.blockDominatedRegion(UnsatSat.java:494)
+696.19/516.29		at org.sat4j.moco.algorithm.UnsatSat.solve(UnsatSat.java:176)
+696.19/516.29		at org.sat4j.moco.Launcher.main(Launcher.java:158)
+696.19/516.29	s UNKNOWN
+696.19/516.29	n 0
