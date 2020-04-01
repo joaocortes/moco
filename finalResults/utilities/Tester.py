@@ -29,8 +29,6 @@ def readArguments():
     parser.add_argument("-alg", type=int, dest="algorithm", default=3,
                         help="algorithm to run. 0-paretoMCS, 1-unsatSat,\
                         2-pMinimal, 3-all intercalated")
-    parser.add_argument("-t", type=int, dest="time", default=10,
-                        help="runout time")
     parser.add_argument("-m", type=int, dest="memoryKB", default=10000000,
                         help="runout memory, in KB")
 
@@ -42,9 +40,9 @@ def readArguments():
 class Tester:
 
     def __init__(self, location, servers, gateway, algorithms=(1, 2, 3),
-                 encoderGD="GTE", time=3600):
+                 encoderGD="GTE", time=10):
         self.location = location
-        self.time = None
+        self.time = time
         self.memoryKB = 10000000
         self.algorithm = None
         self.encoderGD = encoderGD
@@ -58,7 +56,6 @@ class Tester:
     def fillParameters(self):
         self.args = readArguments()
         self.memoryKB = self.args.memoryKB
-        self.time = self.args.time
         self.algorithm = self.args.algorithm
         self.useSandbox = self.args.useSandbox
 
