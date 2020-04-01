@@ -3,7 +3,7 @@ import Tester
 testsPath = "instances/"
 servers = ("pictor",)
 gateway = "aquila"
-location = "./moco/finalResults/finalResultsSC/run3/"
+location = "./"
 algorithms = (1,)
 encoder = "GTE"
 time = 1800
