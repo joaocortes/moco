@@ -44,7 +44,8 @@ class Tester:
         self.location = location
         self.time = time
         self.memoryKB = 10000000
-        self.algorithm = None
+        # TODO: algorithm should be sensitive to the user
+        self.algorithm = 1
         self.encoderGD = encoderGD
         self.useSandbox = None
         self.part = None
