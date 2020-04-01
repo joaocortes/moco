@@ -52,6 +52,7 @@ class Tester:
         self.args = None
         self.shellInterface = ShellInterface.Interface(servers, gateway)
         self.solverRange = algorithms
+        self.completeOutputPath = outputPath
 
     def fillParameters(self):
         self.args = readArguments()
@@ -113,10 +114,10 @@ class Tester:
                       "-M ", str(self.memoryKB),
                       "--timestamp "
                       "-w ", os.path.join(
-                          outputPath,
+                          self.completeOutputPath,
                           watcherFilePrefix + outputName),
                       "-o ", os.path.join(
-                          outputPath,
+                          self.completeOutputPath,
                           solverOutputFilePrefix + outputName),
                       "java -jar ", javaJarName,
                       "", os.path.join(testsPath, fileName),
