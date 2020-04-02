@@ -488,11 +488,6 @@ public boolean blockDominatedRegion(int[] diffAttainedValue ){
 	return this.AddClause(notPreviousModel);
     }
 
-    private boolean AddClause(IVecInt setOfLiterals){
-	this.auxiliarConstraintsN++;
-	return this.goalDelimeter.AddClause(setOfLiterals);
-    }
-
  public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){
 	if(clausing)
 	    Log.clausing(this.goalDelimeter.prettyFormatVecInt(vecInt));
