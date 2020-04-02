@@ -31,7 +31,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.sat4j.moco.analysis.Result;
-import org.sat4j.moco.algorithm.MySolver;
+import org.sat4j.moco.algorithm.algorithm;
 import org.sat4j.moco.algorithm.ParetoMCS;
 import org.sat4j.moco.algorithm.UnsatSat;
 import org.sat4j.moco.algorithm.pMinimal;
@@ -54,7 +54,7 @@ public class Launcher {
      * MOCO solver's shutdown handler class. The solver should log the current result before exiting.
      * @author Miguel Terra-Neves
      */
-    private static class ShutdownHandler<Solver extends MySolver> extends Thread {
+    private static class ShutdownHandler<Solver extends algorithm> extends Thread {
         
         /**
          * The algorithm being executed.
@@ -79,7 +79,7 @@ public class Launcher {
         
     }
 
-    private static <Solver extends MySolver>void setShutdownHandler(Solver solver) {
+    private static <Solver extends algorithm>void setShutdownHandler(Solver solver) {
         Runtime.getRuntime().addShutdownHook(new ShutdownHandler<Solver>(solver));
     }
     
