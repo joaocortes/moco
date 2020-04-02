@@ -46,23 +46,8 @@ import org.sat4j.specs.IVecInt;
  * @author João Cortes
  */
 
-public class pMinimal implements algorithm {
+public class pMinimal extends algorithm {
 
-    /**
-     * An instance of a MOCO problem to be solved.
-     */
-    private Instance problem = null;
-    
-    /**
-     * Stores the result (e.g. nondominated solutions) of the execution of the Pareto-MCS algorithm.
-     */
-    private Result result = null;
-    
-    /**
-     * Stores the PB solver to be used by the Pareto-MCS algorithm.
-     */
-    private PBSolver solver = null;
-    
     /**
      * IDs of the variables used int the sequential encoder. The first
      * index is the goal, the second is the first index of s from " On
@@ -413,11 +398,13 @@ public class pMinimal implements algorithm {
 	return true;
     }
 
-    /**
-     * Retrieves the result of the last call to {@link #solve()}.
-     * @return The result.
-     */
-    public Result getResult() { return this.result; }
+    public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){
+	if(clausing)
+	    Log.clausing(this.goalDelimeter.prettyFormatVecInt(vecInt));
+	else
+	    Log.comment(6, this.goalDelimeter.prettyFormatVecInt(vecInt));
+	return;
+    }
     
 }
 
