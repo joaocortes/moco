@@ -46,23 +46,7 @@ import org.sat4j.specs.IVecInt;
  * @author João Cortes
  */
 
-public class UnsatSat implements algorithm {
-
-    /**
-     * An instance of a MOCO problem to be solved.
-     */
-    private Instance problem = null;
-
-    /**
-     * Stores the result (e.g. nondominated solutions) of the execution of the Pareto-MCS algorithm.
-     */
-    private Result result = null;
-
-    /**
-     * Stores the PB solver to be used by the Pareto-MCS algorithm.
-     */
-    private PBSolver solver = null;
-
+public class UnsatSat extends algorithm {
 
     /**
      * IDs of the variables used int the sequential encoder. The first
@@ -505,13 +489,9 @@ public boolean blockDominatedRegion(int[] diffAttainedValue ){
     }
 
     private boolean AddClause(IVecInt setOfLiterals){
+	this.auxiliarConstraintsN++;
 	return this.goalDelimeter.AddClause(setOfLiterals);
     }
 
-    /**
-     * Retrieves the result of the last call to {@link #solve()}.
-     * @return The result.
-     */
-    public Result getResult() { return this.result; }
 
 }
