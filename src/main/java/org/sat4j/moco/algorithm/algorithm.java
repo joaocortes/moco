@@ -24,8 +24,25 @@ abstract public class  algorithm{
     protected PBSolver solver = null;
 
     /**
+     * the number of auxiliar constraints added
+     */
+    protected int auxiliarConstraintsN = 0;
+
+    /**
+     * the number of auxiliar variables added
+     */
+    protected int auxiliarVariablesN = 0;
+
+
+    /**
      * Retrieves the result of the last call to {@link #solve()}.
      * @return The result.
      */
     public Result getResult() { return this.result; }
+
+    public void printFlightRecord(){
+	Log.comment(1, "aux constraints: " + this.auxiliarConstraintsN);
+	Log.comment(1, "aux Variables: " + this.auxiliarVariablesN);
+    };
+
 }
