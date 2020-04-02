@@ -378,25 +378,6 @@ public class pMinimal extends algorithm {
 	    notPreviousModel.push(-modelX.get(iX));
 	return this.AddClause(notPreviousModel);
     }
-    
-    private boolean AddClause(IVecInt setOfLiterals){
-	Log.comment(5, "In pMinimal.AddClause");
-	for(int i = 0; i < setOfLiterals.size(); ++i)
-	    this.goalDelimeter.prettyPrintVariable(setOfLiterals.get(i));
-	try{
-	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
-	}
-	catch (ContradictionException e) {
-	    System.out.println("contradiction when adding clause: ");
-	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		this.goalDelimeter.prettyPrintVariable(setOfLiterals.get(j));
-	    System.out.println();
-	    Log.comment(5, "done");
-	    return false;
-	}
-	    Log.comment(5, "done");
-	return true;
-    }
 
     public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){
 	if(clausing)
