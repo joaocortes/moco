@@ -58,9 +58,8 @@ public abstract class GoalDelimeter{
 
     public boolean AddClause(IVecInt setOfLiterals){
 	this.prettyPrintVecInt(setOfLiterals,true);
-	for(int i = 0; i < setOfLiterals.size(); ++i)
 	try{
-	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
+	    this.solver.AddClause(setOfLiterals);
 	} catch (ContradictionException e) {
 	    Log.comment(6, "contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
