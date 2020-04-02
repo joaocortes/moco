@@ -43,13 +43,7 @@ public abstract class GoalDelimeter{
 	return;
      }
 
-    public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){
-	if(clausing)
-	    Log.clausing(prettyFormatVecInt(vecInt));
-	else
-	    Log.comment(6, prettyFormatVecInt(vecInt));
-	 return;
-     }
+   
 
     public void prettyPrintVariable(int literal){
 	Log.comment(6,prettyFormatVariable(literal));

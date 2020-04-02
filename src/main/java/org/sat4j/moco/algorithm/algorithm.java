@@ -4,6 +4,7 @@ import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.Log;
+import org.sat4j.specs.IVecInt;
 
 
 abstract public class  algorithm{
@@ -40,6 +41,7 @@ abstract public class  algorithm{
      */
     public Result getResult() { return this.result; }
 
+    abstract public void prettyPrintVecInt(IVecInt vecInt, boolean clausing);
     public void printFlightRecord(){
 	Log.comment(1, "aux constraints: " + this.auxiliarConstraintsN);
 	Log.comment(1, "aux Variables: " + this.auxiliarVariablesN);
