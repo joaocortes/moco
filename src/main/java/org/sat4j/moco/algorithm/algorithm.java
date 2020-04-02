@@ -27,17 +27,6 @@ abstract public class  algorithm{
     protected PBSolver solver = null;
 
     /**
-     * the number of auxiliar constraints added
-     */
-    protected int auxiliarConstraintsN = 0;
-
-    /**
-     * the number of auxiliar variables added
-     */
-    protected int auxiliarVariablesN = 0;
-
-
-    /**
      * Retrieves the result of the last call to {@link #solve()}.
      * @return The result.
      */
@@ -45,15 +34,18 @@ abstract public class  algorithm{
 
     abstract public void prettyPrintVecInt(IVecInt vecInt, boolean clausing);
 
+
+
+
     /**
-     *Adds the disjunction of setOfLiterals
+     *Adds the disjunction of setOfLiterals, and logs
      *@param setOfliterals
      */
+
     public boolean AddClause(IVecInt setOfLiterals){
 	this.prettyPrintVecInt(setOfLiterals,true);
-	for(int i = 0; i < setOfLiterals.size(); ++i)
 	try{
-	    this.solver.addConstr(PBFactory.instance().mkClause(setOfLiterals));
+	    this.solver.AddClause(setOfLiterals);
 	} catch (ContradictionException e) {
 	    Log.comment(6, "contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
