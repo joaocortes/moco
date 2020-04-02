@@ -55,22 +55,8 @@ import org.sat4j.specs.IVecInt;
  *      (pp. 1376-1382).
  * @author Miguel Terra-Neves
  */
-public class ParetoMCS implements algorithm {
+public class ParetoMCS extends algorithm {
     
-    /**
-     * An instance of a MOCO problem to be solved.
-     */
-    private Instance problem = null;
-    
-    /**
-     * Stores the result (e.g. nondominated solutions) of the execution of the Pareto-MCS algorithm.
-     */
-    private NonCheckedResult result = null;
-    
-    /**
-     * Stores the PB solver to be used by the Pareto-MCS algorithm.
-     */
-    private PBSolver solver = null;
     
     /**
      * Stores the MCS extractor to be used by the Pareto-MCS algorithm.
