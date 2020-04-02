@@ -76,6 +76,16 @@ public class PBSolver {
     private int max_conflicts = -1;
     
     /**
+     *Number of clauses
+     */
+
+    private int clausesN = 0;
+    
+    public int getClausesN(){
+	return this.clausesN;
+    }
+
+    /**
      * Creates an instance of a PB solver.
      */
     public PBSolver() { this.solver = SolverFactory.newDefault(); }
@@ -331,6 +341,19 @@ public class PBSolver {
 	return literal > 0;
 
 }
+
+    /**
+     *Adds the disjunction of setOfLiterals
+     *@param setOfliterals
+     */
+
+    public void AddClause(IVecInt setOfLiterals) throws ContradictionException{ 
+	this.clausesN++;
+	this.solver.addClause(setOfLiterals);
+    }
+
+
+
     /**
      * returns the the id of the literal
      * @param literal
