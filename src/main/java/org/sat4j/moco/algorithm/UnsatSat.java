@@ -493,5 +493,12 @@ public boolean blockDominatedRegion(int[] diffAttainedValue ){
 	return this.goalDelimeter.AddClause(setOfLiterals);
     }
 
+ public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){
+	if(clausing)
+	    Log.clausing(this.goalDelimeter.prettyFormatVecInt(vecInt));
+	else
+	    Log.comment(6, this.goalDelimeter.prettyFormatVecInt(vecInt));
+	 return;
+     }
 
 }
