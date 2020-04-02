@@ -373,5 +373,8 @@ public class ParetoMCS extends algorithm {
         }
         this.extractor.updtParams(p);
     }
-    
+    /**
+     *TODO
+     */
+    public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){};
 }
