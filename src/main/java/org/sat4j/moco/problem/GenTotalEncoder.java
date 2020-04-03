@@ -211,6 +211,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    return this.containerAll.tailMap(olderUpperLimit);
 		}
 
+		public Collection<NodeVars.NodeVar> currentHead(){
+		    return this.containerAll.headMap(upperLimit+1).values();
+		}
+
 	    }	     
 
 	    NodeVars nodeVars = null;
@@ -521,10 +525,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 	Log.comment(5, "in GenTotalEncoder.addSumClauses");
 	boolean change = false;
 	Collection<Node.NodeVars.NodeVar> firstAll =
-	    first.nodeVars.containerAll.values();
+	    first.nodeVars.currentHead();
 	
 	Collection<Node.NodeVars.NodeVar> secondAll =
-	    second.nodeVars.containerAll.values();
+	    second.nodeVars.currentHead();
 	
 	for(Node.NodeVars.NodeVar firstVar : firstAll){
 	    for(Node.NodeVars.NodeVar secondVar : secondAll ){
