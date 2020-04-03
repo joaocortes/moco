@@ -549,36 +549,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	return change;
     }
 
-    /**
-     * This adds the clause that makes this an GTE. That is, v1 v2 =>
-     * v3, where kD of v3 is the (corrected) sum kD of v1 and v2
-     */
-    
-    private boolean addBindingInternal(SumTree ithObjSumTree,Node parent, Node first, Node second){
-	Log.comment(5, "in GenTotalEncoder.addSumClauses");
-	boolean change = false;
-	Collection<Node.NodeVars.NodeVar> firstAll =
-	    first.nodeVars.containerAll.values();
-	
-	Collection<Node.NodeVars.NodeVar> secondAll =
-	    second.nodeVars.containerAll.values();
-	
-	for(Node.NodeVars.NodeVar firstVar : firstAll){
-	    for(Node.NodeVars.NodeVar secondVar : secondAll ){
-		int ghostParentKD = firstVar.getKD() + secondVar.getKD();
-		if(ghostParentKD > ithObjSumTree.upperLimit) 
-		    if(ghostParentKD!=0 ) 
-			{
-			    int parentVarCeilling = parent.nodeVars.getCeilingId();
-			    IVecInt clause = new VecInt(new int[] {-firstVar.id, -secondVar.id, parentVarCeilling});
-			    AddClause(clause);
-			    change = true;
-			}
-	    }
-	}
-        Log.comment(5, "done");
-	return change;
-    }
 
     /**
      *Adds all clauses, respecting the current upperLimit, that complete the semantics of the GTE 
@@ -608,8 +578,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    change = addClausesSubSumTree(sumTree, right, secondPhase) || change;
 	    if(!secondPhase)
 		change = addSumClauses(currentNode, left, right) || change;    
-	    else
-		change = addBindingInternal(sumTree, currentNode, left, right);
+	    // else
+	    // 	change = addBindingInternal(sumTree, currentNode, left, right);
 	    // change = addSumClauses(currentNode, right, left) || change;    
 	}
 	return change;
