@@ -171,8 +171,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 		public NodeVar addParsimoneously(int kD){
 		    NodeVar nodeVar = this.containerAll.get(kD);
+		    int max = instance.getObj(iObj).getWeightDiff();
 		    if(nodeVar == null)
-			nodeVar = this.add(kD, 0, true, true);
+			if(kD <= max)
+			    nodeVar = this.add(kD, 0, false, true);
 		    return nodeVar;
 		}
 
