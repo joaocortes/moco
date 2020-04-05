@@ -55,9 +55,9 @@ abstract public class  algorithm{
 	return true;
     }
 
-    public void printFlightRecord(){
-	Log.comment(1, "aux constraints: " + this.auxiliarConstraintsN);
-	Log.comment(1, "aux Variables: " + this.auxiliarVariablesN);
-    };
 
+    public void printFlightRecord(){
+	Log.comment("constraints: " + this.solver.getClausesN());
+	Log.comment("Variables: " + this.solver.nVars());
+    }
 }
