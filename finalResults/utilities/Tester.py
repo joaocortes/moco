@@ -40,15 +40,15 @@ def readArguments():
 class Tester:
 
     def __init__(self, location, servers, gateway, algorithms=(1, 2, 3),
-                 encoderGD="GTE", time=10, useSandbox=1):
+                 encoderGD="GTE", time=10, useSandbox=1, part=3):
         self.location = location
         self.time = time
         self.memoryKB = 10000000
         # TODO: algorithm should be sensitive to the user
-        self.algorithm = 1
+        self.algorithm = 4
         self.encoderGD = encoderGD
         self.useSandbox = useSandbox
-        self.part = None
+        self.part = part
         self.commands = []
         self.args = None
         self.shellInterface = ShellInterface.Interface(servers, gateway)
@@ -74,7 +74,7 @@ class Tester:
 
         listFiles = os.listdir(testsPath)
         numberFiles = len(listFiles)
-        parts = len(self.shellInterface.servers)*2
+        parts = len(self.shellInterface.servers)*self.part
         listFilesParts = list()
         for i in range(0, parts):
             listFilesParts.append(listFiles[i * numberFiles//parts : (i+1)* numberFiles//parts])
