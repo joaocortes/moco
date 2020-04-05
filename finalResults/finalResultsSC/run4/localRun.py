@@ -1,7 +1,8 @@
 import Tester
 
 testsPath = "instances/"
-servers = ("spica", "serpens","sextans", "pictor", "scutum", "musca")
+servers = ("spica", "serpens","sextans", "pictor", "scutum", "musca",
+           "octans")
 gateway = "aquila"
 location = "./moco/finalResults/finalResultsSC/run4"
 algorithms = (1,)
