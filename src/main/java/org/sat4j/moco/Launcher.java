@@ -75,6 +75,7 @@ public class Launcher {
          */
         public void run() {
             logResult(this.solver.getResult());
+	    this.solver.printFlightRecord();
         }
         
     }
