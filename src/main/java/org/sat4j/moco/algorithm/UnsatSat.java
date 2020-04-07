@@ -272,7 +272,8 @@ public class UnsatSat extends algorithm {
 			for( iX = 0; iX < nX ;iX ++  )
 			    if(ithObjectiveXs.get(iX) == id)
 				break;
-	    		this.setUpperKD(iObj, ithObjective.getSubObjCoeffs(0).get(iX).asInt());
+			if(iX < nX)
+			    this.setUpperKD(iObj, ithObjective.getSubObjCoeffs(0).get(iX).asInt());
 	    	    }
 	    	}
 	    }
