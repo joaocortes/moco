@@ -81,11 +81,6 @@ import org.sat4j.specs.ContradictionException;
       */
      private Hashtable<Integer, Integer> bVariablesInverseIndex  = new Hashtable<Integer, Integer>();
 
-    /**
-     *First solver variable that pertains to the sequential encoding
-     */
-
-    private int firstVariable = 0;
 
     /**
      * Creates an Instance of the sequential encoder
