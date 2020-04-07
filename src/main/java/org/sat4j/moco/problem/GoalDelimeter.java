@@ -17,9 +17,24 @@ public abstract class GoalDelimeter{
      */
     protected PBSolver solver = null;
 
+    /**
+     *First solver variable that pertains to the goal delimeter
+     *encoding
+     */
+    private int firstVariable = 0;
 
     abstract public boolean UpdateCurrentK(int iObj, int upperKD);
     abstract public boolean isY(int id);
+
+    /**
+     *Checks if a variable is an X(original) variable.
+     */
+    public boolean isX(int literal){
+	int id = this.solver.idFromLiteral(literal);
+	if(id < this.firstVariable)
+	    return true;
+	return false;
+    }
 
     abstract public int getCurrentKD(int iObj);
 
