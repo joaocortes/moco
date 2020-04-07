@@ -301,12 +301,7 @@ public class GenTotalEncoder extends GoalDelimeter {
      */
 
     private SumTree[] sumTrees = null;
-     
 
-    /**
-     *index of the first auxiliar variable
-     */
-    private int firstVariable = 0;
 
     /**
      * Creates an instance of the generalized totalizor encoder
@@ -418,15 +413,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	return false;
     }
 
-    /**
-     *Checks if a variable is an X(original) variable.
-     */
-    public boolean isX(int literal){
-	int id = this.solver.idFromLiteral(literal);
-	if(id < this.firstVariable)
-	    return true;
-	return false;
-    }
 
     /**
      *Checks if a variable is an S variable, given a literal.
