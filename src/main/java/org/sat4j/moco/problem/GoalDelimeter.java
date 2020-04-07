@@ -21,7 +21,7 @@ public abstract class GoalDelimeter{
      *First solver variable that pertains to the goal delimeter
      *encoding
      */
-    private int firstVariable = 0;
+    protected int firstVariable = 0;
 
     abstract public boolean UpdateCurrentK(int iObj, int upperKD);
     abstract public boolean isY(int id);
