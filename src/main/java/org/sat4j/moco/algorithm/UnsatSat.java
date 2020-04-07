@@ -255,14 +255,29 @@ public class UnsatSat extends algorithm {
 	for(int i = 0; i < currentExplanation.size(); ++i){
 	    int ithLiteral = currentExplanation.get(i);
 	    int id = this.solver.idFromLiteral(ithLiteral);
-	    int jObj = this.goalDelimeter.getIObjFromY(id);
-	    int kd = this.goalDelimeter.getKDFromY(id);
-	    //TODO This is strange, and should not be always true
-	    assert kd ==this.getUpperKD(jObj);
-
+	    if(this.goalDelimeter.isY(id)){
+		int jObj = this.goalDelimeter.getIObjFromY(id);
+		int kd = this.goalDelimeter.getKDFromY(id);
 		this.setUpperKD(jObj, kd);
 		this.goalDelimeter.UpdateCurrentK(jObj, kd);
+
+	    }else{
+	        if(this.goalDelimeter.isX(id)){
+	    	    int objN = this.problem.nObjs();
+	    	    for(int iObj = 0; iObj < objN ; ++iObj){
+			Objective ithObjective = this.problem.getObj(iObj);
+			IVecInt ithObjectiveXs = ithObjective.getSubObjLits(0);
+			int nX = ithObjective.getTotalLits(); 
+			int iX = 0;
+			for( iX = 0; iX < nX ;iX ++  )
+			    if(ithObjectiveXs.get(iX) == id)
+				break;
+	    		this.setUpperKD(iObj, ithObjective.getSubObjCoeffs(0).get(iX).asInt());
+	    	    }
+	    	}
 	    }
+	}
+
         Log.comment(5, "in done");
 	}
 
