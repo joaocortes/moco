@@ -570,7 +570,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    }
 	}
 
-	}        Log.comment(5, "done");
+	Log.comment(5, "done");
 	return change;
     }
 
