@@ -273,7 +273,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	 *Links the SumTree, in such a fashion that at any time all
 	 *unlinked nodes are lighter than any linked node.
 	 */
-	public void linkTree(){
+	public void linkTreeNameNodes(){
 	    int size = unlinkedNodes.size();
 	    int name = 0;
 	    while(size >=2){
@@ -302,7 +302,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		this.unlinkedNodes.add(node);
 		iX ++;
 	    }
-	    linkTree();
+	    linkTreeNameNodes();
 
 	    this.parent = this.unlinkedNodes.poll();
 
