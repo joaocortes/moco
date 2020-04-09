@@ -240,7 +240,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 		int sign = 1;
 		if(weight < 0)
 		     sign = -1;
-		this.nodeName = nodes.size()-1;
 		this.nodeSum = sign * weight;
 		this.left = null; 
 		this.right = null;
@@ -254,7 +253,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	     
 	    public Node(Node left, Node right){
 		nodes.add(this);
-		this.nodeName = nodes.size()-1;
 		this.left = left;
 		this.right = right;
 		this.nodeVars =  new NodeVars();
@@ -277,10 +275,17 @@ public class GenTotalEncoder extends GoalDelimeter {
 	 */
 	public void linkTree(){
 	    int size = unlinkedNodes.size();
+	    int name = 0;
 	    while(size >=2){
 	 	Node leftNode = unlinkedNodes.poll();
+		leftNode.nodeName = name;
+		name++;
 		Node rightNode = unlinkedNodes.poll();
+		rightNode.nodeName = name;
+		name++;
 		Node parentNode = new Node(leftNode, rightNode);
+		parentNode.nodeName = name;
+		name++;
 		unlinkedNodes.add(parentNode);
 		size--;
 	    }
