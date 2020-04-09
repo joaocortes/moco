@@ -69,6 +69,12 @@ public class GenTotalEncoder extends GoalDelimeter {
 	 *Must old the last but effective upperLimit.
 	 */
 	private int olderUpperLimit = 0;
+
+	/**
+	 *Maximal possible value
+	 */
+	private int maxUpperLimit = 0;
+
 	/**
 	 *The root of the SumTree.
 	 */
@@ -129,7 +135,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    }
                    protected boolean newValidVariable(){
 		       if(olderUpperLimit < this.kD)
-			   if(this.kD <= 2*upperLimit)
+			   if(this.kD <= maxUpperLimit)
 			       return true;
 		       return false;
 		    }
@@ -173,8 +179,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    NodeVar nodeVar = this.containerAll.get(kD);
 		    int max = instance.getObj(iObj).getWeightDiff();
 		    if(nodeVar == null)
-			if(kD <= max)
+			if(kD < maxUpperLimit)
 			    nodeVar = this.add(kD, 0, false, true);
+			else
+			    nodeVar = this.add(maxUpperLimit, 0, false, true);
 		    return nodeVar;
 		}
 
@@ -281,6 +289,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	public SumTree(int iObj, int[] leafWeights, int upperLimit){
 	    this.iObj = iObj;
 	    this.upperLimit = upperLimit;
+	    this.maxUpperLimit = instance.getObj(iObj).getWeightDiff();
 	    int iX = 0;
 	    for(int weight : leafWeights){
 		int X = instance.getObj(iObj).getSubObjLits(0).get(iX);
