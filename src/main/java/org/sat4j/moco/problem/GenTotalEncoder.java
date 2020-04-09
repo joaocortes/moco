@@ -129,7 +129,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    }
                    protected boolean newValidVariable(){
 		       if(olderUpperLimit < this.kD)
-			   if(this.kD <= upperLimit)
+			   if(this.kD <= 2*upperLimit)
 			       return true;
 		       return false;
 		    }
