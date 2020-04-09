@@ -344,7 +344,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    for(Node node: this.sumTrees[iObj].nodes)
 		node.nodeVars.add(0, 0, false, false);
-	    // this.bindLeafVariables(iObj);
 	}
 	Log.comment(5, "done");
     }
@@ -464,24 +463,6 @@ public class GenTotalEncoder extends GoalDelimeter {
     }
 
 
-    /**
-     *Bind the leaf variables. If they are not large not, they imply the largest of all variables.
-     */
-
-    private boolean bindLeafVariables(int iObj){
-        Log.comment(5, "in GenTotalEncoder.bindLeafVariables");
-	Node parent = this.sumTrees[iObj].parent;
-	int topId = parent.nodeVars.containerAll.lastEntry().getValue().getId();
-	int upperLimit = this.sumTrees[iObj].upperLimit;
-	for(Node node: this.sumTrees[iObj].nodes)
-	    if(node.leafID!=0)
-		if(node.nodeSum > upperLimit){
-		    IVecInt clause = new VecInt(new int[] {-node.leafID, topId});
-		    AddClause(clause);
-		}
-        Log.comment(5, "done");
-	return false;
-    }
 
     /**
      * Add the sequential clauses. This are the clauses of the form v1
@@ -621,10 +602,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    this.sumTrees[iObj].setUpperLimit(upperKD);
 	    change = addClausesSumTree(iObj);
 	    upperKD++;
-	}
-	if(change){
-	    // bindLeafVariables(iObj);
-	    
 	}
     Log.comment(5, "done");
     return change;
