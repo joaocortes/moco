@@ -284,8 +284,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 		rightNode.nodeName = name;
 		name++;
 		Node parentNode = new Node(leftNode, rightNode);
-		parentNode.nodeName = name;
-		name++;
 		unlinkedNodes.add(parentNode);
 		size--;
 	    }
