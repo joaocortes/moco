@@ -297,8 +297,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    this.maxUpperLimit = instance.getObj(iObj).getWeightDiff();
 	    int iX = 0;
 	    for(int weight : leafWeights){
-		int X = instance.getObj(iObj).getSubObjLits(0).get(iX);
-		Node node =  new Node(weight, X);
+		int ithX = instance.getObj(iObj).getSubObjLits(0).get(iX);
+		Node node =  new Node(weight, ithX);
 		this.unlinkedNodes.add(node);
 		iX ++;
 	    }
