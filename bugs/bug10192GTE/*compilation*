@@ -1,0 +1,224 @@
+-*- mode: compilation; default-directory: "~/OneDrive/Documents/escola/doutoramento/office/tools/moco/" -*-
+Compilation started at Thu Apr  9 15:42:57
+
+mvn exec:java -Dexec.mainClass=org.sat4j.moco.Launcher -Dexec.args="/home/joaooneillcortes/OneDrive/Documents/escola/doutoramento/office/tools/moco/bugs/bug10192GTE/minimal.opb -alg 1 -v 6"
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------< org.sat4j.moco:org.sat4j.moco.threeAlgorithms >------------
+[INFO] Building SAT4J moco 0.0.1-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:java (default-cli) @ org.sat4j.moco.threeAlgorithms ---
+c :verbosity 6
+c :decimal-scale 5
+c in OPBReader.readMOCO
+c standard constraint builders ready
+c :nvars 3 :constraints 2 :objectives 1
+c out OPBReader.readMOCO
+c :parse-time 0.025859679
+c in UnsatSat constructor
+c in UnsatSat.buildSolver
+c out UnsatSat.buildSolver
+c in GenTotalEncoder
+c var +X[1] 
+c var +X[2] 
+c var +X[3] 
+c var S[0, 0, 0]::4 
+p S[0, 0, 0]::4 
+c var S[0, 1, 0]::5 
+p S[0, 1, 0]::5 
+c var S[0, 2, 0]::6 
+p S[0, 2, 0]::6 
+c var S[0, 3, 0]::7 
+p S[0, 3, 0]::7 
+c var Y[0, 0]::8 
+p Y[0, 0]::8 
+c in GenTotalEncoder.bindLeafVariables
+p -X[1] Y[0, 0]::8 
+p -X[2] Y[0, 0]::8 
+p -X[3] Y[0, 0]::8 
+c done
+c done
+c in UnsatSat.solve
+c diff upper limit: [0]
+c in GenTotalEncoder.UpdateCurrentK of 0 to 1
+c in GenTotalEncoder.addSumClauses
+c var S[0, 3, 1]::9 
+p -X[2] S[0, 2, 0]::-6 S[0, 3, 1]::9 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[0, 1]::10 
+p S[0, 3, 1]::-9 S[0, 0, 0]::-4 Y[0, 1]::10 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[0, 1]::-10 Y[0, 0]::8 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p -X[1] Y[0, 1]::10 
+p -X[3] Y[0, 1]::10 
+c done
+c done
+c diff upper limit: [0]
+c Checking against assumptions:
+c Y[0, 1]::-10 
+c Explanation:
+c Y[0, 1]::-10 
+c //
+c in UnsatSat.updateUpperBound
+c in GenTotalEncoder.UpdateCurrentK of 0 to 1
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 2
+c in GenTotalEncoder.addSumClauses
+c var S[0, 3, 2]::11 
+p S[0, 1, 0]::-5 -X[3] S[0, 3, 2]::11 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[0, 2]::12 
+p S[0, 3, 2]::-11 S[0, 0, 0]::-4 Y[0, 2]::12 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[0, 2]::-12 Y[0, 1]::10 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p -X[1] Y[0, 2]::12 
+c done
+c done
+c in done
+c diff upper limit: [1]
+c in GenTotalEncoder.UpdateCurrentK of 0 to 2
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 3
+c in GenTotalEncoder.addSumClauses
+c var S[0, 3, 3]::13 
+p -X[2] -X[3] S[0, 3, 3]::13 
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[0, 3]::14 
+p S[0, 3, 3]::-13 S[0, 0, 0]::-4 Y[0, 3]::14 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[0, 3]::-14 Y[0, 2]::12 
+c done
+c in GenTotalEncoder.bindLeafVariables
+p -X[1] Y[0, 3]::14 
+c done
+c done
+c diff upper limit: [2]
+c Checking against assumptions:
+c Y[0, 3]::-14 
+c Explanation:
+c Y[0, 3]::-14 
+c //
+c in UnsatSat.updateUpperBound
+c in GenTotalEncoder.UpdateCurrentK of 0 to 3
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 4
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 5
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[0, 5]::15 
+p S[0, 3, 0]::-7 -X[1] Y[0, 5]::15 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[0, 5]::-15 Y[0, 3]::14 
+c done
+c in GenTotalEncoder.bindLeafVariables
+c done
+c done
+c in done
+c diff upper limit: [3]
+c in GenTotalEncoder.UpdateCurrentK of 0 to 4
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 5
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addClauseSequential
+c done
+c in GenTotalEncoder.UpdateCurrentK of 0 to 6
+c in GenTotalEncoder.addSumClauses
+c done
+c in GenTotalEncoder.addSumClauses
+c var Y[0, 6]::16 
+p S[0, 3, 1]::-9 -X[1] Y[0, 6]::16 
+c done
+c in GenTotalEncoder.addClauseSequential
+p Y[0, 6]::-16 Y[0, 5]::15 
+c done
+c in GenTotalEncoder.bindLeafVariables
+c done
+c done
+c diff upper limit: [5]
+c Checking against assumptions:
+c Y[0, 6]::-16 
+c :elapsed 0.166248841 :front-size 1
+c  current subResult size:1
+c ModelX :
+c +X[1] 
+c -X[2] 
+c +X[3] 
+c ModelY :
+c Y[0, 0]::8 
+c Y[0, 1]::10 
+c Y[0, 2]::12 
+c Y[0, 3]::14 
+c Y[0, 5]::15 
+c Y[0, 6]::-16 
+c Blocking dominated region
+c diff attained value: [7]
+[WARNING] 
+java.lang.NullPointerException
+    at org.sat4j.moco.problem.GenTotalEncoder$SumTree$Node$NodeVars.getCeilingId (GenTotalEncoder.java:187)
+    at org.sat4j.moco.problem.GenTotalEncoder.getY (GenTotalEncoder.java:403)
+    at org.sat4j.moco.algorithm.UnsatSat.blockDominatedRegion (UnsatSat.java:478)
+    at org.sat4j.moco.algorithm.UnsatSat.solve (UnsatSat.java:160)
+    at org.sat4j.moco.Launcher.main (Launcher.java:159)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0 (Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke (NativeMethodAccessorImpl.java:62)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke (DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke (Method.java:498)
+    at org.codehaus.mojo.exec.ExecJavaMojo$1.run (ExecJavaMojo.java:282)
+    at java.lang.Thread.run (Thread.java:748)
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1.179 s
+[INFO] Finished at: 2020-04-09T15:42:59+01:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.codehaus.mojo:exec-maven-plugin:1.6.0:java (default-cli) on project org.sat4j.moco.threeAlgorithms: An exception occured while executing the Java class. null: NullPointerException -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+
+Compilation exited abnormally with code 1 at Thu Apr  9 15:42:59
