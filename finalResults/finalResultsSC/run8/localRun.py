@@ -3,10 +3,10 @@ import Tester
 testsPath = "instances/"
 # taurus spica serpens sextans pictor pegasus scutum musca octans
 # centaurus
-servers = ("taurus", "spica", "serpens", "sextans", "pictor", "pegasus",
-           "scutum")
+servers = ("taurus", "spica", "serpens", "pictor", "pegasus",
+           "scutum", "musca", "octans", "sextans")
 gateway = "aquila"
-location = "./moco/finalResults/finalResultsSC/run7/"
+location = "./moco/finalResults/finalResultsSC/run8/"
 algorithms = (1,)
 encoder = "GTE"
 time = 3600
