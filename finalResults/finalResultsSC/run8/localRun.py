@@ -4,7 +4,7 @@ testsPath = "instances/"
 # taurus spica serpens sextans pictor pegasus scutum musca octans
 # centaurus
 servers = ("taurus", "spica", "serpens", "pictor", "pegasus",
-           "scutum", "musca", "octans", "sextans")
+           "musca", "sextans")
 gateway = "aquila"
 location = "./moco/finalResults/finalResultsSC/run8/"
 algorithms = (1,)
