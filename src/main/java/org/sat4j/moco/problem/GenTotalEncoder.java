@@ -68,7 +68,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	/**
 	 *Must old the last but effective upperLimit.
 	 */
-	private int olderUpperLimit = 0;
+	private int olderUpperLimit = -1;
 
 	/**
 	 *Maximal possible value
@@ -224,7 +224,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 		public Collection<NodeVars.NodeVar> currentHead(){
 		    return this.containerAll.headMap(upperLimit+1).values();
 		}
-
+		public Collection<NodeVars.NodeVar> currentNovel(){
+		    return this.containerAll.subMap(olderUpperLimit+1, upperLimit+1).values();
+		}
 	    }	     
 
 	    NodeVars nodeVars = null;
@@ -508,11 +510,11 @@ public class GenTotalEncoder extends GoalDelimeter {
 	Collection<Node.NodeVars.NodeVar> firstAll =
 	    first.nodeVars.currentHead();
 	
-	Collection<Node.NodeVars.NodeVar> secondAll =
-	    second.nodeVars.currentHead();
+	Collection<Node.NodeVars.NodeVar> secondPartial =
+	    second.nodeVars.currentNovel();
 	
 	for(Node.NodeVars.NodeVar firstVar : firstAll){
-	    for(Node.NodeVars.NodeVar secondVar : secondAll ){
+	    for(Node.NodeVars.NodeVar secondVar : secondPartial ){
 		Node.NodeVars.NodeVar parentVar =
 		    parent.nodeVars.addParsimoneously(firstVar.kD + secondVar.kD);
 		if(parentVar != null && parentVar.newValidVariable()) 
@@ -558,6 +560,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    change = addClausesSubSumTree(sumTree, right, secondPhase) || change;
 	    if(!secondPhase)
 		change = addSumClauses(currentNode, left, right) || change;    
+		change = addSumClauses(currentNode, right, left) || change;    
 	    // else
 	    // 	change = addBindingInternal(sumTree, currentNode, left, right);
 	    // change = addSumClauses(currentNode, right, left) || change;    
