@@ -193,7 +193,7 @@ public class UnsatSat extends algorithm {
 	//..log
 	
 	    logUpperLimit +="]";
-	    Log.comment(5, logUpperLimit );
+	    Log.comment(1, logUpperLimit );
     }
     
     /**
@@ -503,7 +503,7 @@ public boolean blockDominatedRegion(int[] diffAttainedValue ){
 	//..log
 	
 	logDiffAttainedValue +="]";
-	Log.comment(5, logDiffAttainedValue );
+	Log.comment(1, logDiffAttainedValue );
 
     int[] literals = new int[this.problem.nObjs()];
     for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
