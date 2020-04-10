@@ -542,8 +542,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
 	change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, false) || change;
-	if(change)
-	    addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, true);
+	// if(change)
+	//     addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, true);
 	change = addClauseSequential(ithObjSumTree.parent ) || change;
 	return change;
     }
@@ -566,7 +566,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 		change = addSumClauses(currentNode, right, left) || change;    
 	    // else
 	    // 	change = addBindingInternal(sumTree, currentNode, left, right);
-	    // change = addSumClauses(currentNode, right, left) || change;    
 	}
 	return change;
     }
