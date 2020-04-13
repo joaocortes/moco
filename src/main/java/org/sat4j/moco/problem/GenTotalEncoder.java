@@ -68,7 +68,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	/**
 	 *Must old the last but effective upperLimit.
 	 */
-	private int olderUpperLimit = -1;
+	private int olderUpperLimit = 0;
 
 	/**
 	 *Maximal possible value
