@@ -561,9 +561,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	else{
 	    change = addClausesSubSumTree(sumTree, left, secondPhase) || change;
 	    change = addClausesSubSumTree(sumTree, right, secondPhase) || change;
-	    if(!secondPhase)
-		change = addSumClauses(currentNode, left, right) || change;    
-		change = addSumClauses(currentNode, right, left) || change;    
 	    // else
 	    // 	change = addBindingInternal(sumTree, currentNode, left, right);
 	}
