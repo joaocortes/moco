@@ -536,17 +536,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 
 
     /**
-     *Adds all clauses, respecting the current upperLimit, that complete the semantics of the GTE 
-     */
-    public boolean addClausesSumTree(int iObj){
-	boolean change = false;
-	SumTree ithObjSumTree = this.sumTrees[iObj];
-	change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, false) || change;
-	// if(change)
-	//     addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, true);
-	return change;
-    }
-    /**
      *Recursive helper of addClausesSumTree
      */
 
@@ -569,6 +558,19 @@ public class GenTotalEncoder extends GoalDelimeter {
 	}
 	return change;
     }
+
+    /**
+     *Adds all clauses, respecting the current upperLimit, that complete the semantics of the GTE 
+     */
+    public boolean addClausesSumTree(int iObj){
+	boolean change = false;
+	SumTree ithObjSumTree = this.sumTrees[iObj];
+	change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, false) || change;
+	// if(change)
+	//     addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, true);
+	return change;
+    }
+
     /**
      *Updates the semantics, in such a way that everything is valid
      *for any value kD less or equal to upperKD. Notice that it may
