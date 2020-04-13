@@ -289,6 +289,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 		unlinkedNodes.add(parentNode);
 		size--;
 	    }
+	    this.parent = this.unlinkedNodes.poll();
+	    this.parent.nodeName = name;
+
 	}
 
 	public SumTree(int iObj, int[] leafWeights, int upperLimit){
@@ -303,8 +306,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 		iX ++;
 	    }
 	    linkTreeNameNodes();
-
-	    this.parent = this.unlinkedNodes.poll();
 
 	}
 	 
