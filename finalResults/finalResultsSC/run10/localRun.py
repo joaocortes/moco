@@ -3,8 +3,8 @@ import Tester
 testsPath = "instances/"
 # taurus spica serpens sextans pictor pegasus scutum musca octans
 # centaurus
-servers = ("taurus", "spica", "serpens", "pictor", "pegasus",
-           "musca", "sextans")
+servers = ("taurus", "spica", "serpens", "sextans", "pictor", "pegasus",
+           "scutum", "musca", "octans")
 gateway = "aquila"
 location = "./moco/finalResults/finalResultsSC/run10/"
 algorithms = (1,)
