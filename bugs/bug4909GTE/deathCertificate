@@ -1,0 +1,22 @@
+-*- mode: compilation; default-directory: "~/OneDrive/Documents/escola/doutoramento/office/tools/moco/" -*-
+Compilation started at Wed Apr 15 12:07:06
+
+mvn exec:java -Dexec.mainClass=org.sat4j.moco.Launcher -Dexec.args="./bugs/bug4909GTE/minimal.opb -alg 1"
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------< org.sat4j.moco:org.sat4j.moco.threeAlgorithms >------------
+[INFO] Building SAT4J moco 0.0.1-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:java (default-cli) @ org.sat4j.moco.threeAlgorithms ---
+c :verbosity 0
+c :decimal-scale 5
+o 18.0
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1.690 s
+[INFO] Finished at: 2020-04-15T12:07:09+01:00
+[INFO] ------------------------------------------------------------------------
+
+Compilation finished at Wed Apr 15 12:07:09
