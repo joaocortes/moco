@@ -8,7 +8,7 @@
 (setq compilation-finish-functions nil)
 
 (defun* joc-depure-moco-buggy-instance (buffer desc)
- (shell-command "date")
+  (shell-command "date")
   (message (concat "depure: Did " joc-moco-depure-last-kill "break the example?"))
 
   ;; Find out if the last compilation broke the example. Set
@@ -74,7 +74,9 @@
   (setq joc-moco-depure-last-kill "")
   (setq joc-moco-depure-size-block-max 6)
   (add-hook 'compilation-finish-functions  'joc-depure-moco-first-run)
-  (compile "cd ~/moco/;java -jar  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar ./bugs/bug4909GTE/minimal.opb -alg 1" ))
+  (compile "cd ~/moco/;java -jar
+  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+  ./bugs/bug4909GTE/minimal.opb -alg 1" ))
 
 
 (defun joc-depure-moco-comment (buffer desc)
