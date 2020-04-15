@@ -533,6 +533,37 @@ public class GenTotalEncoder extends GoalDelimeter {
 	Log.comment(5, "done");
 	return change;
     }
+    /**
+     * Simple propagation of variables above the current limit
+     * 
+     */
+    
+    private boolean simplePropagation(Node parent){
+	ArrayList<Node> children = new ArrayList<Node>(2);
+	children.add(parent.left);
+	children.add(parent.right);
+	Log.comment(5, "in GenTotalEncoder.simplePropagation");
+	boolean change = false;
+	
+	for(Node child: children){
+	    Collection<Node.NodeVars.NodeVar> childTail =
+		child.nodeVars.currentTail().values();
+	    for(Node.NodeVars.NodeVar childVar : childTail){
+		Node.NodeVars.NodeVar parentVar =
+		    parent.nodeVars.addParsimoneously(childVar.kD);
+		if(parentVar != null && parentVar.newValidVariable()) 
+		    if(parentVar.getKD()!=0 ){
+			IVecInt clause = new VecInt(new int[]{parentVar.getId()});
+			if(childVar.getKD()>0)
+			    clause.push(-childVar.getId());
+			AddClause(clause);
+			change = true;
+		    }
+	    }
+	}
+	Log.comment(5, "done");
+	return change;
+    }
 
 
     /**
@@ -551,6 +582,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    change = addClausesSubSumTree(sumTree, right, secondPhase) || change;
 	    change = addSumClauses(currentNode, left, right) || change;    
 	    change = addSumClauses(currentNode, right, left) || change;    
+	    change = simplePropagation(currentNode) || change;
 	    change = addClauseSequential(currentNode ) || change;
 
 	    // else
