@@ -219,8 +219,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    return this.containerAll.ceilingEntry(iKD).getValue().getKD();
 		}
 
-		public SortedMap<Integer, NodeVars.NodeVar> currentTail(){
-		    return this.containerAll.tailMap(olderUpperLimit);
+		public Collection<NodeVars.NodeVar> currentTail(){
+		    return this.containerAll.tailMap(olderUpperLimit).values();
 		}
 
 		public Collection<NodeVars.NodeVar> currentHead(){
@@ -480,7 +480,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	Node.NodeVars.NodeVar past;
 	Node.NodeVars.NodeVar current;
 	Collection<Node.NodeVars.NodeVar> tail =
-	    root.nodeVars.currentTail().values();
+	    root.nodeVars.currentTail();
 	Iterator<Node.NodeVars.NodeVar> it = tail.iterator();
 	if(it.hasNext()){
 	    past = it.next();
@@ -553,7 +553,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	
 	for(Node child: children){
 	    Collection<Node.NodeVars.NodeVar> childTail =
-		child.nodeVars.currentTail().values();
+		child.nodeVars.currentUpper();
 	    for(Node.NodeVars.NodeVar childVar : childTail){
 		Node.NodeVars.NodeVar parentVar =
 		    parent.nodeVars.addOrRetrieve(childVar.kD);
