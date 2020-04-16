@@ -619,7 +619,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
 	if(upperKD > this.getCurrentKD(iObj)){
-	this.sumTrees[iObj].setOlderUpperLimit();
+	ithObjSumTree.setOlderUpperLimit();
+	
 	while(!change && upperKD <= this.instance.getObj(iObj).getWeightDiff()){
 	    Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
 	    this.sumTrees[iObj].setUpperLimit(upperKD);
