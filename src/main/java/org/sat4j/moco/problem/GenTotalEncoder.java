@@ -478,26 +478,30 @@ public class GenTotalEncoder extends GoalDelimeter {
     private boolean addClauseSequential(Node root){
         Log.comment(5, "in GenTotalEncoder.addClauseSequential");
 	boolean change = false;
-	boolean first = true;
+
 	Node.NodeVars.NodeVar past;
+	Node.NodeVars.NodeVar current;
 	Collection<Node.NodeVars.NodeVar> tail =
 	    root.nodeVars.currentTail().values();
 	Iterator<Node.NodeVars.NodeVar> it = tail.iterator();
 	if(it.hasNext()){
 	    past = it.next();
-	    for(Node.NodeVars.NodeVar current: tail ){
-		if(first){
-		    first = false;
-		    past = current;
+	    if(it.hasNext()){
+		current = it.next();
+		while(it.hasNext()){
+		    current = it.next();
+		    if(current.iAmFresh() || past.iAmFresh()){
+			IVecInt clause = new VecInt(new int[] {-current.id, past.id});
+			AddClause(clause);
+			past.iAmFresh = false;
+			past = current;
+			change = true;
+		    }
 		}
-		else{
-		    IVecInt clause = new VecInt(new int[] {-current.id, past.id});
-		    AddClause(clause);
-		    change = true;
-		    past = current;
-		}
-	    };
-	    
+		current.iAmFresh = false;
+	    }
+
+
 	}
         Log.comment(5, "done");
 	return change;
