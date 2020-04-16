@@ -179,7 +179,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		 * @param kD
 		 */
 
-		public NodeVar addParsimoneously(int kD){
+		public NodeVar addOrRetrieve(int kD){
 		    NodeVar nodeVar = this.containerAll.get(kD);
 		    int max = instance.getObj(iObj).getWeightDiff();
 		    if(nodeVar == null)
@@ -521,7 +521,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	for(Node.NodeVars.NodeVar firstVar : firstAll){
 	    for(Node.NodeVars.NodeVar secondVar : secondPartial ){
 		Node.NodeVars.NodeVar parentVar =
-		    parent.nodeVars.addParsimoneously(firstVar.kD + secondVar.kD);
+		    parent.nodeVars.addOrRetrieve(firstVar.kD + secondVar.kD);
 		if(parentVar != null && parentVar.newValidVariable()) 
 		    if(parentVar.getKD()!=0 ){
 			IVecInt clause = new VecInt(new int[]{parentVar.getId()});
@@ -555,7 +555,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		child.nodeVars.currentTail().values();
 	    for(Node.NodeVars.NodeVar childVar : childTail){
 		Node.NodeVars.NodeVar parentVar =
-		    parent.nodeVars.addParsimoneously(childVar.kD);
+		    parent.nodeVars.addOrRetrieve(childVar.kD);
 		if(parentVar != null && parentVar.newValidVariable()) 
 		    if(parentVar.getKD()!=0 ){
 			IVecInt clause = new VecInt(new int[]{parentVar.getId()});
