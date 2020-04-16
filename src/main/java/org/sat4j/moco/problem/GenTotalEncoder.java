@@ -111,6 +111,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    private int kD;
 		    private Integer id= null;
 
+		    private boolean iAmFresh = true;
 		    public NodeVar(int kD){
 			this.setKD(kD);
 		    }
@@ -140,6 +141,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 		       return false;
 		    }
 
+		    public boolean iAmFresh(){
+			return iAmFresh;
+		    }
 		}
 		public NodeVars(){
 		    this.containerAll = new TreeMap<Integer, NodeVar>();
