@@ -558,16 +558,14 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    Collection<Node.NodeVars.NodeVar> childTail =
 		child.nodeVars.currentUpper();
 	    for(Node.NodeVars.NodeVar childVar : childTail){
-		Node.NodeVars.NodeVar parentVar =
-		    parent.nodeVars.containerAll.get(childVar.getKD());
-		if(null != parentVar){
-		    if(parentVar.iAmFresh && parentVar.getKD()!=0 ){
-			IVecInt clause = new VecInt(new int[]{parentVar.getId()});
-			if(childVar.getKD()>0)
-			    clause.push(-childVar.getId());
-			AddClause(clause);
-			change = true;
-		    }
+		if(childVar.iAmFresh){
+		    Node.NodeVars.NodeVar parentVar = parent.nodeVars.addOrRetrieve(childVar.getKD());
+		    IVecInt clause = new VecInt(new int[]{parentVar.getId()});
+		    if(childVar.getKD()>0)
+			clause.push(-childVar.getId());
+		    AddClause(clause);
+		    change = true;
+		}
 	    }
 	}
 	Log.comment(5, "done");
@@ -592,9 +590,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    change = addSumClauses(currentNode, left, right) || change;    
 	    change = addSumClauses(currentNode, right, left) || change;    
 	    change = simplePropagation(currentNode) || change;
-	    if(currentNode != sumTree.parent)
-		for(Node.NodeVars.NodeVar var: currentNode.nodeVars.currentTail())
-		    var.iAmFresh = false;
+
 	    // else
 	    // 	change = addBindingInternal(sumTree, currentNode, left, right);
 	}
