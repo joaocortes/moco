@@ -592,6 +592,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    change = addSumClauses(currentNode, left, right) || change;    
 	    change = addSumClauses(currentNode, right, left) || change;    
 	    change = simplePropagation(currentNode) || change;
+	    if(currentNode != sumTree.parent)
+		for(Node.NodeVars.NodeVar var: currentNode.nodeVars.currentTail())
+		    var.iAmFresh = false;
 	    // else
 	    // 	change = addBindingInternal(sumTree, currentNode, left, right);
 	}
