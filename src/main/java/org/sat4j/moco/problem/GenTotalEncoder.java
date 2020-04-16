@@ -111,7 +111,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    private int kD;
 		    private Integer id= null;
 
-		    private boolean iAmFresh = true;
+		    private boolean iAmFresh = false;
 		    public NodeVar(int kD){
 			this.setKD(kD);
 		    }
