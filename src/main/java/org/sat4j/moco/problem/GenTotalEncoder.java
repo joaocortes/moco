@@ -604,7 +604,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
 	change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, false) || change;
-	change = addClauseSequential(ithObjSumTree.parent ) || change;
 
 
 	// if(change)
@@ -620,6 +619,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 
     public boolean UpdateCurrentK(int iObj, int upperKD){
 	boolean change = false;
+	SumTree ithObjSumTree = this.sumTrees[iObj];
 	if(upperKD > this.getCurrentKD(iObj)){
 	this.sumTrees[iObj].setOlderUpperLimit();
 	while(!change && upperKD <= this.instance.getObj(iObj).getWeightDiff()){
@@ -627,7 +627,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    this.sumTrees[iObj].setUpperLimit(upperKD);
 	    change = addClausesSumTree(iObj);
 	    upperKD++;
-	}	}
+	}
+	if(change)
+	    change = addClauseSequential(ithObjSumTree.parent ) || change;
+}
     Log.comment(5, "done");
     return change;
     }
