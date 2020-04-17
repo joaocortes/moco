@@ -541,6 +541,28 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    }
 	    }
 	}
+	firstAll =
+	    first.nodeVars.currentNovel();
+	
+	secondPartial =
+	    second.nodeVars.olderHead();
+	
+	for(Node.NodeVars.NodeVar firstVar : firstAll){
+	    for(Node.NodeVars.NodeVar secondVar : secondPartial ){
+		Node.NodeVars.NodeVar parentVar =
+		    parent.nodeVars.addOrRetrieve(firstVar.kD + secondVar.kD);
+		if(parentVar != null && parentVar.newValidVariable()) 
+		    if(parentVar.getKD()!=0 ){
+			IVecInt clause = new VecInt(new int[]{parentVar.getId()});
+			if(firstVar.getKD()>0)
+			    clause.push(-firstVar.getId());
+			if(secondVar.getKD()>0)
+			    clause.push(-secondVar.getId());
+			AddClause(clause);
+			change = true;
+		    }
+	    }
+	}
 	
 	Log.comment(5, "done");
 	return change;
@@ -591,7 +613,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    change = addClausesSubSumTree(sumTree, left, secondPhase) || change;
 	    change = addClausesSubSumTree(sumTree, right, secondPhase) || change;
 	    change = addSumClauses(currentNode, left, right) || change;    
-	    change = addSumClauses(currentNode, right, left) || change;    
 	    change = simplePropagation(currentNode) || change;
 
 	    // else
