@@ -273,7 +273,11 @@ public class UnsatSat extends algorithm {
 			    if(ithObjectiveXs.get(iX) == id)
 				break;
 			if(iX < nX)
-			    this.setUpperKD(iObj, ithObjective.getSubObjCoeffs(0).get(iX).asInt());
+			    {
+				int weight = ithObjective.getSubObjCoeffs(0).get(iX).asInt();
+				weight = weight > 0? weight: -weight;
+				this.setUpperKD(iObj, weight);
+			    }
 	    	    }
 	    	}
 	    }
