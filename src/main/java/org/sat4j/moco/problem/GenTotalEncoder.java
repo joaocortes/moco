@@ -561,9 +561,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 		if(childVar.iAmFresh){
 		    childVar.iAmFresh = false;
 		    Node.NodeVars.NodeVar parentVar = parent.nodeVars.addOrRetrieve(childVar.getKD());
-		    IVecInt clause = new VecInt(new int[]{parentVar.getId()});
-		    if(childVar.getKD()>0)
-			clause.push(-childVar.getId());
+		    IVecInt clause = new VecInt(new int[]{-childVar.getId(), parentVar.getId()});
+		    
 		    AddClause(clause);
 		    change = true;
 		}
