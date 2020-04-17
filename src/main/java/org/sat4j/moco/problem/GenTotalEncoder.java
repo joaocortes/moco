@@ -491,8 +491,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	if(it.hasNext()){
 	    past = it.next();
 	    if(it.hasNext()){
-		current = it.next();
-		while(it.hasNext()){
+	    do{
 		    current = it.next();
 		    if(current.iAmFresh() || past.iAmFresh()){
 			IVecInt clause = new VecInt(new int[] {-current.id, past.id});
@@ -501,11 +500,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 			past = current;
 			change = true;
 		    }
-		}
-		current.iAmFresh = false;
+	    }while(it.hasNext());
+	    current.iAmFresh = false;
 	    }
-
-
 	}
         Log.comment(5, "done");
 	return change;
