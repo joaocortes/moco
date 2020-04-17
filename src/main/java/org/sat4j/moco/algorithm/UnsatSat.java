@@ -234,14 +234,16 @@ public class UnsatSat extends algorithm {
      */
 
     private void preAssumptionsExtend(){
-	boolean change = false;
 	int objN = this.problem.nObjs();
 	for(int iObj = 0; iObj < objN ; ++iObj){
-	    change = this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj) + 1);
-	    if(change)
+	    int ithMax = this.problem.getObj(iObj).getWeightDiff();
+	    if(this.getUpperKD(iObj) == ithMax){
+		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj));
+	    }
+	    else{
+		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj)+1);
 		this.UpperKD[iObj] =  this.goalDelimeter.getCurrentKD(iObj) - 1;
-	    else
-		this.UpperKD[iObj] = this.goalDelimeter.getCurrentKD(iObj);
+	    }
 	}
     }
 
