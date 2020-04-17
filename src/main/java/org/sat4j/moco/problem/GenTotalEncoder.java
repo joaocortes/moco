@@ -229,6 +229,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 		public Collection<NodeVars.NodeVar> currentHead(){
 		    return this.containerAll.headMap(upperLimit+1).values();
 		}
+		public Collection<NodeVars.NodeVar> olderHead(){
+		    return this.containerAll.headMap(olderUpperLimit+1).values();
+		}
 		public Collection<NodeVars.NodeVar> currentNovel(){
 		    return this.containerAll.subMap(olderUpperLimit+1, upperLimit+1).values();
 		}
