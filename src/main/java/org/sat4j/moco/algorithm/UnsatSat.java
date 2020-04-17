@@ -112,18 +112,17 @@ public class UnsatSat extends algorithm {
         //     Log.comment(1, "UnsatSat.solve called on already solved instance");
         //     return;
         // }
-        Log.comment(3, "in UnsatSat.solve");
+	       Log.comment(3, "in UnsatSat.solve");
 	boolean goOn = true;
 	//for testing purposes
 	//	this.goalDelimeter.UpdateCurrentK(0, 2);
+	this.logUpperLimit();
+	this.preAssumptionsExtend();
+	currentAssumptions = this.generateUpperBoundAssumptions();
+
 	while(goOn){
 	    ///log..
-
 	    this.logUpperLimit();
-	    this.preAssumptionsExtend();
-	    this.logUpperLimit();
-	    currentAssumptions = this.generateUpperBoundAssumptions();
-
 	    //log..
 	    Log.comment(5, "Checking against assumptions:");
 	    this.goalDelimeter.prettyPrintVecInt(currentAssumptions);
@@ -175,6 +174,9 @@ public class UnsatSat extends algorithm {
 		    goOn = false;
 		}else{
 		    this.updateUpperBound(currentExplanation);
+		    this.preAssumptionsExtend();
+		    currentAssumptions = this.generateUpperBoundAssumptions();
+
 		}
 	    }
 	}
