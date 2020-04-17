@@ -651,7 +651,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    upperKD++;
 	}
 	if(change)
-	    change = addClauseSequential(ithObjSumTree.parent ) || change;
+	    addClauseSequential(ithObjSumTree.parent );
 }
     Log.comment(5, "done");
     return change;
