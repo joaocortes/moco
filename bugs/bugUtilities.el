@@ -25,6 +25,15 @@
 (defvar joc-moco-depure-size-block 1)
 (defvar joc-moco-depure-size-block-max 4)
 
+(defun joc-moco-depure-bugginess-definition (buffer)
+  (with-current-buffer buffer
+    (when (or
+	   (re-search-forward "exception" nil t)
+	   (re-search-forward "compilation exited" nil t))
+      (goto-char (point-min))
+      (when (re-search-forward "NullPointerException" nil t)
+	(setq joc-moco-depure-code 1)))))
+
 
 (defun* joc-depure-moco-buggy-instance (buffer desc)
   (shell-command "date")
@@ -32,15 +41,11 @@
 
   ;; Find out if the last compilation broke the example. Set
   ;; joc-moco-depure-code accordingly: 1 if it is intact, 0 if it is broken.
-  (with-current-buffer buffer
-    (when joc-moco-depure-last-kill
-      (when (or
-	     (re-search-forward "exception" nil t)
-	     (re-search-forward "compilation exited" nil t))
-	(goto-char (point-min))
-	(if (re-search-forward "NullPointerException" nil t)
-	    (setq joc-moco-depure-code 1))
-	(message "depure: example incact"))))
+
+  (when joc-moco-depure-last-kill
+    (if (joc-moco-depure-bugginess-definition buffer)
+	(message "bug is intact")
+      (message "bug was broken. Going back")))
   ;; 
   (with-current-buffer joc-moco-depure-buffer
     (if (= joc-moco-depure-code 0)
@@ -101,14 +106,11 @@
 (defun joc-depure-moco-comment (buffer desc)
   (shell-command "date")
   (message (concat "depure: Did " joc-moco-depure-last-kill "break the example?"))
-  (with-current-buffer buffer
-      (when (or
-	     (re-search-forward "exception" nil t)
-	     (re-search-forward "compilation exited" nil t))
-	(goto-char (point-min))
-	(if (re-search-forward "NullPointerException" nil t)
-	    (setq joc-moco-depure-code 1))
-	(message "depure: example incact")))
+
+  (if (joc-moco-depure-bugginess-definition buffer)
+      (message "bug is intact")
+    (message "bug was broken. Going back"))
+
   (with-current-buffer joc-moco-depure-buffer
     (if (= joc-moco-depure-code 0)
 	(progn	(re-search-forward "\*+ " nil t)
