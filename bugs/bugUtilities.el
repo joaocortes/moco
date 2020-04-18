@@ -45,25 +45,27 @@
   (shell-command "date")
   (message (concat "depure: Did " joc-moco-depure-last-kill "break the example?"))
 
+
+  (when  joc-moco-depure-last-kill
+
   ;; Find out if the last compilation broke the example. Set
   ;; joc-moco-depure-code accordingly: 1 if it is intact, 0 if it is broken.
-
-  (when joc-moco-depure-last-kill
-    (if (joc-moco-depure-bugginess-definition buffer)
-	(message "bug is intact")
-      (message "bug was broken. Going back")))
   ;; 
-  (with-current-buffer joc-moco-depure-buffer
+  (if (joc-moco-depure-bugginess-definition buffer)
+	(message "bug is intact")
+      (message "bug was broken. Going back"))
+    with-current-buffer joc-moco-depure-buffer
     (if (= joc-moco-depure-code 0)
 	(insert joc-moco-depure-last-kill)
       (message "new minimal_certain. Current point at %d." (point))
-      (write-region nil nil "./minimal_certain.opb" ))
+      (write-region nil nil "./minimal_certain.opb" )))
 
     (setq joc-moco-depure-last-kill nil)
     ;; start weaving the next kill
     (when  (re-search-forward " [-+][0-9]* x[0-9]*" nil  t)
       (setq joc-moco-depure-last-kill (match-string 0))
-      (delete-region (match-beginning 0)(match-end 0))))
+      (delete-region (match-beginning 0)(match-end 0)))
+
   ;; if the kill is empty, incf the size of the block. If it is
   ;; saturated, end, otherwise start over from point-min.
   (unless joc-moco-depure-last-kill
