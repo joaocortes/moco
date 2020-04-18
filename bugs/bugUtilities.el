@@ -100,8 +100,22 @@
   (setq joc-moco-depure-code 0)
   (setq joc-moco-depure-last-kill "")
   (setq joc-moco-depure-size-block-max 6)
-  (add-hook 'compilation-finish-functions  'joc-depure-moco-first-run)
-  (compile (concat "cd ../../;mvn -DskipTests=true package;" "java -jar ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar " (buffer-file-name joc-moco-depure-buffer)  " -alg 1")))
+  (let ((confirmation t))
+    (when compilation-finish-functions
+      (setq confirmation (string-equal
+			  (read-string
+			   (format
+			    "%s might interfere. Continue?"
+			    compilation-finish-functions)) "yes")))
+    (when confirmation 
+      (add-hook 'compilation-finish-functions  'joc-depure-moco-first-run)
+      (compile (concat "cd ../../;mvn -DskipTests=true package;"
+		       "java -jar"
+		       " ./target/"
+		       "org.sat4j.moco.threeAlgorithms-"
+		       "0.0.1-SNAPSHOT-jar-with-dependencies.jar"
+		       (buffer-file-name joc-moco-depure-buffer)
+		       " -alg 1")))))
 
 (defun joc-depure-moco-comment (buffer desc)
   (shell-command "date")
