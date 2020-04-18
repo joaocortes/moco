@@ -1,5 +1,6 @@
 (require 'cl)
 
+;;; Run all bugs
 (defun joc-moco-test-register-results (buffer desc)
   (with-current-buffer  joc-moco-test-buffer (insert (concat desc "\n")))
   (setq minimal (pop joc-moco-test-bugs))
@@ -17,6 +18,7 @@
 			       :prompt-prefix "Run command: "))
 
 
+;;; depure minimal
 
 (defvar joc-moco-depure-buffer nil)
 (defvar joc-moco-depure-code 0)
