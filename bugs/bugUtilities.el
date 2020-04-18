@@ -55,7 +55,7 @@
   (with-current-buffer joc-moco-depure-buffer
     (if (= joc-moco-depure-code 0)
 	(insert joc-moco-depure-last-kill)
-      (message "new minimal_certain. Current point at %n." (point))
+      (message "new minimal_certain. Current point at %d." (point))
       (write-region nil nil "./minimal_certain.opb" ))
 
     (setq joc-moco-depure-last-kill nil)
