@@ -26,7 +26,7 @@
 
 (defvar joc-moco-depure-buffer nil)
 (defvar joc-moco-depure-code 0)
-(defvar joc-moco-depure-last-kill "")
+(defvar joc-moco-depure-last-kill nil)
 (defvar joc-moco-depure-size-block 1)
 (defvar joc-moco-depure-size-block-max 4)
 
@@ -73,6 +73,7 @@
     (with-current-buffer joc-moco-depure-buffer
       (goto-char (point-min)))
     (setq joc-moco-depure-code 1)
+    (setq joc-moco-depure-last-kill nil)
     (joc-depure-moco-buggy-instance buffer desc)
     (return-from joc-depure-moco-buggy-instance ))
 
@@ -105,8 +106,8 @@
 (defun joc-depure-moco-starter (&optional arg)
   (interactive "P")
   (setq joc-moco-depure-buffer (current-buffer))
+  (setq joc-moco-depure-last-kill nil)
   (setq joc-moco-depure-code 1)
-  (setq joc-moco-depure-last-kill "")
   (setq joc-moco-depure-size-block-max 6)
   (let ((confirmation t) first-compile )
     (when compilation-finish-functions
