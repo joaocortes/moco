@@ -32,6 +32,7 @@
 
 (defun joc-moco-depure-bugginess-definition (buffer)
   (with-current-buffer buffer
+    (write-region nil nil "./lastCompile")
     (when (or
 	   (re-search-forward "exception" nil t)
 	   (re-search-forward "compilation exited" nil t))
