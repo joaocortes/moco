@@ -1,5 +1,4 @@
 (require 'cl)
-(setq compilation-finish-functions nil)
 
 (defun joc-moco-test-register-results (buffer desc)
   (with-current-buffer  joc-moco-test-buffer (insert (concat desc "\n")))
