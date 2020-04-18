@@ -7,7 +7,11 @@
   (if (not minimal)
       (remove-hook 'compilation-finish-functions 'joc-moco-test-register-results)
     (with-current-buffer  joc-moco-test-buffer (insert (concat minimal "\n")))
-    (compile  (concat "java -jar  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "  minimal " -alg 1"))))
+    (compile
+     (concat
+      "java -jar  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "
+      minimal
+      " -alg 1"))))
 (defun joc-moco-test-run-bugs-starter ()
   (interactive)
   (setq joc-moco-test-bugs  (directory-files-recursively default-directory "minimal.opb$"))
@@ -86,7 +90,11 @@
 
 (defun joc-depure-moco-first-run (buffer desc)
   (remove-hook 'compilation-finish-functions  'joc-depure-moco-first-run)
-  (compile (concat  "java -jar ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar " (buffer-file-name joc-moco-depure-buffer)  " -alg 1") )
+  (compile (concat
+	    "java -jar"
+	    " ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "
+	    (buffer-file-name joc-moco-depure-buffer)
+	    " -alg 1") )
   (joc-depure-moco-comment (get-buffer "*compilation*") "")
   (add-hook 'compilation-finish-functions  'joc-depure-moco-comment))
 
