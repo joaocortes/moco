@@ -195,7 +195,7 @@ public class UnsatSat extends algorithm {
 	//..log
 	
 	    logUpperLimit +="]";
-	    Log.comment(5, logUpperLimit );
+	    Log.comment(2, logUpperLimit );
     }
     
     /**
@@ -464,9 +464,10 @@ public class UnsatSat extends algorithm {
      */
 
     public void printModel(IVecInt model) {
-	for(int j = 0; j <model.size(); ++j)
-	    this.goalDelimeter.prettyPrintVariable(model.get(j));
-
+	for(int j = 0; j <model.size(); ++j){
+	    if(model.get(j)>0)
+		this.goalDelimeter.prettyPrintVariable(model.get(j),2);
+	}
 
 	return;
     }
@@ -511,7 +512,7 @@ public boolean blockDominatedRegion(int[] diffAttainedValue ){
 	//..log
 	
 	logDiffAttainedValue +="]";
-	Log.comment(5, logDiffAttainedValue );
+	Log.comment(2, logDiffAttainedValue );
 
     int[] literals = new int[this.problem.nObjs()];
     for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
