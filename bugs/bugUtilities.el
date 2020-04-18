@@ -103,28 +103,33 @@
 ;;   (joc-depure-moco-buggy-instance (get-buffer "*compilation*") "")
 ;;   (add-hook 'compilation-finish-functions  'joc-depure-moco-buggy-instance))
 
-(defun joc-depure-moco-starter ()
-  (interactive)
+(defun joc-depure-moco-starter (&optional arg)
+  (interactive "P")
   (setq joc-moco-depure-buffer (current-buffer))
-  (setq joc-moco-depure-code 0)
+  (setq joc-moco-depure-code 1)
   (setq joc-moco-depure-last-kill "")
   (setq joc-moco-depure-size-block-max 6)
-  (let ((confirmation t))
+  (let ((confirmation t) first-compile )
     (when compilation-finish-functions
       (setq confirmation (string-equal
 			  (read-string
 			   (format
 			    "%s might interfere. Continue?"
 			    compilation-finish-functions)) "yes")))
-    (when confirmation 
+    (when confirmation
+      (setq first-compile    (concat
+			      "java -jar"
+			      " ./target/"
+			      "org.sat4j.moco.threeAlgorithms-"
+			      "0.0.1-SNAPSHOT-jar-with-dependencies.jar"
+			      (buffer-file-name joc-moco-depure-buffer)
+			      " -alg 1"))
+
+      (when arg (when (string-equal (read-string "recompile module?" ) "y")
+		  (setq first-compile (concat  "mvn -DskipTests=true package; " first-compile) )))
+
       (add-hook 'compilation-finish-functions  'joc-depure-moco-first-run)
-      (compile (concat "cd ../../;mvn -DskipTests=true package;"
-		       "java -jar"
-		       " ./target/"
-		       "org.sat4j.moco.threeAlgorithms-"
-		       "0.0.1-SNAPSHOT-jar-with-dependencies.jar"
-		       (buffer-file-name joc-moco-depure-buffer)
-		       " -alg 1")))))
+      (compile (concat "cd ../../;" first-compile)))))
 
 (defun joc-depure-moco-comment (buffer desc)
   (shell-command "date")
