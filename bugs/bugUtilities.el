@@ -95,8 +95,7 @@
   (setq joc-moco-depure-last-kill "")
   (setq joc-moco-depure-size-block-max 6)
   (add-hook 'compilation-finish-functions  'joc-depure-moco-first-run)
-  (compile (concat  "cd ../../; java -jar ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar " (buffer-file-name joc-moco-depure-buffer)  " -alg 1") ))
-
+  (compile (concat "cd ../../;mvn -DskipTests=true package;" "java -jar ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar " (buffer-file-name joc-moco-depure-buffer)  " -alg 1")))
 
 (defun joc-depure-moco-comment (buffer desc)
   (shell-command "date")
