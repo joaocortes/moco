@@ -80,6 +80,7 @@
 
 (defun joc-depure-moco-first-run (buffer desc)
   (remove-hook 'compilation-finish-functions  'joc-depure-moco-first-run)
+  (compile (concat  "java -jar ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar " (buffer-file-name joc-moco-depure-buffer)  " -alg 1") )
   (joc-depure-moco-comment (get-buffer "*compilation*") "")
   (add-hook 'compilation-finish-functions  'joc-depure-moco-comment))
 
