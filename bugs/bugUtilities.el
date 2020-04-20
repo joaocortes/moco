@@ -9,7 +9,7 @@
     (with-current-buffer  joc-moco-test-buffer (insert (concat minimal "\n")))
     (compile
      (concat
-      "java -jar  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "
+      "cd ../;java -jar  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "
       minimal
       " -alg 1"))))
 (defun joc-moco-test-run-bugs-starter ()
@@ -97,8 +97,8 @@
   (remove-hook 'compilation-finish-functions  'joc-depure-moco-first-run)
   (add-hook 'compilation-finish-functions  'joc-depure-moco-comment)
   (compile (concat
-	    "java -jar"
-	    " ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "
+	    "java -jar "
+	    " ../../target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "
 	    (buffer-file-name joc-moco-depure-buffer)
 	    " -alg 1") ))
 
@@ -122,18 +122,16 @@
 			    compilation-finish-functions)) "yes")))
     (when confirmation
       (setq first-compile    (concat
-			      "java -jar"
-			      " ./target/"
-			      "org.sat4j.moco.threeAlgorithms-"
-			      "0.0.1-SNAPSHOT-jar-with-dependencies.jar"
+			      "java -jar "
+			      " ../../target/org.sat4j.moco.threeAlgorithms-"
+			      "0.0.1-SNAPSHOT-jar-with-dependencies.jar "
 			      (buffer-file-name joc-moco-depure-buffer)
 			      " -alg 1"))
 
       (when arg (when (string-equal (read-string "recompile module?" ) "y")
 		  (setq first-compile (concat  "mvn -DskipTests=true package; " first-compile) )))
-
       (add-hook 'compilation-finish-functions  'joc-depure-moco-first-run)
-      (compile (concat "cd ../../;" first-compile)))))
+      (compile first-compile))))
 
 (defun joc-depure-moco-comment (buffer desc)
   (shell-command "date")
