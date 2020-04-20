@@ -102,7 +102,7 @@
   (compile (concat
 	    "java -jar "
 	    " ../../target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "
-	    (buffer-file-name joc-moco-depure-buffer)
+	    (file-name-nondirectory (buffer-file-name joc-moco-depure-buffer))
 	    " -alg 1") ))
 
 ;; (defun joc-depure-moco-first-run (buffer desc)
@@ -128,7 +128,7 @@
 			      "java -jar "
 			      " ../../target/org.sat4j.moco.threeAlgorithms-"
 			      "0.0.1-SNAPSHOT-jar-with-dependencies.jar "
-			      (buffer-file-name joc-moco-depure-buffer)
+			      (file-name-nondirectory (buffer-file-name joc-moco-depure-buffer))
 			      " -alg 1"))
 
       (when arg (when (string-equal (read-string "recompile module?" ) "y")
