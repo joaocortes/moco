@@ -1,0 +1,19 @@
+*******************************************************************************
+* Problem type: SC-CP16
+* Input file: ../instances/bp-100-20-3-10-10192.dat
+* 3 objectives
+* 100 variables
+* 20 constraints
+*******************************************************************************
+* c -X[52] -X[72] -X[8] -X[44] -X[37] -X[10] -X[87] 
+* c in GenTotalEncoder.UpdateCurrentK of 1 to 82
+* c in GenTotalEncoder.UpdateCurrentK of 0 to 29
+* c in GenTotalEncoder.UpdateCurrentK of 0 to 68
+* c in GenTotalEncoder.UpdateCurrentK of 0 to 79
+
+min: +81 x7 +68 x8 +89 x9 +70 x10 +64 x33 +28 x34 +29 x35 +24 x36 +79 x37 +68 x38 +42 x39 +35 x40 +29 x44 +92 x45 +86 x46 +81 x47 +16 x48 +98 x55 +2 x58 +24 x59 +70 x60 +29 x72 +81 x97 +57 x98 +81 x99 +13 x100 ;
+min: +36 x51 +82 x52 +33 x54 +26 x87 +18 x91 +7 x92 ;
+ +1 x8 +1 x52 +1 x91 +1 x72 >= 1 ;
+ +62 x43 +1 x96 +1 x60 >= 1 ;
+ +1 x10 +1 x44 +1 x37 +1 x87 >= 1 ;
+* (add)
