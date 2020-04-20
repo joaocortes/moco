@@ -88,7 +88,10 @@
 		    (point)))
       (while (and (> (decf index) 0)  (re-search-forward " [-+][0-9]* x[0-9]*" bound  t))
 	(setq joc-moco-depure-last-kill (concat joc-moco-depure-last-kill (match-string 0)))
-	(delete-region (match-beginning 0)(match-end 0))))
+	(delete-region (match-beginning 0)(match-end 0))
+	(setq bound (save-excursion     
+		      (move-end-of-line nil)
+		      (point)))))
 
     (setq joc-moco-depure-code 0)
     (let ((compilation-ask-about-save nil)) (recompile))))
