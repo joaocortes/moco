@@ -122,7 +122,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 			this.kD = newKD;
 		    }
 		    private void cutValue(){
-			if(this.kD > upperLimit )this.setKD(upperLimit);
+			if(this.kD > upperLimit )
+			    this.setKD(upperLimit);
 			
 		    }
 		    /**
