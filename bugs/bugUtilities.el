@@ -117,10 +117,10 @@
   (setq joc-moco-depure-run-command
 	(concat
 	 "../../runsolver"
-	 "-W ",
-	 " 300 ",
-	 "-M ",
-	 " 10000000",
+	 " -W "
+	 " 300 "
+	 "-M "
+	 " 10000000 "
 	 "java -jar "
 	 " ../../target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "
 	 (file-name-nondirectory (buffer-file-name joc-moco-depure-buffer))
