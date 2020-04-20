@@ -30,6 +30,8 @@
 (defvar joc-moco-depure-size-block 1)
 (defvar joc-moco-depure-size-block-max 4)
 
+(defvar joc-moco-depure-run-command ""
+  )
 (defun joc-moco-depure-bugginess-definition (buffer)
   (with-current-buffer buffer
     (when (or
@@ -99,11 +101,7 @@
 (defun joc-depure-moco-first-run (buffer desc)
   (remove-hook 'compilation-finish-functions  'joc-depure-moco-first-run)
   (add-hook 'compilation-finish-functions  'joc-depure-moco-comment)
-  (compile (concat
-	    "java -jar "
-	    " ../../target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "
-	    (file-name-nondirectory (buffer-file-name joc-moco-depure-buffer))
-	    " -alg 1") ))
+  (compile joc-moco-depure-run-command))
 
 ;; (defun joc-depure-moco-first-run (buffer desc)
 ;;   (remove-hook 'compilation-finish-functions  'joc-depure-moco-first-run)
@@ -116,6 +114,18 @@
   (setq joc-moco-depure-last-kill nil)
   (setq joc-moco-depure-code 1)
   (setq joc-moco-depure-size-block-max 6)
+  (setq joc-moco-depure-run-command
+	(concat
+	 "../../runsolver"
+	 "-W ",
+	 " 300 ",
+	 "-M ",
+	 " 10000000",
+	 "java -jar "
+	 " ../../target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "
+	 (file-name-nondirectory (buffer-file-name joc-moco-depure-buffer))
+	 " -alg 1"))
+
   (let ((confirmation t) first-compile )
     (when compilation-finish-functions
       (setq confirmation (string-equal
@@ -124,12 +134,7 @@
 			    "%s might interfere. Continue?"
 			    compilation-finish-functions)) "yes")))
     (when confirmation
-      (setq first-compile    (concat
-			      "java -jar "
-			      " ../../target/org.sat4j.moco.threeAlgorithms-"
-			      "0.0.1-SNAPSHOT-jar-with-dependencies.jar "
-			      (file-name-nondirectory (buffer-file-name joc-moco-depure-buffer))
-			      " -alg 1"))
+      (setq first-compile joc-moco-depure-run-command)
 
       (when arg (when (string-equal (read-string "recompile module?" ) "y")
 		  (setq first-compile (concat  "mvn -DskipTests=true package; " first-compile) )))
