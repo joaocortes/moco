@@ -32,13 +32,13 @@
 
 (defun joc-moco-depure-bugginess-definition (buffer)
   (with-current-buffer buffer
-    (write-region nil nil "./lastCompile")
     (when (or
 	   (re-search-forward "exception" nil t)
 	   (re-search-forward "compilation exited" nil t))
       (goto-char (point-min))
       (when (re-search-forward "NullPointerException" nil t)
-	(setq joc-moco-depure-code 1)))))
+	(setq joc-moco-depure-code 1)
+	(write-region nil nil "./lastCompile")))))
 
 
 (defun* joc-depure-moco-buggy-instance (buffer desc)
