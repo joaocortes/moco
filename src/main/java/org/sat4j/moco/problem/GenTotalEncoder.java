@@ -498,9 +498,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 			IVecInt clause = new VecInt(new int[] {-current.id, past.id});
 			AddClause(clause);
 			past.iAmFresh = false;
-			past = current;
 			change = true;
 		    }
+		    past = current;
 	    }while(it.hasNext());
 	    current.iAmFresh = false;
 	    }
