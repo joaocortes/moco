@@ -518,9 +518,8 @@ public class UnsatSat extends algorithm {
 		newHardClause.push( - this.goalDelimeter.getY(iObj, diffAttainedValue[iObj]));
 	}
 	Log.comment(6, "Blocking clause:");
-	if(!newHardClause.isEmpty())
-	    return this.AddClause(newHardClause);
-	return false;
+	return this.AddClause(newHardClause);
+
     }
     
     public boolean blockModelX(IVecInt modelX){
