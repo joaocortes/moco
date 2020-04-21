@@ -1,4 +1,4 @@
-# run9 = runDAL1
+# run12
 import Tester
 
 testsPath = "instances/"
@@ -6,13 +6,13 @@ testsPath = "instances/"
 # centaurus
 servers = ("taurus", "spica", "sextans", "pictor", "pegasus",)
 gateway = "aquila"
-location = "./moco/finalResults/finalResultsDAL/run1"
+location = "./moco/finalResults/finalResultsDAL/run12"
 algorithms = (1,)
 encoder = "GTE"
 time = 3600
 useSandbox = 0
 
 tester = Tester.Tester(location, servers, gateway, algorithms,
-                       encoder, time, useSandbox, 3)
+                       encoder, time, useSandbox, 2)
 # tester.fillParameters()
 tester.test()
