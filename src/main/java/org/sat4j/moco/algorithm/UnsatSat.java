@@ -242,7 +242,6 @@ public class UnsatSat extends algorithm {
 	    }
 	    else{
 		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj)+1);
-		this.UpperKD[iObj] =  this.goalDelimeter.getCurrentKD(iObj) - 1;
 	    }
 	}
     }
