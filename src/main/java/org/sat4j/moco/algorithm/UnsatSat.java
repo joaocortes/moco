@@ -287,7 +287,7 @@ public class UnsatSat extends algorithm {
 	}
 
         Log.comment(5, "in done");
-	}
+    }
 
 
     /**
@@ -503,7 +503,7 @@ public class UnsatSat extends algorithm {
      * Block the region dominated by the last found model.
      */
 
-public boolean blockDominatedRegion(int[] diffAttainedValue ){
+    public boolean blockDominatedRegion(int[] diffAttainedValue ){
     
 	String logDiffAttainedValue = "diff attained value: ["+ diffAttainedValue[0];
 	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
@@ -528,12 +528,12 @@ public boolean blockDominatedRegion(int[] diffAttainedValue ){
 	return this.AddClause(notPreviousModel);
     }
 
- public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){
+    public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){
 	if(clausing)
 	    Log.clausing(this.goalDelimeter.prettyFormatVecInt(vecInt));
 	else
 	    Log.comment(6, this.goalDelimeter.prettyFormatVecInt(vecInt));
-	 return;
-     }
+	return;
+    }
 
 }
