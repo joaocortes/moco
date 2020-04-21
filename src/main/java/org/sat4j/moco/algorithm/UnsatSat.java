@@ -86,9 +86,9 @@ public class UnsatSat extends algorithm {
         }
 	this.realVariablesN = this.solver.nVars();
 	if(encodingGD)
-	this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
+	    this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
 	else
-	this.goalDelimeter = new SeqEncoder(this.problem,this.solver);
+	    this.goalDelimeter = new SeqEncoder(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
     }
 
@@ -112,7 +112,7 @@ public class UnsatSat extends algorithm {
         //     Log.comment(1, "UnsatSat.solve called on already solved instance");
         //     return;
         // }
-	       Log.comment(3, "in UnsatSat.solve");
+	Log.comment(3, "in UnsatSat.solve");
 	boolean goOn = true;
 	//for testing purposes
 	//	this.goalDelimeter.UpdateCurrentK(0, 2);
@@ -194,8 +194,8 @@ public class UnsatSat extends algorithm {
 	    logUpperLimit +=", "+this.getUpperKD(iObj) ;//+ this.problem.getObj(iObj).getMinValue())
 	//..log
 	
-	    logUpperLimit +="]";
-	    Log.comment(2, logUpperLimit );
+	logUpperLimit +="]";
+	Log.comment(2, logUpperLimit );
     }
     
     /**
@@ -221,7 +221,7 @@ public class UnsatSat extends algorithm {
 		    assumptions.push(- sign * objectiveLits.get(iX));
 	    }
 
-}
+	}
 
 	return assumptions;
     }
