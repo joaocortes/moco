@@ -238,7 +238,7 @@ public class UnsatSat extends algorithm {
 	for(int iObj = 0; iObj < objN ; ++iObj){
 	    int ithMax = this.problem.getObj(iObj).getWeightDiff();
 	    if(this.getUpperKD(iObj) == ithMax){
-		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj));
+		this.goalDelimeter.UpdateCurrentK(iObj, ithMax);
 	    }
 	    else{
 		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj)+1);
