@@ -512,15 +512,17 @@ public class UnsatSat extends algorithm {
 	
 	logDiffAttainedValue +="]";
 	Log.comment(2, logDiffAttainedValue );
-
-    int[] literals = new int[this.problem.nObjs()];
-    for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	literals[iObj] = -this.goalDelimeter.getY(iObj, diffAttainedValue[iObj]);
-    IVecInt newHardClause = new VecInt(literals);
-    Log.comment(6, "Blocking clause:");
-    return this.AddClause(newHardClause);
+	IVecInt newHardClause = new VecInt();
+	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+	    if(diffAttainedValue[iObj] != 0)
+		newHardClause.push( - this.goalDelimeter.getY(iObj, diffAttainedValue[iObj]));
+	}
+	Log.comment(6, "Blocking clause:");
+	if(!newHardClause.isEmpty())
+	    return this.AddClause(newHardClause);
+	return false;
     }
-
+    
     public boolean blockModelX(IVecInt modelX){
 	IVecInt notPreviousModel = new VecInt(new int[] {});
 	for(int iX = 0; iX < modelX.size(); ++iX)
