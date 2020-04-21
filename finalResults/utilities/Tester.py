@@ -77,10 +77,12 @@ class Tester:
         parts = len(self.shellInterface.servers)*self.part
         listFilesParts = list()
         for i in range(0, parts):
-            listFilesParts.append(listFiles[i * numberFiles//parts : (i+1)* numberFiles//parts])
+            listFilesParts.append(listFiles[i * numberFiles//parts:
+                                            (i+1) * numberFiles//parts])
+            print("part " + str(i) + ":")
             print(listFilesParts[i])
         for solverI in solverRange:
-            for i in range(0,parts):
+            for i in range(0, parts):
                 self.generateCommands(listFilesParts[i], solverI)
             self.distributeCommands()
         for process in self.runCommands():
@@ -91,7 +93,8 @@ class Tester:
         commandI = -1
         for command in self.commands:
             commandI += 1
-            serverI = math.floor(commandI * len(self.shellInterface.servers) / len(self.commands))
+            serverI = math.floor(commandI *
+                                 len(self.shellInterface.servers) / len(self.commands))
             server = self.shellInterface.servers[serverI]
             location = self.location
             command = self.shellInterface.sshServer(command, server, location)
