@@ -122,7 +122,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 			this.kD = newKD;
 		    }
 		    private void cutValue(){
-			if(this.kD > upperLimit )this.setKD(upperLimit);
+			if(this.kD > upperLimit )
+			    this.setKD(upperLimit);
 			
 		    }
 		    /**
@@ -497,9 +498,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 			IVecInt clause = new VecInt(new int[] {-current.id, past.id});
 			AddClause(clause);
 			past.iAmFresh = false;
-			past = current;
 			change = true;
 		    }
+		    past = current;
 	    }while(it.hasNext());
 	    current.iAmFresh = false;
 	    }
