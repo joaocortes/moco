@@ -67,9 +67,11 @@ public abstract class GoalDelimeter{
      }
 
    
-
     public void prettyPrintVariable(int literal){
 	Log.comment(6,prettyFormatVariable(literal));
+    }
+    public void prettyPrintVariable(int literal, int level){
+	Log.comment(level,prettyFormatVariable(literal));
     }
 
 
