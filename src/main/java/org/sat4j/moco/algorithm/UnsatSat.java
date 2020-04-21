@@ -112,18 +112,17 @@ public class UnsatSat extends algorithm {
         //     Log.comment(1, "UnsatSat.solve called on already solved instance");
         //     return;
         // }
-        Log.comment(3, "in UnsatSat.solve");
+	       Log.comment(3, "in UnsatSat.solve");
 	boolean goOn = true;
 	//for testing purposes
 	//	this.goalDelimeter.UpdateCurrentK(0, 2);
+	this.logUpperLimit();
+	this.preAssumptionsExtend();
+	currentAssumptions = this.generateUpperBoundAssumptions();
+
 	while(goOn){
 	    ///log..
-
 	    this.logUpperLimit();
-	    this.preAssumptionsExtend();
-	    this.logUpperLimit();
-	    currentAssumptions = this.generateUpperBoundAssumptions();
-
 	    //log..
 	    Log.comment(5, "Checking against assumptions:");
 	    this.goalDelimeter.prettyPrintVecInt(currentAssumptions);
@@ -175,6 +174,9 @@ public class UnsatSat extends algorithm {
 		    goOn = false;
 		}else{
 		    this.updateUpperBound(currentExplanation);
+		    this.preAssumptionsExtend();
+		    currentAssumptions = this.generateUpperBoundAssumptions();
+
 		}
 	    }
 	}
@@ -193,7 +195,7 @@ public class UnsatSat extends algorithm {
 	//..log
 	
 	    logUpperLimit +="]";
-	    Log.comment(5, logUpperLimit );
+	    Log.comment(2, logUpperLimit );
     }
     
     /**
@@ -232,14 +234,16 @@ public class UnsatSat extends algorithm {
      */
 
     private void preAssumptionsExtend(){
-	boolean change = false;
 	int objN = this.problem.nObjs();
 	for(int iObj = 0; iObj < objN ; ++iObj){
-	    change = this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj) + 1);
-	    if(change)
+	    int ithMax = this.problem.getObj(iObj).getWeightDiff();
+	    if(this.getUpperKD(iObj) == ithMax){
+		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj));
+	    }
+	    else{
+		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj)+1);
 		this.UpperKD[iObj] =  this.goalDelimeter.getCurrentKD(iObj) - 1;
-	    else
-		this.UpperKD[iObj] = this.goalDelimeter.getCurrentKD(iObj);
+	    }
 	}
     }
 
@@ -273,7 +277,11 @@ public class UnsatSat extends algorithm {
 			    if(ithObjectiveXs.get(iX) == id)
 				break;
 			if(iX < nX)
-			    this.setUpperKD(iObj, ithObjective.getSubObjCoeffs(0).get(iX).asInt());
+			    {
+				int weight = ithObjective.getSubObjCoeffs(0).get(iX).asInt();
+				weight = weight > 0? weight: -weight;
+				this.setUpperKD(iObj, weight);
+			    }
 	    	    }
 	    	}
 	    }
@@ -456,9 +464,10 @@ public class UnsatSat extends algorithm {
      */
 
     public void printModel(IVecInt model) {
-	for(int j = 0; j <model.size(); ++j)
-	    this.goalDelimeter.prettyPrintVariable(model.get(j));
-
+	for(int j = 0; j <model.size(); ++j){
+	    if(model.get(j)>0)
+		this.goalDelimeter.prettyPrintVariable(model.get(j),2);
+	}
 
 	return;
     }
@@ -503,7 +512,7 @@ public boolean blockDominatedRegion(int[] diffAttainedValue ){
 	//..log
 	
 	logDiffAttainedValue +="]";
-	Log.comment(5, logDiffAttainedValue );
+	Log.comment(2, logDiffAttainedValue );
 
     int[] literals = new int[this.problem.nObjs()];
     for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
