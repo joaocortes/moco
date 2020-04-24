@@ -4,7 +4,7 @@
 (setq plot-script-path (expand-file-name "./completeTrajectories.wls "))
 (defun joc-total-recomputation ()
   (let ((default-directory default-directory)
-	(directories '("../finalResultsSC/" "../finalResultsSPL/")))
+	(directories '(directory-files t "finalResults.*")))
     (dolist (directory directories)
       (let* ((default-directory (concat default-directory directory))
 	     runs)
