@@ -1,14 +1,14 @@
-# run17
+# run18
 import Tester
 
 testsPath = "instances/"
 # taurus spica serpens sextans pictor pegasus scutum musca octans
 # centaurus
-servers = ("taurus", "pegasus",)
+servers = ("taurus", "spica", "serpens",)
 gateway = "aquila"
-location = "./moco/finalResults/finalResultsFTP/run17"
-algorithms = (1,)
-encoder = "GTE"
+location = "./moco/finalResults/finalResultsFTP/run18"
+algorithms = (2,)
+encoder = "SWC"
 time = 3600
 useSandbox = 0
 
