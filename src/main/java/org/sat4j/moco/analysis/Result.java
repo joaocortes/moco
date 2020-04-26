@@ -66,6 +66,16 @@ public class Result {
     }
 
     /**
+     * Creates an instance of a container for the nondominated solutions found for a given MOCO instance.
+     * @param m The instance.
+     */
+    public Result(Instance m, boolean unsafe) {
+	this(m);
+	if(unsafe)
+	    this.solutions = new NondominatedPopulationUnsafe();
+}
+
+    /**
      * Extracts and stores the solution that corresponds to a model in a given PB solver.
      * @param solver The solver.
      */
@@ -84,8 +94,8 @@ public class Result {
     }
 
     /**
-     * Extracts and stores the solution that corresponds to a model in a given PB solver.
-     * @param solver The solver.
+     * Extracts and stores the solution that corresponds to xModelValues
+     * @param xModelValues, the model in (eval.x_1, ...,eval.x_n) format
      */
     public void saveThisModel(boolean[] xModelValues ) {
         Solution sol = this.problem.newSolution();
@@ -99,6 +109,38 @@ public class Result {
             Log.costs(sol.getObjectives());
             Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
         }
+    }
+
+    /**
+     * Extracts and stores the solution that corresponds to a model in a given PB solver, without checking
+     * @param solver The solver.
+     */
+    public void saveModelUnsafe(PBSolver solver) {
+        Solution sol = this.problem.newSolution();
+        for (int lit = 1; lit <= sol.getNumberOfVariables(); ++lit) {
+            Variable var = sol.getVariable(lit-1);
+            EncodingUtils.setBoolean(var, solver.modelValue(lit));
+        }
+        this.problem.evaluate(sol);
+	this.solutions.add(sol);
+	Log.costs(sol.getObjectives());
+	Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
+    }
+
+    /**
+     * Extracts and stores the solution that corresponds to xModelValues, without checking.
+     * @param  xModelValues
+     */
+    public void saveThisModelUnsafe(boolean[] xModelValues ) {
+        Solution sol = this.problem.newSolution();
+        for (int lit = 1; lit <= sol.getNumberOfVariables(); ++lit) {
+            Variable var = sol.getVariable(lit-1);
+            EncodingUtils.setBoolean(var, xModelValues[lit-1]);
+        }
+        this.problem.evaluate(sol);
+            this.solutions.add(sol);
+            Log.costs(sol.getObjectives());
+            Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
     }
     
     /**
@@ -178,13 +220,11 @@ public class Result {
      * If not, it is added to the set and now dominated solutions are discarded.
      * @param s The solution.
      */
-    public void addSolutionPublicly(Solution sol) { 
-	     this.problem.evaluate(sol);
-        if (!sol.violatesConstraints() && !isWeaklyDominated(sol, this.solutions)) {
-            this.solutions.add(sol);
-            Log.costs(sol.getObjectives());
-            Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
-        }
+    public void addSolutionUnsafe(Solution sol) { 
+	this.problem.evaluate(sol);
+	this.solutions.add(sol);
+	Log.costs(sol.getObjectives());
+	Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
 	; }
 
     /**

@@ -30,7 +30,6 @@ import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.Params;
-import org.sat4j.moco.analysis.NonCheckedResult;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.mcs.IModelListener;
 import org.sat4j.moco.mcs.MCSExtractor;
@@ -69,7 +68,7 @@ public class ParetoMCS extends algorithm {
      */
     public ParetoMCS(Instance m) {
         this.problem = m;
-        this.result = new NonCheckedResult(m);
+        this.result = new Result(m);
         try {
             this.solver = buildSolver();
         }
