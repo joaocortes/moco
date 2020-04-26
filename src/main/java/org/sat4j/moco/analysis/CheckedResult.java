@@ -32,34 +32,18 @@ import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.Clock;
 import org.sat4j.moco.util.Log;
 
-/**
- * Container class for the result of an execution of the MOCO solver.
- * Stores the nondominated solutions found by the solver and if that set of solutions is the Pareto front
- * of the MOCO instance.
- * @author Miguel Terra-Neves
- */
-public class Result extends GenericResult {
-
-
-
+public class CheckedResult extends Result {
     /**
-     * Stores the nondominated solutions found by the solver.
+     * Extracts and stores the solution that corresponds to a model in
+     * a given PB solver, without logging the costs
+     * @param solver The solver
      */
+
     protected NondominatedPopulation solutions = null;
 
-    public Result(){}
-    /**
-     * Creates an instance of a container for the nondominated solutions found for a given MOCO instance.
-     * @param m The instance.
-     */
-    public Result(Instance m) {
+    public CheckedResult(Instance m){
         this.problem = new MOCOProblem(m);
         this.solutions = new NondominatedPopulation();
-    }
 
-    /**
-     * Retrieves the nondominated solutions in the container.
-     * @return The nondominated solutions.
-     */
-    NondominatedPopulation getSolutions() { return this.solutions; }
+    }
 }

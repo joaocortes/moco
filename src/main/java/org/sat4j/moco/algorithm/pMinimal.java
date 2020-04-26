@@ -27,8 +27,8 @@ import org.sat4j.core.VecInt;
 import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
-import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.analysis.NonCheckedResult;
+import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
@@ -54,7 +54,7 @@ public class pMinimal implements MySolver {
     /**
      * Stores the result (e.g. nondominated solutions) of the execution of the Pareto-MCS algorithm.
      */
-    private Result result = null;
+    private NonCheckedResult result = null;
     
     /**
      * Stores the PB solver to be used by the Pareto-MCS algorithm.
@@ -89,7 +89,7 @@ public class pMinimal implements MySolver {
     public pMinimal(Instance m) {
 	Log.comment(5, "In pMinimal.pMinimal");
 	this.problem = m;
-	this.result = new Result(m);
+	this.result = new NonCheckedResult(m);
 	try {
             this.solver = buildSolver();
         }
@@ -122,16 +122,19 @@ public class pMinimal implements MySolver {
 	this.solver.check(assumptions);
 	sat = this.solver.isSat();
 	while(sat){
-	    while(sat){		
+	    do{		
 		currentYModel = this.getYModel();
 		currentXModelValues = this.getXModelValues();
 		this.setAssumptions(assumptions, currentXModelValues);
 		this.solver.check(assumptions);
 		sat = this.solver.isSat();
-	    }
+	    }while(sat);
+	    System.out.println("Model:");
+	    for(boolean value: currentXModelValues)
+		System.out.println(value);
 	    this.result.saveThisModel(currentXModelValues);
 	    this.seqEncoder.prettyPrintVecInt(currentYModel);
-
+	    
 	    assumptions = new VecInt(new int[] {});
 	    this.solver.check();
 	    sat = this.solver.isSat();
@@ -146,6 +149,7 @@ public class pMinimal implements MySolver {
 	int[] upperLimits = this.findUpperLimits(XModelValues);
 	// int literal, id;
 	// int currentKD, currentIObj;
+	assumptions.clear();
 	for(int iObj = 0, n = this.problem.nObjs(); iObj < n; ++iObj)
 	    assumptions.push(-this.seqEncoder.getSTop(iObj, upperLimits[iObj]));
 	// for(int i = 0, n = yModel.size(); i < n ; ++i){

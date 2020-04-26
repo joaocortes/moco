@@ -30,7 +30,7 @@ import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.Params;
-import org.sat4j.moco.analysis.NonCheckedResult;
+import org.sat4j.moco.analysis.CheckedResult;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.mcs.IModelListener;
 import org.sat4j.moco.mcs.MCSExtractor;
@@ -65,7 +65,7 @@ public class ParetoMCS implements MySolver {
     /**
      * Stores the result (e.g. nondominated solutions) of the execution of the Pareto-MCS algorithm.
      */
-    private NonCheckedResult result = null;
+    private Result result = null;
     
     /**
      * Stores the PB solver to be used by the Pareto-MCS algorithm.
@@ -83,7 +83,7 @@ public class ParetoMCS implements MySolver {
      */
     public ParetoMCS(Instance m) {
         this.problem = m;
-        this.result = new NonCheckedResult(m);
+        this.result = new CheckedResult(m);
         try {
             this.solver = buildSolver();
         }
