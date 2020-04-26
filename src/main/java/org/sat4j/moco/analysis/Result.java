@@ -66,6 +66,16 @@ public class Result {
     }
 
     /**
+     * Creates an instance of a container for the nondominated solutions found for a given MOCO instance.
+     * @param m The instance.
+     */
+    public Result(Instance m, boolean unsafe) {
+	this(m);
+	if(unsafe)
+	    this.solutions = new NondominatedPopulationUnsafe();
+}
+
+    /**
      * Extracts and stores the solution that corresponds to a model in a given PB solver.
      * @param solver The solver.
      */
