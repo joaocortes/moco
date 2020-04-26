@@ -189,13 +189,11 @@ public class Result {
      * If not, it is added to the set and now dominated solutions are discarded.
      * @param s The solution.
      */
-    public void addSolutionPublicly(Solution sol) { 
-	     this.problem.evaluate(sol);
-        if (!sol.violatesConstraints() && !isWeaklyDominated(sol, this.solutions)) {
-            this.solutions.add(sol);
-            Log.costs(sol.getObjectives());
-            Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
-        }
+    public void addSolutionUnsafe(Solution sol) { 
+	this.problem.evaluate(sol);
+	this.solutions.add(sol);
+	Log.costs(sol.getObjectives());
+	Log.comment(1, ":elapsed " + Clock.instance().getElapsed() + " :front-size " + nSolutions());
 	; }
 
     /**
