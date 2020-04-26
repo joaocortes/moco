@@ -60,4 +60,5 @@ abstract public class  algorithm{
 	Log.comment("constraints: " + this.solver.getClausesN());
 	Log.comment("Variables: " + this.solver.nVars());
     }
+    abstract public void printFlightRecordParticular();
 }
