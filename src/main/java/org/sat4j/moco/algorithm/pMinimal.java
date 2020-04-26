@@ -129,7 +129,7 @@ public class pMinimal implements MySolver {
 		this.solver.check(assumptions);
 		sat = this.solver.isSat();
 	    }
-	    this.result.saveThisModel(currentXModelValues);
+	    this.result.saveThisModelUnsafe(currentXModelValues);
 	    this.seqEncoder.prettyPrintVecInt(currentYModel);
 
 	    assumptions = new VecInt(new int[] {});
