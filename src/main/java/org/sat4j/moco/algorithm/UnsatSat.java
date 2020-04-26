@@ -90,7 +90,7 @@ public class UnsatSat implements MySolver {
     public UnsatSat(Instance m) {
         Log.comment(3, "in UnsatSat constructor");
 	this.problem = m;
-	this.result = new Result(m);
+	this.result = new Result(m, true);
 	try {
             this.solver = buildSolver();
         }
