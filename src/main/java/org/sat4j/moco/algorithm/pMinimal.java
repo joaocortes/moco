@@ -89,7 +89,7 @@ public class pMinimal implements MySolver {
     public pMinimal(Instance m) {
 	Log.comment(5, "In pMinimal.pMinimal");
 	this.problem = m;
-	this.result = new Result(m);
+	this.result = new Result(m, true);
 	try {
             this.solver = buildSolver();
         }
