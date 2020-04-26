@@ -76,7 +76,7 @@ public class UnsatSat extends algorithm {
     public UnsatSat(Instance m, boolean encodingGD) {
         Log.comment(3, "in UnsatSat constructor");
 	this.problem = m;
-	this.result = new Result(m);
+	this.result = new Result(m, true);
 	try {
             this.solver = buildSolver();
         }
@@ -162,7 +162,7 @@ public class UnsatSat extends algorithm {
 		//     goOn = false;
 	    }else{
 		for(int i = 0; i < subResult.nSolutions(); ++i)
-		    this.result.addSolutionPublicly(subResult.getSolution(i));
+		    this.result.addSolutionUnsafe(subResult.getSolution(i));
 		subResult = new SubResult(this.problem);
 		currentExplanation = solver.unsatExplanation();
 		//log..

@@ -28,7 +28,6 @@ import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
-import org.sat4j.moco.analysis.NonCheckedResult;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
@@ -76,7 +75,7 @@ public class pMinimal extends algorithm {
     public pMinimal(Instance m, boolean encodingGD) {
 	Log.comment(5, "In pMinimal.pMinimal");
 	this.problem = m;
-	this.result = new Result(m);
+	this.result = new Result(m, true);
 	try {
             this.solver = buildSolver();
         }
@@ -119,9 +118,8 @@ public class pMinimal extends algorithm {
 		this.solver.check(assumptions);
 		sat = this.solver.isSat();
 	    }
-	    this.result.saveThisModel(currentXModelValues);
+	    this.result.saveThisModelUnsafe(currentXModelValues);
 	    sat = this.blockDominatedRegion(currentXModelValues);
-	    this.goalDelimeter.prettyPrintVecInt(currentYModel);
 	    if(sat){
 		assumptions = new VecInt(new int[] {});
 		this.solver.check();
