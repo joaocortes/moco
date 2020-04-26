@@ -177,7 +177,7 @@ public class UnsatSat implements MySolver {
 		//     goOn = false;
 	    }else{
 		for(int i = 0; i < subResult.nSolutions(); ++i)
-		    this.result.addSolutionPublicly(subResult.getSolution(i));
+		    this.result.addSolutionUnsafe(subResult.getSolution(i));
 		subResult = new SubResult(this.problem);
 		currentExplanation  = solver.unsatExplanation();
 		//log..
