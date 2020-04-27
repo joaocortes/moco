@@ -4,7 +4,7 @@ import Tester
 testsPath = "instances/"
 # taurus spica serpens sextans pictor pegasus scutum musca octans
 # centaurus
-servers = ("spica", "serpens", "sextans",)
+servers = ("taurus",)
 gateway = "aquila"
 location = "./moco/finalResults/finalResultsFTP/run24"
 algorithms = (0,)
