@@ -1,0 +1,64 @@
+* Goal: giant table
+  :PROPERTIES:
+  :alpha:    [2020-04-27 Mon 11:42]
+  :END:
+
+#+begin_src awk :dir  "../output" :in-file "solver*"
+  BEGIN {FS="[[:blank:]\.\_/-]|"}
+  /\ts/ {$0 = FILENAME " " $0;$1=$1; 
+      # print $0;
+      myline = " " $10 " " $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8 " " $9 " " $14"."$15 " " $17 " "; }
+  /\tn/ { myline=myline " " $4;
+      print myline;
+      myline=""}  
+#+end_src
+
+#+RESULTS:
+| 0       | f1 | DataDisplay | 0 | order4 | S2  | txt | 1 |       99 |    . | 53 |    |
+| EDCBAir | f1 | DataDisplay | 0 | order4 | seq | A   | 2 |        1 | 89.0 | s  | 55 |
+| irabcde | f1 | DataDisplay | 0 | order4 | seq | A   | 2 |        1 | 74.0 | s  | 54 |
+| irEDCBA | f1 | DataDisplay | 0 | order4 | seq | A   | 2 |        1 | 76.0 | s  | 53 |
+| abcdeir | f1 | DataDisplay | 0 | order4 | seq | A   | 2 |        2 | 80.0 | s  | 55 |
+| EDCBAir | f1 | DataDisplay | 0 | order4 | seq | A   | 2 |        2 |  2.0 | s  | 63 |
+| irabcde | f1 | DataDisplay | 0 | order4 | seq | A   | 2 |        2 | 67.0 | s  | 46 |
+| irEDCBA | f1 | DataDisplay | 0 | order4 | seq | A   | 2 |        2 | 94.0 | s  | 53 |
+| abcdeir | f1 | DataDisplay | 0 | order4 | seq | A   | 2 | combined | 22.0 | s  | 57 |
+| EDCBAir | f1 | DataDisplay | 0 | order4 | seq | A   | 2 | combined | 92.0 | s  |  7 |
+| irabcde | f1 | DataDisplay | 0 | order4 | seq | A   | 2 | combined | 17.0 | s  | 61 |
+| irEDCBA | f1 | DataDisplay | 0 | order4 | seq | A   | 2 | combined | 10.0 | s  | 62 |
+| abcdeir | f1 | DataDisplay | 0 | order4 | seq | A   | 3 |        1 | 46.0 | s  | 34 |
+| EDCBAir | f1 | DataDisplay | 0 | order4 | seq | A   | 3 |        1 | 23.0 | s  | 59 |
+| irabcde | f1 | DataDisplay | 0 | order4 | seq | A   | 3 |        1 | 23.0 | s  | 36 |
+| irEDCBA | f1 | DataDisplay | 0 | order4 | seq | A   | 3 |        1 | 58.0 | s  | 47 |
+| abcdeir | f1 | DataDisplay | 0 | order4 | seq | A   | 3 |        2 | 36.0 | s  | 39 |
+| EDCBAir | f1 | DataDisplay | 0 | order4 | seq | A   | 3 |        2 | 29.0 | s  | 62 |
+| irabcde | f1 | DataDisplay | 0 | order4 | seq | A   | 3 |        2 | 11.0 | s  | 41 |
+| irEDCBA | f1 | DataDisplay | 0 | order4 | seq | A   | 3 |        2 | 97.0 | s  | 42 |
+| abcdeir | f1 | DataDisplay | 0 | order4 | seq | A   | 3 | combined | 23.0 | s  | 44 |
+| EDCBAir | f1 | DataDisplay | 0 | order4 | seq | A   | 3 | combined | 23.0 | s  | 40 |
+| irabcde | f1 | DataDisplay | 0 | order4 | seq | A   | 3 | combined | 97.0 | s  | 43 |
+| irEDCBA | f1 | DataDisplay | 0 | order4 | seq | A   | 3 | combined | 86.0 | s  | 65 |
+| abcdeir | f1 | DataDisplay | 0 | order4 | seq | B   | 2 |        1 | 87.1 | s  | 55 |
+| EDCBAir | f1 | DataDisplay | 0 | order4 | seq | B   | 2 |        1 | 82.1 | s  | 84 |
+| irabcde | f1 | DataDisplay | 0 | order4 | seq | B   | 2 |        1 |  4.0 | s  | 86 |
+| irEDCBA | f1 | DataDisplay | 0 | order4 | seq | B   | 2 |        1 | 30.1 | s  | 22 |
+| abcdeir | f1 | DataDisplay | 0 | order4 | seq | B   | 2 |        2 | 44.0 | s  | 88 |
+| EDCBAir | f1 | DataDisplay | 0 | order4 | seq | B   | 2 |        2 | 52.1 | s  | 81 |
+| irabcde | f1 | DataDisplay | 0 | order4 | seq | B   | 2 |        2 | 70.0 | s  | 78 |
+| irEDCBA | f1 | DataDisplay | 0 | order4 | seq | B   | 2 |        2 | 91.0 | s  |  5 |
+| abcdeir | f1 | DataDisplay | 0 | order4 | seq | B   | 2 | combined | 68.1 | s  | 11 |
+| EDCBAir | f1 | DataDisplay | 0 | order4 | seq | B   | 2 | combined | 36.1 | s  | 75 |
+| irabcde | f1 | DataDisplay | 0 | order4 | seq | B   | 2 | combined | 83.0 | s  |  6 |
+| irEDCBA | f1 | DataDisplay | 0 | order4 | seq | B   | 2 | combined | 48.1 | s  | 37 |
+| abcdeir | f1 | DataDisplay | 0 | order4 | seq | B   | 3 |        1 |  0.0 | s  | 55 |
+| EDCBAir | f1 | DataDisplay | 0 | order4 | seq | B   | 3 |        1 | 29.0 | s  | 63 |
+| irabcde | f1 | DataDisplay | 0 | order4 | seq | B   | 3 |        1 | 67.0 | s  |  3 |
+| irEDCBA | f1 | DataDisplay | 0 | order4 | seq | B   | 3 |        1 | 69.0 | s  |  7 |
+| abcdeir | f1 | DataDisplay | 0 | order4 | seq | B   | 3 |        2 | 21.0 | s  | 65 |
+| EDCBAir | f1 | DataDisplay | 0 | order4 | seq | B   | 3 |        2 | 73.0 | s  | 10 |
+| irabcde | f1 | DataDisplay | 0 | order4 | seq | B   | 3 |        2 | 22.0 | s  | 65 |
+| irEDCBA | f1 | DataDisplay | 0 | order4 | seq | B   | 3 |        2 |  0.0 | s  | 61 |
+| abcdeir | f1 | DataDisplay | 0 | order4 | seq | B   | 3 | combined | 16.0 | s  | 65 |
+| EDCBAir | f1 | DataDisplay | 0 | order4 | seq | B   | 3 | combined | 28.0 | s  | 66 |
+| irabcde | f1 | DataDisplay | 0 | order4 | seq | B   | 3 | combined | 29.0 | s  | 68 |
+| irEDCBA | f1 | DataDisplay | 0 | order4 | seq | B   | 3 | combined | 56.0 | s  | 73 |
