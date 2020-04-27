@@ -74,7 +74,6 @@
 
 
 
-
 ** sample b
    :PROPERTIES:
    :alpha:    [2020-04-27 Mon 20:28]
@@ -88,3 +87,11 @@
        print myline;
        myline=""}  
  #+end_src
+
+** Useful scripts
+   :PROPERTIES:
+   :alpha:    [2020-04-27 Mon 22:05]
+   :END:
+   #+begin_src bash :eval no
+for file in $(find  sampleB/ -name '*tableGenerator.sh' -follow);do pushd $(dirname $file); source $(basename $file) ;popd;done
+   #+end_src
