@@ -11,66 +11,73 @@
  | solver | f1 | DataDisplay | 0 | order4 | seq | A   |    2 |  1 | EDCBAir | S0 | txt |        3908 | 67 | 3600 |  9 | s  | SATISFIABLE |
  | solver | f1 | DataDisplay | 0 | order4 | seq | A   |    2 |  1 | irabcde | S0 | txt |        3735 | 66 | 3600 |  2 | s  | SATISFIABLE |
 
-
+This is the most effective filter so far. I think it is a global one.
  #+begin_src awk :dir ./sampleA/run21/output :in-file "solver*" 
-   BEGIN {FS="[[:blank:]\.\_/-]|"}
-   /\ts/ {$0 = FILENAME " " $0;$1=$1; 
-       # print $0;
-       myline = " " $11 " " $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8 " " $9 " " $10 " " $14"."$15 " " $18 " "; }
-   /\tn/ { myline=myline " " $4;
+   BEGIN {FS="[[:blank:]_/]|"}
+   /\ts/ {
+       myline =$NF;
+   }
+   /\tn/ { 
+       myline=myline " " $NF " "$(NF-2);
+       FS = "[\.\_-]";
+       $0 = FILENAME;
+       $1=$1;
+       if(NF>=1){
+	   for(i=2;i<NF-1;i++) myline= myline " " $i;}
        print myline;
-       myline=""}  
+       FS="[[:blank:]_/]|";
+   }  
  #+end_src
 
  #+RESULTS:
- | 4  | f1 | DataDisplay | 0 | order4 | S0  | txt | 3904 |       93 | 3600    |      . | 7           |    |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    2 |        1 | EDCBAir |  67.36 | SATISFIABLE | 13 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    2 |        1 | irabcde |  66.36 | SATISFIABLE |  4 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    2 |        1 | irEDCBA |  22.36 | SATISFIABLE |  4 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    2 |        2 | abcdeir |  36.36 | SATISFIABLE |  4 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    2 |        2 | EDCBAir |  39.36 | SATISFIABLE |  4 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    2 |        2 | irabcde |  48.36 | SATISFIABLE |  4 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    2 |        2 | irEDCBA |  75.36 | SATISFIABLE | 10 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    2 | combined | abcdeir |  72.36 | SATISFIABLE | 10 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    2 | combined | EDCBAir |  27.36 | SATISFIABLE |  7 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    2 | combined | irabcde |  96.36 | SATISFIABLE |  4 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    2 | combined | irEDCBA |  99.36 | SATISFIABLE |  6 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    3 |        1 | abcdeir |   94.1 | OPTIMUM     |  5 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    3 |        1 | EDCBAir |   21.0 | OPTIMUM     |  2 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    3 |        1 | irabcde |   37.0 | OPTIMUM     | 97 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    3 |        1 | irEDCBA |   58.0 | OPTIMUM     | 60 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    3 |        2 | abcdeir |   26.0 | OPTIMUM     | 68 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    3 |        2 | EDCBAir |    2.0 | OPTIMUM     | 96 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    3 |        2 | irabcde |    3.0 | OPTIMUM     | 54 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    3 |        2 | irEDCBA |   90.0 | OPTIMUM     | 56 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    3 | combined | abcdeir |   51.1 | OPTIMUM     | 15 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    3 | combined | EDCBAir |   24.1 | OPTIMUM     |  6 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    3 | combined | irabcde |   14.0 | OPTIMUM     | 67 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | A   |    3 | combined | irEDCBA |   34.1 | OPTIMUM     | 16 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    2 |        1 | abcdeir |  43.36 | SATISFIABLE | 11 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    2 |        1 | EDCBAir |  50.36 | SATISFIABLE |  4 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    2 |        1 | irabcde |  49.36 | SATISFIABLE |  4 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    2 |        1 | irEDCBA |  43.36 | SATISFIABLE |  5 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    2 |        2 | abcdeir |  22.36 | SATISFIABLE |  4 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    2 |        2 | EDCBAir |   7.36 | SATISFIABLE |  9 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    2 |        2 | irabcde |  24.36 | SATISFIABLE | 11 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    2 |        2 | irEDCBA |  17.36 | SATISFIABLE |  6 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    2 | combined | abcdeir |  84.36 | SATISFIABLE |  4 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    2 | combined | EDCBAir |  79.36 | SATISFIABLE | 14 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    2 | combined | irabcde |  19.36 | SATISFIABLE |  4 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    2 | combined | irEDCBA |  35.36 | SATISFIABLE |  5 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    3 |        1 | abcdeir | 65.131 | OPTIMUM     | 44 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    3 |        1 | EDCBAir | 99.102 | OPTIMUM     | 68 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    3 |        1 | irabcde | 38.138 | OPTIMUM     | 19 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    3 |        1 | irEDCBA | 20.164 | OPTIMUM     | 30 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    3 |        2 | abcdeir |  22.53 | OPTIMUM     | 64 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    3 |        2 | EDCBAir |   64.9 | OPTIMUM     | 93 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    3 |        2 | irabcde |  42.56 | OPTIMUM     | 19 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    3 |        2 | irEDCBA |  18.86 | OPTIMUM     | 84 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    3 | combined | abcdeir | 94.149 | OPTIMUM     | 42 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    3 | combined | EDCBAir | 89.179 | OPTIMUM     | 79 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    3 | combined | irabcde |  13.17 | OPTIMUM     | 23 |
- | S0 | f1 | DataDisplay | 0 | order4 | seq | B   |    3 | combined | irEDCBA | 64.116 | OPTIMUM     | 35 |
+ | SATISFIABLE | 14 | 3600.07 | f1 | DataDisplay | 0 | order4 |     |   |   |          |         |
+ | SATISFIABLE | 14 | 3600.13 | f1 | DataDisplay | 0 | order4 | seq | A | 2 |        1 | EDCBAir |
+ | SATISFIABLE | 15 | 3600.04 | f1 | DataDisplay | 0 | order4 | seq | A | 2 |        1 | irabcde |
+ | SATISFIABLE | 15 | 3600.04 | f1 | DataDisplay | 0 | order4 | seq | A | 2 |        1 | irEDCBA |
+ | SATISFIABLE | 16 | 3600.04 | f1 | DataDisplay | 0 | order4 | seq | A | 2 |        2 | abcdeir |
+ | SATISFIABLE | 16 | 3600.04 | f1 | DataDisplay | 0 | order4 | seq | A | 2 |        2 | EDCBAir |
+ | SATISFIABLE | 16 | 3600.04 | f1 | DataDisplay | 0 | order4 | seq | A | 2 |        2 | irabcde |
+ | SATISFIABLE | 15 |  3600.1 | f1 | DataDisplay | 0 | order4 | seq | A | 2 |        2 | irEDCBA |
+ | SATISFIABLE | 22 |  3600.1 | f1 | DataDisplay | 0 | order4 | seq | A | 2 | combined | abcdeir |
+ | SATISFIABLE | 23 | 3600.07 | f1 | DataDisplay | 0 | order4 | seq | A | 2 | combined | EDCBAir |
+ | SATISFIABLE | 23 | 3600.04 | f1 | DataDisplay | 0 | order4 | seq | A | 2 | combined | irabcde |
+ | SATISFIABLE | 22 | 3600.06 | f1 | DataDisplay | 0 | order4 | seq | A | 2 | combined | irEDCBA |
+ | OPTIMUM     | 10 |    1.05 | f1 | DataDisplay | 0 | order4 | seq | A | 3 |        1 | abcdeir |
+ | OPTIMUM     | 10 |    1.02 | f1 | DataDisplay | 0 | order4 | seq | A | 3 |        1 | EDCBAir |
+ | OPTIMUM     | 10 |    0.97 | f1 | DataDisplay | 0 | order4 | seq | A | 3 |        1 | irabcde |
+ | OPTIMUM     | 10 |     0.6 | f1 | DataDisplay | 0 | order4 | seq | A | 3 |        1 | irEDCBA |
+ | OPTIMUM     | 12 |    0.68 | f1 | DataDisplay | 0 | order4 | seq | A | 3 |        2 | abcdeir |
+ | OPTIMUM     | 12 |    0.96 | f1 | DataDisplay | 0 | order4 | seq | A | 3 |        2 | EDCBAir |
+ | OPTIMUM     | 12 |    0.54 | f1 | DataDisplay | 0 | order4 | seq | A | 3 |        2 | irabcde |
+ | OPTIMUM     | 12 |    0.56 | f1 | DataDisplay | 0 | order4 | seq | A | 3 |        2 | irEDCBA |
+ | OPTIMUM     | 13 |    1.15 | f1 | DataDisplay | 0 | order4 | seq | A | 3 | combined | abcdeir |
+ | OPTIMUM     | 13 |    1.06 | f1 | DataDisplay | 0 | order4 | seq | A | 3 | combined | EDCBAir |
+ | OPTIMUM     | 13 |    0.67 | f1 | DataDisplay | 0 | order4 | seq | A | 3 | combined | irabcde |
+ | OPTIMUM     | 13 |    1.16 | f1 | DataDisplay | 0 | order4 | seq | A | 3 | combined | irEDCBA |
+ | SATISFIABLE | 28 | 3600.11 | f1 | DataDisplay | 0 | order4 | seq | B | 2 |        1 | abcdeir |
+ | SATISFIABLE | 29 | 3600.04 | f1 | DataDisplay | 0 | order4 | seq | B | 2 |        1 | EDCBAir |
+ | SATISFIABLE | 30 | 3600.04 | f1 | DataDisplay | 0 | order4 | seq | B | 2 |        1 | irabcde |
+ | SATISFIABLE | 37 | 3600.05 | f1 | DataDisplay | 0 | order4 | seq | B | 2 |        1 | irEDCBA |
+ | SATISFIABLE | 27 | 3600.04 | f1 | DataDisplay | 0 | order4 | seq | B | 2 |        2 | abcdeir |
+ | SATISFIABLE | 27 | 3600.09 | f1 | DataDisplay | 0 | order4 | seq | B | 2 |        2 | EDCBAir |
+ | SATISFIABLE | 27 | 3600.11 | f1 | DataDisplay | 0 | order4 | seq | B | 2 |        2 | irabcde |
+ | SATISFIABLE | 27 | 3600.06 | f1 | DataDisplay | 0 | order4 | seq | B | 2 |        2 | irEDCBA |
+ | SATISFIABLE | 28 | 3600.04 | f1 | DataDisplay | 0 | order4 | seq | B | 2 | combined | abcdeir |
+ | SATISFIABLE | 28 | 3600.14 | f1 | DataDisplay | 0 | order4 | seq | B | 2 | combined | EDCBAir |
+ | SATISFIABLE | 28 | 3600.04 | f1 | DataDisplay | 0 | order4 | seq | B | 2 | combined | irabcde |
+ | SATISFIABLE | 43 | 3600.05 | f1 | DataDisplay | 0 | order4 | seq | B | 2 | combined | irEDCBA |
+ | OPTIMUM     | 70 |  131.44 | f1 | DataDisplay | 0 | order4 | seq | B | 3 |        1 | abcdeir |
+ | OPTIMUM     | 70 |  102.68 | f1 | DataDisplay | 0 | order4 | seq | B | 3 |        1 | EDCBAir |
+ | OPTIMUM     | 70 |  138.19 | f1 | DataDisplay | 0 | order4 | seq | B | 3 |        1 | irabcde |
+ | OPTIMUM     | 70 |   164.3 | f1 | DataDisplay | 0 | order4 | seq | B | 3 |        1 | irEDCBA |
+ | OPTIMUM     | 79 |   53.64 | f1 | DataDisplay | 0 | order4 | seq | B | 3 |        2 | abcdeir |
+ | OPTIMUM     | 79 |   90.93 | f1 | DataDisplay | 0 | order4 | seq | B | 3 |        2 | EDCBAir |
+ | OPTIMUM     | 79 |   56.19 | f1 | DataDisplay | 0 | order4 | seq | B | 3 |        2 | irabcde |
+ | OPTIMUM     | 79 |   86.84 | f1 | DataDisplay | 0 | order4 | seq | B | 3 |        2 | irEDCBA |
+ | OPTIMUM     | 85 |  149.42 | f1 | DataDisplay | 0 | order4 | seq | B | 3 | combined | abcdeir |
+ | OPTIMUM     | 85 |  179.79 | f1 | DataDisplay | 0 | order4 | seq | B | 3 | combined | EDCBAir |
+ | OPTIMUM     | 85 |  170.23 | f1 | DataDisplay | 0 | order4 | seq | B | 3 | combined | irabcde |
+ | OPTIMUM     | 85 |  116.35 | f1 | DataDisplay | 0 | order4 | seq | B | 3 | combined | irEDCBA |
 
 
 
