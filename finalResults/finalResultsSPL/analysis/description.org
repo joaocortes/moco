@@ -1,0 +1,23 @@
+* Goal: giant table
+  :PROPERTIES:
+  :alpha: [2020-04-28 Tue 09:25]
+  :END:
+
+
+
+ #+begin_src awk :dir ../run16/output :in-file "solver*" 
+   BEGIN {FS="[[:blank:]._/-]|"}
+   /\ts/ {$0 = FILENAME " " $0;$1=$1; 
+       # print $0;
+       myline = " " $8 " " $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $12"."$13 " " $NF " "; }
+   /\tn/ {
+       myline=myline " " $NF;
+       print $0;
+       print myline;
+       myline=""}  
+ #+end_src
+
+ #+RESULTS:
+
+
+
