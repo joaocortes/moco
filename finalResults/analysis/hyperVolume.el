@@ -1,5 +1,14 @@
+(defvar joc-moco-analyzer-buffer nil )
+(defvar joc-moco-analyzer-jar
+  (concat "java -cp"
+	  " ./target/org.sat4j.moco.threeAlgorithms"
+	  "-0.0.1-SNAPSHOT-jar-with-dependencies.jar"
+	  " org.sat4j.moco.analysis.Analyzer "))
+
+(setq joc-moco-analyzer-buffer "*joc moco analyzer output*" )
+(defvar joc-moco-root-folder "/home/joaooneillcortes/OneDrive/Documents/escola/doutoramento/office/tools/moco/")
 (defun joc-clean-solver-output (file)
-  (setq file-clean (concat (file-name-sans-extension (expand-file-name file)) "_clean.txt"))
+  (setq file-clean (concat (file-name-sans-extension (expand-file-name file)) "_clean.out"))
   (save-excursion
     (with-temp-file file-clean
       (print (current-buffer))
@@ -26,7 +35,7 @@
 	(string-match "\\(bp.*SC\\)" solver-file)
 	(setq instance-file (match-string 1 solver-file))
 	(setq instance-file (concat "../finalResultsSC/run1/instances/" instance-file ".pbmo"))  
-	(setq solver-file-clean (concat (file-name-sans-extension (expand-file-name solver-file)) "_clean.txt"))
+	(setq solver-file-clean (concat (file-name-sans-extension (expand-file-name solver-file)) "_clean.out"))
 	(shell-command (concat " java -cp ../../target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.sat4j.moco.analysis.Analyzer " instance-file " 1:" solver-file-clean " > /tmp/hyperVolume.txt"))
 	(condition-case	 nil
 	    (progn (with-temp-buffer
@@ -42,33 +51,97 @@
 	  (forward-line))
 	))))
 
+
+
 (defun joc-moco-calculate-hypervolumes () 
   (interactive)
   (with-temp-file "./hyperVolume.txt"
     (dolist (output     (cl-remove-if-not #'file-directory-p (directory-files-recursively "../" "output$" t)))
       (dolist (solver-file (cl-remove-if (lambda (string) (string-match "clean" string))
 					 (directory-files output t "^solver*")))
-	;; (joc-clean-solver-output solver-file)
+	(joc-clean-solver-output solver-file)
 	(message (concat "working on " solver-file ))
 	(let (instance-file solver-file-clean hyper-volume)
 	  (string-match "solver_\\(.*\\)_S[0-2]\\\.txt" solver-file)
 	  (setq instance-file (match-string 1 solver-file))
 	  (setq instance-file (concat output "/../instances/" instance-file ".pbmo"))  
-	  (setq solver-file-clean (concat (file-name-sans-extension (expand-file-name solver-file)) "_clean.txt"))
-	  ;; (shell-command (concat " java -cp ../../target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.sat4j.moco.analysis.Analyzer " instance-file " 1:" solver-file-clean " > /tmp/hyperVolume.txt"))
+	  (setq solver-file-clean (concat (file-name-sans-extension (expand-file-name solver-file)) "_clean.out"))
+	  (shell-command (concat " java -cp ../../target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.sat4j.moco.analysis.Analyzer " instance-file " 1:" solver-file-clean " > /tmp/hyperVolume.txt"))
 
 	  (delete-file solver-file-clean)
 	  (message "completede the computation!")
-	  ;; (condition-case	 nil
-	  ;;     (progn (with-temp-buffer
-	  ;; 	       (insert-file-contents "/tmp/hyperVolume.txt")
-	  ;; 	       (re-search-forward ":values \\[\\(.*\\)\\] :min")
-	  ;; 	       (setq hyper-volume (match-string 1))))
-	  ;;   (error (setq hyper-volume "0.0") nil))
-	  ;; (let (id alg)
-	  ;;   (string-match "\\([0-9]*\\)-SC_S\\(.\\)" solver-file)
-	  ;;   (setq id (match-string 1 solver-file))
-	  ;;   (setq alg (match-string 2 solver-file))
-	  ;;   (insert (concat id ", " alg  ", " hyper-volume "\n"))
-	  ;;   (forward-line))
+	  (condition-case nil
+	      (progn (with-temp-buffer
+	  	       (insert-file-contents "/tmp/hyperVolume.txt")
+	  	       (re-search-forward ":values \\[\\(.*\\)\\] :min")
+	  	       (setq hyper-volume (match-string 1))))
+	    (error (setq hyper-volume "0.0") nil))
+	  (let (id alg)
+	    (string-match "\\([0-9]*\\)-SC_S\\(.\\)" solver-file)
+	    (setq id (match-string 1 solver-file))
+	    (setq alg (match-string 2 solver-file))
+	    (insert (concat id ", " alg  ", " hyper-volume "\n"))
+	    (forward-line))
 	  )))))
+
+(defun joc-moco-analyzer-hyperVolume (&optional solver-file)
+  "Calculate the hypervolume from the current buffer "
+  (interactive)
+  (let ((solver-file (unless solver-file (buffer-file-name (current-buffer))))
+	clean-file instance-file id )
+    (setq id (joc-moco-get-id-from-output solver-file))
+    (setq clean-file (concat (file-name-sans-extension solver-file) "_clean.out"))
+    (delete-file clean-file)
+    (joc-clean-solver-output solver-file)
+    (unless (file-exists-p (expand-file-name clean-file)) (error "clean file %s not created" clean-file ))
+    (setq instance-file (joc-moco-get-instance-from-output solver-file))
+    (let ((default-directory joc-moco-root-folder)
+	  (shell-command-dont-erase-buffer t) command)
+      (setq command
+	    (concat
+	     joc-moco-analyzer-jar
+	     instance-file 
+	     " 1:" clean-file ))
+      (with-current-buffer (get-buffer-create joc-moco-analyzer-buffer)
+	(print command))
+      (async-shell-command
+       command
+       (get-buffer-create joc-moco-analyzer-buffer)))))
+
+
+(defun joc-moco-get-id-from-output (&optional solver-file)
+  "get the name of the instance from the name of one output file"
+  (interactive)
+  (unless solver-file (setq solver-file (buffer-file-name (current-buffer))))
+  (condition-case nil (let (id)
+			(unless (string-match "solver_\\(.*\\)_S[0-9]\\.txt"
+					      solver-file)
+			  (error  "%s  cannot be used like this " solver-file ))
+			(setq id  (match-string 1 solver-file)))
+    (error nil)))
+
+
+
+
+(defun joc-moco-get-instance-from-output (&optional solver-file)
+  "get the name of the instance from the name of one output file"
+  (interactive)
+  (unless solver-file (setq solver-file (buffer-file-name (current-buffer))))
+  (condition-case nil 
+      (let (instance-file id)
+	(unless (setq id (joc-moco-get-id-from-output solver-file))
+	  (error  "%s  cannot be used like this " solver-file ))
+	(setq instance-file (expand-file-name (concat
+					       (file-name-directory solver-file)
+					       "../instances/"
+					       id ".pbmo")))
+	(unless (joc-moco-file-exists-p instance-file)
+	  (error "Instance %s does not exist" instance-file) )
+	instance-file)
+    (error nil)))
+
+
+(defun joc-moco-file-exists-p (file)
+  (if (file-exists-p file)
+      t nil))
+(joc-moco-get-id-from-output "/home/joaooneillcortes/OneDrive/Documents/escola/doutoramento/office/tools/moco/finalResults/finalResultsDAL/run12/output/solver_f1-DataDisplay_0_order4.seq-A-2-1-EDCBAir_S1.txt")
