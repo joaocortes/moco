@@ -281,6 +281,7 @@ public class UnsatSat extends algorithm {
      */
     private void updateUpperBound(IVecInt currentExplanation){
         Log.comment(5, "in UnsatSat.updateUpperBound");
+	IVecInt currentExplanationX = new VecInt(new int[] {});
 	for(int i = 0; i < currentExplanation.size(); ++i){
 	    int ithLiteral = currentExplanation.get(i);
 	    int id = this.solver.idFromLiteral(ithLiteral);
@@ -292,6 +293,7 @@ public class UnsatSat extends algorithm {
 
 	    }else{
 	        if(this.goalDelimeter.isX(id)){
+		    currentExplanationX.push(id);
 	    	    int objN = this.problem.nObjs();
 	    	    for(int iObj = 0; iObj < objN ; ++iObj){
 			Objective ithObjective = this.problem.getObj(iObj);
