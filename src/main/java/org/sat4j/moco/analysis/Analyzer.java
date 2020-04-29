@@ -21,6 +21,7 @@
  *   Miguel Terra-Neves, Ines Lynce and Vasco Manquinho - MOCO solver
  *******************************************************************************/
 package org.sat4j.moco.analysis;
+import org.moeaframework.core.Settings;
 
 import java.io.File;
 import java.io.FileReader;
@@ -81,6 +82,10 @@ public class Analyzer {
     public Analyzer(Instance m) {
         this.moco = m;
         this.problem = new MOCOProblem(m);
+	Settings.PROPERTIES.setString("org.moeaframework.configuration.EPS", "0.0E-1");
+	System.out.println("EPS is:");
+	System.out.println(Settings.PROPERTIES.getDouble("org.moeaframework.configuration.EPS", 0));
+
     }
     
     /**
