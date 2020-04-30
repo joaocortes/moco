@@ -82,9 +82,9 @@ public class Analyzer {
     public Analyzer(Instance m) {
         this.moco = m;
         this.problem = new MOCOProblem(m);
-	Settings.PROPERTIES.setString("org.moeaframework.configuration.EPS", "0.0E-1");
-	System.out.println("EPS is:");
-	System.out.println(Settings.PROPERTIES.getDouble("org.moeaframework.configuration.EPS", 0));
+	// Settings.PROPERTIES.setString("org.moeaframework.configuration.EPS", "0.0E-1");
+	// System.out.println("EPS is:");
+	// System.out.println(Settings.PROPERTIES.getDouble("org.moeaframework.configuration.EPS", 0));
 
     }
     
@@ -185,10 +185,10 @@ public class Analyzer {
         analyzer = analyzer.withProblem(this.problem)
                            .withReferencePoint(rs.getRefPoint().getObjectives())
                            .withIdealPoint(rs.getIdealPoint().getObjectives())
-                           .includeInvertedGenerationalDistance()
+                           // .includeInvertedGenerationalDistance()
                            .includeHypervolume()
-                           .showIndividualValues()
-                           .showStatisticalSignificance()
+                           // .showIndividualValues()
+                           // .showStatisticalSignificance()
                            .withReferenceSet(r_file);
         addDataset(analyzer);
         Log.comment(3, "out Analyzer.buildMOEAAnalyzer");
