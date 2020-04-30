@@ -136,9 +136,9 @@ class ReferenceSet {
      */
     public Solution getRefPoint() {
         Solution s = getNadirPoint();
-        double r = 1.0 + 1.0 / Math.max(1.0, getMergedSet().size()-1);
         for (int i = 0; i < s.getNumberOfObjectives(); ++i) {
-            s.setObjective(i, s.getObjective(i) * r);
+	    s.setObjective(i, problem.maxPoint().get(i)); // using the max point as the reference point.
+	    //I don't understand what Miguel did.
         }
         return s;
     }
