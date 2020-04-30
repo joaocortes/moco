@@ -162,7 +162,7 @@ class ReferenceSet {
             if (single || nadir.getObjective(i) - ideal.getObjective(i) < Settings.EPS) {
                 Solution s = nadir.copy();
                 s.setObjective(i, ref.getObjective(i));
-                s.setObjective(i, s.getObjective(i) - 2 * Settings.EPS);    
+                s.setObjective(i, s.getObjective(i) - Settings.EPS);    
                 p.add(s);                                                   
 		Log.comment(1, "Artificial point, objective " + i);
             }
