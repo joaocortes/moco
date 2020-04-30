@@ -1,11 +1,13 @@
 (defvar joc-moco-analyzer-buffer nil )
+(setq joc-moco-analyzer-buffer "*joc moco analyzer output*" )
+
 (defvar joc-moco-analyzer-jar
   (concat "java -cp"
 	  " ./target/org.sat4j.moco.threeAlgorithms"
 	  "-0.0.1-SNAPSHOT-jar-with-dependencies.jar"
 	  " org.sat4j.moco.analysis.Analyzer "))
-
-(setq joc-moco-analyzer-buffer "*joc moco analyzer output*" )
+(defvar joc-moco-analyzer-verbosity 3)
+(setq joc-moco-analyzer-verbosity 3 )
 (defvar joc-moco-root-folder "/home/joaooneillcortes/OneDrive/Documents/escola/doutoramento/office/tools/moco/")
 (defun joc-clean-solver-output (file)
   (setq file-clean (concat (file-name-sans-extension (expand-file-name file)) "_clean.out"))
@@ -52,34 +54,18 @@
 	))))
 
 
-
 (defun joc-moco-calculate-hypervolumes () 
   (interactive)
   (with-temp-file "./hyperVolume.txt"
     (dolist (output     (cl-remove-if-not #'file-directory-p (directory-files-recursively "../" "output$" t)))
       (dolist (solver-file (cl-remove-if (lambda (string) (string-match "clean" string))
 					 (directory-files output t "^solver*")))
-	(joc-clean-solver-output solver-file)
-	(message (concat "working on " solver-file ))
-	(let (instance-file solver-file-clean hyper-volume)
-	  (string-match "solver_\\(.*\\)_S[0-2]\\\.txt" solver-file)
-	  (setq instance-file (match-string 1 solver-file))
-	  (setq instance-file (concat output "/../instances/" instance-file ".pbmo"))  
-	  (setq solver-file-clean (concat (file-name-sans-extension (expand-file-name solver-file)) "_clean.out"))
-	  (shell-command (concat " java -cp ../../target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.sat4j.moco.analysis.Analyzer " instance-file " 1:" solver-file-clean " > /tmp/hyperVolume.txt"))
-
-	  (delete-file solver-file-clean)
-	  (message "completede the computation!")
-	  (condition-case nil
-	      (progn (with-temp-buffer
-	  	       (insert-file-contents "/tmp/hyperVolume.txt")
-	  	       (re-search-forward ":values \\[\\(.*\\)\\] :min")
-	  	       (setq hyper-volume (match-string 1))))
-	    (error (setq hyper-volume "0.0") nil))
+	(let (solver-file-clean hyper-volume)
+	  (setq hyper-volume (joc-moco-analyzer-hyperVolume solver-file))
 	  (let (id alg)
-	    (string-match "\\([0-9]*\\)-SC_S\\(.\\)" solver-file)
-	    (setq id (match-string 1 solver-file))
+	    (string-match "-SC_S\\(.\\)" solver-file)
 	    (setq alg (match-string 2 solver-file))
+	  (setq id (joc-moco-get-id-from-output solver-file))
 	    (insert (concat id ", " alg  ", " hyper-volume "\n"))
 	    (forward-line))
 	  )))))
@@ -87,26 +73,38 @@
 (defun joc-moco-analyzer-hyperVolume (&optional solver-file)
   "Calculate the hypervolume from the current buffer "
   (interactive)
-  (let ((solver-file (unless solver-file (buffer-file-name (current-buffer))))
-	clean-file instance-file id )
+  (unless solver-file (setq solver-file (buffer-file-name (current-buffer))))
+  (let (clean-file instance-file id )
+    (with-current-buffer (get-buffer-create joc-moco-analyzer-buffer) (insert (concat "working on " solver-file "\n" )))
     (setq id (joc-moco-get-id-from-output solver-file))
     (setq clean-file (concat (file-name-sans-extension solver-file) "_clean.out"))
     (delete-file clean-file)
     (joc-clean-solver-output solver-file)
     (unless (file-exists-p (expand-file-name clean-file)) (error "clean file %s not created" clean-file ))
     (setq instance-file (joc-moco-get-instance-from-output solver-file))
-    (let ((default-directory joc-moco-root-folder)
-	  (shell-command-dont-erase-buffer t) command)
+    (let (hyper-volume (default-directory joc-moco-root-folder)
+		       (shell-command-dont-erase-buffer t) command)
       (setq command
 	    (concat
 	     joc-moco-analyzer-jar
 	     instance-file 
-	     " 1:" clean-file ))
+	     " 1:" clean-file
+	     " -v "
+	     (number-to-string joc-moco-analyzer-verbosity)
+	     ))
       (with-current-buffer (get-buffer-create joc-moco-analyzer-buffer)
-	(print command))
-      (async-shell-command
+	(insert command)
+	(insert "\n"))
+      (shell-command
        command
-       (get-buffer-create joc-moco-analyzer-buffer)))))
+       (get-buffer-create joc-moco-analyzer-buffer))
+      (condition-case nil
+	  (with-current-buffer joc-moco-analyzer-buffer  
+	    (save-excursion (re-search-backward ":values \\[\\(.*\\)\\] :min"))
+	    (setq hyper-volume (match-string 1)))
+	(error (setq hyper-volume "-1.0") nil))
+      (message hyper-volume)
+      )))
 
 
 (defun joc-moco-get-id-from-output (&optional solver-file)
