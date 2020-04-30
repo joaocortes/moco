@@ -22,6 +22,9 @@
  *******************************************************************************/
 package org.sat4j.moco.pb;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.util.Real;
@@ -40,6 +43,12 @@ public class PBExpr {
     private ReadOnlyVecInt lits = null;
     
     /**
+     * Map ids to weights.
+     */
+    private Map<Integer, Real> IdsToWeight = null;
+    
+
+    /**
      * Stores the PB expression's coefficients.
      */
     private ReadOnlyVec<Real> coeffs = null;
@@ -52,7 +61,10 @@ public class PBExpr {
     public PBExpr(IVecInt lits, IVec<Real> coeffs) {
         this.lits = new ReadOnlyVecInt(lits);
         this.coeffs = new ReadOnlyVec<Real>(coeffs);
+	this.IdsToWeight = new HashMap<Integer, Real>();
         assert(this.lits.size() == this.coeffs.size());
+	for(int iLit = 0;  iLit < lits.size();iLit++)
+	    this.IdsToWeight.put(this.lits.get(iLit), this.coeffs.get(iLit));
     }
     
     /**
@@ -116,6 +128,16 @@ public class PBExpr {
         }
         return val;
     }
+
+
+    /**
+     * Get the weight given the literal id
+     */
+    public Real weightFromId(int id){
+	Real weight = this.IdsToWeight.get(id);
+	return weight;
+}
+
     
     /**
      * Auxiliary interface for strategy objects used by {@link PBExpr#checkAllTerms(ITermChecker)} to check
