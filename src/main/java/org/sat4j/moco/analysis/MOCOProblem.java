@@ -25,10 +25,12 @@ package org.sat4j.moco.analysis;
 import org.moeaframework.core.Solution;
 import org.moeaframework.core.variable.EncodingUtils;
 import org.moeaframework.problem.AbstractProblem;
+import org.sat4j.core.Vec;
 import org.sat4j.moco.pb.PBConstr;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.util.Real;
+import org.sat4j.specs.IVecInt;
 
 /**
  * Implementation of the MOCO problem as an {@link AbstractProblem} in the MOEA framework.
@@ -63,6 +65,27 @@ class MOCOProblem extends AbstractProblem {
             a[j] = EncodingUtils.getBoolean(sol.getVariable(j));
         }
         return a;
+    }
+
+    /**
+     *returns the maximal point
+     */
+
+    public Vec<Integer> maxPoint(){
+	Vec<Integer> result = new Vec<Integer>();
+	for(int i = 0, n = this.instance.nObjs();i<n;i++)
+	    result.push(this.instance.getObj(i).getMaxValue());
+	return result;			
+    }
+    /**
+     *returns the minimal point
+     */
+
+    public Vec<Integer> minPoint(){
+	Vec<Integer> result = new Vec<Integer>();
+	for(int i = 0, n = this.instance.nObjs();i<n;i++)
+	    result.push(this.instance.getObj(i).getMinValue());
+	return result;			
     }
 
     /**
