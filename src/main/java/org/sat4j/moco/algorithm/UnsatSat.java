@@ -61,6 +61,13 @@ public class UnsatSat extends algorithm {
      * Last explored differential k, for each objective function.
      */
     private int[] UpperKD = null;
+
+    /**
+     * Exhausted upperKD. At any time, all that solutions that
+     * dominate this point were found already.
+     */
+    private int[] exhaustedUpperKD = null;
+
     /**
      *  Last id of the real, non auxiliary,  variables
      */
@@ -175,12 +182,13 @@ public class UnsatSat extends algorithm {
 		    this.goalDelimeter.prettyPrintVecInt(currentExplanation);
 		    Log.comment(5, "//");
 		
-		    if(currentExplanation.size() == 0){
-			goOn = false;
-		    }else{
-			this.updateUpperBound(currentExplanation);
-			this.preAssumptionsExtend();
-			currentAssumptions = this.generateUpperBoundAssumptions();
+		if(currentExplanation.size() == 0){
+		    goOn = false;
+		}else{
+		    this.exhaustedUpperKD = this.UpperKD;
+		    this.updateUpperBound(currentExplanation);
+		    this.preAssumptionsExtend();
+		    currentAssumptions = this.generateUpperBoundAssumptions();
 
 		    }}
 	    }
@@ -542,4 +550,13 @@ public class UnsatSat extends algorithm {
 	return;
     }
 
+    public void printFlightRecordParticular(){
+	String logUpperLimit = "completed upper limit: ["+this.exhaustedUpperKD[0];
+	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
+	    logUpperLimit +=", "+ (this.exhaustedUpperKD[0] - this.problem.getObj(iObj).getMinValue());
+	
+	logUpperLimit +="]";
+	System.out.print("f " + logUpperLimit);
+
+    }
 }

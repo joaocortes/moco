@@ -385,5 +385,8 @@ public class pMinimal extends algorithm {
 	return;
     }
     
+    public void printFlightRecordParticular(){
+
+    }
 }
 
