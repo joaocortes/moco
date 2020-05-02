@@ -136,9 +136,9 @@ class ReferenceSet {
      */
     public Solution getRefPoint() {
         Solution s = getNadirPoint();
-        double r = 1.0 + 1.0 / Math.max(1.0, getMergedSet().size()-1);
         for (int i = 0; i < s.getNumberOfObjectives(); ++i) {
-            s.setObjective(i, s.getObjective(i) * r);
+	    s.setObjective(i, problem.maxPoint().get(i)); // using the max point as the reference point.
+	    //I don't understand what Miguel did.
         }
         return s;
     }
@@ -155,14 +155,16 @@ class ReferenceSet {
         // range is empty; in order to avoid such scenarios, new solutions are injected based on the reference
         // and ideal points
         boolean single = p.size() == 1;
+	Log.comment( "single  " + p.size());
         Solution nadir = getNadirPoint(), ideal = getIdealPoint(), ref = getRefPoint();
+	// make sure all objectives attain a finite range inside the population. Add artificial points, if that is not the case.
         for (int i = 0; i < this.problem.getNumberOfObjectives(); ++i) {
             if (single || nadir.getObjective(i) - ideal.getObjective(i) < Settings.EPS) {
-                Solution s = ideal.copy();
+                Solution s = nadir.copy();
                 s.setObjective(i, ref.getObjective(i));
-                int j = (i + 1) % this.problem.getNumberOfObjectives();     // this is required when the reference
-                s.setObjective(j, s.getObjective(j) - Settings.EPS);        // set has a single solution, or the new
-                p.add(s);                                                   // point would be dominated by it
+                s.setObjective(i, s.getObjective(i) - Settings.EPS);    
+                p.add(s);                                                   
+		Log.comment(1, "Artificial point, objective " + i);
             }
         }
         Log.comment(1, ":ref-set-size " + p.size());

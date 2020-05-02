@@ -95,11 +95,7 @@ public abstract class Objective {
 
 	int total = 0;
 	for (int i = 0; i < this.nSubObj() ; ++i){
-	    ReadOnlyVec<Real> ithCoeffs =  this.getSubObjCoeffs(i);
-	    int ithCoeffsN = ithCoeffs.size();
-	    for(int  k = 0; k < ithCoeffsN;++k)
-		if(ithCoeffs.get(k).isPositive())
-		    total += ithCoeffs.get(k).asInt();
+	    total+=this.getSubObj(i).getMaxSum().asIntExact();
 	}
 	return total;
     }
@@ -107,24 +103,18 @@ public abstract class Objective {
 
     /**
      * get the Min Weight of an objective
-     *@param o The objective
      */
     public int getMinValue(){
 
 	int total = 0;
 	for (int i = 0; i < this.nSubObj() ; ++i){
-	    ReadOnlyVec<Real> ithCoeffs =  this.getSubObjCoeffs(i);
-	    int ithCoeffsN = ithCoeffs.size();
-	    for(int  k = 0; k < ithCoeffsN;++k)
-		if(ithCoeffs.get(k).isNegative())
-		    total += ithCoeffs.get(k).asInt();
+	    total += this.getSubObj(i).getMinSum().asIntExact();
 	}
 	return total;
     }
 
     /**
-     * get the Min Weight of an objective
-     *@param o The objective
+     * get the range of the objective
      */
     public int getWeightDiff(){
 	int result = this.getMaxValue() - this.getMinValue();
@@ -135,7 +125,6 @@ public abstract class Objective {
 
     /**
      * get the greatest of all coeffs
-     *@param o The objective
      */
     public int getMaxAbsCoeff(){
 

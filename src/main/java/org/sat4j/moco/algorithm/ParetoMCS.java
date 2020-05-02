@@ -376,4 +376,8 @@ public class ParetoMCS extends algorithm {
      *TODO
      */
     public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){};
+
+    public void printFlightRecordParticular(){};
+
+
 }
