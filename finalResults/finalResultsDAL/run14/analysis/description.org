@@ -1,0 +1,17 @@
+* Goal: giant table
+  :PROPERTIES:
+  :alpha:    [2020-04-27 Mon 11:42]
+  :END:
+
+#+begin_src awk :dir  (expand-file-name "../output") :in-file "solver*"
+  BEGIN {FS="[[:blank:]\.\_/-]|"}
+  /\ts/ {$0 = FILENAME " " $0;$1=$1; 
+      # print $0;
+      myline = " " $10 " " $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8 " " $9 " " $14"."$15 " " $17 " "; }
+  /\tn/ { myline=myline " " $4;
+      print myline;
+      myline=""}  
+#+end_src
+
+#+RESULTS:
+: S2 f49 DC TotalLoss seq A 3 2 irEDCBA 3148.71 OPTIMUM  12

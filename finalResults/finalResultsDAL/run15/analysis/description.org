@@ -1,0 +1,75 @@
+* Goal: giant table
+  :PROPERTIES:
+  :alpha:    [2020-04-27 Mon 11:42]
+  :END:
+Create all tables. For now, do one for each run, just with an ID, the
+time, the final state and the nunmber of elements in the Pareto front
+aproximation.
+
+#+begin_src emacs-lisp
+  (let ((default-directory (expand-file-name "../../finalResultsDAL/run15")))
+    (rgrep "s" "solver*" default-directory )
+	)
+#+end_src
+
+I should use awk to find extract the desired information from each
+file. Or maybe use flex.
+
+#+begin_src awk :dir  "../output" :in-file "solver*"
+  BEGIN {FS="[[:blank:]\.\_/-]|"}
+  /\ts/ {$0 = FILENAME " " $0;$1=$1; 
+      # print $0;
+      myline = " " $10 " " $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8 " " $9 " " $14"."$15 " " $17 " "; }
+  /\tn/ { myline=myline " " $4;
+      print myline;
+      myline=""}  
+#+end_src
+
+#+RESULTS:
+| S1 | f49 | DC | TotalLoss | seq | A | 2 |        1 | EDCBAir | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | A | 2 |        1 | irabcde | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | A | 2 |        1 | irEDCBA | 3600.03 | UNKNOWN |  3 |
+| S1 | f49 | DC | TotalLoss | seq | A | 2 |        2 | abcdeir | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | A | 2 |        2 | EDCBAir | 3600.03 | UNKNOWN |  3 |
+| S1 | f49 | DC | TotalLoss | seq | A | 2 |        2 | irabcde | 3600.03 | UNKNOWN |  3 |
+| S1 | f49 | DC | TotalLoss | seq | A | 2 |        2 | irEDCBA | 3600.03 | UNKNOWN |  3 |
+| S1 | f49 | DC | TotalLoss | seq | A | 2 | combined | EDCBAir | 3600.03 | UNKNOWN |  3 |
+| S1 | f49 | DC | TotalLoss | seq | A | 2 | combined | irabcde | 3600.03 | UNKNOWN |  3 |
+| S1 | f49 | DC | TotalLoss | seq | A | 2 | combined | irEDCBA | 3600.03 | UNKNOWN |  3 |
+| S1 | f49 | DC | TotalLoss | seq | A | 3 |        1 | abcdeir |  397.48 | OPTIMUM | 97 |
+| S1 | f49 | DC | TotalLoss | seq | A | 3 |        1 | EDCBAir |  639.81 | OPTIMUM | 45 |
+| S1 | f49 | DC | TotalLoss | seq | A | 3 |        1 | irabcde |  322.52 | OPTIMUM | 18 |
+| S1 | f49 | DC | TotalLoss | seq | A | 3 |        1 | irEDCBA |  506.97 | OPTIMUM | 44 |
+| S1 | f49 | DC | TotalLoss | seq | A | 3 |        2 | abcdeir |  782.45 | OPTIMUM | 47 |
+| S1 | f49 | DC | TotalLoss | seq | A | 3 |        2 | EDCBAir |  407.63 | OPTIMUM | 27 |
+| S1 | f49 | DC | TotalLoss | seq | A | 3 |        2 | irabcde | 1053.68 | OPTIMUM | 45 |
+| S1 | f49 | DC | TotalLoss | seq | A | 3 |        2 | irEDCBA |  378.12 | OPTIMUM | 94 |
+| S1 | f49 | DC | TotalLoss | seq | A | 3 | combined | abcdeir |  861.98 | OPTIMUM |  7 |
+| S1 | f49 | DC | TotalLoss | seq | A | 3 | combined | EDCBAir |  151.24 | OPTIMUM | 64 |
+| S1 | f49 | DC | TotalLoss | seq | A | 3 | combined | irabcde |  906.98 | OPTIMUM | 10 |
+| S1 | f49 | DC | TotalLoss | seq | A | 3 | combined | irEDCBA |  281.93 | OPTIMUM | 28 |
+| S1 | f49 | DC | TotalLoss | seq | B | 2 |        1 | abcdeir | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | B | 2 |        1 | EDCBAir | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | B | 2 |        1 | irabcde | 3600.04 | UNKNOWN |  4 |
+| S1 | f49 | DC | TotalLoss | seq | B | 2 |        1 | irEDCBA | 3600.04 | UNKNOWN |  4 |
+| S1 | f49 | DC | TotalLoss | seq | B | 2 |        2 | abcdeir | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | B | 2 |        2 | EDCBAir | 3600.04 | UNKNOWN |  4 |
+| S1 | f49 | DC | TotalLoss | seq | B | 2 |        2 | irabcde | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | B | 2 |        2 | irEDCBA | 3600.03 | UNKNOWN |  3 |
+| S1 | f49 | DC | TotalLoss | seq | B | 2 | combined | EDCBAir | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | B | 2 | combined | irabcde | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | B | 2 | combined | irEDCBA | 3600.04 | UNKNOWN |  4 |
+| S1 | f49 | DC | TotalLoss | seq | B | 3 |        1 | abcdeir | 3600.03 | UNKNOWN |  3 |
+| S1 | f49 | DC | TotalLoss | seq | B | 3 |        1 | EDCBAir | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | B | 3 |        1 | irabcde |  3600.0 | UNKNOWN |  0 |
+| S1 | f49 | DC | TotalLoss | seq | B | 3 |        1 | irEDCBA |  3600.0 | UNKNOWN |  0 |
+| S1 | f49 | DC | TotalLoss | seq | B | 3 |        2 | abcdeir | 3600.04 | UNKNOWN |  4 |
+| S1 | f49 | DC | TotalLoss | seq | B | 3 |        2 | irabcde | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | B | 3 |        2 | irEDCBA | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | B | 3 | combined | abcdeir | 3600.02 | UNKNOWN |  2 |
+| S1 | f49 | DC | TotalLoss | seq | B | 3 | combined | EDCBAir | 3600.04 | UNKNOWN |  4 |
+| S1 | f49 | DC | TotalLoss | seq | B | 3 | combined | irabcde | 3600.04 | UNKNOWN |  4 |
+| S1 | f49 | DC | TotalLoss | seq | B | 3 | combined | irEDCBA | 3600.03 | UNKNOWN |  3 |
+
+
+

@@ -1,0 +1,82 @@
+* Goal: giant table
+  :PROPERTIES:
+  :alpha:    [2020-04-27 Mon 11:42]
+  :END:
+** part 1 
+   :PROPERTIES:
+   :alpha:    [2020-04-27 Mon 20:28]
+   :END:
+
+ |               1 | 2   |  3 | 4 | 5 | 6 | 7 | 8  | 9   |   10 |        11 |   12 | 13 | 14 |      15 |
+ |          solver | ftp | 10 | 2 | 7 | 3 | 1 | S1 | txt | 4142 |        30 | 3600 |  2 |  s | UNKNOWN |
+ | 4142.30/3600.02 | n   |  0 |   |   |   |   |    |     |      |           |      |    |    |         |
+ |              30 | ftp | 10 | 2 | 7 | 3 | 1 | S1 | txt | 4142 | s.UNKNOWN |    2 |    |    |         |
+
+ #+begin_src awk :dir ./part1/run17/output :in-file "solver*" 
+   BEGIN {FS="[[:blank:]._/-]|"}
+   /\ts/ {$0 = FILENAME " " $0;$1=$1; 
+       # print $0;
+       myline = " " $8 " " $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $12"."$13 " " $NF " "; }
+   /\tn/ {
+       myline=myline " " $NF;
+       print $0;
+       print myline;
+       myline=""}  
+ #+end_src
+
+ #+RESULTS:
+ | 4142.30/3600.02 | n   |  0 |   |   |   |   |         |               |   |
+ | S1              | ftp | 10 | 2 | 7 | 3 | 1 | 3600.02 | UNKNOWN       | 0 |
+ | 27.41/11.31     | n   |  0 |   |   |   |   |         |               |   |
+ | S1              | ftp | 10 | 2 | 7 | 3 | 2 |   11.31 | UNSATISFIABLE | 0 |
+ | 4240.84/3600.04 | n   |  0 |   |   |   |   |         |               |   |
+ | S1              | ftp | 10 | 2 | 7 | 3 | 3 | 3600.04 | UNKNOWN       | 0 |
+ | 23.99/9.70      | n   |  0 |   |   |   |   |         |               |   |
+ | S1              | ftp | 10 | 2 | 7 | 3 | 4 |     9.7 | UNSATISFIABLE | 0 |
+ | 4629.50/3600.02 | n   |  0 |   |   |   |   |         |               |   |
+ | S1              | ftp | 10 | 2 | 7 | 3 | 5 | 3600.02 | UNKNOWN       | 0 |
+ | 4096.83/3600.01 | n   |  0 |   |   |   |   |         |               |   |
+ | S1              | ftp | 10 | 2 | 7 | 4 | 1 | 3600.01 | UNKNOWN       | 0 |
+ | 4423.73/3600.03 | n   |  0 |   |   |   |   |         |               |   |
+ | S1              | ftp | 10 | 2 | 7 | 4 | 2 | 3600.03 | UNKNOWN       | 0 |
+ | 4077.51/3600.01 | n   |  0 |   |   |   |   |         |               |   |
+ | S1              | ftp | 10 | 2 | 7 | 4 | 3 | 3600.01 | UNKNOWN       | 0 |
+ | 4200.36/3600.12 | n   |  0 |   |   |   |   |         |               |   |
+ | S1              | ftp | 10 | 2 | 7 | 4 | 4 | 3600.12 | UNKNOWN       | 0 |
+ | 4443.48/3600.03 | n   |  0 |   |   |   |   |         |               |   |
+ | S1              | ftp | 10 | 2 | 7 | 4 | 5 | 3600.03 | UNKNOWN       | 0 |
+
+** part 2
+   :PROPERTIES:
+   :alpha:    [2020-04-27 Mon 22:06]
+   :END:
+ #+begin_src awk :dir ./part2/run23/output :in-file "solver*" 
+   BEGIN {FS="[[:blank:]._/-]|"}
+   /\ts/ {$0 = FILENAME " " $0;$1=$1; 
+       # print $0;
+       myline = " " $8 " " $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $12"."$13 " " $NF " "; }
+   /\tn/ {
+       myline=myline " " $NF;
+       # print $0;
+       print myline;
+       myline=""}  
+ #+end_src
+
+ #+RESULTS:
+ | 9580.89/3600.54  | n   |  6 |   |   |   |   |         |               |   |
+ | S0               | ftp | 10 | 2 | 7 | 3 | 1 | 3600.04 | SATISFIABLE   | 6 |
+ | 7.68/1.47        | n   |  0 |   |   |   |   |         |               |   |
+ | S0               | ftp | 10 | 2 | 7 | 3 | 2 |    1.47 | UNSATISFIABLE | 0 |
+ | 11289.33/3600.52 | n   |  6 |   |   |   |   |         |               |   |
+ | S0               | ftp | 10 | 2 | 7 | 3 | 3 | 3600.03 | SATISFIABLE   | 6 |
+ | 7.92/1.41        | n   |  0 |   |   |   |   |         |               |   |
+ | S0               | ftp | 10 | 2 | 7 | 3 | 4 |    1.41 | UNSATISFIABLE | 0 |
+ | 10567.05/3600.72 | n   |  6 |   |   |   |   |         |               |   |
+ | S0               | ftp | 10 | 2 | 7 | 4 | 1 | 3600.06 | SATISFIABLE   | 6 |
+ | 12075.66/3600.51 | n   |  7 |   |   |   |   |         |               |   |
+ | S0               | ftp | 10 | 2 | 7 | 4 | 2 | 3600.02 | SATISFIABLE   | 7 |
+ | 10730.09/3600.37 | n   |  3 |   |   |   |   |         |               |   |
+ | S0               | ftp | 10 | 2 | 7 | 4 | 3 | 3600.03 | SATISFIABLE   | 3 |
+ | 12583.37/3600.33 | n   |  7 |   |   |   |   |         |               |   |
+ | S0               | ftp | 10 | 2 | 7 | 4 | 5 | 3600.03 | SATISFIABLE   | 7 |
+
