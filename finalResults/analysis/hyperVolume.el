@@ -104,29 +104,33 @@
        (get-buffer-create joc-moco-analyzer-buffer))
       (condition-case nil
 	  (with-current-buffer joc-moco-analyzer-buffer  
-	    (save-excursion (re-search-backward ":values \\[\\(.*\\)\\] :min"))
-	    (setq hyper-volume (match-string 1)))
+	    (goto-char (point-max))
+	    (re-search-backward ":values \\[\\(.*\\)\\] :min")
+	    (setq hyper-volume (match-string 1 ))
+	    (goto-char (point-max)))
 	(error (setq hyper-volume "-1.0") nil))
-      (message hyper-volume)
+      hyper-volume
       )))
 
 
 (defun joc-moco-get-id-from-output (&optional solver-file)
-  "get the name of the instance from the name of one output file"
+  "get the id from the name of solver output, solver-file"
   (interactive)
   (unless solver-file (setq solver-file (buffer-file-name (current-buffer))))
-  (condition-case nil (let (id)
-			(unless (string-match "solver_\\(.*\\)_S[0-9]\\.txt"
-					      solver-file)
-			  (error  "%s  cannot be used like this " solver-file ))
-			(setq id  (match-string 1 solver-file)))
-    (error nil)))
+   (let (id)
+     (condition-case nil			
+	 (if (string-match "solver_\\(.*\\)_S[0-9]\\.txt" solver-file)
+	     (setq id  (match-string 1 solver-file))
+	   (error  "%s  cannot be used like this " solver-file ))
+       (error nil))
+     id))
 
 
 
 
 (defun joc-moco-get-instance-from-output (&optional solver-file)
-  "get the name of the instance from the name of one output file"
+  "get the name of the instance from the name of solver output,
+solver-file"
   (interactive)
   (unless solver-file (setq solver-file (buffer-file-name (current-buffer))))
   (condition-case nil 
