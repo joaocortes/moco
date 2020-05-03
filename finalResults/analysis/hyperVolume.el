@@ -29,21 +29,6 @@
 	(next-line)
 	(move-end-of-line nil))
       ))
-(defun joc-moco-calculate-hypervolumes () 
-  (interactive)
-  (with-temp-file "./hyperVolume.txt"
-    (dolist (output     (cl-remove-if-not #'file-directory-p (directory-files-recursively "../" "output$" t)))
-      (dolist (solver-file (cl-remove-if (lambda (string) (string-match "clean" string))
-					 (directory-files output t "^solver*")))
-	(let (solver-file-clean hyper-volume)
-	  (setq hyper-volume (joc-moco-analyzer-hyperVolume solver-file))
-	  (let (id alg)
-	    (string-match "-SC_S\\(.\\)" solver-file)
-	    (setq alg (match-string 2 solver-file))
-	  (setq id (joc-moco-get-id-from-output solver-file))
-	    (insert (concat id ", " alg  ", " hyper-volume "\n"))
-	    (forward-line))
-	  )))))
   (file-exists-p file-clean))
 
 (defun joc-moco-analyzer-hyperVolume (&optional solver-file)
@@ -83,6 +68,22 @@
       hyper-volume
       )))
 
+(defun joc-moco-calculate-hypervolumes ()
+"calculate all hypervolumes of valid files reachable from the
+parent directory "
+  (interactive)
+  (dolist (output     (cl-remove-if-not #'file-directory-p (directory-files-recursively "../" "output$" t)))
+    (append-to-file (concat output "\n") nil "./hyperVolume.txt" )
+    (dolist (solver-file (cl-remove-if (lambda (string) (string-match "clean" string))
+				       (directory-files output t "^solver*")))
+    (let (solver-file-clean hyper-volume)
+	(setq hyper-volume (joc-moco-analyzer-hyperVolume solver-file))
+	(let (id alg)
+	  (string-match "\_S\\([0-2]+\\)\\.[a-z]*" solver-file)
+	  (setq alg (match-string 1 solver-file))
+	  (setq id (joc-moco-get-id-from-output solver-file))
+	  (append-to-file  (concat alg ", " hyper-volume  ", " id "\n") nil  "./hyperVolume.txt"))
+	))))
 
 (defun joc-moco-get-id-from-output (&optional solver-file)
   "get the id from the name of solver output, solver-file"
