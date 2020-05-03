@@ -137,13 +137,9 @@
 					       (file-name-directory solver-file)
 					       "../instances/"
 					       id ".pbmo")))
-	(unless (joc-moco-file-exists-p instance-file)
+	(unless (file-exists-p instance-file)
 	  (error "Instance %s does not exist" instance-file) )
 	instance-file)
     (error nil)))
 
 
-(defun joc-moco-file-exists-p (file)
-  (if (file-exists-p file)
-      t nil))
-(joc-moco-get-id-from-output "/home/joaooneillcortes/OneDrive/Documents/escola/doutoramento/office/tools/moco/finalResults/finalResultsDAL/run12/output/solver_f1-DataDisplay_0_order4.seq-A-2-1-EDCBAir_S1.txt")
