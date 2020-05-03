@@ -29,6 +29,7 @@ import org.moeaframework.core.Population;
 import org.moeaframework.core.Settings;
 import org.moeaframework.core.Solution;
 import org.moeaframework.util.ReferenceSetMerger;
+import org.sat4j.core.Vec;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.Log;
 
@@ -72,7 +73,17 @@ class ReferenceSet {
      * @param r The result.
      */
     public void add(Result r) { this.merger.add(mkFreshKey(), r.getSolutions()); }
-    
+
+    /**
+     *Ref point
+     */
+    private Solution refPoint = null;
+
+    /**
+     *Ideal point
+     */
+    private Solution idealPoint = null; 
+
     /**
      * Updates the reference set with the nondominated solutions in a collection of result objects.
      * @param c The result object collection.
@@ -127,7 +138,19 @@ class ReferenceSet {
      * @return The ideal point.
      */
     // TODO: multiple calls can become inefficient; use caching?
-    public Solution getIdealPoint() { return getPoint(false); }
+    
+    public Solution getIdealPoint() { 
+	if(this.idealPoint!=null)
+	    return this.idealPoint;
+
+	Vec<Integer> idealObjInt = this.problem.minPoint();
+	double[] idealObjDouble = new double[idealObjInt.size()];
+	for(int iObj=0, nObj = idealObjInt.size(); iObj < nObj; iObj++){
+	    idealObjDouble[iObj] = idealObjInt.get(iObj);
+	}
+	this.idealPoint = new Solution(idealObjDouble);
+	return this.idealPoint;
+    }
     
     /**
      * Computes a reference point of the MOCO instance, for hypervolume computation, based on the current
@@ -135,12 +158,14 @@ class ReferenceSet {
      * @return The reference point.
      */
     public Solution getRefPoint() {
-        Solution s = getNadirPoint();
-        for (int i = 0; i < s.getNumberOfObjectives(); ++i) {
-	    s.setObjective(i, problem.maxPoint().get(i)); // using the max point as the reference point.
-	    //I don't understand what Miguel did.
+	if(this.refPoint!=null)
+	    return this.refPoint;
+
+        this.refPoint = getNadirPoint();
+        for (int i = 0, n = this.refPoint.getNumberOfObjectives(); i < n;++i) {
+	    this.refPoint.setObjective(i, problem.maxPoint().get(i)); // using the max point as the reference point.
         }
-        return s;
+        return this.refPoint;
     }
     
     /**
@@ -160,9 +185,8 @@ class ReferenceSet {
 	// make sure all objectives attain a finite range inside the population. Add artificial points, if that is not the case.
         for (int i = 0; i < this.problem.getNumberOfObjectives(); ++i) {
             if (single || nadir.getObjective(i) - ideal.getObjective(i) < Settings.EPS) {
-                Solution s = nadir.copy();
-                s.setObjective(i, ref.getObjective(i));
-                s.setObjective(i, s.getObjective(i) - 2 * Settings.EPS);    
+                Solution s = ref.copy();
+                s.setObjective(i, s.getObjective(i) - Settings.EPS);    
                 p.add(s);                                                   
 		Log.comment(1, "Artificial point, objective " + i);
             }

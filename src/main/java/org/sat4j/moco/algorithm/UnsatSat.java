@@ -121,6 +121,7 @@ public class UnsatSat extends algorithm {
         // }
 	Log.comment(3, "in UnsatSat.solve");
 	boolean goOn = true;
+	boolean goOn1 = true;
 	//for testing purposes
 	//	this.goalDelimeter.UpdateCurrentK(0, 2);
 	this.logUpperLimit();
@@ -137,7 +138,7 @@ public class UnsatSat extends algorithm {
 
 	    solver.check(currentAssumptions);
 
-	    if(solver.isSat()){
+	    if(goOn1 && solver.isSat()){
 		subResult.saveModel(this.solver);
 		//log
 		Log.comment(5, " current subResult size:" + subResult.nSolutions());
@@ -163,19 +164,23 @@ public class UnsatSat extends algorithm {
 		//log
 		Log.comment(5, "Blocking dominated region");
 		int[] diffAttainedValue = this.diffAttainedValue();
- 		if(! this.blockDominatedRegion(diffAttainedValue))
-		    goOn = false;
+ 		if(! this.blockDominatedRegion(diffAttainedValue)){
+		    goOn1 = false;
+		}
+
 		// if(! this.blockModelX(modelsX.lastElement()))
 		//     goOn = false;
 	    }else{
 		for(int i = 0; i < subResult.nSolutions(); ++i)
 		    this.result.addSolutionUnsafe(subResult.getSolution(i));
 		subResult = new SubResult(this.problem);
-		currentExplanation = solver.unsatExplanation();
-		//log..
-		Log.comment(5, "Explanation:");
-		this.goalDelimeter.prettyPrintVecInt(currentExplanation);
-		Log.comment(5, "//");
+		goOn = goOn1;
+		if(goOn){
+		    currentExplanation = solver.unsatExplanation();
+		    //log..
+		    Log.comment(5, "Explanation:");
+		    this.goalDelimeter.prettyPrintVecInt(currentExplanation);
+		    Log.comment(5, "//");
 		
 		if(currentExplanation.size() == 0){
 		    goOn = false;
@@ -185,7 +190,7 @@ public class UnsatSat extends algorithm {
 		    this.preAssumptionsExtend();
 		    currentAssumptions = this.generateUpperBoundAssumptions();
 
-		}
+		    }}
 	    }
 	}
 	this.result.setParetoFrontFound();
