@@ -28,31 +28,6 @@
   (file-exists-p file-clean)
   )
 
-(defun joc-moco-calculate-hypervolumes-SC () 
-  (with-temp-file "./hyperVolume.txt"
-    (dolist (solver-file (cl-remove-if (lambda (string) (string-match "clean" string))
-				       (directory-files "../finalResultsSC/run1/output/" t "^solver*")))
-      ;; (joc-clean-solver-output solver-file)
-      (let (instance-file solver-file-clean hyper-volume)
-	(string-match "\\(bp.*SC\\)" solver-file)
-	(setq instance-file (match-string 1 solver-file))
-	(setq instance-file (concat "../finalResultsSC/run1/instances/" instance-file ".pbmo"))  
-	(setq solver-file-clean (concat (file-name-sans-extension (expand-file-name solver-file)) "_clean.out"))
-	(shell-command (concat " java -cp ../../target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.sat4j.moco.analysis.Analyzer " instance-file " 1:" solver-file-clean " > /tmp/hyperVolume.txt"))
-	(condition-case	 nil
-	    (progn (with-temp-buffer
-		     (insert-file-contents "/tmp/hyperVolume.txt")
-		     (re-search-forward ":values \\[\\(.*\\)\\] :min")
-		     (setq hyper-volume (match-string 1))))
-	  (error (setq hyper-volume "0.0") nil))
-	(let (id alg)
-	  (string-match "\\([0-9]*\\)-SC_S\\(.\\)" solver-file)
-	  (setq id (match-string 1 solver-file))
-	  (setq alg (match-string 2 solver-file))
-	  (insert (concat id ", " alg  ", " hyper-volume "\n"))
-	  (forward-line))
-	))))
-
 
 (defun joc-moco-calculate-hypervolumes () 
   (interactive)
@@ -139,7 +114,8 @@
     (error nil)))
 
 
+
 (defun joc-moco-file-exists-p (file)
   (if (file-exists-p file)
       t nil))
-(joc-moco-get-id-from-output "/home/joaooneillcortes/OneDrive/Documents/escola/doutoramento/office/tools/moco/finalResults/finalResultsDAL/run12/output/solver_f1-DataDisplay_0_order4.seq-A-2-1-EDCBAir_S1.txt")
+
