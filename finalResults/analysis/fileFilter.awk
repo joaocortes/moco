@@ -1,5 +1,5 @@
 #! /usr/bin/awk -f
-   BEGIN {FS="[[:blank:]_/]|"}
+   BEGIN {FS="[][[:blank:]_/]"}
    /\ts/ {
        myline =$NF;
    }
