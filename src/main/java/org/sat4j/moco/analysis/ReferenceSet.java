@@ -185,8 +185,7 @@ class ReferenceSet {
 	// make sure all objectives attain a finite range inside the population. Add artificial points, if that is not the case.
         for (int i = 0; i < this.problem.getNumberOfObjectives(); ++i) {
             if (single || nadir.getObjective(i) - ideal.getObjective(i) < Settings.EPS) {
-                Solution s = nadir.copy();
-                s.setObjective(i, ref.getObjective(i));
+                Solution s = ref.copy();
                 s.setObjective(i, s.getObjective(i) - Settings.EPS);    
                 p.add(s);                                                   
 		Log.comment(1, "Artificial point, objective " + i);
