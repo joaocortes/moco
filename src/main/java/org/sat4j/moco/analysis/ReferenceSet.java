@@ -72,7 +72,17 @@ class ReferenceSet {
      * @param r The result.
      */
     public void add(Result r) { this.merger.add(mkFreshKey(), r.getSolutions()); }
-    
+
+    /**
+     *Ref point
+     */
+    private Solution refPoint = null;
+
+    /**
+     *Ideal point
+     */
+    private Solution idealPoint = null; 
+
     /**
      * Updates the reference set with the nondominated solutions in a collection of result objects.
      * @param c The result object collection.
