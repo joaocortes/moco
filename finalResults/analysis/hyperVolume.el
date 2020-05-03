@@ -7,9 +7,13 @@
 	  "-0.0.1-SNAPSHOT-jar-with-dependencies.jar"
 	  " org.sat4j.moco.analysis.Analyzer "))
 (defvar joc-moco-analyzer-verbosity 3)
+(require 'projectile)
 (setq joc-moco-analyzer-verbosity 3 )
-(defvar joc-moco-root-folder "/home/joaooneillcortes/OneDrive/Documents/escola/doutoramento/office/tools/moco/")
+(defvar joc-moco-root-folder  (projectile-project-root))
+(setq joc-moco-root-folder  (projectile-project-root))
+
 (defun joc-clean-solver-output (file)
+  "Removes the time marks run solver prints "
   (setq file-clean (concat (file-name-sans-extension (expand-file-name file)) "_clean.out"))
   (save-excursion
     (with-temp-file file-clean
