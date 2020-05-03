@@ -29,8 +29,6 @@
 	(next-line)
 	(move-end-of-line nil))
       ))
-  (file-exists-p file-clean)
-  )
 
 (defun joc-moco-calculate-hypervolumes-SC () 
   (with-temp-file "./hyperVolume.txt"
@@ -73,9 +71,10 @@
 	    (insert (concat id ", " alg  ", " hyper-volume "\n"))
 	    (forward-line))
 	  )))))
+  (file-exists-p file-clean))
 
 (defun joc-moco-analyzer-hyperVolume (&optional solver-file)
-  "Calculate the hypervolume from the current buffer "
+  "Calculate the hypervolume of the solution in solver-file "
   (interactive)
   (unless solver-file (setq solver-file (buffer-file-name (current-buffer))))
   (let (clean-file instance-file id )
@@ -86,8 +85,7 @@
     (joc-clean-solver-output solver-file)
     (unless (file-exists-p (expand-file-name clean-file)) (error "clean file %s not created" clean-file ))
     (setq instance-file (joc-moco-get-instance-from-output solver-file))
-    (let (hyper-volume (default-directory joc-moco-root-folder)
-		       (shell-command-dont-erase-buffer t) command)
+    (let ((shell-command-dont-erase-buffer t) hyper-volume (default-directory joc-moco-root-folder) command)
       (setq command
 	    (concat
 	     joc-moco-analyzer-jar
