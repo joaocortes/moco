@@ -29,6 +29,7 @@ import org.moeaframework.core.Population;
 import org.moeaframework.core.Settings;
 import org.moeaframework.core.Solution;
 import org.moeaframework.util.ReferenceSetMerger;
+import org.sat4j.core.Vec;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.Log;
 
@@ -137,7 +138,19 @@ class ReferenceSet {
      * @return The ideal point.
      */
     // TODO: multiple calls can become inefficient; use caching?
-    public Solution getIdealPoint() { return getPoint(false); }
+    
+    public Solution getIdealPoint() { 
+	if(this.idealPoint!=null)
+	    return this.idealPoint;
+
+	Vec<Integer> idealObjInt = this.problem.minPoint();
+	double[] idealObjDouble = new double[idealObjInt.size()];
+	for(int iObj=0, nObj = idealObjInt.size(); iObj < nObj; iObj++){
+	    idealObjDouble[iObj] = idealObjInt.get(iObj);
+	}
+	this.idealPoint = new Solution(idealObjDouble);
+	return this.idealPoint;
+    }
     
     /**
      * Computes a reference point of the MOCO instance, for hypervolume computation, based on the current
