@@ -158,12 +158,14 @@ class ReferenceSet {
      * @return The reference point.
      */
     public Solution getRefPoint() {
-        Solution s = getNadirPoint();
-        for (int i = 0; i < s.getNumberOfObjectives(); ++i) {
-	    s.setObjective(i, problem.maxPoint().get(i)); // using the max point as the reference point.
-	    //I don't understand what Miguel did.
+	if(this.refPoint!=null)
+	    return this.refPoint;
+
+        this.refPoint = getNadirPoint();
+        for (int i = 0, n = this.refPoint.getNumberOfObjectives(); i < n;++i) {
+	    this.refPoint.setObjective(i, problem.maxPoint().get(i)); // using the max point as the reference point.
         }
-        return s;
+        return this.refPoint;
     }
     
     /**
