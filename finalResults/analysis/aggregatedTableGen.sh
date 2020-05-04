@@ -9,4 +9,4 @@ do
 done
 column -t aggregatedTable.out > temp.out;
 cp temp.out aggregatedTable.out;
-cat aggregatedTable.outp
+cat aggregatedTable.out
