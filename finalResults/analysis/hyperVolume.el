@@ -1,3 +1,4 @@
+(require 'cl)
 (defvar joc-moco-analyzer-buffer nil )
 (setq joc-moco-analyzer-buffer "*joc moco analyzer output*" )
 
