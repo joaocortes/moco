@@ -40,7 +40,7 @@ def readArguments():
 class Tester:
 
     def __init__(self, location, servers, gateway, algorithms=(1, 2, 3),
-                 encoderGD="GTE", time=10, useSandbox=1, part=3):
+                 encoderGD="GTE", time=10, useSandbox=1, part=3, verbosity=0):
         self.location = location
         self.time = time
         self.memoryKB = 10000000
@@ -54,6 +54,7 @@ class Tester:
         self.shellInterface = ShellInterface.Interface(servers, gateway)
         self.solverRange = algorithms
         self.completeOutputPath = outputPath
+        self.verbosity = verbosity
 
     def fillParameters(self):
         self.args = readArguments()
@@ -128,7 +129,7 @@ class Tester:
                           solverOutputFilePrefix + outputName),
                       "java -jar ", javaJarName,
                       "", os.path.join(testsPath, fileName),
-                      #  "-v 2 "
+                      "-v ", str(self.verbosity), " ",
                       "-alg ", str(solverI),
                       "-enc " "\"" + self.encoderGD + "\"",
                       ";"]
