@@ -187,6 +187,7 @@ public class UnsatSat extends algorithm {
 		}else{
 		    this.exhaustedUpperKD = this.UpperKD;
 		    this.updateUpperBound(currentExplanation);
+		    this.logExhaustedUpperKD();
 		    this.preAssumptionsExtend();
 		    currentAssumptions = this.generateUpperBoundAssumptions();
 
@@ -209,6 +210,18 @@ public class UnsatSat extends algorithm {
 	
 	logUpperLimit +="]";
 	Log.comment(2, logUpperLimit );
+    }
+    
+    /**
+     *Log the value of the exhaustedUpperKD
+     */
+
+    private void logExhaustedUpperKD()    {
+	String logExhaustedUpperKD = "exhausted upper limit: ["+this.exhaustedUpperKD[0];
+	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
+	    logExhaustedUpperKD +=", "+ (this.exhaustedUpperKD[iObj] - this.problem.getObj(iObj).getMinValue());
+	logExhaustedUpperKD +="]";
+	Log.comment(1, logExhaustedUpperKD );
     }
     
     /**
@@ -551,12 +564,12 @@ public class UnsatSat extends algorithm {
     }
 
     public void printFlightRecordParticular(){
-	String logUpperLimit = "completed upper limit: ["+this.exhaustedUpperKD[0];
+	String logExhaustedUpperKD = "completed upper limit: ["+this.exhaustedUpperKD[0];
 	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
-	    logUpperLimit +=", "+ (this.exhaustedUpperKD[0] - this.problem.getObj(iObj).getMinValue());
+	    logExhaustedUpperKD +=", "+ (this.exhaustedUpperKD[iObj] - this.problem.getObj(iObj).getMinValue());
 	
-	logUpperLimit +="]";
-	System.out.print("f " + logUpperLimit);
+	logExhaustedUpperKD +="]";
+	System.out.print("f " + logExhaustedUpperKD);
 
     }
 }
