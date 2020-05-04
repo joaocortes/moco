@@ -1,8 +1,10 @@
 #! /usr/bin/awk -f
-BEGIN {FS="[] \t_/]"}
-
+BEGIN {
+    state=0
+    FS="[] \t_/]"}
 /\ts/ {
     myline =$NF;
+    state=1;
 }
 
 /\tn/ { 
@@ -10,11 +12,11 @@ BEGIN {FS="[] \t_/]"}
 }  
 
 /c constraints: /{
-    myline=myline " " $(NF-1)
+    myline=myline " " $(NF)
 
 }
 /c Variables: /{
-    myline=myline " " $(NF-1)
+    myline=myline " " $(NF)
 }
 
 /f completed upper limit: /{
@@ -23,5 +25,22 @@ BEGIN {FS="[] \t_/]"}
 	myline=myline " " $(i)
 	i--
     }
+}
+END {
+if(state == 0)
+    myline = myline " VOID"
+    
+id = FILENAME
+where = match(id,/_S([0-2]+)/)
+alg=substr(id, where+2, 1)
+myline =  alg " " myline
+
+idStart=match(id, /solver_/)
+id = substr(id,idStart+RLENGTH)
+idEnd=match(id, /_S([0-2]+)/)
+id = substr(id,1, idEnd -1)
+myline = myline " " id
+print myline;
+myline = ""
 }
 
