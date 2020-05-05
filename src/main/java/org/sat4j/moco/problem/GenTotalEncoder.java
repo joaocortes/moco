@@ -291,7 +291,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 	public void linkTreeNameNodes(){
 	    int size = unlinkedNodes.size();
 	    int name = 0;
-	    if(this.parent!=null)
+	    if(size>=1){
+		if(this.parent!=null)
 		name = this.parent.nodeName;
 	    while(size >=2){
 	 	Node leftNode = unlinkedNodes.poll();
@@ -314,7 +315,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    else
 		this.parent = new Node(this.parent, newParent);
 	    this.parent.nodeVars.add(0, 0, false, false);
-
+	    }
 	}
 
 
