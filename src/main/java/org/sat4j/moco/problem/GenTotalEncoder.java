@@ -287,21 +287,33 @@ public class GenTotalEncoder extends GoalDelimeter {
 	public void linkTreeNameNodes(){
 	    int size = unlinkedNodes.size();
 	    int name = 0;
+	    if(this.parent!=null)
+		name = this.parent.nodeName;
 	    while(size >=2){
 	 	Node leftNode = unlinkedNodes.poll();
+		leftNode.nodeVars.add(0, 0, false, false);
 		leftNode.nodeName = name;
 		name++;
 		Node rightNode = unlinkedNodes.poll();
+		rightNode.nodeVars.add(0, 0, false, false);
 		rightNode.nodeName = name;
 		name++;
 		Node parentNode = new Node(leftNode, rightNode);
+		parent.nodeVars.add(0, 0, false, false);
 		unlinkedNodes.add(parentNode);
 		size--;
 	    }
-	    this.parent = this.unlinkedNodes.poll();
-	    this.parent.nodeName = name;
+	    Node newParent = this.unlinkedNodes.poll();
+	    newParent.nodeName = name;
+	    if(this.parent == null)
+		this.parent = newParent;
+	    else
+		this.parent = new Node(this.parent, newParent);
+	    this.parent.nodeVars.add(0, 0, false, false);
 
 	}
+
+
 
 
 	public SumTree(int iObj){
@@ -309,6 +321,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    this.maxUpperLimit = instance.getObj(iObj).getWeightDiff();
 
 	}
+
 
 	/**
 	 *Adds a new sub tree, with nodes associated to leafs in leafsXId
@@ -318,7 +331,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    this.maxUpperLimit = instance.getObj(iObj).getWeightDiff();
 	    for(int x : newXs){
 		int weight = instance.getObj(iObj).getSubObjCoeffs(0).get(x).asInt();
-		Node node =  new Node(weight, iX);
+		Node node =  new Node(weight, x);
 		this.unlinkedNodes.add(node);
 	    }
 	    linkTreeNameNodes();
@@ -350,20 +363,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 	this.sumTrees = new SumTree[this.instance.nObjs()];
 	    
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    Objective ithObj = this.instance.getObj(iObj);
-	    ReadOnlyVec<Real> ithObjCoeffsReal = ithObj.getSubObjCoeffs(0);
-	    int[] ithObjCoeffsInt = new int[ithObjCoeffsReal.size()];
-
-	    for(int iX = 0, nX = ithObjCoeffsReal.size(); iX < nX; ++iX){
-		ithObjCoeffsInt[iX] = Math.round(ithObjCoeffsReal.get(iX).asInt());
-	    }
-	    this.sumTrees[iObj] = new SumTree(iObj ,ithObjCoeffsInt);
+	    this.sumTrees[iObj] = new SumTree(iObj);
 	}
 
-	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    for(Node node: this.sumTrees[iObj].nodes)
-		node.nodeVars.add(0, 0, false, false);
-	}
 	Log.comment(5, "done");
     }
 
