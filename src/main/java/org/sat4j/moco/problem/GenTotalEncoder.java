@@ -331,16 +331,24 @@ public class GenTotalEncoder extends GoalDelimeter {
 	/**
 	 *Adds a new sub tree, with nodes associated to leafs in leafsXId
 	 */
-	public void AddToTreeSumTree(int iObj, int[] newXs){
-	    this.iObj = iObj;
-	    this.maxUpperLimit = instance.getObj(iObj).getWeightDiff();
-	    for(int x : newXs){
-		int weight = instance.getObj(iObj).getSubObjCoeffs(0).get(x).asInt();
-		Node node =  new Node(weight, x);
-		this.unlinkedNodes.add(node);
+	public void AddToSumTree(int[] newX){
+	    
+	    for(int x : newX){
+		Real weight = instance.getObj(iObj).getSubObj(0).weightFromId(x);
+		if(weight!=null){
+		    boolean alreadyThere = false;
+		    int id = solver.idFromLiteral(x);
+		    for(Node node: nodes)
+			if(node.leafID == id)
+			    alreadyThere = true;
+		    if(!alreadyThere){
+			Node node =  new Node(weight.asIntExact(), x);
+			this.unlinkedNodes.add(node);
+		    }
+		}
 	    }
 	    linkTreeNameNodes();
-
+	    
 	}
 	 
     }
