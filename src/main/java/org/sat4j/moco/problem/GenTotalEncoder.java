@@ -682,4 +682,21 @@ public class GenTotalEncoder extends GoalDelimeter {
     Log.comment(5, "done");
     return change;
     }
+
+
+
+    /**
+     *Updates the semantics, in such a way that everything is valid
+     *for any value kD less or equal to upperKD. Notice that it may
+     *well be extend more, depending on the possible sums
+     */
+
+    public boolean UpdateCurrentK(int iObj, int upperKD, IVecInt newUncoveredX){
+	boolean change = false;
+	SumTree ithObjSumTree = this.sumTrees[iObj];
+	ithObjSumTree.AddToTreeSumTree(newUncoveredX.toArray());
+	UpdateCurrentK(iObj, upperKD);
+	Log.comment(5, "done");
+	return change;
+    }
 }
