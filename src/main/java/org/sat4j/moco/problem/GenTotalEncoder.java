@@ -437,7 +437,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 
     /**
      *Tricky. This is not a real getter. Given kD, it returns the id
-     *of the variable with a smaller kD, yet larger or equal to kD.
+     *of the variable with a smaller kD, yet larger or equal than kD.
      */
     public int getY(int iObj, int kD){
 	return this.sumTrees[iObj].parent.nodeVars.getCeilingId(kD);
