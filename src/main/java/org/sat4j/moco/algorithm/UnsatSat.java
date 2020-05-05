@@ -125,7 +125,7 @@ public class UnsatSat extends algorithm {
 	//for testing purposes
 	//	this.goalDelimeter.UpdateCurrentK(0, 2);
 	this.logUpperLimit();
-	this.preAssumptionsExtend();
+	this.preAssumptionsExtend(currentExplanation);
 	currentAssumptions = this.generateUpperBoundAssumptions();
 
 	while(goOn){
@@ -186,11 +186,16 @@ public class UnsatSat extends algorithm {
 		    goOn = false;
 		}else{
 		    this.exhaustedUpperKD = this.UpperKD;
-		    this.updateUpperBound(currentExplanation);
 		    this.logExhaustedUpperKD();
-		    this.preAssumptionsExtend();
-		    currentAssumptions = this.generateUpperBoundAssumptions();
+			    
+		    IVecInt currentExplanationX = new VecInt(new int[] {});
+		    for(int lit: currentExplanation.toArray())
+			if(this.goalDelimeter.isX(lit))
+			    currentExplanationX.push(-lit);
 
+		    this.updateUpperBound(currentExplanation);
+		    this.preAssumptionsExtend(currentExplanationX);
+		    currentAssumptions = this.generateUpperBoundAssumptions();
 		    }}
 	    }
 	}
@@ -268,6 +273,25 @@ public class UnsatSat extends algorithm {
 	    }
 	    else{
 		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj)+1);
+	    }
+	}
+    }
+
+    /**
+     *If necessary for the construction of the current assumptions,
+     *initialize more of the domain of the sequential encoder
+     *differential k index. Informed by currentExplanation.
+     */
+
+    private void preAssumptionsExtend(IVecInt currentExplanation){
+	int objN = this.problem.nObjs();
+	for(int iObj = 0; iObj < objN ; ++iObj){
+	    int ithMax = this.problem.getObj(iObj).getWeightDiff();
+	    if(this.getUpperKD(iObj) == ithMax){
+		this.goalDelimeter.UpdateCurrentK(iObj, ithMax, currentExplanation);
+	    }
+	    else{
+		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj)+1, currentExplanation);
 	    }
 	}
     }
