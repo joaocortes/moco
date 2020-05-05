@@ -288,7 +288,7 @@ public class UnsatSat extends algorithm {
 		int jObj = this.goalDelimeter.getIObjFromY(id);
 		int kd = this.goalDelimeter.getKDFromY(id);
 		this.setUpperKD(jObj, kd);
-		this.goalDelimeter.UpdateCurrentK(jObj, kd);
+		// this.goalDelimeter.UpdateCurrentK(jObj, kd);
 
 	    }else{
 	        if(this.goalDelimeter.isX(id)){
@@ -333,8 +333,8 @@ public class UnsatSat extends algorithm {
      *@param iObj
      */
     private void setUpperKD(int iObj, int newKD){
-	if(this.goalDelimeter.getCurrentKD(iObj) < newKD)
-	    this.goalDelimeter.UpdateCurrentK(iObj, newKD);
+	// if(this.goalDelimeter.getCurrentKD(iObj) < newKD)
+	//     this.goalDelimeter.UpdateCurrentK(iObj, newKD);
 	this.UpperKD[iObj] = newKD;
     }
 
