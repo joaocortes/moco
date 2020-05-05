@@ -194,8 +194,12 @@ public class GenTotalEncoder extends GoalDelimeter {
 		 * that is, the id of the entry with a key that is
 		 * larger or equal to iKD.
 		 */
-		public int getCeilingId(int iKD){
-		    return this.containerAll.ceilingEntry(iKD).getValue().id;
+		private int getCeilingId(int iKD){
+		    
+		    Integer key =  this.containerAll.ceilingKey(iKD);
+		    if(key == null)
+			return -1;
+		    return this.containerAll.get(key).id;
 		}
 
 		/**
