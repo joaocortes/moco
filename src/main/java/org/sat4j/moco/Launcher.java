@@ -160,7 +160,7 @@ public class Launcher {
 		unsatSatSolver.solve();
 		break;
 	    case 2:
-		pMinimal pMinimalSolver = new pMinimal(moco, params.getEncodingGD());
+		pMinimal pMinimalSolver = new pMinimal(moco);
 		setShutdownHandler(pMinimalSolver);
 		pMinimalSolver.solve();
 		break;
