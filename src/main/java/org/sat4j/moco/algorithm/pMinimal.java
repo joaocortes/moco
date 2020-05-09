@@ -34,7 +34,6 @@ import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.problem.SeqEncoder;
-import org.sat4j.moco.problem.GenTotalEncoder;
 import org.sat4j.moco.problem.GoalDelimeter;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
@@ -72,7 +71,7 @@ public class pMinimal extends algorithm {
      * @param m The MOCO instance.
      */
     
-    public pMinimal(Instance m, boolean encodingGD) {
+    public pMinimal(Instance m) {
 	Log.comment(5, "In pMinimal.pMinimal");
 	this.problem = m;
 	this.result = new Result(m, true);
@@ -85,9 +84,6 @@ public class pMinimal extends algorithm {
             return;
         }
 	this.realVariablesN = this.solver.nVars();
-	if(encodingGD)
-	this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
-	else
 	this.goalDelimeter = new SeqEncoder(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
 	for(int iObj = 0, nObj = this.problem.nObjs(); iObj < nObj; ++iObj)
