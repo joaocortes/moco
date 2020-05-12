@@ -293,28 +293,28 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    Node newParent = new Node();
 	    if(size>=1){
 		if(this.parent!=null)
-		name = this.parent.nodeName;
-	    while(size >=2){
-	 	Node leftNode = unlinkedNodes.poll();
-		leftNode.nodeVars.add(0, 0, false, false);
-		leftNode.nodeName = name;
-		name++;
-		Node rightNode = unlinkedNodes.poll();
-		rightNode.nodeVars.add(0, 0, false, false);
-		rightNode.nodeName = name;
-		name++;
-		Node parentNode = new Node(leftNode, rightNode);
-		parentNode.nodeVars.add(0, 0, false, false);
-		unlinkedNodes.add(parentNode);
-		size--;
-	    }
-	    newParent = this.unlinkedNodes.poll();
-	    newParent.nodeName = name;
-	    if(this.parent == null)
-		this.parent = newParent;
-	    else
-		this.parent = new Node(this.parent, newParent);
-	    this.parent.nodeVars.add(0, 0, false, false);
+		    name = this.parent.nodeName;
+		while(size >=2){
+		    Node leftNode = unlinkedNodes.poll();
+		    leftNode.nodeVars.add(0, 0, false, false);
+		    leftNode.nodeName = name;
+		    name++;
+		    Node rightNode = unlinkedNodes.poll();
+		    rightNode.nodeVars.add(0, 0, false, false);
+		    rightNode.nodeName = name;
+		    name++;
+		    Node parentNode = new Node(leftNode, rightNode);
+		    parentNode.nodeVars.add(0, 0, false, false);
+		    unlinkedNodes.add(parentNode);
+		    size--;
+		}
+		newParent = this.unlinkedNodes.poll();
+		newParent.nodeName = name;
+		if(this.parent == null)
+		    this.parent = newParent;
+		else
+		    this.parent = new Node(this.parent, newParent);
+		this.parent.nodeVars.add(0, 0, false, false);
 	    }
 	    return newParent;
 	}
