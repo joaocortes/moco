@@ -272,9 +272,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 		this.nodeVars =  new NodeVars();
 		this.nodeSum = left.nodeSum + right.nodeSum;
 	    }
-	    public boolean isLeaf(){
-		return this.leafID!=0;
-	    }
+
+
 
 	}
 
