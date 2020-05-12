@@ -122,8 +122,6 @@ public class UnsatSat extends algorithm {
 	Log.comment(3, "in UnsatSat.solve");
 	boolean goOn = true;
 	boolean goOn1 = true;
-	//for testing purposes
-	//	this.goalDelimeter.UpdateCurrentK(0, 2);
 	this.logUpperLimit();
 	this.preAssumptionsExtend(currentExplanation);
 	currentAssumptions = this.generateUpperBoundAssumptions();
@@ -260,8 +258,7 @@ public class UnsatSat extends algorithm {
 
     /**
      *If necessary for the construction of the current assumptions,
-     *initialize more of the domain of the sequential encoder
-     *differential k index
+     *initialize more of the domain of the goal delimeter
      */
 
     private void preAssumptionsExtend(){
@@ -279,8 +276,8 @@ public class UnsatSat extends algorithm {
 
     /**
      *If necessary for the construction of the current assumptions,
-     *initialize more of the domain of the sequential encoder
-     *differential k index. Informed by currentExplanation.
+     *initialize more of the domain of the goal delimeter. Informed
+     *by currentExplanation.
      */
 
     private void preAssumptionsExtend(IVecInt currentExplanation){
@@ -298,9 +295,8 @@ public class UnsatSat extends algorithm {
 
 
     /**
-     * Updates the current upperBound on the differential k, according
-     * to the unsatExplanation
-     * current explanation of unsatisfiability
+     * Updates the current differential K upperBound, according to the
+     * unsatExplanation
      */
     private void updateUpperBound(IVecInt currentExplanation){
         Log.comment(5, "in UnsatSat.updateUpperBound");
