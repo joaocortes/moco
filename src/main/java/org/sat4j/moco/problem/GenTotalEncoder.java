@@ -249,6 +249,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    private int leafID = 0;
 	    private int nodeName = 0;
 	    
+	    public Node(){}
 
 	    public Node(int weight, int X){
 		nodes.add(this);
