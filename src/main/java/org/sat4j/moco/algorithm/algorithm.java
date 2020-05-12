@@ -43,6 +43,7 @@ abstract public class  algorithm{
      */
 
     public boolean AddClause(IVecInt setOfLiterals){
+	Log.comment(6, "in algorithm.AddClause");
 	this.prettyPrintVecInt(setOfLiterals,true);
 	try{
 	    this.solver.AddClause(setOfLiterals);
@@ -52,6 +53,7 @@ abstract public class  algorithm{
 		Log.comment(3, " " + setOfLiterals.get(j) + " " );
 	    return false;
 	}
+	Log.comment(6, "done");
 	return true;
     }
 
