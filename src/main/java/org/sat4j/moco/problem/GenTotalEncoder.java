@@ -648,7 +648,8 @@ public class GenTotalEncoder extends GoalDelimeter {
     public boolean addClausesSumTree(int iObj){
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
-	change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, false) || change;
+	if(ithObjSumTree.parent!=null)
+	    change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, false) || change;
 
 
 	// if(change)
