@@ -289,9 +289,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 	 *Links the SumTree, in such a fashion that at any time all
 	 *unlinked nodes are lighter than any linked node.
 	 */
-	public void linkTreeNameNodes(){
+	public SumTree.Node linkTreeNameNodes(){
 	    int size = unlinkedNodes.size();
 	    int name = 0;
+	    Node newParent = new Node();
 	    if(size>=1){
 		if(this.parent!=null)
 		name = this.parent.nodeName;
@@ -317,6 +318,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		this.parent = new Node(this.parent, newParent);
 	    this.parent.nodeVars.add(0, 0, false, false);
 	    }
+	    return newParent;
 	}
 
 
@@ -332,7 +334,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	/**
 	 *Adds a new sub tree, with nodes associated to leafs in leafsXId
 	 */
-	public void AddToSumTree(int[] newX){
+	public SumTree.Node AddToSumTree(int[] newX){
 	    
 	    for(int x : newX){
 		Real weight = instance.getObj(iObj).getSubObj(0).weightFromId(x);
@@ -348,8 +350,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    }
 		}
 	    }
-	    linkTreeNameNodes();
-	    
+	    Node newParent = linkTreeNameNodes();
+	    return newParent;
 	}
 	 
     }
@@ -698,8 +700,10 @@ public class GenTotalEncoder extends GoalDelimeter {
     public boolean UpdateCurrentK(int iObj, int upperKD, IVecInt newUncoveredX){
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
-	ithObjSumTree.AddToSumTree(newUncoveredX.toArray());
-	UpdateCurrentK(iObj, upperKD);
+	Node newParent = ithObjSumTree.AddToSumTree(newUncoveredX.toArray());
+	change = this.addClausesSubSumTree(ithObjSumTree, newParent, false);
+	if(newParent!=ithObjSumTree.parent)
+	    change = this.addClausesCurrentNode(ithObjSumTree, ithObjSumTree.parent) || change;
 	Log.comment(5, "done");
 	return change;
     }
