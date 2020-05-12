@@ -692,8 +692,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 }
     Log.comment(5, "done");
     return change;
-	Log.comment(5, "done");
-	return change;
     }
 
 
