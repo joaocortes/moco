@@ -282,6 +282,7 @@ public class UnsatSat extends algorithm {
      */
 
     private void preAssumptionsExtend(IVecInt currentExplanation){
+	Log.comment(5, "in UnsatSat.preAssumptionsExtend");
 	int objN = this.problem.nObjs();
 	for(int iObj = 0; iObj < objN ; ++iObj){
 	    int ithMax = this.problem.getObj(iObj).getWeightDiff();
@@ -292,6 +293,7 @@ public class UnsatSat extends algorithm {
 		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj)+1, currentExplanation);
 	    }
 	}
+	Log.comment(5, "done");
     }
 
 
