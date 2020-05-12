@@ -675,6 +675,7 @@ public class GenTotalEncoder extends GoalDelimeter {
      */
 
     public boolean UpdateCurrentK(int iObj, int upperKD){
+	Log.comment(6, "in GenTotalEncoder.UpdateCurrentK upperKD " + upperKD);
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
 	if(upperKD > this.getCurrentKD(iObj)){
@@ -691,6 +692,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 }
     Log.comment(5, "done");
     return change;
+	Log.comment(5, "done");
+	return change;
     }
 
 
