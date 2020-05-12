@@ -457,9 +457,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 	if(!isS(literal))
 	    return false;
 	for(SumTree sumTree: this.sumTrees)
-	    for(SumTree.Node.NodeVars.NodeVar nodeVar: sumTree.parent.nodeVars.containerAll.values())
-		if(nodeVar.getId() == id)
-		return true;
+	    if(sumTree.parent!=null)
+		for(SumTree.Node.NodeVars.NodeVar nodeVar: sumTree.parent.nodeVars.containerAll.values())
+		    if(nodeVar.getId() == id)
+			return true;
 	return false;
     }
 
