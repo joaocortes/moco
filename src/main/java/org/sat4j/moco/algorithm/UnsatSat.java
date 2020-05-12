@@ -123,9 +123,8 @@ public class UnsatSat extends algorithm {
 	boolean goOn = true;
 	boolean goOn1 = true;
 	this.logUpperLimit();
-	this.preAssumptionsExtend(currentExplanation);
+	// this.preAssumptionsExtend(currentExplanation);
 	currentAssumptions = this.generateUpperBoundAssumptions();
-
 	while(goOn){
 	    ///log..
 	    this.logUpperLimit();
