@@ -440,7 +440,9 @@ public class GenTotalEncoder extends GoalDelimeter {
      *of the variable with a smaller kD, yet larger or equal than kD.
      */
     public int getY(int iObj, int kD){
-	return this.sumTrees[iObj].parent.nodeVars.getCeilingId(kD);
+	if(this.sumTrees[iObj].parent!=null)
+	    return this.sumTrees[iObj].parent.nodeVars.getCeilingId(kD);
+	return 0;
     }
 
 
