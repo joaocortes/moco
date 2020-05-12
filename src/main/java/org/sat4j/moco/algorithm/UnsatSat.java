@@ -315,9 +315,12 @@ public class UnsatSat extends algorithm {
 	    	    int objN = this.problem.nObjs();
 	    	    for(int iObj = 0; iObj < objN ; ++iObj){
 			Objective ithObjective = this.problem.getObj(iObj);
-			int weight=ithObjective.getSubObj(0).weightFromId(id).asIntExact();
-			weight = weight > 0? weight: -weight;
-			this.setUpperKD(iObj, weight);
+			Real weight =ithObjective.getSubObj(0).weightFromId(id);
+			if(weight!=null){
+			    int weightInt = weight.asIntExact();
+			    weightInt = weightInt > 0? weightInt: -weightInt;
+			    this.setUpperKD(iObj, weightInt);
+			}
 	    	    }
 	    	}
 	    }
