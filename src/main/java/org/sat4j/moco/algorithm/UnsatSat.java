@@ -355,9 +355,8 @@ public class UnsatSat extends algorithm {
      *@param iObj
      */
     private void setUpperKD(int iObj, int newKD){
-	// if(this.goalDelimeter.getCurrentKD(iObj) < newKD)
-	//     this.goalDelimeter.UpdateCurrentK(iObj, newKD);
-	this.UpperKD[iObj] = newKD;
+	if(this.getUpperKD(iObj)< newKD)
+	    this.UpperKD[iObj] = newKD;
     }
 
     /**
