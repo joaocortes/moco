@@ -312,22 +312,7 @@ public class UnsatSat extends algorithm {
 		int kd = this.goalDelimeter.getKDFromY(id);
 		if( this.getUpperKD(jObj)<=kd  + 1)
 		    this.setUpperKD(jObj, kd);
-		    
 	    }
-	    // else{
-	    // 	if(this.goalDelimeter.isX(id)){
-	    // 	    int objN = this.problem.nObjs();
-	    // 	    for(int iObj = 0; iObj < objN ; ++iObj){
-	    // 		Objective ithObjective = this.problem.getObj(iObj);
-	    // 		Real weight =ithObjective.getSubObj(0).weightFromId(id);
-	    // 		if(weight!=null){
-	    // 		    int weightInt = weight.asIntExact();
-	    // 		    weightInt = weightInt > 0? weightInt: -weightInt;
-	    // 		    this.setUpperKD(iObj, weightInt);
-	    // 		}
-	    // 	    }
-	    // 	}
-	    // }
 	}
         Log.comment(5, "in done");
     }
