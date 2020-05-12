@@ -695,7 +695,7 @@ public class GenTotalEncoder extends GoalDelimeter {
     public boolean UpdateCurrentK(int iObj, int upperKD, IVecInt newUncoveredX){
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
-	ithObjSumTree.AddToTreeSumTree(newUncoveredX.toArray());
+	ithObjSumTree.AddToSumTree(newUncoveredX.toArray());
 	UpdateCurrentK(iObj, upperKD);
 	Log.comment(5, "done");
 	return change;
