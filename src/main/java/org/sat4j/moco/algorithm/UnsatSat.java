@@ -469,6 +469,7 @@ public class UnsatSat extends algorithm {
     //  */
 
     public void printModelY(IVecInt modelY) {
+	if(modelY.size()>0){
     	int[][] convertedModel = new int[(modelY.size())][];
     	for(int i=0, n = modelY.size();i<n;i++){
     	    int yId = this.solver.idFromLiteral( modelY.get(i));
@@ -494,8 +495,9 @@ public class UnsatSat extends algorithm {
 		currentIObj = convertedModel[i][1];
 	    }
 	}
-    }
+	}
 
+    }
     /**
      * Print a model
      * @param models, the obtained models
