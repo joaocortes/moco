@@ -707,10 +707,12 @@ public class GenTotalEncoder extends GoalDelimeter {
     public boolean UpdateCurrentK(int iObj, int upperKD, IVecInt newUncoveredX){
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
-	Node newParent = ithObjSumTree.AddToSumTree(newUncoveredX.toArray());
-	change = this.addClausesSubSumTree(ithObjSumTree, newParent, false);
-	if(newParent!=ithObjSumTree.parent)
-	    change = this.addClausesCurrentNode(ithObjSumTree, ithObjSumTree.parent) || change;
+	if(newUncoveredX.size()>0){
+	    Node newParent = ithObjSumTree.AddToSumTree(newUncoveredX.toArray());
+	    change = this.addClausesSubSumTree(ithObjSumTree, newParent, false);
+	    if(newParent!=ithObjSumTree.parent)
+		change = this.addClausesCurrentNode(ithObjSumTree, ithObjSumTree.parent) || change;
+	}
 	change = UpdateCurrentK(iObj, upperKD) || change;
 	Log.comment(5, "done");
 	return change;
