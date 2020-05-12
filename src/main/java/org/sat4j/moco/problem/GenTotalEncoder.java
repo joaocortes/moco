@@ -305,11 +305,11 @@ public class GenTotalEncoder extends GoalDelimeter {
 		rightNode.nodeName = name;
 		name++;
 		Node parentNode = new Node(leftNode, rightNode);
-		parent.nodeVars.add(0, 0, false, false);
+		parentNode.nodeVars.add(0, 0, false, false);
 		unlinkedNodes.add(parentNode);
 		size--;
 	    }
-	    Node newParent = this.unlinkedNodes.poll();
+	    newParent = this.unlinkedNodes.poll();
 	    newParent.nodeName = name;
 	    if(this.parent == null)
 		this.parent = newParent;
