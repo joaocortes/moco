@@ -28,13 +28,11 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import java.util.PriorityQueue;
-import java.util.SortedMap;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Collection;
 
 
-import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
