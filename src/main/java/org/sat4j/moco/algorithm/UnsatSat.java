@@ -221,7 +221,7 @@ public class UnsatSat extends algorithm {
     private void logExhaustedUpperKD()    {
 	String logExhaustedUpperKD = "exhausted upper limit: ["+this.exhaustedUpperKD[0];
 	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
-	    logExhaustedUpperKD +=", "+ (this.exhaustedUpperKD[iObj] - this.problem.getObj(iObj).getMinValue());
+	    logExhaustedUpperKD +=", "+ (this.exhaustedUpperKD[iObj]);
 	logExhaustedUpperKD +="]";
 	Log.comment(1, logExhaustedUpperKD );
     }
