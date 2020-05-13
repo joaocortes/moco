@@ -304,26 +304,7 @@ public class UnsatSat extends algorithm {
 	}
     }
 
-    /**
-     *If necessary for the construction of the current assumptions,
-     *initialize more of the domain of the goal delimeter. Informed
-     *by currentExplanation.
-     */
 
-    private void preAssumptionsExtend(IVecInt currentExplanation){
-	Log.comment(5, "in UnsatSat.preAssumptionsExtend");
-	int objN = this.problem.nObjs();
-	for(int iObj = 0; iObj < objN ; ++iObj){
-	    int ithMax = this.problem.getObj(iObj).getWeightDiff();
-	    if(this.getUpperKD(iObj) == ithMax){
-		this.goalDelimeter.UpdateCurrentK(iObj, ithMax, currentExplanation);
-	    }
-	    else{
-		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj)+1, currentExplanation);
-	    }
-	}
-	Log.comment(5, "done");
-    }
 
 
     /**
