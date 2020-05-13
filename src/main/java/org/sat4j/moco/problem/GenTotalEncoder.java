@@ -497,6 +497,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 	int sign =(literal>0)? 1: -1;
 	int id =  literal * sign;
 
+	if(isX(id)){
+	    return (sign>0? "+":"-")+"X["+id+"] ";
+	}
 	if(this.isY(id)){
 	    int iObj = this.getIObjFromS(id);
 	    int kD = this.getKDFromS(id);
@@ -504,9 +507,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    return "Y[" + iObj + ", " + k +"]"+ "::" + literal + " ";
 	}
 	 
-	if(isX(id)){
-	    return (sign>0? "+":"-")+"X["+id+"] ";
-	}
+
 	/**
 	 *Then, it is S!
 	 */
