@@ -325,15 +325,22 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    return newParent;
 	}
 
-
-
-
 	public SumTree(int iObj){
 	    this.iObj = iObj;
 	    this.maxUpperLimit = instance.getObj(iObj).getWeightDiff();
 
 	}
 
+	public boolean isNodeAlreadyHere(int lit){
+	boolean alreadyHere = false;
+	for(Node node: this.nodes){
+	    int leafIdTrue = solver.idFromLiteral(node.leafID);
+	    int xId = solver.idFromLiteral(lit);
+	    if(leafIdTrue == xId)
+		alreadyHere = true;
+	    }	    
+	return alreadyHere;
+    }
 
 	/**
 	 *Adds a new sub tree, with nodes associated to leafs in leafsXId
