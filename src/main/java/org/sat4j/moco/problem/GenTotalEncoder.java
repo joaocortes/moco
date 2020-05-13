@@ -685,15 +685,27 @@ public class GenTotalEncoder extends GoalDelimeter {
     }
 
 
+    /**
+     *Adds leafs to tree
+     */
+    public boolean addLeafs(int iObj, IVecInt explanationX ){
+	SumTree ithObjSumTree = this.sumTrees[iObj];
+	boolean result = ithObjSumTree.pushNewLeafs(explanationX);
+	ithObjSumTree.freshParent = ithObjSumTree.linkNewNodes();
+
+	return result;
+    }
+    
+
+    public boolean isNodeAlreadyHere(int iObj, int lit){
+	return this.sumTrees[iObj].isNodeAlreadyHere(lit);
+    }
 
     /**
-     *Updates the semantics, in such a way that everything is valid
-     *for any value kD less or equal to upperKD. Notice that it may
-     *well be extend more, depending on the possible sums
+     *clause fresh subTree, whose nodes where already linked by addLeafsTo
      */
 
-    public boolean UpdateCurrentK(int iObj, int upperKD){
-	Log.comment(6, "in GenTotalEncoder.UpdateCurrentK upperKD " + upperKD);
+    public boolean bindFreshSubTree(int iObj){
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
 	if(upperKD > this.getCurrentKD(iObj)){
@@ -705,12 +717,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    change = addClausesSumTree(iObj);
 	    upperKD++;
 	}
-	if(change)
-	    addClauseSequential(ithObjSumTree.parent );
-}
-    Log.comment(5, "done");
-    return change;
+	return change;
     }
+
+
 
 
 
@@ -720,16 +730,31 @@ public class GenTotalEncoder extends GoalDelimeter {
      *well be extend more, depending on the possible sums
      */
 
-    public boolean UpdateCurrentK(int iObj, int upperKD, IVecInt newUncoveredX){
+    public boolean UpdateCurrentK(int iObj, int upperKD){
+	Log.comment(5, "in GenTotalEncoder.UpdateCurrentK");
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
-	if(newUncoveredX.size()>0){
-	    Node newParent = ithObjSumTree.AddToSumTree(newUncoveredX.toArray());
-	    change = this.addClausesSubSumTree(ithObjSumTree, newParent, false);
-	    if(newParent!=ithObjSumTree.parent)
-		change = this.addClausesCurrentNode(ithObjSumTree, ithObjSumTree.parent) || change;
+
+	if(upperKD > this.getCurrentKD(iObj)){
+	    Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
+	    ithObjSumTree.setOlderUpperLimit();
+	    if(ithObjSumTree.parent.isLeaf()){
+		int weight = ithObjSumTree.parent.nodeSum;
+		Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + weight);
+		Node.NodeVars.NodeVar nodeVar=  ithObjSumTree.parent.nodeVars.addOrRetrieve(weight);
+		nodeVar.iAmFresh =true;
+		ithObjSumTree.setUpperLimit(weight);
+		change=true;
 	}
-	change = UpdateCurrentK(iObj, upperKD) || change;
+	while(!change && upperKD <= this.instance.getObj(iObj).getWeightDiff()){
+	    Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
+	    this.sumTrees[iObj].setUpperLimit(upperKD);
+	    change = addClausesSumTree(iObj);
+	    upperKD++;
+	}
+	if(change)
+	    addClauseSequential(ithObjSumTree.parent);
+	}
 	Log.comment(5, "done");
 	return change;
     }
