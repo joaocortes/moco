@@ -24,8 +24,6 @@ public abstract class GoalDelimeter{
     protected int firstVariable = 0;
 
     abstract public boolean UpdateCurrentK(int iObj, int upperKD);
-    abstract public boolean UpdateCurrentK(int iObj, int upperKD, IVecInt newUncoveredX);
-
     abstract public boolean isY(int id);
 
     /**
