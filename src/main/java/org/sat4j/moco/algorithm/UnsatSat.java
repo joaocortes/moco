@@ -203,6 +203,29 @@ public class UnsatSat extends algorithm {
 	return;
     }
 
+
+    /**
+     *Uncover leafs
+     */
+    private boolean uncoverXs(IVecInt explanationX)
+    {
+	boolean change = false;
+	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
+	    change = this.goalDelimeter.addLeafs(iObj, explanationX) || change;
+	return change;
+    }
+
+    /**
+     *bind leafs
+     */
+    private boolean bindXs()
+    {	boolean change = false;
+	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
+	    change = this.goalDelimeter.bindFreshSubTree(iObj) || change;
+	return change;
+    }
+
+
     /**
      *Log the value of the upperLimit
      */
