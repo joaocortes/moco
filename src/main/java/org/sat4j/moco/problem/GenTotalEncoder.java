@@ -616,10 +616,10 @@ public class GenTotalEncoder extends GoalDelimeter {
      */
     
     private boolean simplePropagation(Node parent){
+	Log.comment(5, "in GenTotalEncoder.simplePropagation");
 	ArrayList<Node> children = new ArrayList<Node>(2);
 	children.add(parent.left);
 	children.add(parent.right);
-	Log.comment(5, "in GenTotalEncoder.simplePropagation");
 	boolean change = false;
 	
 	for(Node child: children){
