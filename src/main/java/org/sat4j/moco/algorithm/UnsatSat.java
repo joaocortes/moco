@@ -55,7 +55,7 @@ public class UnsatSat extends algorithm {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private GoalDelimeter goalDelimeter = null;
+    private GenTotalEncoder goalDelimeter = null;
 
     /**
      * Last explored differential k, for each objective function.
@@ -92,10 +92,7 @@ public class UnsatSat extends algorithm {
             return;
         }
 	this.realVariablesN = this.solver.nVars();
-	if(encodingGD)
-	    this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
-	else
-	    this.goalDelimeter = new SeqEncoder(this.problem,this.solver);
+	this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
     }
 
