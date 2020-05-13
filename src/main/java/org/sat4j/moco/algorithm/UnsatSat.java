@@ -320,7 +320,7 @@ public class UnsatSat extends algorithm {
 	    if(this.goalDelimeter.isY(id)){
 		int jObj = this.goalDelimeter.getIObjFromY(id);
 		int kd = this.goalDelimeter.getKDFromY(id);
-		if( this.getUpperKD(jObj)<=kd  + 1)
+		if( this.goalDelimeter.getCurrentKD(jObj)<=kd)
 		    this.setUpperKD(jObj, kd);
 	    }
 	}
