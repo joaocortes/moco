@@ -270,12 +270,15 @@ public class UnsatSat extends algorithm {
 	    int sign = 1;
 	    int ithAbsoluteWeight;
 	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
+		int ithX = objectiveLits.get(iX);
 		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
 		sign = (ithAbsoluteWeight > 0? 1 : -1);
 		ithAbsoluteWeight *= sign;
-		if( ithAbsoluteWeight > this.getUpperKD(iObj))
-		    assumptions.push(- sign * objectiveLits.get(iX));
-	    }
+		if(!this.goalDelimeter.isNodeAlreadyHere(iObj,ithX ))
+		    assumptions.push(- sign * ithX);
+		if( ithAbsoluteWeight > this.getUpperKD(iObj) && this.goalDelimeter.isNodeAlreadyHere(iObj,ithX))
+		    assumptions.push(- sign * ithX);
+			    }
 
 	}
 
