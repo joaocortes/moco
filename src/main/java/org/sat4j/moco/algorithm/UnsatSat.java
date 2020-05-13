@@ -179,16 +179,22 @@ public class UnsatSat extends algorithm {
 		if(currentExplanation.size() == 0){
 		    goOn = false;
 		}else{
-		    this.exhaustedUpperKD = this.UpperKD;
-		    this.logExhaustedUpperKD();
-			    
 		    IVecInt currentExplanationX = new VecInt(new int[] {});
-		    for(int lit: currentExplanation.toArray())
-			if(this.goalDelimeter.isX(lit))
+		    for(int lit: currentExplanation.toArray()){
+			int id = this.solver.idFromLiteral(lit);
+			if(this.goalDelimeter.isX(id))
 			    currentExplanationX.push(-lit);
+			
+		    }
+		    boolean treeChanged = this.uncoverXs(currentExplanationX);
+		    this.bindXs();
 
-		    this.updateUpperBound(currentExplanation);
-		    this.preAssumptionsExtend(currentExplanationX);
+		    if(!treeChanged){
+			this.exhaustedUpperKD = this.UpperKD;
+			this.logExhaustedUpperKD();
+			this.updateUpperBound(currentExplanation);
+			this.preAssumptionsExtend();
+}
 		    currentAssumptions = this.generateUpperBoundAssumptions();
 		    }}
 	    }
