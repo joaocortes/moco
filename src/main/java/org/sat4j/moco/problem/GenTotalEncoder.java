@@ -88,6 +88,12 @@ public class GenTotalEncoder extends GoalDelimeter {
 	private PriorityQueue<Node> unlinkedNodes = new PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
 
 	/**
+	 *The root of the SumTree added.
+	 */
+
+	private Node freshParent = null;
+
+	/**
 	 *Node of a SumTree.
 	 */
 	class Node {
