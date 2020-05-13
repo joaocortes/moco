@@ -469,8 +469,8 @@ public class GenTotalEncoder extends GoalDelimeter {
      */
     public boolean isY(int literal){
 	int id = this.solver.idFromLiteral(literal);
-	if(!isS(literal))
-	    return false;
+	// if(!isS(literal))
+	//     return false;
 	for(SumTree sumTree: this.sumTrees)
 	    if(sumTree.parent!=null)
 		for(SumTree.Node.NodeVars.NodeVar nodeVar: sumTree.parent.nodeVars.containerAll.values())
