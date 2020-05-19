@@ -121,47 +121,25 @@ public class UnsatSat extends algorithm {
 	// this.preAssumptionsExtend(currentExplanation);
 	currentAssumptions = this.generateUpperBoundAssumptions();
 	while(goOn){
-	    ///log..
 	    this.logUpperLimit();
-	    //log..
 	    Log.comment(5, "Checking against assumptions:");
 	    this.goalDelimeter.prettyPrintVecInt(currentAssumptions);
-	    //..log
-
 	    solver.check(currentAssumptions);
 
 	    if(goOn1 && solver.isSat()){
 		subResult.saveModel(this.solver);
-		//log
 		Log.comment(5, " current subResult size:" + subResult.nSolutions());
-
 		currentYModel = this.getYModel();
-		// currentXModelValues = this.getXModelValues();
-		// modelsY.add(this.getYModel());
-
-		//log..
-		// Log.comment(5, "ModelX :");
-		// this.printModel(modelsX.lastElement());
-		// Log.comment(5, "j o ");
-		// for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-		//     Objective ithObj = this.problem.getObj(iObj);
-		//     Log.comment(5, this.attainedValue(ithObj)+ " " );
-		// }
 		Log.comment(5, "ModelX :");
 		this.printModel(this.getXModel());
 		Log.comment(5, "ModelY :");
 		this.printModelY(currentYModel);
-		//..log
-
-		//log
 		Log.comment(5, "Blocking dominated region");
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
 		    goOn1 = false;
 		}
 
-		// if(! this.blockModelX(modelsX.lastElement()))
-		//     goOn = false;
 	    }else{
 		for(int i = 0; i < subResult.nSolutions(); ++i)
 		    this.result.addSolutionUnsafe(subResult.getSolution(i));
