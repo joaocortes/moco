@@ -280,25 +280,6 @@ public class UnsatSat extends algorithm {
 
 
 
-    /**
-     * Updates the current differential K upperBound, according to the
-     * unsatExplanation
-     */
-    private void updateUpperBound(IVecInt currentExplanation){
-        Log.comment(5, "in UnsatSat.updateUpperBound");
-	for(int i = 0; i < currentExplanation.size(); ++i){
-	    int ithLiteral = currentExplanation.get(i);
-	    int id = this.solver.idFromLiteral(ithLiteral);
-	    this.logUpperLimit();
-	    if(this.goalDelimeter.isY(id)){
-		int jObj = this.goalDelimeter.getIObjFromY(id);
-		int kd = this.goalDelimeter.getKDFromY(id);
-		if( this.goalDelimeter.getCurrentKD(jObj)<=kd)
-		    this.setUpperKD(jObj, kd);
-	    }
-	}
-        Log.comment(5, "in done");
-    }
 
 
     /**
