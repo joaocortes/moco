@@ -34,8 +34,6 @@ import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
-import org.sat4j.moco.problem.GoalDelimeter;
-import org.sat4j.moco.problem.SeqEncoder;
 import org.sat4j.moco.problem.GenTotalEncoder;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
