@@ -152,26 +152,23 @@ public class UnsatSat extends algorithm {
 		    this.goalDelimeter.prettyPrintVecInt(currentExplanation);
 		    Log.comment(5, "//");
 		
-		if(currentExplanation.size() == 0){
-		    goOn = false;
-		}else{
-		    IVecInt currentExplanationX = new VecInt(new int[] {});
-		    for(int lit: currentExplanation.toArray()){
-			int id = this.solver.idFromLiteral(lit);
-			if(this.goalDelimeter.isX(id))
-			    currentExplanationX.push(-lit);
-			
-		    }
-		    boolean treeChanged = this.uncoverXs(currentExplanationX);
-		    this.bindXs();
-
-		    if(!treeChanged){
+		    if(currentExplanation.size() == 0){
+			goOn = false;
+		    }else{
+			IVecInt currentExplanationX = new VecInt(new int[] {});
+			for(int lit: currentExplanation.toArray()){
+			    int id = this.solver.idFromLiteral(lit);
+			    if(this.goalDelimeter.isX(id))
+				currentExplanationX.push(-lit);
+			}
+			this.uncoverXs(currentExplanationX);
+			this.bindXs();
 			this.exhaustedUpperKD = this.UpperKD;
 			this.logExhaustedUpperKD();
-			this.updateUpperBound(currentExplanation);
+			for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
+			    this.setUpperKD(iObj, this.goalDelimeter.getCurrentKD(iObj));
 			this.preAssumptionsExtend();
-}
-		    currentAssumptions = this.generateUpperBoundAssumptions();
+			currentAssumptions = this.generateUpperBoundAssumptions();
 		    }}
 	    }
 	}
