@@ -258,20 +258,8 @@ public class UnsatSat extends algorithm {
 		if(newY!=0)
 		    assumptions.push(newY);
 	    }
-	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
-	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
-	    int sign = 1;
-	    int ithAbsoluteWeight;
-	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
-		int ithX = objectiveLits.get(iX);
-		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
-		sign = (ithAbsoluteWeight > 0? 1 : -1);
-		ithAbsoluteWeight *= sign;
-		if(!this.goalDelimeter.isNodeAlreadyHere(iObj,ithX ))
-		    assumptions.push(- sign * ithX);
-		if( ithAbsoluteWeight > this.getUpperKD(iObj) && this.goalDelimeter.isNodeAlreadyHere(iObj,ithX))
-		    assumptions.push(- sign * ithX);
-			    }
+	    for(Integer x: this.coveredLiterals.keySet())
+		assumptions.push(x);
 
 	}
 
