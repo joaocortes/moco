@@ -202,6 +202,9 @@ public class UnsatSat extends algorithm {
 	boolean change = false;
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
 	    change = this.goalDelimeter.addLeafs(iObj, explanationX) || change;
+	int[] explanationXarray = explanationX.toArray();
+	for(int x : explanationXarray)
+	    this.coveredLiterals.remove(x);
 	return change;
     }
 
