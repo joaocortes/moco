@@ -25,6 +25,7 @@ package org.sat4j.moco.algorithm;
 import java.util.Vector;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import org.sat4j.core.VecInt;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
@@ -71,7 +72,7 @@ public class UnsatSat extends algorithm {
      */
     private int realVariablesN = 0;
 
-
+    private HashMap<Integer, Boolean> coveredLiterals = null;
     /**
      * Creates an instance of a MOCO solver, for a given instance,
      * that applies the Pareto-MCS algorithm.
@@ -89,7 +90,23 @@ public class UnsatSat extends algorithm {
             Log.comment(3, "Contradiction in ParetoMCS.buildSolver");
             return;
         }
+	
 	this.realVariablesN = this.solver.nVars();
+	this.coveredLiterals = new HashMap<Integer, Boolean>(this.realVariablesN);
+	for(int iObj = 0, nObj = this.problem.nObjs();iObj < nObj; iObj++){
+	    Objective ithObjective = this.problem.getObj(iObj);
+	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
+	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
+	    int sign = 1;
+	    int ithAbsoluteWeight;
+	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
+		int ithX = objectiveLits.get(iX);
+		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
+		sign = (ithAbsoluteWeight > 0? 1 : -1);
+		ithAbsoluteWeight *= sign;
+		this.coveredLiterals.put(-sign * ithX, null);
+	    }
+	}
 	this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
     }
