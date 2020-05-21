@@ -179,7 +179,6 @@ public class UnsatSat extends algorithm {
 				currentExplanationX.push(-lit);
 			}
 			this.uncoverXs(currentExplanationX);
-			this.bindXs();
 			this.exhaustedUpperKD = this.UpperKD;
 			this.logExhaustedUpperKD();
 			for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
@@ -200,21 +199,13 @@ public class UnsatSat extends algorithm {
     private boolean uncoverXs(IVecInt explanationX)
     {
 	boolean change = false;
-	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
+	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    change = this.goalDelimeter.addLeafs(iObj, explanationX) || change;
+	    change = this.goalDelimeter.bindFreshSubTree(iObj) || change;
+	}
 	int[] explanationXarray = explanationX.toArray();
 	for(int x : explanationXarray)
 	    this.coveredLiterals.remove(x);
-	return change;
-    }
-
-    /**
-     *bind leafs
-     */
-    private boolean bindXs()
-    {	boolean change = false;
-	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	    change = this.goalDelimeter.bindFreshSubTree(iObj) || change;
 	return change;
     }
 
