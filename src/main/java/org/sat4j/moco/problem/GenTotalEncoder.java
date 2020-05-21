@@ -295,11 +295,11 @@ public class GenTotalEncoder extends GoalDelimeter {
 	 */
 	public SumTree.Node linkTreeNameNodes(){
 	    int size = unlinkedNodes.size();
-	    int name = 0;
+	    int name = nodes.size()-size;
 	    Node newParent = null;
 	    if(size>=1){
-		if(this.parent!=null)
-		    name = this.parent.nodeName;
+		// if(this.parent!=null)
+		//     name = this.parent.nodeName;
 		while(size >=2){
 		    Node leftNode = unlinkedNodes.poll();
 		    leftNode.nodeVars.add(0, 0, false, false);
