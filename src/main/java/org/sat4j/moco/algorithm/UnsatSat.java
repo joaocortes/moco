@@ -507,8 +507,11 @@ public class UnsatSat extends algorithm {
 	Log.comment(2, logDiffAttainedValue );
 	IVecInt newHardClause = new VecInt();
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    if(diffAttainedValue[iObj] != 0)
-		newHardClause.push( - this.goalDelimeter.getY(iObj, diffAttainedValue[iObj]));
+	    if(diffAttainedValue[iObj] != 0){
+		int possibleClause =- this.goalDelimeter.getY(iObj, diffAttainedValue[iObj]);
+		if(possibleClause != 0)
+		    newHardClause.push(possibleClause );
+	    }
 	}
 	Log.comment(6, "Blocking clause:");
 	return this.AddClause(newHardClause);
