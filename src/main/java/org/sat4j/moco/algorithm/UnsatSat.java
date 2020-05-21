@@ -104,7 +104,7 @@ public class UnsatSat extends algorithm {
 		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
 		sign = (ithAbsoluteWeight > 0? 1 : -1);
 		ithAbsoluteWeight *= sign;
-		this.coveredLiterals.put(-sign * ithX, null);
+		this.coveredLiterals.putIfAbsent(-sign * ithX, true);
 	    }
 	}
 	this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
