@@ -249,10 +249,11 @@ public class UnsatSat extends algorithm {
 		if(newY!=0)
 		    assumptions.push(newY);
 	    }
-	    for(Integer x: this.coveredLiterals.keySet())
-		assumptions.push(x);
+
 
 	}
+	for(Integer x: this.coveredLiterals.keySet())
+	    assumptions.push(x);
 
 	return assumptions;
     }
