@@ -202,7 +202,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 		    
 		    Integer key =  this.containerAll.ceilingKey(iKD);
 		    if(key == null)
-			return -1;
+			return 0;
 		    return this.containerAll.get(key).id;
 		}
 
