@@ -35,7 +35,7 @@ import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
-import org.sat4j.moco.problem.GenTotalEncoder;
+import org.sat4j.moco.problem.GenTotalEncoderMSU3;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
@@ -54,7 +54,7 @@ public class UnsatSatMSU3 extends algorithm {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private GenTotalEncoder goalDelimeter = null;
+    private GenTotalEncoderMSU3 goalDelimeter = null;
 
     /**
      * Last explored differential k, for each objective function.
@@ -107,7 +107,7 @@ public class UnsatSatMSU3 extends algorithm {
 		this.coveredLiterals.putIfAbsent(-sign * ithX, true);
 	    }
 	}
-	this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
+	this.goalDelimeter = new GenTotalEncoderMSU3(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
     }
 
