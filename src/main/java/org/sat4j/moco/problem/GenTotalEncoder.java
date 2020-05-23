@@ -634,43 +634,6 @@ public class GenTotalEncoder extends GoalDelimeter {
     }
 
 
-    /**
-     *Adds leafs to tree
-     */
-    public boolean addLeafs(int iObj, IVecInt explanationX ){
-	SumTree ithObjSumTree = this.sumTrees[iObj];
-	boolean result = ithObjSumTree.pushNewLeafs(explanationX);
-	ithObjSumTree.freshParent = ithObjSumTree.linkNewNodes();
-
-	return result;
-    }
-    
-
-    public boolean isNodeAlreadyHere(int iObj, int lit){
-	return this.sumTrees[iObj].isNodeAlreadyHere(lit);
-    }
-
-    /**
-     *clause fresh subTree, whose nodes where already linked by addLeafsTo
-     */
-
-    public boolean bindFreshSubTree(int iObj){
-	boolean change = false;
-	SumTree ithObjSumTree = this.sumTrees[iObj];
-	if(upperKD > this.getCurrentKD(iObj)){
-	ithObjSumTree.setOlderUpperLimit();
-	
-	while(!change && upperKD <= this.instance.getObj(iObj).getWeightDiff()){
-	    Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
-	    this.sumTrees[iObj].setUpperLimit(upperKD);
-	    change = addClausesSumTree(iObj);
-	    upperKD++;
-	}
-	return change;
-    }
-
-
-
 
 
     /**
