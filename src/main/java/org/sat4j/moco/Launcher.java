@@ -34,6 +34,7 @@ import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.algorithm.algorithm;
 import org.sat4j.moco.algorithm.ParetoMCS;
 import org.sat4j.moco.algorithm.UnsatSat;
+import org.sat4j.moco.algorithm.UnsatSatMSU3;
 import org.sat4j.moco.algorithm.pMinimal;
 import org.sat4j.moco.parsing.OPBReader;
 import org.sat4j.moco.problem.Instance;
@@ -164,6 +165,12 @@ public class Launcher {
 		setShutdownHandler(pMinimalSolver);
 		pMinimalSolver.solve();
 		break;
+	    case 3:
+  		UnsatSatMSU3 unsatSatMSU3Solver = new UnsatSatMSU3(moco, params.getEncodingGD());
+		setShutdownHandler(unsatSatMSU3Solver);
+		unsatSatMSU3Solver.solve();
+		break;
+
 	    default:
 		Log.comment("Don't know what solver to use");
 		break;
