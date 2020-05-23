@@ -28,11 +28,13 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import java.util.PriorityQueue;
+import java.util.SortedMap;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Collection;
 
 
+import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
@@ -86,12 +88,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	 *List of unlinked nodes. Discardable.
 	 */
 	private PriorityQueue<Node> unlinkedNodes = new PriorityQueue<Node>((a,b) -> a.nodeSum - b.nodeSum);
-
-	/**
-	 *The root of the SumTree added.
-	 */
-
-	private Node freshParent = null;
 
 	/**
 	 *Node of a SumTree.
@@ -198,12 +194,8 @@ public class GenTotalEncoder extends GoalDelimeter {
 		 * that is, the id of the entry with a key that is
 		 * larger or equal to iKD.
 		 */
-		private int getCeilingId(int iKD){
-		    
-		    Integer key =  this.containerAll.ceilingKey(iKD);
-		    if(key == null)
-			return 0;
-		    return this.containerAll.get(key).id;
+		public int getCeilingId(int iKD){
+		    return this.containerAll.ceilingEntry(iKD).getValue().id;
 		}
 
 		/**
@@ -253,7 +245,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    private int leafID = 0;
 	    private int nodeName = 0;
 	    
-	    public Node(){}
 
 	    public Node(int weight, int X){
 		nodes.add(this);
@@ -293,82 +284,37 @@ public class GenTotalEncoder extends GoalDelimeter {
 	 *Links the SumTree, in such a fashion that at any time all
 	 *unlinked nodes are lighter than any linked node.
 	 */
-	public SumTree.Node linkTreeNameNodes(){
+	public void linkTreeNameNodes(){
 	    int size = unlinkedNodes.size();
-	    int name = nodes.size()-size;
-	    Node newParent = null;
-	    if(size>=1){
-		// if(this.parent!=null)
-		//     name = this.parent.nodeName;
-		while(size >=2){
-		    Node leftNode = unlinkedNodes.poll();
-		    leftNode.nodeVars.add(0, 0, false, false);
-		    leftNode.nodeName = name;
-		    name++;
-		    Node rightNode = unlinkedNodes.poll();
-		    rightNode.nodeVars.add(0, 0, false, false);
-		    rightNode.nodeName = name;
-		    name++;
-		    Node parentNode = new Node(leftNode, rightNode);
-		    parentNode.nodeVars.add(0, 0, false, false);
-		    unlinkedNodes.add(parentNode);
-		    size--;
-		}
-		newParent = this.unlinkedNodes.poll();
-		newParent.nodeName = name;
-		if(this.parent == null)
-		    this.parent = newParent;
-		else{
-		    this.parent = new Node(this.parent, newParent);
-		    this.parent.nodeName = name + 1;
-		}
-		this.parent.nodeVars.add(0, 0, false, false);
+	    int name = 0;
+	    while(size >=2){
+	 	Node leftNode = unlinkedNodes.poll();
+		leftNode.nodeName = name;
+		name++;
+		Node rightNode = unlinkedNodes.poll();
+		rightNode.nodeName = name;
+		name++;
+		Node parentNode = new Node(leftNode, rightNode);
+		unlinkedNodes.add(parentNode);
+		size--;
 	    }
-	    return newParent;
+	    this.parent = this.unlinkedNodes.poll();
+	    this.parent.nodeName = name;
+
 	}
 
-	public SumTree(int iObj){
+	public SumTree(int iObj, int[] leafWeights){
 	    this.iObj = iObj;
 	    this.maxUpperLimit = instance.getObj(iObj).getWeightDiff();
-
-	}
-
-	public boolean isNodeAlreadyHere(int lit){
-	boolean alreadyHere = false;
-	for(Node node: this.nodes){
-	    int leafIdTrue = solver.idFromLiteral(node.leafID);
-	    int xId = solver.idFromLiteral(lit);
-	    if(leafIdTrue == xId)
-		alreadyHere = true;
-	    }	    
-	return alreadyHere;
-    }
-
-	/**
-	 * push new stuff to unlinkedNodes
-	 */
-	public boolean pushNewLeafs(IVecInt explanationX){
-	    boolean alreadyHere = false;
-	    int[] newX = explanationX.toArray();
-	    for(int x : newX){
-		int id = solver.idFromLiteral(x);
-		Real weight = instance.getObj(iObj).getSubObj(0).weightFromId(id);
-		if(weight!=null){
-		    alreadyHere= this.isNodeAlreadyHere(x);
-		    if(!alreadyHere){
-			Node node =  new Node(weight.asIntExact(), x);
-			this.unlinkedNodes.add(node);
-		    }
-		}
+	    int iX = 0;
+	    for(int weight : leafWeights){
+		int ithX = instance.getObj(iObj).getSubObjLits(0).get(iX);
+		Node node =  new Node(weight, ithX);
+		this.unlinkedNodes.add(node);
+		iX ++;
 	    }
-	    return this.unlinkedNodes.size()!=0;
-	}
-	/**
-	 *Adds a new sub tree, with nodes associated to leafs in leafsXId
-	 */
-	public SumTree.Node linkNewNodes(){
-	    Node newParent = linkTreeNameNodes();
-	    return newParent;
+	    linkTreeNameNodes();
+
 	}
 	 
     }
@@ -396,9 +342,20 @@ public class GenTotalEncoder extends GoalDelimeter {
 	this.sumTrees = new SumTree[this.instance.nObjs()];
 	    
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    this.sumTrees[iObj] = new SumTree(iObj);
+	    Objective ithObj = this.instance.getObj(iObj);
+	    ReadOnlyVec<Real> ithObjCoeffsReal = ithObj.getSubObjCoeffs(0);
+	    int[] ithObjCoeffsInt = new int[ithObjCoeffsReal.size()];
+
+	    for(int iX = 0, nX = ithObjCoeffsReal.size(); iX < nX; ++iX){
+		ithObjCoeffsInt[iX] = Math.round(ithObjCoeffsReal.get(iX).asInt());
+	    }
+	    this.sumTrees[iObj] = new SumTree(iObj ,ithObjCoeffsInt);
 	}
 
+	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
+	    for(Node node: this.sumTrees[iObj].nodes)
+		node.nodeVars.add(0, 0, false, false);
+	}
 	Log.comment(5, "done");
     }
 
@@ -457,12 +414,10 @@ public class GenTotalEncoder extends GoalDelimeter {
 
     /**
      *Tricky. This is not a real getter. Given kD, it returns the id
-     *of the variable with a smaller kD, yet larger or equal than kD.
+     *of the variable with a smaller kD, yet larger or equal to kD.
      */
     public int getY(int iObj, int kD){
-	if(this.sumTrees[iObj].parent!=null)
-	    return this.sumTrees[iObj].parent.nodeVars.getCeilingId(kD);
-	return 0;
+	return this.sumTrees[iObj].parent.nodeVars.getCeilingId(kD);
     }
 
 
@@ -471,13 +426,12 @@ public class GenTotalEncoder extends GoalDelimeter {
      */
     public boolean isY(int literal){
 	int id = this.solver.idFromLiteral(literal);
-	// if(!isS(literal))
-	//     return false;
+	if(!isS(literal))
+	    return false;
 	for(SumTree sumTree: this.sumTrees)
-	    if(sumTree.parent!=null)
-		for(SumTree.Node.NodeVars.NodeVar nodeVar: sumTree.parent.nodeVars.containerAll.values())
-		    if(nodeVar.getId() == id)
-			return true;
+	    for(SumTree.Node.NodeVars.NodeVar nodeVar: sumTree.parent.nodeVars.containerAll.values())
+		if(nodeVar.getId() == id)
+		return true;
 	return false;
     }
 
@@ -499,9 +453,6 @@ public class GenTotalEncoder extends GoalDelimeter {
 	int sign =(literal>0)? 1: -1;
 	int id =  literal * sign;
 
-	if(isX(id)){
-	    return (sign>0? "+":"-")+"X["+id+"] ";
-	}
 	if(this.isY(id)){
 	    int iObj = this.getIObjFromS(id);
 	    int kD = this.getKDFromS(id);
@@ -509,7 +460,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    return "Y[" + iObj + ", " + k +"]"+ "::" + literal + " ";
 	}
 	 
-
+	if(isX(id)){
+	    return (sign>0? "+":"-")+"X["+id+"] ";
+	}
 	/**
 	 *Then, it is S!
 	 */
@@ -618,10 +571,10 @@ public class GenTotalEncoder extends GoalDelimeter {
      */
     
     private boolean simplePropagation(Node parent){
-	Log.comment(5, "in GenTotalEncoder.simplePropagation");
 	ArrayList<Node> children = new ArrayList<Node>(2);
 	children.add(parent.left);
 	children.add(parent.right);
+	Log.comment(5, "in GenTotalEncoder.simplePropagation");
 	boolean change = false;
 	
 	for(Node child: children){
@@ -641,14 +594,7 @@ public class GenTotalEncoder extends GoalDelimeter {
 	Log.comment(5, "done");
 	return change;
     }
-    public boolean addClausesCurrentNode(SumTree sumTree, Node currentNode){
-	boolean change = false;
-	Node left = currentNode.left;
-	Node right = currentNode.right;
-	change = addSumClauses(currentNode, left, right) || change;    
-	change = simplePropagation(currentNode) || change;
-	return change;
-    }
+
 
     /**
      *Recursive helper of addClausesSumTree
@@ -664,7 +610,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 	else{
 	    change = addClausesSubSumTree(sumTree, left, secondPhase) || change;
 	    change = addClausesSubSumTree(sumTree, right, secondPhase) || change;
-	    addClausesCurrentNode(sumTree, currentNode);
+	    change = addSumClauses(currentNode, left, right) || change;    
+	    change = simplePropagation(currentNode) || change;
+
 	    // else
 	    // 	change = addBindingInternal(sumTree, currentNode, left, right);
 	}
@@ -677,8 +625,7 @@ public class GenTotalEncoder extends GoalDelimeter {
     public boolean addClausesSumTree(int iObj){
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
-	if(ithObjSumTree.parent!=null)
-	    change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, false) || change;
+	change = addClausesSubSumTree(ithObjSumTree, ithObjSumTree.parent, false) || change;
 
 
 	// if(change)
@@ -733,21 +680,11 @@ public class GenTotalEncoder extends GoalDelimeter {
      */
 
     public boolean UpdateCurrentK(int iObj, int upperKD){
-	Log.comment(5, "in GenTotalEncoder.UpdateCurrentK");
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
-
 	if(upperKD > this.getCurrentKD(iObj)){
-	    Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
-	    ithObjSumTree.setOlderUpperLimit();
-	    if(ithObjSumTree.parent.isLeaf()){
-		int weight = ithObjSumTree.parent.nodeSum;
-		Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + weight);
-		Node.NodeVars.NodeVar nodeVar=  ithObjSumTree.parent.nodeVars.addOrRetrieve(weight);
-		nodeVar.iAmFresh =true;
-		ithObjSumTree.setUpperLimit(weight);
-		change=true;
-	}
+	ithObjSumTree.setOlderUpperLimit();
+	
 	while(!change && upperKD <= this.instance.getObj(iObj).getWeightDiff()){
 	    Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
 	    this.sumTrees[iObj].setUpperLimit(upperKD);
@@ -755,9 +692,9 @@ public class GenTotalEncoder extends GoalDelimeter {
 	    upperKD++;
 	}
 	if(change)
-	    addClauseSequential(ithObjSumTree.parent);
-	}
-	Log.comment(5, "done");
-	return change;
+	    addClauseSequential(ithObjSumTree.parent );
+}
+    Log.comment(5, "done");
+    return change;
     }
 }
