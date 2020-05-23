@@ -253,17 +253,21 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    private int leafID = 0;
 	    private int nodeName = 0;
 	    
-	    public Node(){}
+	    public Node(){
+		nodes.add(this);
+		this.nodeVars = new NodeVars();
+		this.nodeVars.add(0, 0, false, false);
+	    }
+	    
 
 	    public Node(int weight, int X){
-		nodes.add(this);
+		this();
 		int sign = 1;
 		if(weight < 0)
 		     sign = -1;
 		this.nodeSum = sign * weight;
 		this.left = null; 
 		this.right = null;
-		this.nodeVars = new NodeVars();
 		this.leafID = sign * X;
 		// this.nodeVars.add(this.nodeSum, leafID, false, false);
 		
@@ -272,10 +276,9 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    }
 	     
 	    public Node(Node left, Node right){
-		nodes.add(this);
+		this();
 		this.left = left;
 		this.right = right;
-		this.nodeVars =  new NodeVars();
 		this.nodeSum = left.nodeSum + right.nodeSum;
 	    }
 	    public boolean isLeaf(){
@@ -303,15 +306,12 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		//     name = this.parent.nodeName;
 		while(size >=2){
 		    Node leftNode = unlinkedNodes.poll();
-		    leftNode.nodeVars.add(0, 0, false, false);
 		    leftNode.nodeName = name;
 		    name++;
 		    Node rightNode = unlinkedNodes.poll();
-		    rightNode.nodeVars.add(0, 0, false, false);
 		    rightNode.nodeName = name;
 		    name++;
 		    Node parentNode = new Node(leftNode, rightNode);
-		    parentNode.nodeVars.add(0, 0, false, false);
 		    unlinkedNodes.add(parentNode);
 		    size--;
 		}
