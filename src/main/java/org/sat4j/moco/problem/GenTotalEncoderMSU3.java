@@ -338,8 +338,10 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	for(Node node: this.nodes){
 	    int leafIdTrue = solver.idFromLiteral(node.leafID);
 	    int xId = solver.idFromLiteral(lit);
-	    if(leafIdTrue == xId)
+	    if(leafIdTrue == xId){
 		alreadyHere = true;
+		break;
+	    }
 	    }	    
 	return alreadyHere;
     }
