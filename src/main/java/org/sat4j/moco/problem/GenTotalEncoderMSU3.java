@@ -323,7 +323,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		    this.parent = new Node(this.parent, newParent);
 		    this.parent.nodeName = name + 1;
 		}
-		this.parent.nodeVars.add(0, 0, false, false);
 	    }
 	    return newParent;
 	}
@@ -656,14 +655,22 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
      */
 
     public boolean addClausesSubSumTree(SumTree sumTree, Node currentNode){
+	Log.comment(5, "in GenTotalEncoder.addClausesSubSumTree");
+	
 	boolean change = false;
 	Node left = currentNode.left;
 	Node right = currentNode.right;
 	Node.NodeVars.NodeVar nodeVar = null;
 	if(currentNode.isLeaf()){
-	    if(currentNode.nodeSum <= sumTree.upperLimit)
+	    if(currentNode.nodeSum <= sumTree.upperLimit){
 		nodeVar = currentNode.nodeVars.addOrRetrieve(currentNode.nodeSum);
-	    return (nodeVar != null) && nodeVar.iAmFresh;
+		if((nodeVar != null) && nodeVar.iAmFresh){
+		    AddClause(new VecInt(new int[]{-currentNode.leafID, nodeVar.getId()}));
+		    Log.comment(5, "done");
+		    return true;
+		}
+		return false;
+	    }
 	}
 	else{
 	    change = addClausesSubSumTree(sumTree, left) || change;
