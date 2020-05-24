@@ -644,11 +644,13 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	return change;
     }
     public boolean addClausesCurrentNode(SumTree sumTree, Node currentNode){
+	Log.comment(5, "in GenTotalEncoder.addClausesCurrentNode");
 	boolean change = false;
 	Node left = currentNode.left;
 	Node right = currentNode.right;
 	change = addSumClauses(currentNode, left, right) || change;    
 	change = simplePropagation(currentNode) || change;
+	Log.comment(5, "done");
 	return change;
     }
 
@@ -681,7 +683,10 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    // else
 	    // 	change = addBindingInternal(sumTree, currentNode, left, right);
 	}
+	Log.comment(5, "done");
+
 	return change;
+
     }
 
     /**
@@ -704,9 +709,11 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
      *Adds leafs to tree
      */
     public boolean addLeafs(int iObj, IVecInt explanationX ){
+	Log.comment(5, "in GenTotalEncoder.addLeafs");
 	SumTree ithObjSumTree = this.sumTrees[iObj];
 	boolean result = ithObjSumTree.pushNewLeafs(explanationX);
 	ithObjSumTree.freshParent = ithObjSumTree.linkNewNodes();
+	Log.comment(5, "done");
 
 	return result;
     }
