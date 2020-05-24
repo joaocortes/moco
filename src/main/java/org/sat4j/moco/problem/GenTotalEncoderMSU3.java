@@ -576,7 +576,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    for(Node.NodeVars.NodeVar secondVar : secondPartial ){
 		Node.NodeVars.NodeVar parentVar =
 		    parent.nodeVars.addOrRetrieve(firstVar.kD + secondVar.kD);
-		if(parentVar != null && parentVar.newValidVariable()) 
+		if(parentVar != null) 
 		    if(parentVar.getKD()!=0 ){
 			IVecInt clause = new VecInt(new int[]{parentVar.getId()});
 			if(firstVar.getKD()>0)
@@ -598,7 +598,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    for(Node.NodeVars.NodeVar secondVar : secondPartial ){
 		Node.NodeVars.NodeVar parentVar =
 		    parent.nodeVars.addOrRetrieve(firstVar.kD + secondVar.kD);
-		if(parentVar != null && parentVar.newValidVariable()) 
+		if(parentVar != null) 
 		    if(parentVar.getKD()!=0 ){
 			IVecInt clause = new VecInt(new int[]{parentVar.getId()});
 			if(firstVar.getKD()>0)
