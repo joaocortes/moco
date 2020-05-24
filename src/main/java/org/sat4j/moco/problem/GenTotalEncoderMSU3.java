@@ -746,21 +746,14 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	if(upperKD > this.getCurrentKD(iObj)){
 	    Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
 	    ithObjSumTree.setOlderUpperLimit();
-	    if(ithObjSumTree.parent!=null && ithObjSumTree.parent.isLeaf()){
-		int weight = ithObjSumTree.parent.nodeSum;
-		Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + weight);
-		// nodeVar.iAmFresh =true;
-		ithObjSumTree.setUpperLimit(weight);
-		change=true;
-	}
-	while(!change && upperKD <= this.instance.getObj(iObj).getWeightDiff()){
-	    Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
-	    this.sumTrees[iObj].setUpperLimit(upperKD);
-	    change = addClausesSumTree(iObj);
-	    upperKD++;
-	}
-	if(change)
-	    addClauseSequential(ithObjSumTree.parent);
+	    while(!change && upperKD <= this.instance.getObj(iObj).getWeightDiff()){
+		Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
+		this.sumTrees[iObj].setUpperLimit(upperKD);
+		change = addClausesSumTree(iObj);
+		upperKD++;
+	    }
+	    if(change)
+		addClauseSequential(ithObjSumTree.parent);
 	}
 	Log.comment(5, "done");
 	return change;
