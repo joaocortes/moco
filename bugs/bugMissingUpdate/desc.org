@@ -1,0 +1,5 @@
+* Bug
+  :PROPERTIES:
+  :alpha:    [2020-05-25 Mon 12:06]
+  :END:
+When the upper limit is updated to 1, x[1] should be unlocked.
