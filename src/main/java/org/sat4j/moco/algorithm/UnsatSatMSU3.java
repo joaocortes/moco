@@ -252,7 +252,7 @@ public class UnsatSatMSU3 extends algorithm {
 	    }
 	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
 	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
-	    int sign = 1;
+	    int sign;
 	    int ithAbsoluteWeight;
 
 	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
@@ -261,7 +261,7 @@ public class UnsatSatMSU3 extends algorithm {
 		sign = (ithAbsoluteWeight > 0? 1 : -1);
 		ithAbsoluteWeight *= sign;
 		if(ithAbsoluteWeight > this.getUpperKD(iObj))
-		    this.coveredLiterals.putIfAbsent(-sign * ithX, true);
+		    assumptions.push(-sign * ithX);
 	    }
 
 	}
