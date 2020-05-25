@@ -159,15 +159,15 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		    NodeVar newNodeVar =  new NodeVar(kD);
 		    if(cutKD){ newNodeVar.cutValue(); kD = newNodeVar.getKD();}
 		    if(!clausing || newNodeVar.newValidVariable()){
-		    this.containerAll.put(kD, newNodeVar);
-		    if(id == 0) 
-			newNodeVar.setFreshId();
-		    else    newNodeVar.id = id;
-		    auxVariablesInverseIndex.put(newNodeVar.getId(), new int[]{kD, iObj, nodeName});
-		    Log.comment(6, "var " + prettyFormatVariable(newNodeVar.getId()));
-		    if(kD == 0)
-			AddClause( new VecInt(new int[] {newNodeVar.getId()}));
-		    return newNodeVar;
+			this.containerAll.put(kD, newNodeVar);
+			if(id == 0) 
+			    newNodeVar.setFreshId();
+			else    newNodeVar.id = id;
+			auxVariablesInverseIndex.put(newNodeVar.getId(), new int[]{kD, iObj, nodeName});
+			Log.comment(6, "var " + prettyFormatVariable(newNodeVar.getId()));
+			if(kD == 0)
+			    AddClause( new VecInt(new int[] {newNodeVar.getId()}));
+			return newNodeVar;
 		    }
 		    return null;
 		}
