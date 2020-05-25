@@ -353,14 +353,13 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    boolean alreadyHere = false;
 	    int[] newExplanationX = explanationX.toArray();
 	    for(int explanation : newExplanationX){
-		int x = - explanation;
-		int id = solver.idFromLiteral(x);
+		int lit = - explanation;
+		int id = solver.idFromLiteral(lit);
 		Real weight = instance.getObj(iObj).getSubObj(0).weightFromId(id);
-		int sign = weight.isNegative()? -1 : 1;
 		if(weight!=null){
-		    alreadyHere= this.isNodeAlreadyHere(x);
+		    alreadyHere= this.isNodeAlreadyHere(lit);
 		    if(!alreadyHere){
-			Node node =  new Node(weight.asIntExact(), sign * x);
+			Node node =  new Node(weight.asIntExact(), id);
 			this.unlinkedNodes.add(node);
 		    }
 		}
