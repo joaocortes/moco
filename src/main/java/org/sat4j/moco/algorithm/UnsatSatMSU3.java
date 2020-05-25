@@ -176,7 +176,7 @@ public class UnsatSatMSU3 extends algorithm {
 			for(int lit: currentExplanation.toArray()){
 			    int id = this.solver.idFromLiteral(lit);
 			    if(this.goalDelimeter.isX(id))
-				currentExplanationX.push(-lit);
+				currentExplanationX.push(lit);
 			}
 			this.uncoverXs(currentExplanationX);
 			this.exhaustedUpperKD = this.UpperKD;
