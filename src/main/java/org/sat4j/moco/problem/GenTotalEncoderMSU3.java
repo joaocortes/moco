@@ -351,8 +351,9 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	 */
 	public boolean pushNewLeafs(IVecInt explanationX){
 	    boolean alreadyHere = false;
-	    int[] newX = explanationX.toArray();
-	    for(int x : newX){
+	    int[] newExplanationX = explanationX.toArray();
+	    for(int explanation : newExplanationX){
+		int x = - explanation;
 		int id = solver.idFromLiteral(x);
 		Real weight = instance.getObj(iObj).getSubObj(0).weightFromId(id);
 		if(weight!=null){
