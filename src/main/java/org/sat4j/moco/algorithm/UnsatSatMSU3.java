@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  * SAT4J: a SATisfiability library for Java Copyright (C) 2004, 2012 Artois University and CNRS
  *
@@ -139,19 +140,19 @@ public class UnsatSatMSU3 extends algorithm {
 	currentAssumptions = this.generateUpperBoundAssumptions();
 	while(goOn){
 	    this.logUpperLimit();
-	    Log.comment(5, "Checking against assumptions:");
-	    this.goalDelimeter.prettyPrintVecInt(currentAssumptions);
+	    Log.comment(2, "Checking against assumptions:");
+	    Log.comment(2, this.goalDelimeter.prettyFormatVecInt(currentAssumptions));
 	    solver.check(currentAssumptions);
 
 	    if(goOn1 && solver.isSat()){
 		subResult.saveModel(this.solver);
-		Log.comment(5, " current subResult size:" + subResult.nSolutions());
+		Log.comment(2, " current subResult size:" + subResult.nSolutions());
 		currentYModel = this.getYModel();
-		Log.comment(5, "ModelX :");
+		Log.comment(2, "ModelX :");
 		this.printModel(this.getXModel());
-		Log.comment(5, "ModelY :");
+		Log.comment(2, "ModelY :");
 		this.printModelY(currentYModel);
-		Log.comment(5, "Blocking dominated region");
+		Log.comment(2, "Blocking dominated region");
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
 		    goOn1 = false;
@@ -165,13 +166,14 @@ public class UnsatSatMSU3 extends algorithm {
 		if(goOn){
 		    currentExplanation = solver.unsatExplanation();
 		    //log..
-		    Log.comment(5, "Explanation:");
-		    this.goalDelimeter.prettyPrintVecInt(currentExplanation);
-		    Log.comment(5, "//");
+		    Log.comment(2, "Explanation:");
+		    Log.comment(2, this.goalDelimeter.prettyFormatVecInt(currentExplanation));
+		    Log.comment(2, "//");
 		
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
+			Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
 			IVecInt currentExplanationX = new VecInt(new int[] {});
 			for(int lit: currentExplanation.toArray()){
 			    int id = this.solver.idFromLiteral(lit);
@@ -233,7 +235,7 @@ public class UnsatSatMSU3 extends algorithm {
 	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
 	    logExhaustedUpperKD +=", "+ (this.exhaustedUpperKD[iObj]);
 	logExhaustedUpperKD +="]";
-	Log.comment(1, logExhaustedUpperKD );
+	Log.comment(0, logExhaustedUpperKD );
     }
     
     /**
@@ -552,7 +554,7 @@ public class UnsatSatMSU3 extends algorithm {
 	    logExhaustedUpperKD +=", "+ (this.exhaustedUpperKD[iObj] - this.problem.getObj(iObj).getMinValue());
 	
 	logExhaustedUpperKD +="]";
-	System.out.print("f " + logExhaustedUpperKD);
+	System.out.println("f " + logExhaustedUpperKD);
 
     }
 }
