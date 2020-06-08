@@ -547,12 +547,12 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		    if(current.iAmFresh() || past.iAmFresh()){
 			IVecInt clause = new VecInt(new int[] {-current.id, past.id});
 			AddClause(clause);
-			past.iAmFresh = false;
+			// past.iAmFresh = false;
 			change = true;
 		    }
 		    past = current;
 	    }while(it.hasNext());
-	    current.iAmFresh = false;
+	    // current.iAmFresh = false;
 	    }
 	}
         Log.comment(5, "done");
@@ -620,7 +620,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
      * 
      */
     
-    private boolean simplePropagation(Node parent){
+    private boolean simplePropagation(Node parent, boolean ignoreFreshness){
 	Log.comment(5, "in GenTotalEncoder.simplePropagation");
 	ArrayList<Node> children = new ArrayList<Node>(2);
 	children.add(parent.left);
@@ -631,7 +631,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    Collection<Node.NodeVars.NodeVar> childTail =
 		child.nodeVars.currentUpper();
 	    for(Node.NodeVars.NodeVar childVar : childTail){
-		if(childVar.iAmFresh){
+		if(ignoreFreshness || childVar.iAmFresh){
 		    childVar.iAmFresh = false;
 		    Node.NodeVars.NodeVar parentVar = parent.nodeVars.addOrRetrieve(childVar.getKD());
 		    IVecInt clause = new VecInt(new int[]{-childVar.getId(), parentVar.getId()});
@@ -644,13 +644,13 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	Log.comment(5, "done");
 	return change;
     }
-    public boolean addClausesCurrentNode(SumTree sumTree, Node currentNode){
+    public boolean addClausesCurrentNode(SumTree sumTree, Node currentNode, boolean iAmtheNewRoot){
 	Log.comment(5, "in GenTotalEncoder.addClausesCurrentNode");
 	boolean change = false;
 	Node left = currentNode.left;
 	Node right = currentNode.right;
 	change = addSumClauses(currentNode, left, right) || change;    
-	change = simplePropagation(currentNode) || change;
+	change = simplePropagation(currentNode, iAmtheNewRoot) || change;
 	Log.comment(5, "done");
 	return change;
     }
@@ -680,7 +680,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	else{
 	    change = addClausesSubSumTree(sumTree, left) || change;
 	    change = addClausesSubSumTree(sumTree, right) || change;
-	    addClausesCurrentNode(sumTree, currentNode);
+	    addClausesCurrentNode(sumTree, currentNode, false);
 	    // else
 	    // 	change = addBindingInternal(sumTree, currentNode, left, right);
 	}
@@ -725,7 +725,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
     }
 
     /**
-     *clause fresh subTree, whose nodes where already linked by addLeafsTo
+     *clause fresh subTree, whose nodes were already linked by addLeafsTo
      */
 
     public boolean bindFreshSubTree(int iObj){
@@ -737,7 +737,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    ithObjSumTree.olderUpperLimit = 0;
 	    change = this.addClausesSubSumTree(ithObjSumTree, newParent);
 	    if(newParent!=ithObjSumTree.parent){
-		change = this.addClausesCurrentNode(ithObjSumTree, ithObjSumTree.parent) || change;
+	 	change = this.addClausesCurrentNode(ithObjSumTree, ithObjSumTree.parent, true) || change;
 	    }
 	    this.addClauseSequential(ithObjSumTree.parent);
 	    ithObjSumTree.olderUpperLimit = oldOldUpperLimit;
