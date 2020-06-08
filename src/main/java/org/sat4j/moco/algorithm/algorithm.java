@@ -48,9 +48,9 @@ abstract public class  algorithm{
 	try{
 	    this.solver.AddClause(setOfLiterals);
 	} catch (ContradictionException e) {
-	    Log.comment(6, "contradiction when adding clause: ");
+	    Log.comment(2, "contradiction when adding clause: ");
 	    for(int j = 0; j < setOfLiterals.size(); ++j)
-		Log.comment(3, " " + setOfLiterals.get(j) + " " );
+		Log.comment(2, " " + setOfLiterals.get(j) + " " );
 	    return false;
 	}
 	Log.comment(6, "done");
