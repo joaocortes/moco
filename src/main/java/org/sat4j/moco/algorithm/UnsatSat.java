@@ -132,8 +132,8 @@ public class UnsatSat extends algorithm {
 	    ///log..
 	    this.logUpperLimit();
 	    //log..
-	    Log.comment(5, "Checking against assumptions:");
-	    this.goalDelimeter.prettyPrintVecInt(currentAssumptions);
+	    Log.comment(2, "Checking against assumptions:");
+	    Log.comment(2, this.goalDelimeter.prettyFormatVecInt(currentAssumptions));
 	    //..log
 
 	    solver.check(currentAssumptions);
@@ -141,7 +141,7 @@ public class UnsatSat extends algorithm {
 	    if(goOn1 && solver.isSat()){
 		subResult.saveModel(this.solver);
 		//log
-		Log.comment(5, " current subResult size:" + subResult.nSolutions());
+		Log.comment(2, " current subResult size:" + subResult.nSolutions());
 
 		currentYModel = this.getYModel();
 		// currentXModelValues = this.getXModelValues();
@@ -155,9 +155,9 @@ public class UnsatSat extends algorithm {
 		//     Objective ithObj = this.problem.getObj(iObj);
 		//     Log.comment(5, this.attainedValue(ithObj)+ " " );
 		// }
-		Log.comment(5, "ModelX :");
+		Log.comment(2, "ModelX :");
 		this.printModel(this.getXModel());
-		Log.comment(5, "ModelY :");
+		Log.comment(2, "ModelY :");
 		this.printModelY(currentYModel);
 		//..log
 
@@ -178,9 +178,9 @@ public class UnsatSat extends algorithm {
 		if(goOn){
 		    currentExplanation = solver.unsatExplanation();
 		    //log..
-		    Log.comment(5, "Explanation:");
-		    this.goalDelimeter.prettyPrintVecInt(currentExplanation);
-		    Log.comment(5, "//");
+		    Log.comment(2, "Explanation:");
+		    Log.comment(2, this.goalDelimeter.prettyFormatVecInt(currentExplanation));
+		    Log.comment(2, "//");
 		
 		if(currentExplanation.size() == 0){
 		    goOn = false;
@@ -221,7 +221,7 @@ public class UnsatSat extends algorithm {
 	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
 	    logExhaustedUpperKD +=", "+ (this.exhaustedUpperKD[iObj] - this.problem.getObj(iObj).getMinValue());
 	logExhaustedUpperKD +="]";
-	Log.comment(1, logExhaustedUpperKD );
+	Log.comment(0, logExhaustedUpperKD );
     }
     
     /**
