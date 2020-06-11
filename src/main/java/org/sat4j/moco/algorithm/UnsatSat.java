@@ -471,16 +471,17 @@ public class UnsatSat extends algorithm {
     		}
     	    });
 
-
+	String logYModel = "";
 	int  currentIObj = convertedModel[0][1];
     	for(int i=0, n = convertedModel.length;i<n;i++){
 	    if(convertedModel[i][1] == currentIObj)	 
-    		this.goalDelimeter.prettyPrintVariable(convertedModel[i][0]);
+    		logYModel += this.goalDelimeter.prettyFormatVariable(convertedModel[i][0]) + " ";
 	    else{
 		Log.comment(5, "\n");
 		currentIObj = convertedModel[i][1];
 	    }
 	}
+	Log.comment(2, logYModel);
     }
 
     /**

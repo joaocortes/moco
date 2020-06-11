@@ -43,7 +43,7 @@ public abstract class GoalDelimeter{
 
     abstract public int getY(int iObj, int iKD);
 
-    abstract String prettyFormatVariable(int literal);    
+    abstract public String prettyFormatVariable(int literal);    
 
 
      public String prettyFormatVecInt(IVecInt vecInt){
