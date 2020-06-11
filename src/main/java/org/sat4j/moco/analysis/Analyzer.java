@@ -28,8 +28,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -47,6 +50,7 @@ import org.sat4j.moco.parsing.OPBReader;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.IOUtils;
 import org.sat4j.moco.util.Log;
+
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -187,6 +191,7 @@ public class Analyzer {
                            .withIdealPoint(rs.getIdealPoint().getObjectives())
                            // .includeInvertedGenerationalDistance()
                            .includeHypervolume()
+                           .includeContribution()
                            // .showIndividualValues()
                            // .showStatisticalSignificance()
                            .withReferenceSet(r_file);
@@ -195,6 +200,78 @@ public class Analyzer {
         return analyzer;
     }
     
+    /**
+     *compare populations
+     */
+    private int compareAlgorithms(){
+
+	for(Entry<String, Result> entryA: this.dataset.entries()) {
+		NondominatedPopulation A = entryA.getValue().solutions;
+		for(Entry<String, Result> entryB: this.dataset.entries()) {
+		    NondominatedPopulation B = entryA.getValue().solutions;
+		    int iA = 0;
+		    int iB = 0;
+		    int [][] interDominance = new int [A.size()][ B.size()];
+	Iterator<org.moeaframework.core.Solution> itA = A.iterator();
+	Iterator<org.moeaframework.core.Solution> itB = B.iterator();
+	while(itA.hasNext()){
+	    iA++;
+	    while(itB.hasNext()){
+		iB++;
+		org.moeaframework.core.Solution solA = itA.next();
+		org.moeaframework.core.Solution solB = itB.next();
+		switch(A.getComparator().compare(solA, solB)){
+		case -1:
+		    interDominance[iA][iB] = -1;
+		case 1:
+		    interDominance[iA][iB] = 1;
+		    break;
+		case 0:
+		    interDominance[iA][iB] = 0;
+		    break;
+		}
+	    }}
+	    System.out.print(interDominance);
+	    }}
+	return 0;
+	 }
+
+    /**
+     *compare populations(simple)
+     */
+    private int simpleCompareAlgorithms(){
+	HashMap<String, Integer> interDominance = new HashMap<String, Integer>();
+	for(Entry<String, Result> entryA: this.dataset.entries()) {
+	    NondominatedPopulation A = entryA.getValue().solutions;
+		Iterator<org.moeaframework.core.Solution> itA = A.iterator();
+		int countA = 0;
+		for(Entry<String, Result> entryB: this.dataset.entries()){
+		    NondominatedPopulation B = entryA.getValue().solutions;
+		    Iterator<org.moeaframework.core.Solution> itB = B.iterator();
+		    while(itA.hasNext()){
+			org.moeaframework.core.Solution solA = itA.next();
+			while(itB.hasNext()){
+			    org.moeaframework.core.Solution solB = itB.next();
+			    if(A.getComparator().compare(solA, solB) == 1){
+				countA++;
+			    }
+			}
+		    }
+		    interDominance.put(entryA.getKey() + " < " + entryB.getKey(), countA);
+		}
+	}
+	String interDominanceLog ="interdominance: ";
+	for(Entry<String, Integer> interDominanceEntry:interDominance.entrySet()){
+	    interDominanceLog += interDominanceEntry.getKey();
+	    interDominanceLog += ", ";
+	    interDominanceLog += interDominanceEntry.getValue();
+	    interDominanceLog += "| ";
+
+	}
+	Log.comment(interDominanceLog);
+	return 0;
+    }
+
     /**
      * Analyzes the execution results in the {@link #dataset} and prints the results of the analysis
      * (hypervolumes, inverted generational distances and respective statistical significances).
@@ -361,6 +438,7 @@ public class Analyzer {
             Instance moco = readMOCO(cl);
             Analyzer analyzer = buildAnalyzer(moco, retrieveDescs(cl));
             analyzer.printAnalysis();
+	    analyzer.simpleCompareAlgorithms();
         }
         catch (ParseException e) {
             printHelpMessage(options);
