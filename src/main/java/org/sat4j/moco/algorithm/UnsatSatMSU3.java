@@ -455,7 +455,8 @@ public class UnsatSatMSU3 extends algorithm {
 	int  currentIObj = convertedModel[0][1];
     	for(int i=0, n = convertedModel.length;i<n;i++){
 	    if(convertedModel[i][1] == currentIObj)	 
-    		logYModel += this.goalDelimeter.prettyFormatVariable(convertedModel[i][0]) + " ";
+		if(convertedModel[i][0] > 0)
+		    logYModel += this.goalDelimeter.prettyFormatVariable(convertedModel[i][0]) + " ";
 	    else{
 		Log.comment(5, "\n");
 		currentIObj = convertedModel[i][1];
@@ -470,13 +471,9 @@ public class UnsatSatMSU3 extends algorithm {
      */
 
     public void printModel(IVecInt model) {
-	for(int j = 0; j <model.size(); ++j){
-	    if(model.get(j)>0)
-		this.goalDelimeter.prettyPrintVariable(model.get(j),2);
+	this.goalDelimeter.prettyPrintVecInt(model, 2);
 	}
 
-	return;
-    }
 
     /**
      * The attained value of objective in the interpretation of the
