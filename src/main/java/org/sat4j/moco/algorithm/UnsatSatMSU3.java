@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * SAT4J: a SATisfiability library for Java Copyright (C) 2004, 2012 Artois University and CNRS
  *
@@ -175,16 +174,26 @@ public class UnsatSatMSU3 extends algorithm {
 		    }else{
 			Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
 			IVecInt currentExplanationX = new VecInt(new int[] {});
+			HashMap<Integer,Boolean> objectivesToChange = new HashMap<Integer, Boolean>(this.problem.nObjs());
 			for(int lit: currentExplanation.toArray()){
 			    int id = this.solver.idFromLiteral(lit);
-			    if(this.goalDelimeter.isX(id))
+			    if(this.goalDelimeter.isX(id)){
 				currentExplanationX.push(lit);
+				for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+				    if(this.problem.getObj(iObj).getSubObj(0).weightFromId(id) != null)
+					objectivesToChange.put(iObj, null);
+				}
+			    }
+			    else
+				objectivesToChange.put(this.goalDelimeter.getIObjFromY(id), null);
+
 			}
 			this.uncoverXs(currentExplanationX);
 			this.exhaustedUpperKD = this.UpperKD;
 			this.logExhaustedUpperKD();
-			for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
+			for(int iObj :objectivesToChange.keySet()){
 			    this.setUpperKD(iObj, this.goalDelimeter.getCurrentKD(iObj));
+			}
 			this.preAssumptionsExtend();
 			currentAssumptions = this.generateUpperBoundAssumptions();
 		    }}
