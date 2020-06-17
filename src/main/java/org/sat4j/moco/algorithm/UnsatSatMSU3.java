@@ -192,6 +192,8 @@ public class UnsatSatMSU3 extends algorithm {
 			this.exhaustedUpperKD = this.UpperKD;
 			this.logExhaustedUpperKD();
 			for(int iObj :objectivesToChange.keySet()){
+			    Log.comment(2, "changing "+ iObj + " upperlimit");
+
 			    this.setUpperKD(iObj, this.goalDelimeter.getCurrentKD(iObj));
 			}
 			this.preAssumptionsExtend();
