@@ -58,25 +58,37 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
     class SumTree {
 
 	private int iObj = -1;
+
 	/**
-	 *must old the desired upperLimit, at any time. Desired is
-	 *purposefully
+	 *larger k that is initialized. variable y_k should be negated
+	 *to enforce  lastValue semantics.
 	 */
+
 	private int upperLimit = 0;
+
 	/**
-	 *Must old the last but effective upperLimit.
+	 *Must old the last but one upperLimit.
 	 */
 	private int olderUpperLimit = 0;
 
 	/**
-	 *Maximal possible value
+	 *max possible upperLimit, corresponding to all literals being active.
 	 */
+
 	private int maxUpperLimit = 0;
+
+	/**
+	 * If y_k is negated, for k = upperLimit, than this is the
+	 * last valid value for the objective function
+	 */
+
+	private int lastValue = 0
 
 	/**
 	 *The root of the SumTree.
 	 */
 	private Node parent = null;
+
 	/**
 	 *List of nodes. Simple array.
 	 */
@@ -407,6 +419,11 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 
     public int getCurrentKD(int iObj){
 	return this.sumTrees[iObj].upperLimit;
+    }
+
+
+    public int getCurrentLastValue(int iObj){
+	return this.sumTrees[iObj].lastValue;
     }
 
 
