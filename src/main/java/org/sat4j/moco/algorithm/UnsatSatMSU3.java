@@ -193,8 +193,11 @@ public class UnsatSatMSU3 extends algorithm {
 			this.logExhaustedUpperKD();
 			for(int iObj :objectivesToChange.keySet()){
 			    Log.comment(2, "changing "+ iObj + " upperlimit");
-
+			    if(this.getUpperKD(iObj) == this.goalDelimeter.getCurrentKD(iObj))
+				this.goalDelimeter.UpdateCurrentK(iObj,this.getUpperKD(iObj) + 1);
 			    this.setUpperKD(iObj, this.goalDelimeter.getCurrentKD(iObj));
+
+				
 			}
 			this.preAssumptionsExtend();
 			currentAssumptions = this.generateUpperBoundAssumptions();
@@ -298,6 +301,8 @@ public class UnsatSatMSU3 extends algorithm {
 		this.goalDelimeter.UpdateCurrentK(iObj, ithMax);
 	    }
 	    else{
+		if(this.getUpperKD(iObj) == this.goalDelimeter.getCurrentKD(iObj))
+		    continue;
 		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj)+1);
 	    }
 	}
