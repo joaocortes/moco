@@ -11,7 +11,7 @@
 ("Run unsatSat on exampleX" :type "java" :request "launch" :args "examples/exampleX.opb -alg 3 -v 6" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
  :name "Run Configuration" ;; :projectName  "org.sat4j.moco"
  :mainClass  "org.sat4j.moco.Launcher")
-("Run unsatSat on bugIAmFresh2" :type "java" :request "launch" :args "bugs/bugIAmFresh2/minimal.opb -alg 1 -v 6" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
+("Run unsatSat on bugDuplicatedUpperLimit" :type "java" :request "launch" :args "bugs/bugDuplicatedUpperLimit/f49-DC_TotalLoss.seq-A-2-1-abcdeir.pbmo -alg 3 -v 6" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
  :name "Run Configuration" ;; :projectName  "org.sat4j.moco"
  :mainClass  "org.sat4j.moco.Launcher")("Run unsatSat on bugupperlimit" :type "java" :request "launch" :args "examples/bugUpperLimit.opb -alg 1 -v 6" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
  :name "Run Configuration" ;; :projectName  "org.sat4j.moco"
