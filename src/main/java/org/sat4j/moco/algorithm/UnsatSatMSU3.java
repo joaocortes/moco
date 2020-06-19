@@ -62,6 +62,11 @@ public class UnsatSatMSU3 extends algorithm {
     private int[] UpperKD = null;
 
     /**
+     * Upper bound, exclusive
+     */
+    private int[] UpperBound = null;
+
+    /**
      * Exhausted upperKD. At any time, all that solutions that
      * dominate this point were found already.
      */
@@ -109,6 +114,7 @@ public class UnsatSatMSU3 extends algorithm {
 	}
 	this.goalDelimeter = new GenTotalEncoderMSU3(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
+	this.UpperBound =  new int[(this.problem.nObjs())];
     }
 
 
@@ -332,6 +338,24 @@ public class UnsatSatMSU3 extends algorithm {
     private void setUpperKD(int iObj, int newKD){
 	if(this.getUpperKD(iObj)< newKD)
 	    this.UpperKD[iObj] = newKD;
+    }
+
+    /**
+     *gets the current upper bound
+     *@param iObj
+     */
+
+    private int getUpperBound(int iObj){
+	return this.UpperBound[iObj];
+    }
+
+    /**
+     *Sets the current upper bound of iObj to nowKD
+     *@param newKD
+     *@param iObj
+     */
+    private void setUpperBound(int iObj, int newKD){
+	    this.UpperBound[iObj] = newKD;
     }
 
     /**
