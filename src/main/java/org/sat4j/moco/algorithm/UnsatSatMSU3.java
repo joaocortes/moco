@@ -199,11 +199,12 @@ public class UnsatSatMSU3 extends algorithm {
 			this.logExhaustedUpperKD();
 			for(int iObj :objectivesToChange.keySet()){
 			    Log.comment(2, "changing "+ iObj + " upperlimit");
-			    if(this.getUpperKD(iObj) == this.goalDelimeter.getCurrentKD(iObj))
-				this.goalDelimeter.UpdateCurrentK(iObj,this.getUpperKD(iObj) + 1);
-			    this.setUpperKD(iObj, this.goalDelimeter.getCurrentKD(iObj));
-
-				
+			    if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
+				this.setUpperKD(iObj, this.goalDelimeter.nextKDValue(iObj,
+										     this.getUpperKD(iObj),
+										     this.getUpperBound(iObj)));
+				this.setUpperBound(iObj, this.goalDelimeter.nextKDValue(iObj,
+										     this.getUpperKD(iObj)));
 			}
 			this.preAssumptionsExtend();
 			currentAssumptions = this.generateUpperBoundAssumptions();
@@ -300,17 +301,35 @@ public class UnsatSatMSU3 extends algorithm {
      */
 
     private void preAssumptionsExtend(){
+	int newValue = 0;
 	int objN = this.problem.nObjs();
 	for(int iObj = 0; iObj < objN ; ++iObj){
 	    int ithMax = this.problem.getObj(iObj).getWeightDiff();
 	    if(this.getUpperKD(iObj) == ithMax){
-		this.goalDelimeter.UpdateCurrentK(iObj, ithMax);
+		this.setUpperBound(iObj, ithMax);
 	    }
 	    else{
-		if(this.getUpperKD(iObj) == this.goalDelimeter.getCurrentKD(iObj))
+		if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
 		    continue;
-		this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj)+1);
+		else{
+		    int newUpperKD = this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj),
+							      this.getUpperBound(iObj));
+		    this.setUpperKD(iObj, newValue);
+
+		    if(newUpperKD == this.getUpperBound(iObj)){
+					 int newUpperBound =  this.goalDelimeter.nextKDValue(iObj, this.getUpperBound(iObj),
+											     ithMax);
+					 this.setUpperBound(iObj, newUpperBound);
+			}
+		    else
+			continue;
+		    
+		    
+		}
+
 	    }
+
+
 	}
     }
 
