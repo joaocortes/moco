@@ -268,7 +268,7 @@ public class UnsatSatMSU3 extends algorithm {
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    Objective ithObjective = this.problem.getObj(iObj);
 	    if(this.getUpperKD(iObj)  < ithObjective.getWeightDiff()){
-		int newY = -this.goalDelimeter.getY(iObj, this.getUpperKD(iObj) + 1);
+		int newY = -this.goalDelimeter.getY(iObj, this.getUpperBound(iObj));
 		if(newY!=0)
 		    assumptions.push(newY);
 
