@@ -728,7 +728,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
      *clause fresh subTree, whose nodes were already linked by addLeafsTo
      */
 
-    public boolean bindFreshSubTree(int iObj){
+    public boolean bindFreshSubTree(int iObj, int upperLimit){
+	Log.comment(5, "in GenTotalEncoder.bindFreshSubTree");
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
 	Node newParent = ithObjSumTree.freshParent;
