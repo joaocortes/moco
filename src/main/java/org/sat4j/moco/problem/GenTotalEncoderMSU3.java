@@ -735,13 +735,18 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	Node newParent = ithObjSumTree.freshParent;
     	if(newParent!=null){
 	    int oldOldUpperLimit = ithObjSumTree.olderUpperLimit;
+	    int oldUpperLimit = ithObjSumTree.upperLimit;
+
 	    ithObjSumTree.olderUpperLimit = 0;
+	    ithObjSumTree.upperLimit = upperLimit;
+
 	    change = this.addClausesSubSumTree(ithObjSumTree, newParent);
 	    if(newParent!=ithObjSumTree.parent){
 	 	change = this.addClausesCurrentNode(ithObjSumTree, ithObjSumTree.parent, true) || change;
 	    }
 	    this.addClauseSequential(ithObjSumTree.parent);
 	    ithObjSumTree.olderUpperLimit = oldOldUpperLimit;
+	    ithObjSumTree.upperLimit = oldUpperLimit;
 	}
 	return change;
     }
