@@ -785,25 +785,40 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
      *
      */
 
-    public boolean nextKDValue(int iObj, int kD){
+    public int nextKDValue(int iObj, int kD, int oldNext){
 	Log.comment(5, "in GenTotalEncoder.nextKDValue");
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
-	upperLimit = ithObjSumTree.upperLimit;
-	ithObjSumTree.setOlderUpperLimit();
-	if(upperKD > this.getCurrentKD(iObj)){
+	// store  values of upperLimit and olderUpperLimit
+	int upperLimit = ithObjSumTree.upperLimit;
+	int olderUpperLimit = ithObjSumTree.olderUpperLimit;
+	ithObjSumTree.olderUpperLimit = kD;
+	int upperKD = kD + 1;
+	Log.comment(5, "in GenTotalEncoder.nexKDValue of "+ iObj + "from " + ithObjSumTree.upperLimit + " to " + upperKD);
+	while(!change && upperKD < oldNext){
 	    Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
-	    ithObjSumTree.setOlderUpperLimit();
-	    while(!change && upperKD <= newKD){
-		Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
-		this.sumTrees[iObj].setUpperLimit(upperKD);
-		change = addClausesSumTree(iObj);
-		upperKD++;
-	    }
-	    if(change)
-		addClauseSequential(ithObjSumTree.parent);
+	    this.sumTrees[iObj].setUpperLimit(upperKD);
+	    change = addClausesSumTree(iObj);
+	    upperKD++;
 	}
+	if(change)
+	    addClauseSequential(ithObjSumTree.parent);
+
 	Log.comment(5, "done");
-	return change;
+	ithObjSumTree.upperLimit = upperLimit;
+	ithObjSumTree.olderUpperLimit = olderUpperLimit;
+	return upperKD;
+	}
+
+    /**
+     *Finds the next valid kD value, starting from lastK and extending
+     *until newKD, inclusive. This will not repeat clauses only if the
+     *intervale (kD, newKD] is empty of already computed kD values
+     *
+     */
+
+    public int nextKDValue(int iObj, int kD){
+	int oldNext = this.sumTrees[iObj].maxUpperLimit;
+	return 	this.nextKDValue(iObj, kD, oldNext);
     }
 }
