@@ -178,35 +178,7 @@ public class UnsatSatMSU3 extends algorithm {
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
-			Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
-			IVecInt currentExplanationX = new VecInt(new int[] {});
-			HashMap<Integer,Boolean> objectivesToChange = new HashMap<Integer, Boolean>(this.problem.nObjs());
-			for(int lit: currentExplanation.toArray()){
-			    int id = this.solver.idFromLiteral(lit);
-			    if(this.goalDelimeter.isX(id)){
-				currentExplanationX.push(lit);
-				for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-				    if(this.problem.getObj(iObj).getSubObj(0).weightFromId(id) != null)
-					objectivesToChange.put(iObj, null);
-				}
-			    }
-			    else
-				objectivesToChange.put(this.goalDelimeter.getIObjFromY(id), null);
-
-			}
-			this.uncoverXs(currentExplanationX);
-			this.exhaustedUpperKD = this.UpperKD;
-			this.logExhaustedUpperKD();
-			for(int iObj :objectivesToChange.keySet()){
-			    Log.comment(2, "changing "+ iObj + " upperlimit");
-			    if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
-				this.setUpperKD(iObj, this.goalDelimeter.nextKDValue(iObj,
-										     this.getUpperKD(iObj),
-										     this.getUpperBound(iObj)));
-				this.setUpperBound(iObj, this.goalDelimeter.nextKDValue(iObj,
-										     this.getUpperKD(iObj)));
-			}
-			this.preAssumptionsExtend();
+			this.preAssumptionsExtend(currentExplanation);
 			currentAssumptions = this.generateUpperBoundAssumptions();
 		    }}
 	    }
@@ -300,9 +272,38 @@ public class UnsatSatMSU3 extends algorithm {
      *initialize more of the domain of the goal delimeter
      */
 
-    private void preAssumptionsExtend(){
+    private void preAssumptionsExtend(IVecInt currentExplanation){
 	int newValue = 0;
 	int objN = this.problem.nObjs();
+	Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
+	IVecInt currentExplanationX = new VecInt(new int[] {});
+	HashMap<Integer,Boolean> objectivesToChange = new HashMap<Integer, Boolean>(this.problem.nObjs());
+	for(int lit: currentExplanation.toArray()){
+	    int id = this.solver.idFromLiteral(lit);
+	    if(this.goalDelimeter.isX(id)){
+		currentExplanationX.push(lit);
+		for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+		    if(this.problem.getObj(iObj).getSubObj(0).weightFromId(id) != null)
+			objectivesToChange.put(iObj, null);
+		}
+	    }
+	    else
+		objectivesToChange.put(this.goalDelimeter.getIObjFromY(id), null);
+
+	}
+	this.uncoverXs(currentExplanationX);
+	this.exhaustedUpperKD = this.UpperKD;
+	this.logExhaustedUpperKD();
+	for(int iObj :objectivesToChange.keySet()){
+	    Log.comment(2, "changing "+ iObj + " upperlimit");
+	    if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
+		this.setUpperKD(iObj, this.goalDelimeter.nextKDValue(iObj,
+								     this.getUpperKD(iObj),
+								     this.getUpperBound(iObj)));
+	    this.setUpperBound(iObj, this.goalDelimeter.nextKDValue(iObj,
+								    this.getUpperKD(iObj)));
+	}
+
 	for(int iObj = 0; iObj < objN ; ++iObj){
 	    int ithMax = this.problem.getObj(iObj).getWeightDiff();
 	    if(this.getUpperKD(iObj) == ithMax){
