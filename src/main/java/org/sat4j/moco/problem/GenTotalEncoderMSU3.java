@@ -801,7 +801,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	int upperKD = kD + 1;
 	Log.comment(5, "in GenTotalEncoder.nexKDValue of "+ iObj + "from " + ithObjSumTree.upperLimit + " to " + upperKD);
 	while(!change && upperKD < oldNext){
-	    Log.comment(5, "in GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
+	    Log.comment(5, "in GenTotalEncoder.nexKDValue of "+ iObj + "from " + ithObjSumTree.upperLimit + " to " + upperKD);
 	    this.sumTrees[iObj].setUpperLimit(upperKD);
 	    change = addClausesSumTree(iObj);
 	    upperKD++;
