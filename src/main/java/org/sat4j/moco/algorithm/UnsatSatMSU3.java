@@ -224,7 +224,7 @@ public class UnsatSatMSU3 extends algorithm {
 	boolean change = false;
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    change = this.goalDelimeter.addLeafs(iObj, explanationX) || change;
-	    change = this.goalDelimeter.bindFreshSubTree(iObj, this.getUpperBound(iObj)) || change;
+	    change = this.goalDelimeter.bindFreshSubTree(iObj, this.getUpperKD(iObj)) || change;
 	}
 	int[] explanationXarray = explanationX.toArray();
 	for(int x : explanationXarray)
