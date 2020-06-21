@@ -823,7 +823,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
      */
 
     public int nextKDValue(int iObj, int kD){
-	int oldNext = this.sumTrees[iObj].maxUpperLimit;
-	return 	this.nextKDValue(iObj, kD, oldNext);
+	int aproxNextKd = this.sumTrees[iObj].parent.nodeVars.getCeilingKD(kD);
+	return 	this.nextKDValue(iObj, kD, aproxNextKd);
     }
 }
