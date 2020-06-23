@@ -183,8 +183,14 @@ public class UnsatSatMSU3 extends algorithm {
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
-			this.preAssumptionsExtend(currentExplanation);
-			currentAssumptions = this.generateUpperBoundAssumptions();
+			boolean change = this.preAssumptionsExtend(currentExplanation);
+			this.logMaxValues();
+			if(change)
+			    currentAssumptions = this.generateUpperBoundAssumptions();
+			else {
+			    Log.comment(2, "There was no expansion");
+			    goOn = false;
+			}
 		    }}
 	    }
 	}
