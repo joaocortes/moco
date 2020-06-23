@@ -120,6 +120,7 @@ public class UnsatSatMSU3 extends algorithm {
 	this.goalDelimeter = new GenTotalEncoderMSU3(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
 	this.UpperBound =  new int[(this.problem.nObjs())];
+	this.maxValues =  new int[(this.problem.nObjs())];
     }
 
 
