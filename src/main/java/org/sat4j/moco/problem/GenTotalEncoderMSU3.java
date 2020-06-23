@@ -671,7 +671,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	Node right = currentNode.right;
 	Node.NodeVars.NodeVar nodeVar = null;
 	if(currentNode.isLeaf()){
-	    if(currentNode.nodeSum <= sumTree.upperLimit){
+	    if(sumTree.olderUpperLimit < currentNode.nodeSum &&  currentNode.nodeSum <= sumTree.upperLimit){
 		nodeVar = currentNode.nodeVars.addOrRetrieve(currentNode.nodeSum);
 		if((nodeVar != null) && nodeVar.iAmFresh){
 		    AddClause(new VecInt(new int[]{-currentNode.leafID, nodeVar.getId()}));
