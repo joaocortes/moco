@@ -318,50 +318,36 @@ public class UnsatSatMSU3 extends algorithm {
 	this.exhaustedUpperKD = this.UpperKD;
 	this.logExhaustedUpperKD();
 	for(int iObj :objectivesToChange.keySet()){
-	    if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
-		this.setUpperKD(iObj, this.goalDelimeter.nextKDValue(iObj,
-								     this.getUpperKD(iObj),
-								     this.getUpperBound(iObj)));
-	    this.setUpperBound(iObj, this.goalDelimeter.nextKDValue(iObj,
-								    this.getUpperKD(iObj)));
 	    Log.comment(2, "changing upperlimit " + iObj);
 	    int upperKDBefore = this.getUpperKD(iObj);
+	    if(this.getUpperKD(iObj) < this.getUpperBound(iObj)){
+		this.setUpperKD(iObj, this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj)));
+	    }
+	    else
+		if(this.getUpperBound(iObj) == this.maxValues[iObj]);
+		else
+		    {
+			this.goalDelimeter.generateNext(iObj, this.getUpperKD(iObj));
+			this.setUpperKD(iObj, this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj)));
+			this.goalDelimeter.generateNext(iObj, this.getUpperKD(iObj));
+			this.setUpperBound(iObj, this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj)));
+			
+		    }			
+		
 	    if(this.getUpperKD(iObj)!= upperKDBefore)
 		change = true;
 
 	}
 	return change;
 
-	for(int iObj = 0; iObj < objN ; ++iObj){
-	    int ithMax = this.problem.getObj(iObj).getWeightDiff();
-	    if(this.getUpperKD(iObj) == ithMax){
-		this.setUpperBound(iObj, ithMax);
-	    }
-	    else{
-		if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
-		    continue;
-		else{
-		    int newUpperKD = this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj),
-							      this.getUpperBound(iObj));
-		    this.setUpperKD(iObj, newValue);
-
-		    if(newUpperKD == this.getUpperBound(iObj)){
-					 int newUpperBound =  this.goalDelimeter.nextKDValue(iObj, this.getUpperBound(iObj),
-											     ithMax);
-					 this.setUpperBound(iObj, newUpperBound);
-			}
-		    else
-			continue;
-		    
-		    
-		}
-
-	    }
-
-
-	}
     }
 
+
+
+
+    /**
+     *Updates the current maxValues for each objective
+     */
 
     private void updateCurrentMaxValues(){
 
