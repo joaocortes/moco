@@ -632,10 +632,10 @@ public class UnsatSatMSU3 extends algorithm {
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    if(diffAttainedValue[iObj] != 0){
 		int possibleClause =- this.goalDelimeter.getY(iObj, diffAttainedValue[iObj]);
+		//this better always be true.
 		if(possibleClause != 0)
-		    newHardClause.push(possibleClause );
-	    }
-	}
+		    newHardClause.push(possibleClause);
+	    }	}	    
 	Log.comment(6, "Blocking clause:");
 	return this.AddClause(newHardClause);
 
