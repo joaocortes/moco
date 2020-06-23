@@ -225,7 +225,11 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		 */
 
 		public int getCeilingKD (int iKD){
-		    return this.containerAll.ceilingEntry(iKD).getValue().getKD();
+
+		    Integer key =  this.containerAll.ceilingKey(iKD);
+		    if(key == null)
+			return -1;
+		    return this.containerAll.get(key).kD;
 		}
 
 		public Collection<NodeVars.NodeVar> currentUpper(){
