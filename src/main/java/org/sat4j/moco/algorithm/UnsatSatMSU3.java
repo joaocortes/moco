@@ -264,11 +264,10 @@ public class UnsatSatMSU3 extends algorithm {
 	
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    Objective ithObjective = this.problem.getObj(iObj);
-	    if(this.getUpperKD(iObj)  < ithObjective.getWeightDiff()){
+	    if(this.getUpperKD(iObj)  != this.getUpperBound(iObj)){
 		int newY = -this.goalDelimeter.getY(iObj, this.getUpperBound(iObj));
 		if(newY!=0)
 		    assumptions.push(newY);
-
 	    }
 	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
 	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
