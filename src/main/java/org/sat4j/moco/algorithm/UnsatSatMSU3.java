@@ -67,6 +67,11 @@ public class UnsatSatMSU3 extends algorithm {
     private int[] UpperBound = null;
 
     /**
+     * maxValues, given the current coveredLiterals
+     */
+    private int[] maxValues = null;
+
+    /**
      * Exhausted upperKD. At any time, all that solutions that
      * dominate this point were found already.
      */
@@ -201,6 +206,7 @@ public class UnsatSatMSU3 extends algorithm {
 	int[] explanationXarray = explanationX.toArray();
 	for(int x : explanationXarray)
 	    this.coveredLiterals.remove(x);
+	this.updateCurrentMaxValues();
 	return change;
     }
 
@@ -217,6 +223,19 @@ public class UnsatSatMSU3 extends algorithm {
 	
 	logUpperLimit +="]";
 	Log.comment(2, logUpperLimit );
+    }
+    /**
+     *Log the current maxValues
+     */
+
+    private void logMaxValues()    {
+	String logMaxValues = " uncovered max values: ["+this.maxValues[0];
+	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
+	    logMaxValues +=", "+this.maxValues[iObj] ;//+ this.problem.getObj(iObj).getMinValue())
+	//..log
+	
+	logMaxValues +="]";
+	Log.comment(2, logMaxValues );
     }
     
     /**
