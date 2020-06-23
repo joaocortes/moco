@@ -788,36 +788,39 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 
 
     /**
-     *Finds the next valid kD value, starting from lastK and extending
+     *Finds the next valid kD value, starting in kD and extending
      *until newKD, inclusive. This will not repeat clauses only if the
      *intervale (kD, newKD] is empty of already computed kD values
      *
      */
 
-    public int nextKDValue(int iObj, int kD, int oldNext){
-	Log.comment(5, "in GenTotalEncoder.nextKDValue");
-	boolean change = false;
-	SumTree ithObjSumTree = this.sumTrees[iObj];
-	// store  values of upperLimit and olderUpperLimit
-	int upperLimit = ithObjSumTree.upperLimit;
-	int olderUpperLimit = ithObjSumTree.olderUpperLimit;
-	ithObjSumTree.olderUpperLimit = kD;
-	int upperKD = kD + 1;
-	Log.comment(5, "in GenTotalEncoder.nexKDValue of "+ iObj + "from " + ithObjSumTree.upperLimit + " to " + upperKD);
-	while(!change && upperKD < oldNext){
-	    Log.comment(5, "in GenTotalEncoder.nexKDValue of "+ iObj + "from " + ithObjSumTree.upperLimit + " to " + upperKD);
-	    this.sumTrees[iObj].setUpperLimit(upperKD);
-	    change = addClausesSumTree(iObj);
-	    upperKD++;
-	}
-	if(change)
-	    addClauseSequential(ithObjSumTree.parent);
+    public int generateNext(int iObj, int kD){
+    	Log.comment(5, "in GenTotalEncoder.generateNext");
+    	boolean change = false;
+    	SumTree ithObjSumTree = this.sumTrees[iObj];
+    	// store  values of upperLimit and olderUpperLimit
+    	int upperLimit = ithObjSumTree.upperLimit;
+    	int olderUpperLimit = ithObjSumTree.olderUpperLimit;
+    	ithObjSumTree.olderUpperLimit = kD;
+	this.sumTrees[iObj].setUpperLimit(kD+1);
+    	int upperKD = kD+1;
+    	while(!change && upperKD <= ithObjSumTree.maxUpperLimit){
+    	    Log.comment(5, "in GenTotalEncoder.generateNext of "+ iObj + "from " + kD + " to " + upperKD);
+    	    this.sumTrees[iObj].setUpperLimit(upperKD);
+    	    change = addClausesSumTree(iObj);
+    	    upperKD++;
+    	}
+    	if(change)
+    	    addClauseSequential(ithObjSumTree.parent);
 
-	Log.comment(5, "done");
-	ithObjSumTree.upperLimit = upperLimit;
-	ithObjSumTree.olderUpperLimit = olderUpperLimit;
-	return upperKD;
-	}
+    	Log.comment(5, "done");
+    	ithObjSumTree.upperLimit = upperLimit;
+    	ithObjSumTree.olderUpperLimit = olderUpperLimit;
+    	if(change)
+    	    return ithObjSumTree.upperLimit;
+    	else
+    	    return kD;
+    	}
 
     /**
      *Finds the next valid kD value, starting from lastK and extending
