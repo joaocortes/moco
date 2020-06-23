@@ -8,6 +8,9 @@
   (projectile-project-compilation-cmd . "mvn -DskipTests=true package"))
  (java-mode
   (dap-debug-template-configurations .  (
+("Run unsatSat on dalB/.." :type "java" :request "launch" :args "/home/joaooneillcortes/Mnemosyne/Aion/moco/mocoData/runnerData/instances/DAL/sampleB/f49-DC_TotalLoss.seq-A-2-1-abcdeir.pbmo -alg 3 -v 6" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
+ :name "Run Configuration" ;; :projectName  "org.sat4j.moco"
+ :mainClass  "org.sat4j.moco.Launcher")
 ("Run unsatSat on exampleX" :type "java" :request "launch" :args "examples/exampleX.opb -alg 3 -v 6" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
  :name "Run Configuration" ;; :projectName  "org.sat4j.moco"
  :mainClass  "org.sat4j.moco.Launcher")
