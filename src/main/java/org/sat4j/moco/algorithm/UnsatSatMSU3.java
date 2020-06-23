@@ -145,24 +145,24 @@ public class UnsatSatMSU3 extends algorithm {
 	Log.comment(3, "in UnsatSat.solve");
 	boolean goOn = true;
 	boolean goOn1 = true;
-	this.logUpperLimit();
-	// this.preAssumptionsExtend(currentExplanation);
 	currentAssumptions = this.generateUpperBoundAssumptions();
 	while(goOn){
 	    this.logUpperLimit();
-	    Log.comment(2, "Checking against assumptions:");
-	    Log.comment(2, this.goalDelimeter.prettyFormatVecInt(currentAssumptions));
+	    this.logUpperBound();
+
+	    Log.comment(3, "Checking against assumptions:");
+	    Log.comment(3, this.goalDelimeter.prettyFormatVecInt(currentAssumptions));
 	    solver.check(currentAssumptions);
 
 	    if(goOn1 && solver.isSat()){
 		subResult.saveModel(this.solver);
 		Log.comment(2, " current subResult size:" + subResult.nSolutions());
 		currentYModel = this.getYModel();
-		Log.comment(2, "ModelX :");
+		Log.comment(3, "ModelX :");
 		this.printModel(this.getXModel());
-		Log.comment(2, "ModelY :");
+		Log.comment(3, "ModelY :");
 		this.printModelY(currentYModel);
-		Log.comment(2, "Blocking dominated region");
+		Log.comment(3, "Blocking dominated region");
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
 		    goOn1 = false;
@@ -176,9 +176,9 @@ public class UnsatSatMSU3 extends algorithm {
 		if(goOn){
 		    currentExplanation = solver.unsatExplanation();
 		    //log..
-		    Log.comment(2, "Explanation:");
-		    Log.comment(2, this.goalDelimeter.prettyFormatVecInt(currentExplanation));
-		    Log.comment(2, "//");
+		    Log.comment(3, "Explanation:");
+		    Log.comment(3, this.goalDelimeter.prettyFormatVecInt(currentExplanation));
+		    Log.comment(3, "//");
 		
 		    if(currentExplanation.size() == 0){
 			goOn = false;
@@ -230,6 +230,21 @@ public class UnsatSatMSU3 extends algorithm {
 	logUpperLimit +="]";
 	Log.comment(2, logUpperLimit );
     }
+
+    /**
+     *Log the current upperBound
+     */
+
+    private void logUpperBound()    {
+	String logUpperLimit = "diff upper bound: ["+this.getUpperBound(0);
+	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
+	    logUpperLimit +=", "+this.getUpperBound(iObj) ;//+ this.problem.getObj(iObj).getMinValue())
+	//..log
+	
+	logUpperLimit +="]";
+	Log.comment(2, logUpperLimit );
+    }
+    
     /**
      *Log the current maxValues
      */
@@ -558,7 +573,7 @@ public class UnsatSatMSU3 extends algorithm {
 		currentIObj = convertedModel[i][1];
 	    }
 	}
-	Log.comment(2, logYModel);
+	Log.comment(3, logYModel);
     }
 
     /**
