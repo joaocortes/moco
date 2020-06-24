@@ -157,7 +157,7 @@ public class UnsatSatMSU3 extends algorithm {
 
 	    if(goOn1 && solver.isSat()){
 		subResult.saveModel(this.solver);
-		Log.comment(2, " current subResult size:" + subResult.nSolutions());
+		Log.comment(3, " current subResult size:" + subResult.nSolutions());
 		currentYModel = this.getYModel();
 		Log.comment(3, "ModelX :");
 		this.printModel(this.getXModel());
@@ -583,7 +583,7 @@ public class UnsatSatMSU3 extends algorithm {
      */
 
     public void printModel(IVecInt model) {
-	this.goalDelimeter.prettyPrintVecInt(model, 2);
+	this.goalDelimeter.prettyPrintVecInt(model, 3);
 	}
 
 
