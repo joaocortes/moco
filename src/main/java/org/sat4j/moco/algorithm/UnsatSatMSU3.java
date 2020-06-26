@@ -148,9 +148,10 @@ public class UnsatSatMSU3 extends algorithm {
 	boolean goOn = true;
 	boolean goOn1 = true;
 	currentAssumptions = this.generateUpperBoundAssumptions();
+	this.logUpperLimit();
+	this.logUpperBound();
+
 	while(goOn){
-	    this.logUpperLimit();
-	    this.logUpperBound();
 
 	    Log.comment(3, "Checking against assumptions:");
 	    Log.comment(3, this.goalDelimeter.prettyFormatVecInt(currentAssumptions));
@@ -176,6 +177,11 @@ public class UnsatSatMSU3 extends algorithm {
 		subResult = new SubResult(this.problem);
 		goOn = goOn1;
 		if(goOn){
+		    this.exhaustedUpperKD = this.UpperKD;
+		    this.logExhaustedUpperKD();
+
+
+
 		    currentExplanation = solver.unsatExplanation();
 		    //log..
 		    Log.comment(3, "Explanation:");
@@ -186,6 +192,8 @@ public class UnsatSatMSU3 extends algorithm {
 			goOn = false;
 		    }else{
 			boolean change = this.preAssumptionsExtend(currentExplanation);
+			this.logUpperLimit();
+			this.logUpperBound();
 			this.logMaxValues();
 			if(change)
 			    currentAssumptions = this.generateUpperBoundAssumptions();
@@ -193,10 +201,13 @@ public class UnsatSatMSU3 extends algorithm {
 			    Log.comment(2, "There was no expansion");
 			    goOn = false;
 			}
-		    }}
+		    }
+
+		}
 	    }
 	}
 	this.result.setParetoFrontFound();
+
 	return;
     }
 
@@ -315,6 +326,7 @@ public class UnsatSatMSU3 extends algorithm {
      */
 
     private boolean preAssumptionsExtend(IVecInt currentExplanation){
+
 	boolean change = false;
 	Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
 	IVecInt currentExplanationX = new VecInt(new int[] {});
@@ -661,7 +673,7 @@ public class UnsatSatMSU3 extends algorithm {
     public void printFlightRecordParticular(){
 	String logExhaustedUpperKD = "completed upper limit: ["+this.exhaustedUpperKD[0];
 	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
-	    logExhaustedUpperKD +=", "+ (this.exhaustedUpperKD[iObj] - this.problem.getObj(iObj).getMinValue());
+	    logExhaustedUpperKD +=", "+ (this.exhaustedUpperKD[iObj]);
 	
 	logExhaustedUpperKD +="]";
 	System.out.println("f " + logExhaustedUpperKD);
