@@ -345,28 +345,18 @@ public class UnsatSatMSU3 extends algorithm {
 
 	}
 	change = this.uncoverXs(currentExplanationX);
-	this.exhaustedUpperKD = this.UpperKD;
-	this.logExhaustedUpperKD();
+	this.updateCurrentMaxValues();
 	for(int iObj :objectivesToChange.keySet()){
-	    Log.comment(2, "changing upperlimit " + iObj);
+	    Log.comment(3, "changing upperlimit " + iObj);
 	    int upperKDBefore = this.getUpperKD(iObj);
-	    if(this.getUpperKD(iObj) < this.getUpperBound(iObj)){
-		this.setUpperKD(iObj, this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj)));
-	    }
-	    else
-		if(this.getUpperBound(iObj) == this.maxValues[iObj]);
-		else
-		    {
-			this.goalDelimeter.generateNext(iObj, this.getUpperKD(iObj));
-			this.setUpperKD(iObj, this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj)));
-			this.goalDelimeter.generateNext(iObj, this.getUpperKD(iObj));
-			this.setUpperBound(iObj, this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj)));
-			
-		    }			
-		
+	    if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
+		this.goalDelimeter.generateNext(iObj, this.getUpperKD(iObj), maxValues[iObj]);
+	    this.setUpperKD(iObj, this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj)));
+	    // if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
+	    this.goalDelimeter.generateNext(iObj, this.getUpperKD(iObj), maxValues[iObj]);
+	    this.setUpperBound(iObj, this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj)));
 	    if(this.getUpperKD(iObj)!= upperKDBefore)
 		change = true;
-
 	}
 	return change;
 
