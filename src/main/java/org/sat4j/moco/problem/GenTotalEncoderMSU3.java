@@ -361,6 +361,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		    alreadyHere= this.isLeafAlreadyHere(lit);
 		    if(!alreadyHere){
 			Node node =  new Node(weight.asIntExact(), id);
+				Log.comment(5, "new leaf: "+ node.leafID);
+
 			this.unlinkedNodes.add(node);
 		    }
 		}
