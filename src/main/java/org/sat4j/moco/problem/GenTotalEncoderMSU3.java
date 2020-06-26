@@ -51,7 +51,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
     /**
      *The inverse index map for the partial sum variables. For each ID, a
      *value that is an array vector with the value of the goal and the
-     *value of the sum
+     *value of the sum, namely {kD, iObj, nodeName}
      */
     protected Hashtable<Integer,int[]> auxVariablesInverseIndex  = new Hashtable<Integer, int[]>();
 
@@ -792,8 +792,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
      *
      */
 
-    public int generateNext(int iObj, int kD){
-    	Log.comment(5, "in GenTotalEncoder.generateNext");
+    public int generateNext(int iObj, int kD, int inclusiveMax){
     	Log.comment(5, "{ GenTotalEncoder.generateNext");
 
     	boolean change = false;
@@ -802,13 +801,14 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
     	int upperLimit = ithObjSumTree.upperLimit;
     	int olderUpperLimit = ithObjSumTree.olderUpperLimit;
     	ithObjSumTree.olderUpperLimit = kD;
-	this.sumTrees[iObj].setUpperLimit(kD+1);
-    	int upperKD = kD+1;
-    	while(!change && upperKD <= ithObjSumTree.maxUpperLimit){
+
+	this.sumTrees[iObj].setUpperLimit(kD);
+    	int upperKD = kD;
+    	while(!change && upperKD < inclusiveMax){
+    	    upperKD++;
     	    this.sumTrees[iObj].setUpperLimit(upperKD);
     	    Log.comment(5, "{ GenTotalEncoder.generateNext of "+ iObj + "from " + kD + " to " + upperKD);
     	    change = addClausesSumTree(iObj);
-    	    upperKD++;
     	    Log.comment(5, "}");
     	}
     	if(change)
