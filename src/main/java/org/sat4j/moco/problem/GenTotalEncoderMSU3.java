@@ -334,7 +334,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 
 	}
 
-	public boolean isNodeAlreadyHere(int lit){
+	public boolean isLeafAlreadyHere(int lit){
 	boolean alreadyHere = false;
 	for(Node node: this.nodes){
 	    int leafIdTrue = solver.idFromLiteral(node.leafID);
@@ -358,7 +358,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		int id = solver.idFromLiteral(lit);
 		Real weight = instance.getObj(iObj).getSubObj(0).weightFromId(id);
 		if(weight!=null){
-		    alreadyHere= this.isNodeAlreadyHere(lit);
+		    alreadyHere= this.isLeafAlreadyHere(lit);
 		    if(!alreadyHere){
 			Node node =  new Node(weight.asIntExact(), id);
 			this.unlinkedNodes.add(node);
@@ -721,8 +721,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
     }
     
 
-    public boolean isNodeAlreadyHere(int iObj, int lit){
-	return this.sumTrees[iObj].isNodeAlreadyHere(lit);
+    public boolean isLeafAlreadyHere(int iObj, int lit){
+	return this.sumTrees[iObj].isLeafAlreadyHere(lit);
     }
 
     /**
