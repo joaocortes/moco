@@ -258,6 +258,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    private int nodeName = 0;
 	    
 	    public Node(){
+		this.nodeName = nodes.size();
 		nodes.add(this);
 		this.nodeVars = new NodeVars();
 		this.nodeVars.add(0, 0, false, false);
@@ -302,32 +303,28 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	 *unlinked nodes are lighter than any linked node.
 	 */
 	public SumTree.Node linkTreeNameNodes(){
+	    Log.comment(5, " { GenTotalEncoderMSU3.linkTreeNameNodes");
 	    int size = unlinkedNodes.size();
-	    int name = nodes.size()-size;
+	    // int name = nodes.size()-size;
 	    Node newParent = null;
 	    if(size>=1){
-		// if(this.parent!=null)
-		//     name = this.parent.nodeName;
 		while(size >=2){
 		    Node leftNode = unlinkedNodes.poll();
-		    leftNode.nodeName = name;
-		    name++;
 		    Node rightNode = unlinkedNodes.poll();
-		    rightNode.nodeName = name;
-		    name++;
 		    Node parentNode = new Node(leftNode, rightNode);
 		    unlinkedNodes.add(parentNode);
 		    size--;
 		}
 		newParent = this.unlinkedNodes.poll();
-		newParent.nodeName = name;
+		// newParent.nodeName = name;
 		if(this.parent == null)
 		    this.parent = newParent;
 		else{
 		    this.parent = new Node(this.parent, newParent);
-		    this.parent.nodeName = name + 1;
+		    // this.parent.nodeName = name + 1;
 		}
 	    }
+	    Log.comment(5, "}");
 	    return newParent;
 	}
 
