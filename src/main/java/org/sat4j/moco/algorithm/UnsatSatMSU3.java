@@ -203,8 +203,9 @@ public class UnsatSatMSU3 extends algorithm {
     /**
      *Uncover leafs
      */
-    private boolean uncoverXs(IVecInt explanationX)
-    {
+    private boolean uncoverXs(IVecInt explanationX) {
+	Log.comment(5, "{ UnsatSatMSU3.uncoverXs");
+
 	boolean change = false;
 	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    change = this.goalDelimeter.addLeafs(iObj, explanationX) || change;
@@ -213,7 +214,7 @@ public class UnsatSatMSU3 extends algorithm {
 	int[] explanationXarray = explanationX.toArray();
 	for(int x : explanationXarray)
 	    this.coveredLiterals.remove(x);
-	this.updateCurrentMaxValues();
+	Log.comment(5, "}");
 	return change;
     }
 

@@ -80,7 +80,7 @@ public class pMinimal extends algorithm {
         }
         catch (ContradictionException e) {
             Log.comment(3, "Contradiction in ParetoMCS.buildSolver");
-	    Log.comment(5, "done");
+	    Log.comment(5, "}");
             return;
         }
 	this.realVariablesN = this.solver.nVars();
@@ -88,7 +88,7 @@ public class pMinimal extends algorithm {
 	this.UpperKD =  new int[(this.problem.nObjs())];
 	for(int iObj = 0, nObj = this.problem.nObjs(); iObj < nObj; ++iObj)
 	    this.setUpperKD(iObj);
-	    Log.comment(5, "done");
+	    Log.comment(5, "}");
     }
 
     
@@ -103,7 +103,7 @@ public class pMinimal extends algorithm {
 	boolean[] currentXModelValues = new boolean[this.problem.nVars()];
 	IVecInt assumptions = new VecInt(new int[] {});
 	boolean sat = true;
-        Log.comment(3, "in pMinimal.solve");
+        Log.comment(3, "{ pMinimal.solve");
 	this.solver.check(assumptions);
 	sat = this.solver.isSat();
 	while(sat){
@@ -336,7 +336,7 @@ public class pMinimal extends algorithm {
 		result += coeff;
 	}
 	Log.comment(3, "attained value:" + result);
-	Log.comment(5, "done");
+	Log.comment(5, "}");
 	return result;
     }
     /**
@@ -350,18 +350,18 @@ public class pMinimal extends algorithm {
 	    upperLimits[i] = this.attainedValue(this.problem.getObj(i), XModelValues);
 	    upperLimits[i]-=this.problem.getObj(i).getMinValue();
 	}
-	Log.comment(5, "done");
+	Log.comment(5, "}");
 	return upperLimits;
     }
 
     public boolean blockDominatedRegion(boolean[] XModelValues){
-	Log.comment(5, "in pMinimal.blockDominatedregion");
+	Log.comment(5, "{ pMinimal.blockDominatedregion");
 	int[] upperLimits = this.findUpperLimits(XModelValues);
 	int[] literals = new int[this.problem.nObjs()];
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
 	    literals[iObj] = -this.goalDelimeter.getY(iObj, upperLimits[iObj]);
 	IVecInt newHardClause = new VecInt(literals);
-	Log.comment(5, "done");
+	Log.comment(5, "}");
 	return this.AddClause(newHardClause);
     }
 
