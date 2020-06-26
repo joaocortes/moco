@@ -100,7 +100,7 @@ public class ParetoMCS extends algorithm {
             Log.comment(1, "ParetoMCS.solve called on already solved instance");
             return;
         }
-        Log.comment(3, "in ParetoMCS.solve");
+        Log.comment(3, "{ ParetoMCS.solve");
         int nmcs = 0;
         initUndefFmls();
         IVec<IVecInt> undef_fmls = buildUndefFmls();
@@ -134,7 +134,7 @@ public class ParetoMCS extends algorithm {
      * @throws ContradictionException if the oracle detects that the MOCO's constraint set is unsatisfiable.
      */
     private PBSolver buildSolver() throws ContradictionException {
-        Log.comment(3, "in ParetoMCS.buildSolver");
+        Log.comment(3, "{ ParetoMCS.buildSolver");
         PBSolver solver = new PBSolver();
         solver.newVars(this.problem.nVars());
         for (int i = 0; i < this.problem.nConstrs(); ++i) {
@@ -151,7 +151,7 @@ public class ParetoMCS extends algorithm {
      * @return The objective literals partition sequence.
      */
     private IVec<IVecInt> buildUndefFmls() {
-        Log.comment(3, "in ParetoMCS.buildUndefFmls");
+        Log.comment(3, "{ ParetoMCS.buildUndefFmls");
         IVec<IVecInt> fmls = new Vec<IVecInt>();
         IVec<IVec<IVecInt>> p_stacks = new Vec<IVec<IVecInt>>(this.undef_parts.size());
         for (int i = 0; i < this.undef_parts.size(); ++i) {
@@ -254,7 +254,7 @@ public class ParetoMCS extends algorithm {
      * @see #buildUndefFmls()
      */
     private void initUndefFmls() {
-        Log.comment(3, "in ParetoMCS.initUndefFmls");
+        Log.comment(3, "{ ParetoMCS.initUndefFmls");
         this.undef_parts = new Vec<IVec<IVecInt>>();
         for (int i = 0; i < this.problem.nObjs(); ++i) {
             Objective o = this.problem.getObj(i);

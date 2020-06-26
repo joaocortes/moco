@@ -120,7 +120,7 @@ public class Analyzer {
      * @return The reference set.
      */
     private ReferenceSet mkRefSet() {
-        Log.comment(3, "in Analyzer.mkRefSet");
+        Log.comment(3, "{ Analyzer.mkRefSet");
         ReferenceSet r = new ReferenceSet(this.moco);
         r.addAll(this.dataset.values());
         Log.comment(3, "out Analyzer.mkRefSet");
@@ -133,7 +133,7 @@ public class Analyzer {
      * @param f The file.
      */
     private void dumpObjVals(Population p, File f) {
-        Log.comment(3, "in Analyzer.dumpObjVals");
+        Log.comment(3, "{ Analyzer.dumpObjVals");
         try {
             PopulationIO.writeObjectives(f, p);
         }
@@ -161,7 +161,7 @@ public class Analyzer {
      * @param analyzer The MOEA framework analyzer.
      */
     private void addDataset(org.moeaframework.Analyzer analyzer) {
-        Log.comment(3, "in Analyzer.addDataset");
+        Log.comment(3, "{ Analyzer.addDataset");
         for (Iterator<String> it = this.dataset.keySet().iterator(); it.hasNext();) {
             String key = it.next();
             Collection<Result> rs = this.dataset.get(key);
@@ -181,7 +181,7 @@ public class Analyzer {
      * @return The MOEA framework analyzer.
      */
     private org.moeaframework.Analyzer buildMOEAAnalyzer(ReferenceSet rs) {
-        Log.comment(3, "in Analyzer.buildMOEAAnalyzer");
+        Log.comment(3, "{ Analyzer.buildMOEAAnalyzer");
         // MOEA Framework's Analyzer requires the reference set to be specified through a file
         File r_file = IOUtils.mkTempFile("ref_set", ".pop", true);
         dumpObjVals(rs.getSolutions(), r_file);
@@ -277,7 +277,7 @@ public class Analyzer {
      * (hypervolumes, inverted generational distances and respective statistical significances).
      */
     public void printAnalysis() {
-        Log.comment(3, "in Analyzer.printAnalysis");
+        Log.comment(3, "{ Analyzer.printAnalysis");
         ReferenceSet ref = mkRefSet();
         if (ref.isEmpty()) {
             Log.comment("0 known solutions, impossible to analyze");
@@ -388,7 +388,7 @@ public class Analyzer {
      * @throws IOException if an error occurs importing a log file's results.
      */
     private static Analyzer buildAnalyzer(Instance m, String[] descs) throws IOException {
-        Log.comment(3, "in Analyzer.buildAnalyzer");
+        Log.comment(3, "{ Analyzer.buildAnalyzer");
         Multimap<String, String> dataset_paths = parseDescs(descs);
         Analyzer analyzer = new Analyzer(m);
         for (Iterator<String> it = dataset_paths.keySet().iterator(); it.hasNext();) {
