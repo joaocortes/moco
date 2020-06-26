@@ -23,6 +23,7 @@
 package org.sat4j.moco.algorithm;
 
 import java.util.Vector;
+import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -554,28 +555,28 @@ public class UnsatSatMSU3 extends algorithm {
     	    int yId = this.solver.idFromLiteral( modelY.get(i));
     	    int iObj = this.goalDelimeter.getIObjFromY(yId);
     	    int kD = this.goalDelimeter.getKDFromY(yId);
-    	    convertedModel[i] = new int[]{ modelY.get(i), iObj, kD};
+    	    convertedModel[i] = new int[]{  iObj, kD,modelY.get(i),};
     	}
 
-    	Arrays.sort(convertedModel, new Comparator<int[]>() {
-    		public int compare(int[] o1, int[] o2) {
-    		    // Intentional: Reverse order for this demo
-		    return o1[1]-o2[1];
-    		}
-    	    });
+
+    	Arrays.sort(convertedModel, Comparator.comparing(IntBuffer::wrap));
 
 	String logYModel = "";
-	int  currentIObj = convertedModel[0][1];
+	int  currentIObj = convertedModel[0][0];
     	for(int i=0, n = convertedModel.length;i<n;i++){
-	    if(convertedModel[i][1] == currentIObj)	 
-		if(convertedModel[i][0] > 0)
-		    logYModel += this.goalDelimeter.prettyFormatVariable(convertedModel[i][0]) + " ";
+	    if(convertedModel[i][0] == currentIObj)	 {
+		// if(convertedModel[i][2] > 0)
+		logYModel += this.goalDelimeter.prettyFormatVariable(convertedModel[i][2]) + " ";
+	    }
 	    else{
-		Log.comment(5, "\n");
-		currentIObj = convertedModel[i][1];
+		Log.comment(3, logYModel);
+		logYModel = "";
+		currentIObj = convertedModel[i][0];
+		Log.comment(5, "");
+		i--;
 	    }
 	}
-	Log.comment(3, logYModel);
+		Log.comment(3, logYModel);
     }
 
     /**
