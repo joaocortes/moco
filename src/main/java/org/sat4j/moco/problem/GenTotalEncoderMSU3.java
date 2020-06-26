@@ -545,7 +545,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    if(it.hasNext()){
 	    do{
 		    current = it.next();
-		    if(current.iAmFresh() || past.iAmFresh()){
+		    if(true || current.iAmFresh() || past.iAmFresh()){
 			IVecInt clause = new VecInt(new int[] {-current.id, past.id});
 			AddClause(clause);
 			// past.iAmFresh = false;
