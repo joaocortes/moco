@@ -89,7 +89,7 @@ import org.sat4j.specs.ContradictionException;
      */
 
     public SeqEncoder(Instance instance, PBSolver solver) {
-	Log.comment(4, "in SeqEncoder");
+	Log.comment(4, "{ SeqEncoder");
 	this.instance = instance;	
 	this.solver = solver;
 	this.firstVariable = solver.nVars() + 1;
@@ -101,7 +101,7 @@ import org.sat4j.specs.ContradictionException;
 	    this.setInitializedKD(iObj,-1);
 	    this.UpdateCurrentK(iObj,0);
 	}
-	Log.comment(4, "done");
+	Log.comment(4, "}");
 	}
 
 
@@ -121,7 +121,7 @@ import org.sat4j.specs.ContradictionException;
 	 // for(int iObj1 = 1; iObj1 < this.instance.nObjs(); ++iObj1)
 	 //     Log.comment(6, ", "+this.getCurrentKD(iObj1));
 	 // Log.comment(6, "]");
- 	Log.comment(4, "in SeqEncoder.UpdatecurrentK");
+ 	Log.comment(4, "{ SeqEncoder.UpdatecurrentK");
 	if(this.getInitializedKD(iObj) == this.instance.getObj(iObj).getWeightDiff())
 	    return false;
 	if(this.getInitializedKD(iObj)< afterKD ){
@@ -145,7 +145,7 @@ import org.sat4j.specs.ContradictionException;
 	     this.IfLessAndIthXAtLeastIthW(iObj, afterKD);
 	     this.setCurrentKD(iObj, afterKD);
 	 }
-	 Log.comment(5, "done");
+	 Log.comment(5, "}");
 	 return true;
      }
 
