@@ -66,7 +66,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	/**
 	 *Must old the last but effective upperLimit.
 	 */
-	private int olderUpperLimit = 0;
+	private int olderUpperLimit = -1;
 
 	/**
 	 *Maximal possible value
@@ -741,7 +741,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    int oldOldUpperLimit = ithObjSumTree.olderUpperLimit;
 	    int oldUpperLimit = ithObjSumTree.upperLimit;
 
-	    ithObjSumTree.olderUpperLimit = 0;
+	    ithObjSumTree.olderUpperLimit = -1;
 	    ithObjSumTree.upperLimit = upperLimit;
 
 	    change = this.addClausesSubSumTree(ithObjSumTree, newParent);
