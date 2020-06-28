@@ -22,6 +22,11 @@ abstract public class  algorithm{
     protected Result result = null;
 
     /**
+     * Stores the partial result (e.g. nondominated solutions) of the execution of the Pareto-MCS algorithm.
+     */
+    protected Result subResult = null;
+
+    /**
      * Stores the PB solver to be used by the Pareto-MCS algorithm.
      */
     protected PBSolver solver = null;
@@ -31,6 +36,16 @@ abstract public class  algorithm{
      * @return The result.
      */
     public Result getResult() { return this.result; }
+
+    /**
+     *Stores any solutions that are in subResult.
+     */
+
+    public void moveSubResult() {
+	if(this.subResult != null)
+	for(int i = 0; i < this.subResult.nSolutions(); ++i)
+	    this.result.addSolutionUnsafe(this.subResult.getSolution(i));
+    }
 
     abstract public void prettyPrintVecInt(IVecInt vecInt, boolean clausing);
 
