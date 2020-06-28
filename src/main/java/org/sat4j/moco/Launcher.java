@@ -104,11 +104,11 @@ public class Launcher {
         else if (r.isParetoFront()) Log.unsat();
         else if (r.nSolutions() > 0) Log.sat();
         else Log.unknown();
+	Log.numberOfSolutions(r.nSolutions());
         for (int i = 0; i < r.nSolutions(); ++i) {
             Log.assignment(r.getAssignment(i));
             Log.costs(r.getCosts(i));
         }
-	Log.numberOfSolutions(r.nSolutions());
     }
     
     /**
@@ -133,6 +133,7 @@ public class Launcher {
      */
     public static void main(String[] args) {
         Clock.instance().reset();
+
         Options options = Params.buildOpts();
         CommandLineParser cl_parser = new DefaultParser();
         CommandLine cl = null;
