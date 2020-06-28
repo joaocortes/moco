@@ -352,8 +352,8 @@ public class UnsatSatMSU3 extends algorithm {
 	    if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
 		this.goalDelimeter.generateNext(iObj, this.getUpperKD(iObj), maxValues[iObj]);
 	    this.setUpperKD(iObj, this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj)));
-	    // if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
-	    this.goalDelimeter.generateNext(iObj, this.getUpperKD(iObj), maxValues[iObj]);
+	    if(this.getUpperKD(iObj) >= this.getUpperBound(iObj))
+		this.goalDelimeter.generateNext(iObj, this.getUpperKD(iObj), maxValues[iObj]);
 	    this.setUpperBound(iObj, this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj)));
 	    if(this.getUpperKD(iObj)!= upperKDBefore)
 		change = true;
@@ -659,6 +659,7 @@ public class UnsatSatMSU3 extends algorithm {
 	    Log.comment(6, this.goalDelimeter.prettyFormatVecInt(vecInt));
 	return;
     }
+
 
     public void printFlightRecordParticular(){
 	String logExhaustedUpperKD = "completed upper limit: ["+this.exhaustedUpperKD[0];
