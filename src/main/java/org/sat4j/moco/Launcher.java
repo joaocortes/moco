@@ -75,15 +75,27 @@ public class Launcher {
          * Logs the current result obtained by the solver.
          */
         public void run() {
-            logResult(this.solver.getResult());
+	    // int i = 0;
+	    // while(i<10){
+	    // 	i++;
+	    // 	try{
+	    // 	    TimeUnit.SECONDS.sleep(1);
+	    // 	}catch (InterruptedException e) {
+	    // 	    Log.comment("cucu");
+	    // 	}
+	    // 	Log.comment("" + i);
+	    // }
+            this.solver.moveSubResult();
 	    this.solver.printFlightRecord();
 	    this.solver.printFlightRecordParticular();
+            logResult(this.solver.getResult());
         }
         
     }
 
     private static <Solver extends algorithm>void setShutdownHandler(Solver solver) {
         Runtime.getRuntime().addShutdownHook(new ShutdownHandler<Solver>(solver));
+
     }
     
     /**
