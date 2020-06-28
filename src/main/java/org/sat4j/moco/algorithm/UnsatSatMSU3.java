@@ -137,7 +137,7 @@ public class UnsatSatMSU3 extends algorithm {
 	// boolean[] currentXModelValues = new boolean[this.problem.nVars()];
 	// Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	// Vector<IVecInt> modelsY = new Vector<IVecInt>();
-	SubResult subResult = new SubResult(this.problem);
+	this.subResult = new SubResult(this.problem);
 
 
         // if (this.result.isParetoFront()) {
@@ -158,8 +158,9 @@ public class UnsatSatMSU3 extends algorithm {
 	    solver.check(currentAssumptions);
 
 	    if(goOn1 && solver.isSat()){
-		subResult.saveModel(this.solver);
-		Log.comment(3, " current subResult size:" + subResult.nSolutions());
+
+		    this.subResult.saveModel(this.solver);
+		Log.comment(3, " current subResult size:" + this.subResult.nSolutions());
 		currentYModel = this.getYModel();
 		Log.comment(3, "ModelX :");
 		this.printModel(this.getXModel());
@@ -172,9 +173,8 @@ public class UnsatSatMSU3 extends algorithm {
 		}
 
 	    }else{
-		for(int i = 0; i < subResult.nSolutions(); ++i)
-		    this.result.addSolutionUnsafe(subResult.getSolution(i));
-		subResult = new SubResult(this.problem);
+		this.moveSubResult();
+		this.subResult = new SubResult(this.problem);
 		goOn = goOn1;
 		if(goOn){
 		    this.exhaustedUpperKD = this.UpperKD;
