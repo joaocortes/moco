@@ -364,5 +364,10 @@ public class PBSolver {
 	int id = this.isLiteralPositive(literal) ? literal: -literal;
 	return id;
 }
+
+    public String getStat(){
+	this.solver.getStat();
+	return "";
+    }
     
 }
