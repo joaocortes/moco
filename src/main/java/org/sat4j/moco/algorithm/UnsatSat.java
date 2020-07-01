@@ -112,7 +112,7 @@ public class UnsatSat extends algorithm {
 	// boolean[] currentXModelValues = new boolean[this.problem.nVars()];
 	// Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	// Vector<IVecInt> modelsY = new Vector<IVecInt>();
-	SubResult subResult = new SubResult(this.problem);
+	this.subResult = new SubResult(this.problem);
 
 
         // if (this.result.isParetoFront()) {
@@ -139,9 +139,9 @@ public class UnsatSat extends algorithm {
 	    solver.check(currentAssumptions);
 
 	    if(goOn1 && solver.isSat()){
-		subResult.saveModel(this.solver);
+		this.subResult.saveModel(this.solver);
 		//log
-		Log.comment(2, " current subResult size:" + subResult.nSolutions());
+		Log.comment(2, " current subResult size:" + this.subResult.nSolutions());
 
 		currentYModel = this.getYModel();
 		// currentXModelValues = this.getXModelValues();
@@ -171,9 +171,9 @@ public class UnsatSat extends algorithm {
 		// if(! this.blockModelX(modelsX.lastElement()))
 		//     goOn = false;
 	    }else{
-		for(int i = 0; i < subResult.nSolutions(); ++i)
-		    this.result.addSolutionUnsafe(subResult.getSolution(i));
-		subResult = new SubResult(this.problem);
+		for(int i = 0; i < this.subResult.nSolutions(); ++i)
+		    this.result.addSolutionUnsafe(this.subResult.getSolution(i));
+		this.subResult = new SubResult(this.problem);
 		goOn = goOn1;
 		if(goOn){
 		    currentExplanation = solver.unsatExplanation();
