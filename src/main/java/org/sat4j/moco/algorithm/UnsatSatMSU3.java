@@ -150,7 +150,6 @@ public class UnsatSatMSU3 extends algorithm {
 	currentAssumptions = this.generateUpperBoundAssumptions();
 	this.logUpperLimit();
 	this.logUpperBound();
-
 	while(goOn){
 
 	    // Log.comment(3, "Checking against assumptions:");
@@ -158,14 +157,13 @@ public class UnsatSatMSU3 extends algorithm {
 	    solver.check(currentAssumptions);
 
 	    if(goOn1 && solver.isSat()){
-
-		    this.subResult.saveModel(this.solver);
-		// Log.comment(3, " current subResult size:" + this.subResult.nSolutions());
+		this.subResult.saveModel(this.solver);
+		Log.comment(3, " current subResult size:" + this.subResult.nSolutions());
 		currentYModel = this.getYModel();
 		// Log.comment(3, "ModelX :");
-		this.printModel(this.getXModel());
+		// this.printModel(this.getXModel());
 		// Log.comment(3, "ModelY :");
-		this.printModelY(currentYModel);
+		// this.printModelY(currentYModel);
 		// Log.comment(3, "Blocking dominated region");
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
