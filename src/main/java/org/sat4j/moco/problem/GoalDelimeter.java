@@ -87,7 +87,7 @@ public abstract class GoalDelimeter{
      */
 
     public boolean AddClause(IVecInt setOfLiterals){
-	this.prettyPrintVecInt(setOfLiterals,true);
+	// this.prettyPrintVecInt(setOfLiterals,true);
 	try{
 	    this.solver.AddClause(setOfLiterals);
 	} catch (ContradictionException e) {

@@ -58,8 +58,8 @@ abstract public class  algorithm{
      */
 
     public boolean AddClause(IVecInt setOfLiterals){
-	Log.comment(6, "{ algorithm.AddClause");
-	this.prettyPrintVecInt(setOfLiterals,true);
+	// Log.comment(6, "{ algorithm.AddClause");
+	// this.prettyPrintVecInt(setOfLiterals,true);
 	try{
 	    this.solver.AddClause(setOfLiterals);
 	} catch (ContradictionException e) {
@@ -68,7 +68,7 @@ abstract public class  algorithm{
 		Log.comment(2, " " + setOfLiterals.get(j) + " " );
 	    return false;
 	}
-	Log.comment(6, "}");
+	// Log.comment(6, "}");
 	return true;
     }
 
@@ -76,6 +76,7 @@ abstract public class  algorithm{
     public void printFlightRecord(){
 	Log.comment("constraints: " + this.solver.getClausesN());
 	Log.comment("Variables: " + this.solver.nVars());
+	Log.comment("decisions: " + this.solver.getStat());
     }
     abstract public void printFlightRecordParticular();
 }
