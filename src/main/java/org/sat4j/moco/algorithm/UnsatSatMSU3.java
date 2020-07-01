@@ -193,6 +193,7 @@ public class UnsatSatMSU3 extends algorithm {
 			this.logUpperLimit();
 			this.logUpperBound();
 			this.logMaxValues();
+			this.printFlightRecord();
 			if(change)
 			    currentAssumptions = this.generateUpperBoundAssumptions();
 			else {
