@@ -367,11 +367,16 @@ public class PBSolver {
 	return id;
 }
 
+    /**
+     *Prints solver stats
+     */
     public void printStats(){
 	PrintWriter writer = new PrintWriter(System.out);
+	writer.println("c constraints: " + this.solver.nConstraints());
+	writer.println("c constraints(mine): " + this.solver.nConstraints());
+	writer.println("c Variables: " + this.solver.nVars());
 	this.solver.printStat(writer);
 	writer.flush();
-	writer.close();
 
     }
     public String[] getStat(){
