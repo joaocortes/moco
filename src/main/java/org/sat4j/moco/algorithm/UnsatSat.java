@@ -81,7 +81,7 @@ public class UnsatSat extends algorithm {
      */
 
     public UnsatSat(Instance m, boolean encodingGD) {
-        Log.comment(3, "in UnsatSat constructor");
+        // Log.comment(3, "in UnsatSat constructor");
 	this.problem = m;
 	this.result = new Result(m, true);
 	try {
@@ -119,7 +119,7 @@ public class UnsatSat extends algorithm {
         //     Log.comment(1, "UnsatSat.solve called on already solved instance");
         //     return;
         // }
-	Log.comment(3, "{ UnsatSat.solve");
+	// Log.comment(3, "{ UnsatSat.solve");
 	boolean goOn = true;
 	boolean goOn1 = true;
 	//for testing purposes
@@ -132,8 +132,8 @@ public class UnsatSat extends algorithm {
 	    ///log..
 	    this.logUpperLimit();
 	    //log..
-	    Log.comment(2, "Checking against assumptions:");
-	    Log.comment(2, this.goalDelimeter.prettyFormatVecInt(currentAssumptions));
+	    // Log.comment(2, "Checking against assumptions:");
+	    // Log.comment(2, this.goalDelimeter.prettyFormatVecInt(currentAssumptions));
 	    //..log
 
 	    solver.check(currentAssumptions);
@@ -155,14 +155,14 @@ public class UnsatSat extends algorithm {
 		//     Objective ithObj = this.problem.getObj(iObj);
 		//     Log.comment(5, this.attainedValue(ithObj)+ " " );
 		// }
-		Log.comment(2, "ModelX :");
-		this.printModel(this.getXModel());
-		Log.comment(2, "ModelY :");
-		this.printModelY(currentYModel);
+		// Log.comment(2, "ModelX :");
+		// this.printModel(this.getXModel());
+		// Log.comment(2, "ModelY :");
+		// this.printModelY(currentYModel);
 		//..log
 
 		//log
-		Log.comment(5, "Blocking dominated region");
+		// Log.comment(5, "Blocking dominated region");
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
 		    goOn1 = false;
@@ -178,13 +178,14 @@ public class UnsatSat extends algorithm {
 		if(goOn){
 		    currentExplanation = solver.unsatExplanation();
 		    //log..
-		    Log.comment(2, "Explanation:");
-		    Log.comment(2, this.goalDelimeter.prettyFormatVecInt(currentExplanation));
-		    Log.comment(2, "//");
+		    // Log.comment(2, "Explanation:");
+		    // Log.comment(2, this.goalDelimeter.prettyFormatVecInt(currentExplanation));
+		    // Log.comment(2, "//");
 		
 		if(currentExplanation.size() == 0){
 		    goOn = false;
 		}else{
+		    this.printFlightRecord();
 		    this.exhaustedUpperKD = this.UpperKD;
 		    this.logExhaustedUpperKD();
 		    this.updateUpperBound(currentExplanation);
@@ -280,7 +281,7 @@ public class UnsatSat extends algorithm {
      * current explanation of unsatisfiability
      */
     private void updateUpperBound(IVecInt currentExplanation){
-        Log.comment(5, "in UnsatSat.updateUpperBound");
+        // Log.comment(5, "in UnsatSat.updateUpperBound");
 	for(int i = 0; i < currentExplanation.size(); ++i){
 	    int ithLiteral = currentExplanation.get(i);
 	    int id = this.solver.idFromLiteral(ithLiteral);
@@ -312,7 +313,7 @@ public class UnsatSat extends algorithm {
 	    }
 	}
 
-        Log.comment(5, "{ done");
+        // Log.comment(5, "{ done");
     }
 
 
@@ -345,13 +346,13 @@ public class UnsatSat extends algorithm {
      * MOCO's constraint set is unsatisfiable.
      */
     private PBSolver buildSolver() throws ContradictionException {
-        Log.comment(5, "in UnsatSat.buildSolver");
+        // Log.comment(5, "in UnsatSat.buildSolver");
         PBSolver solver = new PBSolver();
         solver.newVars(this.problem.nVars());
         for (int i = 0; i < this.problem.nConstrs(); ++i) {
             solver.addConstr(this.problem.getConstr(i));
         }
-        Log.comment(5, "out UnsatSat.buildSolver");
+        // Log.comment(5, "out UnsatSat.buildSolver");
         return solver;
     }
 
@@ -535,13 +536,13 @@ public class UnsatSat extends algorithm {
 	//..log
 	
 	logDiffAttainedValue +="]";
-	Log.comment(2, logDiffAttainedValue );
+	// Log.comment(2, logDiffAttainedValue );
 	IVecInt newHardClause = new VecInt();
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    if(diffAttainedValue[iObj] != 0)
 		newHardClause.push( - this.goalDelimeter.getY(iObj, diffAttainedValue[iObj]));
 	}
-	Log.comment(6, "Blocking clause:");
+	// Log.comment(6, "Blocking clause:");
 	return this.AddClause(newHardClause);
 
     }
@@ -557,7 +558,7 @@ public class UnsatSat extends algorithm {
 	if(clausing)
 	    Log.clausing(this.goalDelimeter.prettyFormatVecInt(vecInt));
 	else
-	    Log.comment(6, this.goalDelimeter.prettyFormatVecInt(vecInt));
+	    Log.comment(6, this.goalDelimeter.prettyFormatVecInt(vecInt)); 
 	return;
     }
 
