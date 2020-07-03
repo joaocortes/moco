@@ -172,14 +172,13 @@ public class UnsatSatMSU3 extends algorithm {
 
 	    }else{
 		this.moveSubResult();
+		this.solver.printStats();
+		
 		this.subResult = new SubResult(this.problem);
 		goOn = goOn1;
 		if(goOn){
 		    this.exhaustedUpperKD = this.UpperKD;
 		    this.logExhaustedUpperKD();
-
-
-
 		    currentExplanation = solver.unsatExplanation();
 		    //log..
 		    // Log.comment(3, "Explanation:");
@@ -660,12 +659,11 @@ public class UnsatSatMSU3 extends algorithm {
 
 
     public void printFlightRecordParticular(){
-	String logExhaustedUpperKD = "completed upper limit: ["+this.exhaustedUpperKD[0];
-	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
-	    logExhaustedUpperKD +=", "+ (this.exhaustedUpperKD[iObj]);
-	
-	logExhaustedUpperKD +="]";
-	System.out.println("f " + logExhaustedUpperKD);
+	this.logExhaustedUpperKD();
+	Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
+	this.logUpperLimit();
+	this.logUpperBound();
+	this.logMaxValues();
 
     }
 }
