@@ -79,6 +79,8 @@ abstract public class  algorithm{
 	Log.comment("decisions: " + this.solver.getStat());
 	// for(String log : this.solver.getStat())
 	//     Log.comment(log);
+	this.solver.printStats();
+	this.printFlightRecordParticular();
     }
     abstract public void printFlightRecordParticular();
 }
