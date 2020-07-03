@@ -87,7 +87,6 @@ public class Launcher {
 	    // }
             this.solver.moveSubResult();
 	    this.solver.printFlightRecord();
-	    this.solver.printFlightRecordParticular();
             logResult(this.solver.getResult());
         }
         
@@ -145,7 +144,6 @@ public class Launcher {
      */
     public static void main(String[] args) {
         Clock.instance().reset();
-
         Options options = Params.buildOpts();
         CommandLineParser cl_parser = new DefaultParser();
         CommandLine cl = null;
