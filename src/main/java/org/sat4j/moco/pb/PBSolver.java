@@ -22,11 +22,13 @@
  *******************************************************************************/
 package org.sat4j.moco.pb;
 
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Map.Entry;
 
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Clock;
@@ -365,9 +367,25 @@ public class PBSolver {
 	return id;
 }
 
-    public String getStat(){
-	this.solver.getStat();
-	return "";
+    public void printStats(){
+	PrintWriter writer = new PrintWriter(System.out);
+	this.solver.printStat(writer);
+	writer.flush();
+	writer.close();
+
+    }
+    public String[] getStat(){
+	Map<String, Number> stats = new HashMap<String, Number>();
+	stats = this.solver.getStat();
+	String[] statLog = new String[stats.size()];
+	int i = 0;
+	for(Entry<String, Number> entry: stats.entrySet()){
+	    statLog[i] = entry.getKey();
+	    statLog[i] += ": ";
+	    statLog[i] += "" + entry.getValue().intValue();
+	    i++;
+}
+	return statLog;
     }
     
 }
