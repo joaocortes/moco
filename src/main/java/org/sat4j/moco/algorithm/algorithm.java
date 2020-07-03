@@ -74,14 +74,9 @@ abstract public class  algorithm{
 
 
     public void printFlightRecord(){
-	Log.comment("constraints: " + this.solver.getClausesN());
-	Log.comment("Variables: " + this.solver.nVars());
-	Log.comment("decisions: " + this.solver.getStat());
-	// for(String log : this.solver.getStat())
-	//     Log.comment(log);
 	this.solver.printStats();
 	this.printFlightRecordParticular();
     }
-    abstract public void printFlightRecordParticular();
+    public void printFlightRecordParticular(){};
 }
 
