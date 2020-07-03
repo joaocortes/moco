@@ -563,12 +563,12 @@ public class UnsatSat extends algorithm {
     }
 
     public void printFlightRecordParticular(){
-	String logExhaustedUpperKD = "completed upper limit: ["+this.exhaustedUpperKD[0];
+	String logExhaustedUpperKD = "exhausted upper limit: ["+this.exhaustedUpperKD[0];
 	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
 	    logExhaustedUpperKD +=", "+ (this.exhaustedUpperKD[iObj]);
 	
 	logExhaustedUpperKD +="]";
-	System.out.print("f " + logExhaustedUpperKD);
+	Log.comment(2, logExhaustedUpperKD);
 
     }
 }
