@@ -439,6 +439,10 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	return this.sumTrees[iObj].upperLimit;
     }
 
+    public int reportUnbalances(){
+	return this.sumTrees[iObj].reportUnbalance();
+    }
+
 
     /**
      * get iObj from an Y variable
