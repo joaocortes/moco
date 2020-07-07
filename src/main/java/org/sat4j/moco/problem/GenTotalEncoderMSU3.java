@@ -114,6 +114,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		class NodeVar {
 		    private int kD;
 		    private Integer id= null;
+
 		    private boolean iAmFresh = false;
 		    public NodeVar(int kD){
 			this.setKD(kD);
@@ -245,18 +246,12 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		    return this.containerAll.headMap(olderUpperLimit+1).values();
 		}
 		public Collection<NodeVars.NodeVar> currentNovel(){
-		    int fromKey = olderUpperLimit+1;
-		    int toKey = upperLimit+1;
-		    if(fromKey >= toKey){
-			return this.containerAll.subMap(0,0).values();
-		    }
-		    return this.containerAll.subMap(fromKey, toKey ).values();
+		    return this.containerAll.subMap(olderUpperLimit+1, upperLimit+1).values();
 		}
 	    }	     
 
 	    NodeVars nodeVars = null;
 	    private int nodeSum = 0;
-	    private int upperLimit = -1;
 	    private Node left = null;
 	    private Node right = null;
 	    private int leafID = 0;
@@ -657,20 +652,10 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	boolean change = false;
 	Node left = currentNode.left;
 	Node right = currentNode.right;
-
-	
-	if(currentNode.upperLimit <=  sumTree.upperLimit){
-	    int oldOlderUpperLimit = sumTree.olderUpperLimit;
-	    sumTree.olderUpperLimit = currentNode.upperLimit;
-	    change = addSumClauses(currentNode, left, right) || change;    
-	    change = simplePropagation(currentNode, iAmtheNewRoot) || change;
-	    sumTree.olderUpperLimit = oldOlderUpperLimit;
-	    // Log.comment(5, "}");
-	    if(change)
-		currentNode.upperLimit = sumTree.upperLimit;
-	}
+	change = addSumClauses(currentNode, left, right) || change;    
+	change = simplePropagation(currentNode, iAmtheNewRoot) || change;
+	// Log.comment(5, "}");
 	return change;
-	
     }
 
     /**
