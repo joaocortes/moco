@@ -188,12 +188,15 @@ public class UnsatSatMSU3 extends algorithm {
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
+			this.analyzeDisjointCores();
 			boolean change = this.preAssumptionsExtend(currentExplanation);
 			this.logUpperLimit();
 			this.logUpperBound();
 			this.logMaxValues();
+
 			if(change)
 			    currentAssumptions = this.generateUpperBoundAssumptions();
+
 			else {
 			    Log.comment(2, "There was no expansion");
 			    goOn = false;
