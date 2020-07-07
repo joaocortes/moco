@@ -93,6 +93,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 
 	private Node freshParent = null;
 
+	private int depth = 0;
 	/**
 	 *Node of a SumTree.
 	 */
@@ -306,6 +307,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    // Log.comment(5, " { GenTotalEncoderMSU3.linkTreeNameNodes");
 	    int size = unlinkedNodes.size();
 	    // int name = nodes.size()-size;
+	    int depth = 0;
 	    Node newParent = null;
 	    if(size>=1){
 		while(size >=2){
@@ -314,13 +316,19 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		    Node parentNode = new Node(leftNode, rightNode);
 		    unlinkedNodes.add(parentNode);
 		    size--;
+		    depth++;
 		}
 		newParent = this.unlinkedNodes.poll();
+		
 		// newParent.nodeName = name;
-		if(this.parent == null)
+		if(this.parent == null){
 		    this.parent = newParent;
+		    this.depth = depth;
+		}
 		else{
 		    this.parent = new Node(this.parent, newParent);
+		    if(this.depth < depth)
+			this.depth = depth;
 		    // this.parent.nodeName = name + 1;
 		}
 	    }
