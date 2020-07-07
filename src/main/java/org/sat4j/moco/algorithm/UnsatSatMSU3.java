@@ -317,6 +317,24 @@ public class UnsatSatMSU3 extends algorithm {
     }
 
 
+
+    private void analyzeDisjointCores(){
+	IVecInt currentAssumptions = this.generateUpperBoundAssumptions();
+	IVecInt disjointCoresLiterals = new VecInt(new int[]{});
+	IVecInt currentExplanation = new VecInt(new int[]{});
+	solver.check(currentAssumptions);
+	if(solver.isSat()){
+	    currentExplanation = solver.unsatExplanation();
+	    for(int x: currentExplanation.toArray())
+		if(this.goalDelimeter.isX(x)){
+		    currentAssumptions.delete( currentAssumptions.indexOf(x));
+		    disjointCoresLiterals.push(x);
+		}
+	    solver.check(currentAssumptions);
+	}
+	Log.comment(2, "disjoint core union size: "  + disjointCoresLiterals.size());
+    }
+
     /**
      *If necessary for the construction of the current assumptions,
      *initialize more of the domain of the goal delimeter
