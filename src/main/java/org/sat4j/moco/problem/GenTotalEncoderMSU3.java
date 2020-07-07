@@ -22,7 +22,7 @@
  *******************************************************************************/
 package org.sat4j.moco.problem;
 
-
+import java.lang.Math;
 import org.sat4j.moco.util.Log;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -384,7 +384,26 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    Node newParent = linkTreeNameNodes();
 	    return newParent;
 	}
-	 
+
+	/**
+	 *report unbalance
+	 */
+
+	public int reportUnbalance(){
+	    int leafsN = 0;
+	    for(Node node: this.nodes){
+		int leafIdTrue = solver.idFromLiteral(node.leafID);
+		int xId = solver.idFromLiteral(lit);
+		if(leafIdTrue != 0){
+		    leafsN++;
+		}
+	    }
+	    int expectedDepth = Math.log(leafsN)/Math.log(2);
+	    Log.comment("expected depth: " + expectedDepth );
+	    Log.comment("true depth: " + this.depth);
+
+	}
+	return expectedDepth/this.depth;
     }
 
     /**
