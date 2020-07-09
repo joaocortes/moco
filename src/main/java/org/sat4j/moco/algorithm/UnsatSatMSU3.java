@@ -188,7 +188,7 @@ public class UnsatSatMSU3 extends algorithm {
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
-
+			this.goalDelimeter.reportUnbalances();
 			boolean change = this.preAssumptionsExtend(currentExplanation);
 			this.logUpperLimit();
 			this.logUpperBound();
