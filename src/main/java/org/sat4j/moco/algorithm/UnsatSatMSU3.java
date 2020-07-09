@@ -157,7 +157,7 @@ public class UnsatSatMSU3 extends algorithm {
 	    solver.check(currentAssumptions);
 
 	    if(goOn1 && solver.isSat()){
-		this.subResult.saveModel(this.solver);
+		this.result.saveModel(this.solver);
 		Log.comment(3, " current subResult size:" + this.subResult.nSolutions());
 		currentYModel = this.getYModel();
 		// Log.comment(3, "ModelX :");
@@ -171,10 +171,7 @@ public class UnsatSatMSU3 extends algorithm {
 		}
 
 	    }else{
-		this.moveSubResult();
 		this.solver.printStats();
-		
-		this.subResult = new SubResult(this.problem);
 		goOn = goOn1;
 		if(goOn){
 		    this.exhaustedUpperKD = this.UpperKD;
