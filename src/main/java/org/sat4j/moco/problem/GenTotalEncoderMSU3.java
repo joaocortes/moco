@@ -329,6 +329,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		    this.parent = new Node(this.parent, newParent);
 		    if(this.depth < depth)
 			this.depth = depth;
+		    this.depth++;
 		    // this.parent.nodeName = name + 1;
 		}
 	    }
