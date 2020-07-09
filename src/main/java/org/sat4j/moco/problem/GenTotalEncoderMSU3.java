@@ -22,7 +22,7 @@
  *******************************************************************************/
 package org.sat4j.moco.problem;
 
-
+import java.lang.Math;
 import org.sat4j.moco.util.Log;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -93,6 +93,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 
 	private Node freshParent = null;
 
+	private int depth = 0;
 	/**
 	 *Node of a SumTree.
 	 */
@@ -139,11 +140,11 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 			solver.newVar();
 			this.id = solver.nVars();
 		    }
-                   protected boolean newValidVariable(){
-		       if(olderUpperLimit < this.kD)
-			   if(this.kD <= maxUpperLimit)
-			       return true;
-		       return false;
+		    protected boolean newValidVariable(){
+			if(olderUpperLimit < this.kD)
+			    if(this.kD <= maxUpperLimit)
+				return true;
+			return false;
 		    }
 
 		    public boolean iAmFresh(){
@@ -269,7 +270,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		this();
 		int sign = 1;
 		if(weight < 0)
-		     sign = -1;
+		    sign = -1;
 		this.nodeSum = sign * weight;
 		this.left = null; 
 		this.right = null;
@@ -306,6 +307,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    // Log.comment(5, " { GenTotalEncoderMSU3.linkTreeNameNodes");
 	    int size = unlinkedNodes.size();
 	    // int name = nodes.size()-size;
+	    int depth = 0;
 	    Node newParent = null;
 	    if(size>=1){
 		while(size >=2){
@@ -314,13 +316,19 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		    Node parentNode = new Node(leftNode, rightNode);
 		    unlinkedNodes.add(parentNode);
 		    size--;
+		    depth++;
 		}
 		newParent = this.unlinkedNodes.poll();
+		
 		// newParent.nodeName = name;
-		if(this.parent == null)
+		if(this.parent == null){
 		    this.parent = newParent;
+		    this.depth = depth;
+		}
 		else{
 		    this.parent = new Node(this.parent, newParent);
+		    if(this.depth < depth)
+			this.depth = depth;
 		    // this.parent.nodeName = name + 1;
 		}
 	    }
@@ -335,17 +343,17 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	}
 
 	public boolean isLeafAlreadyHere(int lit){
-	boolean alreadyHere = false;
-	for(Node node: this.nodes){
-	    int leafIdTrue = solver.idFromLiteral(node.leafID);
-	    int xId = solver.idFromLiteral(lit);
-	    if(leafIdTrue == xId){
-		alreadyHere = true;
-		break;
-	    }
+	    boolean alreadyHere = false;
+	    for(Node node: this.nodes){
+		int leafIdTrue = solver.idFromLiteral(node.leafID);
+		int xId = solver.idFromLiteral(lit);
+		if(leafIdTrue == xId){
+		    alreadyHere = true;
+		    break;
+		}
 	    }	    
-	return alreadyHere;
-    }
+	    return alreadyHere;
+	}
 
 	/**
 	 * push new stuff to unlinkedNodes
@@ -361,7 +369,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		    alreadyHere= this.isLeafAlreadyHere(lit);
 		    if(!alreadyHere){
 			Node node =  new Node(weight.asIntExact(), id);
-				// Log.comment(5, "new leaf: "+ node.leafID);
+			// Log.comment(5, "new leaf: "+ node.leafID);
 
 			this.unlinkedNodes.add(node);
 		    }
@@ -376,9 +384,27 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	    Node newParent = linkTreeNameNodes();
 	    return newParent;
 	}
-	 
-    }
 
+	/**
+	 *report unbalance
+	 */
+
+	public double reportUnbalance(){
+	    int leafsN = 0;
+	    double expectedDepth = 0;
+	    for(Node node: this.nodes){
+		int leafIdTrue = solver.idFromLiteral(node.leafID);
+		if(leafIdTrue != 0){
+		    leafsN++;
+		}
+		expectedDepth = Math.log(leafsN)/Math.log(2);
+		// Log.comment("expected depth: " + expectedDepth );
+		// Log.comment("true depth: " + this.depth);
+
+	    }
+	    return expectedDepth/this.depth;
+	}
+    }
     /**
      *Trees used to encode the goal limits
      */
@@ -410,6 +436,13 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 
     public int getCurrentKD(int iObj){
 	return this.sumTrees[iObj].upperLimit;
+    }
+
+    public void reportUnbalances(){
+	String report = "unbalances: ";
+	for(SumTree sumTree: this.sumTrees)
+	    report += " " + sumTree.reportUnbalance();
+	Log.comment(2, report);
     }
 
 
@@ -545,7 +578,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	if(it.hasNext()){
 	    past = it.next();
 	    if(it.hasNext()){
-	    do{
+		do{
 		    current = it.next();
 		    if(current.iAmFresh() || past.iAmFresh()){
 			IVecInt clause = new VecInt(new int[] {-current.id, past.id});
@@ -554,8 +587,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 			change = true;
 		    }
 		    past = current;
-	    }while(it.hasNext());
-	    // current.iAmFresh = false;
+		}while(it.hasNext());
+		// current.iAmFresh = false;
 	    }
 	}
         // Log.comment(5, "}");
@@ -823,7 +856,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
     	    return ithObjSumTree.upperLimit;
     	else
     	    return kD;
-    	}
+    }
 
     /**
      *Finds the next valid kD value, starting from lastK and extending
