@@ -150,6 +150,7 @@ public class UnsatSatMSU3 extends algorithm {
 	currentAssumptions = this.generateUpperBoundAssumptions();
 	this.logUpperLimit();
 	this.logUpperBound();
+	Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
 	while(goOn){
 
 	    // Log.comment(3, "Checking against assumptions:");
@@ -187,6 +188,7 @@ public class UnsatSatMSU3 extends algorithm {
 		    }else{
 			this.goalDelimeter.reportUnbalances();
 			boolean change = this.preAssumptionsExtend(currentExplanation);
+			Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
 			this.logUpperLimit();
 			this.logUpperBound();
 			this.logMaxValues();
