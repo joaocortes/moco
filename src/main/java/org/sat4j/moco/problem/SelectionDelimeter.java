@@ -60,8 +60,8 @@ class Circuit{
 
     abstract class BaseComponent {
 
-	private int[] inputs;
-	private int[] outputs;
+	protected int[] inputs;
+	protected int[] outputs;
 
 
 	public BaseComponent(){
