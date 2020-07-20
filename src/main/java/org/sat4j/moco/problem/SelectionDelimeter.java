@@ -86,6 +86,20 @@ class Circuit{
     }
 
 
+    /**
+     *Component that selects the max value. Equivalent to a
+     *disjunction
+     */
+
+class selectionOnlyOneComponent extends BaseComponent{
+	@Override
+	void constitutiveClause() {
+	    // TODO Auto-generated method stub
+	    
+	}
+
+    }
+
     class CombineComponent extends BaseComponent{
 	@Override
 	void constitutiveClause() {
