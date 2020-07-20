@@ -78,10 +78,23 @@ class Circuit{
 
     }
 
+
+
     class selectionComponent extends BaseComponent{
 	@Override
 	void constitutiveClause() {
+	    int n = this.inputs.length;
+	    int k = this.outputs.length;
+	    int n1, n2, n3, n4;
+	    if(n == 0 || k <=1){
+		selectionOnlyOneComponent sonoc = new selectionOnlyOneComponent(this.inputs);
+		sonoc.constitutiveClause();
+		if(n < 8 || k == n){
+		    n2 = n / 4; n3 = (n + 1)/4; n4 = (n + 2) / 4;
 
+		}
+		    
+	    }
 	}
     }
 
