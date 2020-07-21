@@ -23,8 +23,18 @@ public abstract class GoalDelimeter{
      */
     protected int firstVariable = 0;
 
+    public GoalDelimeter(){};
+
+    public GoalDelimeter(Instance instance, PBSolver solver) {
+	this.instance = instance;	
+	this.solver = solver;
+	this.firstVariable = solver.nVars() + 1;
+}
+
     abstract public boolean UpdateCurrentK(int iObj, int upperKD);
     abstract public boolean isY(int id);
+
+
 
     /**
      *Checks if a variable is an X(original) variable.
