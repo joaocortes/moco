@@ -228,6 +228,13 @@ public class SelectionDelimeter extends GoalDelimeter {
     public ArrayList<Integer> preffix(List<Integer> seq, int window){
 	return 	new ArrayList<Integer>(seq.subList(0 ,window - 1 ));
     }
+
+    public List<Object> concatenate(List<ArrayList<Object>> seq){
+	List<Object> result = new ArrayList<Object>();
+	for(ArrayList<Object> el: seq)
+	    result.addAll(el);
+	return result;
+    }    
     /**
      *setter of each circuit in this.circuits
      */
