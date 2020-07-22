@@ -73,17 +73,17 @@ public class SelectionDelimeter extends GoalDelimeter {
 	abstract class BaseComponent {
 
 	    protected List<Integer> inputs;
-	    protected int[] outputs;
+	    protected List<Integer> outputs;
 
 
 	    public BaseComponent(){
-		this.inputs = null;
-		this.outputs = null;
+		this.inputs = new ArrayList<Integer>();
+		this.outputs =new ArrayList<Integer>();
 	    }
 
 	    public BaseComponent(List<Integer> inputs, int nOutput){
 		this.inputs = inputs;
-		this.outputs = new int[nOutput];
+		this.outputs = new ArrayList<Integer>(nOutput);
 	    }
 
 	    abstract void constitutiveClause();
@@ -96,12 +96,14 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 	    public SelectionComponent(List<Integer> inputs, int nOutput){
 		super(inputs, nOutput);
+		this.inputs = inputs;
+		this.outputs = new ArrayList<Integer>(nOutput);
 	    }
 	    @Override
 	    void constitutiveClause() {
 	
 		int n = this.inputs.size();
-		int k = this.outputs.length;
+		int k = this.outputs.size();
 		int[] ns = new int[4];
 	    
 		if(n == 0 || k <=1){
@@ -221,16 +223,13 @@ public class SelectionDelimeter extends GoalDelimeter {
 
     }
 
-    public int[] suffix(int[] seq, int window){
-	Arrays.copyOfRange(seq,seq.length - window , seq.length - 1 );
-	return null;
+    public ArrayList<Integer> suffix(List<Integer> seq, int window){
+	return 	new ArrayList<Integer>(seq.subList(seq.size() - window , seq.size() - 1 ));
     }
 
-    public int[] preffix(int[] seq, int window){
-	Arrays.copyOfRange(seq, 0 ,window - 1 );
-	return null;
+    public ArrayList<Integer> preffix(List<Integer> seq, int window){
+	return 	new ArrayList<Integer>(seq.subList(0 ,window - 1 ));
     }
-    
     /**
      *setter of each circuit in this.circuits
      */
