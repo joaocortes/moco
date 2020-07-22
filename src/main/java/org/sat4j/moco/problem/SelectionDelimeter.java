@@ -96,8 +96,6 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 	    public SelectionComponent(List<Integer> inputs, int nOutput){
 		super(inputs, nOutput);
-		this.inputs = inputs;
-		this.outputs = new ArrayList<Integer>(nOutput);
 	    }
 	    @Override
 	    void constitutiveClause() {
