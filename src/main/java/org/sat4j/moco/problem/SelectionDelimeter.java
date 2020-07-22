@@ -253,9 +253,9 @@ public class SelectionDelimeter extends GoalDelimeter {
 	return 	new ArrayList<Integer>(seq.subList(0 ,window - 1 ));
     }
 
-    public List<Object> concatenate(List<ArrayList<Object>> seq){
-	List<Object> result = new ArrayList<Object>();
-	for(ArrayList<Object> el: seq)
+    public List<Integer> concatenate(List<ArrayList<Integer>> seq){
+	List<Integer> result = new ArrayList<Integer>();
+	for(ArrayList<Integer> el: seq)
 	    result.addAll(el);
 	return result;
     }    
