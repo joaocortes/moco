@@ -178,8 +178,10 @@ public class SelectionDelimeter extends GoalDelimeter {
 	}
 
 	class MergeComponent extends BaseComponent{
-	    public MergeComponent(List<Integer> inputs, int nOutput){
-		super(inputs, nOutput);
+	    List<ArrayList<Integer>> inputsList = null;
+	    public MergeComponent(List<ArrayList<Integer>> inputsList, int nOutput){
+		assert inputsList.size() == 4;
+		this.inputsList = inputsList;
 	    }
 	    @Override
 	    void constitutiveClause() {
