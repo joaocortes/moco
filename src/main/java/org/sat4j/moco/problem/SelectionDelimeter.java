@@ -195,6 +195,24 @@ public class SelectionDelimeter extends GoalDelimeter {
 		    selcomp.constitutiveClause();
 		    return;
 		}
+		List<ArrayList<Integer>> inputsListOdd = new ArrayList<ArrayList<Integer>>(4);		    
+		List<ArrayList<Integer>> inputsListEven = new ArrayList<ArrayList<Integer>>(4);		    
+		int parity = 1;
+		int sizeOdd = 0, sizeEven = 0;
+		for(int i = 0, n = this.inputsList.size(); i < n; i++){
+		    for(int entry: this.inputsList.get(i))
+			{
+			    parity++; parity %= 2;
+			    if(parity == 0)
+				inputsListEven.get(i).add(entry);
+			    else
+				inputsListOdd.get(i).add(entry);
+				
+			}			
+		    sizeOdd += inputsListOdd.get(i).size();
+		    sizeEven += inputsListEven.get(i).size();
+		    }
+		
 	    }
 	}
 
