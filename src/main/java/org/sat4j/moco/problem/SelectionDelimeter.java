@@ -182,13 +182,19 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    public MergeComponent(List<ArrayList<Integer>> inputsList, int nOutput){
 		assert inputsList.size() == 4;
 		this.inputsList = inputsList;
+		this.outputs = new ArrayList<Integer>(nOutput);
 	    }
 	    @Override
 	    void constitutiveClause() {
-		if
-
-	// TODO Auto-generated method stub
-	    
+		if(this.inputsList.get(1).size() == 0){
+		    this.outputs = this.inputsList.get(0);
+		    return;
+		}
+		if(this.inputsList.get(0).size() == 1){
+		    SelectionComponent selcomp = new SelectionComponent(concatenate(inputsList), this.outputs.size());
+		    selcomp.constitutiveClause();
+		    return;
+		}
 	    }
 	}
 
