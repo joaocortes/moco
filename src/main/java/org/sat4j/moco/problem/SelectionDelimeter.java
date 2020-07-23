@@ -233,9 +233,25 @@ public class SelectionDelimeter extends GoalDelimeter {
 				inputsListOdd.get(i).add(entry);
 				
 			}			
-		    sizeOdd += inputsListOdd.get(i).size();
-		    sizeEven += inputsListEven.get(i).size();
-		    }
+		sizeOdd += inputsListOdd.get(i).size();
+		sizeEven += inputsListEven.get(i).size();
+		}
+		
+		int kOdd = sizeOdd < k/2 + 2? sizeOdd: k/2 + 2;
+		int kEven = sizeEven < k/2? sizeEven: k/2;
+		MergeComponent mergeOdd = new MergeComponent(inputsListOdd, kOdd);
+		mergeOdd.constitutiveClause();
+		
+		MergeComponent mergeEven = new MergeComponent(inputsListEven, kEven);
+		mergeEven.constitutiveClause();
+
+		CombineComponent combComp = new CombineComponent(preffix(mergeOdd.outputs,kOdd),
+								 preffix(mergeEven.outputs,kEven), k);
+
+		this.outputs.addAll(combComp.outputs);
+		this.outputs.addAll(suffix(mergeOdd.outputs, kOdd + 1));
+		this.outputs.addAll(suffix(mergeEven.outputs, kEven + 1));
+
 		
 	    }
 	}
