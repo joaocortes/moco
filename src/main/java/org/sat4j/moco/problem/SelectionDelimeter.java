@@ -133,16 +133,18 @@ public class SelectionDelimeter extends GoalDelimeter {
 		int ki;
 
 		List<ArrayList<Integer>> preffixes = new ArrayList<ArrayList<Integer>>();
-		List<ArrayList<Integer>> suffixes = new ArrayList<ArrayList<Integer>>();
+		List<Integer> concatenatedSuffixes = new ArrayList<Integer>();
 		for(int ni: ns){
 		    ki = k < ni? k : ni;
 		    List<Integer> slice = this.inputs.subList(offset, offset + ni - 1);
 		    SelectionComponent selcomp = new SelectionComponent(slice, ki);
 		    preffixes.add(preffix(selcomp.outputs, ki));
-		    suffixes.add(suffix(selcomp.outputs, ki + 1));
+		    concatenatedSuffixes.addAll(suffix(selcomp.outputs, ki + 1));
 		}
-		MergeComponent mergecomp = new MergeComponent(suffixes, k);
+		MergeComponent mergecomp = new MergeComponent(preffixes, k);
 		mergecomp.constitutiveClause();
+		this.outputs = mergecomp.outputs;
+		this.outputs.addAll(concatenatedSuffixes);
 		return;
 	    }
 	}
