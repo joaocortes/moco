@@ -149,10 +149,9 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    }
 	}
 
-
 	/**
-	 *Component that selects the max value. Equivalent to a
-	 *disjunction
+	 *Component with 2 inputs that selects either the max or min
+	 *entry, according to its polarity
 	 */
 
 	class optimumComponent extends BaseComponent{
