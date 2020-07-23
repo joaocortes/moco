@@ -90,6 +90,14 @@ public abstract class GoalDelimeter{
     }
 
 
+    /**
+     *Return the ID of a freshly created auxiliar variable
+     */
+
+    protected int getFreshVar(){
+	solver.newVar();
+	return solver.nVars();
+    }
 
     /**
      *Adds the disjunction of setOfLiterals
