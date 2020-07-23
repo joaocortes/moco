@@ -157,20 +157,43 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    boolean polarity = true;
 	    public optimumComponent(List<Integer> inputs, boolean polarity){
 		super(inputs, 1);
+		this.polarity = polarity;
+		this.outputs =  new ArrayList<Integer>(1);
 	    }
 
 	    @Override
 	    void constitutiveClause() {
-		// TODO Auto-generated method stub
-	    
+		this.outputs.add(getFreshVar());
+		int[] intArray = null;
+		// polarity, then use a max component, else use min
+		    if(this.polarity)
+			intArray = Arrays.stream(this.inputs.toArray(new Integer[0])).mapToInt(Integer::intValue).toArray();
+		    else
+			intArray = Arrays.stream(this.inputs.toArray(new Integer[0])).mapToInt(i -> -i).toArray();
+		    for(int lit: intArray){
+			IVecInt clause = new VecInt(new int[]{-lit, this.outputs.get(0)});
+			AddClause(clause);
+		    }
+
+		return;
 	    }
 
 	}
 
+	
+
 	class CombineComponent extends BaseComponent{
-	    public CombineComponent(List<Integer> inputs, int nOutput){
-		super(inputs, nOutput);
-	    }@Override
+	    public CombineComponent(List<Integer> input1, List<Integer> input2, int nOutput){
+		this.outputs = new ArrayList<Integer>(nOutput);
+		int jMax = input1.size() + input2.size();
+		for(int j = 1; j < jMax; j++){
+		    // i is the index of the pair associated to j.
+		    int i = (j + 1) / 2;
+		    if(j%2 == 0)
+			
+		}
+	    }
+	    @Override
 	    void constitutiveClause() {
 		// TODO Auto-generated method stub
 	    
