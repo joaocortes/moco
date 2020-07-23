@@ -183,20 +183,36 @@ public class SelectionDelimeter extends GoalDelimeter {
 	
 
 	class CombineComponent extends BaseComponent{
+	    List<Integer> input1;
+	    List<Integer> input2;
 	    public CombineComponent(List<Integer> input1, List<Integer> input2, int nOutput){
 		this.outputs = new ArrayList<Integer>(nOutput);
-		int jMax = input1.size() + input2.size();
-		for(int j = 1; j < jMax; j++){
-		    // i is the index of the pair associated to j.
-		    int i = (j + 1) / 2;
-		    if(j%2 == 0)
-			
-		}
+		this.input1 = input1;
+		this.input2 = input2;
 	    }
 	    @Override
 	    void constitutiveClause() {
 		// TODO Auto-generated method stub
+		int jMax = input1.size() + input2.size();
+		for(int j = 1; j < jMax; j++){
+		    // i is the index of the pair associated to j.
+		    int i = (j + 1) / 2;
+		    if(j % 2 == 0) {
+			List<ArrayList<Integer>> pairs = new ArrayList<ArrayList<Integer>>(4); 
+			pairs.add()
+			
+		    }
+
+		}
 	    
+	    }
+	    private ArrayList<Integer> normalizedPair(List<Integer> list1, int index1,List<Integer> list2, int index2){
+		ArrayList<Integer> pair = new  ArrayList<Integer>();
+		if(index1 < 0)
+		    pair[0]
+		if(index >= list.size())
+		    return null;
+
 	    }
 
 	}
