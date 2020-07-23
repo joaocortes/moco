@@ -226,12 +226,13 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    }
 	    @Override
 	    void constitutiveClause() {
+		int k = this.outputs.size();
 		if(this.inputsList.get(1).size() == 0){
 		    this.outputs = this.inputsList.get(0);
 		    return;
 		}
 		if(this.inputsList.get(0).size() == 1){
-		    SelectionComponent selcomp = new SelectionComponent(concatenate(inputsList), this.outputs.size());
+		    SelectionComponent selcomp = new SelectionComponent(concatenate(inputsList), k);
 		    selcomp.constitutiveClause();
 		    return;
 		}
