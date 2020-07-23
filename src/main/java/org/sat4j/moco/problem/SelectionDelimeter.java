@@ -105,8 +105,9 @@ public class SelectionDelimeter extends GoalDelimeter {
 		int[] ns = new int[4];
 	    
 		if(n == 0 || k <=1){
-		    selectionOnlyOneComponent sonoc = new selectionOnlyOneComponent(this.inputs);
+		    optimumComponent sonoc = new optimumComponent(this.inputs);
 		    sonoc.constitutiveClause();
+		    this.outputs = sonoc.outputs;
 		    return;
 		}
 		if(n < 8 || k == n){
@@ -152,9 +153,9 @@ public class SelectionDelimeter extends GoalDelimeter {
 	 *disjunction
 	 */
 
-	class selectionOnlyOneComponent extends BaseComponent{
-
-	    public selectionOnlyOneComponent(List<Integer> inputs){
+	class optimumComponent extends BaseComponent{
+	    boolean polarity = true;
+	    public optimumComponent(List<Integer> inputs, boolean polarity){
 		super(inputs, 1);
 	    }
 
