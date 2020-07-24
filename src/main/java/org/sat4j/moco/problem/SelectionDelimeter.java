@@ -184,36 +184,57 @@ public class SelectionDelimeter extends GoalDelimeter {
 	
 
 	class CombineComponent extends BaseComponent{
-	    List<Integer> input1;
-	    List<Integer> input2;
-	    public CombineComponent(List<Integer> input1, List<Integer> input2, int nOutput){
+
+
+	    public CombineComponent(int nOutput){
 		this.outputs = new ArrayList<Integer>(nOutput);
-		this.input1 = input1;
-		this.input2 = input2;
 	    }
-	    @Override
-	    void constitutiveClause() {
-		// TODO Auto-generated method stub
+
+	    void constitutiveClause(List<Integer> input1, List<Integer> input2) {
 		int jMax = input1.size() + input2.size();
 		for(int j = 1; j < jMax; j++){
 		    // i is the index of the pair associated to j.
-		    int i = (j + 1) / 2;
+		    int i = (j + 1) / 2 - 1;
+		    List<ArrayList<Integer>> pairs = new ArrayList<ArrayList<Integer>>(4); 
 		    if(j % 2 == 0) {
-			List<ArrayList<Integer>> pairs = new ArrayList<ArrayList<Integer>>(4); 
-			pairs.add()
-			
+			pairs.add(this.normalizedPair(input1, i + 2, input2, i));
+			pairs.add(this.normalizedPair(input1, i + 1, input2, i - 1));
+			optimumComponent max1 = new optimumComponent(pairs.get(0), true);
+			max1.constitutiveClause();
+			optimumComponent min = new optimumComponent(pairs.get(1), false);
+			min.constitutiveClause();
+			ArrayList<Integer> max2inputs = new ArrayList<Integer>(2);
+			max2inputs.add(max1.outputs.get(0));
+			max2inputs.add(min.outputs.get(0));
+			optimumComponent max2 = new optimumComponent(max2inputs, true);
+			max2.constitutiveClause();
+			this.outputs.add(j, max2.outputs.get(0));
 		    }
+		    else {
+			pairs.add(this.normalizedPair(input1, i + 1, input2, i - 1));
+			pairs.add(this.normalizedPair(input1, i, input2, i - 2));
+			optimumComponent max = new optimumComponent(pairs.get(0), true);
+			max.constitutiveClause();
+			optimumComponent min1 = new optimumComponent(pairs.get(1), false);
+			min1.constitutiveClause();
+			ArrayList<Integer> min2inputs = new ArrayList<Integer>(2);
+			min2.add(max.outputs.get(0));
+			min2inputs.add(min1.outputs.get(0));
+			optimumComponent min2 = new optimumComponent(min2inputs, false);
+			min2.constitutiveClause();
+			this.outputs.add(j, min2.outputs.get(0));
 
+		    }
 		}
-	    
+		return;
 	    }
 	    private ArrayList<Integer> normalizedPair(List<Integer> list1, int index1,List<Integer> list2, int index2){
 		ArrayList<Integer> pair = new  ArrayList<Integer>();
-		if(index1 < 0)
-		    pair[0]
-		if(index >= list.size())
-		    return null;
-
+		if(index1 > 0 && index1 < list1.size())
+		    pair.add(list1.get(index1));
+		if(index2 > 0 && index2 < list2.size())
+		    pair.add(list2.get(index2));
+		return pair;
 	    }
 
 	}
