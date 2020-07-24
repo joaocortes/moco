@@ -162,6 +162,10 @@ public class SelectionDelimeter extends GoalDelimeter {
 		this.outputs =  new ArrayList<Integer>(1);
 	    }
 
+	    public optimumComponent(List<Integer> inputs){
+		this(inputs, true);
+	    }
+
 	    @Override
 	    void constitutiveClause() {
 		this.outputs.add(getFreshVar());
