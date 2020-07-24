@@ -190,6 +190,9 @@ public class SelectionDelimeter extends GoalDelimeter {
 		this.outputs = new ArrayList<Integer>(nOutput);
 	    }
 
+	    // This is required by my stupidity.
+	    void constitutiveClause(){};
+
 	    void constitutiveClause(List<Integer> input1, List<Integer> input2) {
 		int jMax = input1.size() + input2.size();
 		for(int j = 1; j < jMax; j++){
