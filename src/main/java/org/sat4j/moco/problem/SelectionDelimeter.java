@@ -248,20 +248,21 @@ public class SelectionDelimeter extends GoalDelimeter {
 	}
 
 	class MergeComponent extends BaseComponent{
-	    List<ArrayList<Integer>> inputsList = null;
-	    public MergeComponent(List<ArrayList<Integer>> inputsList, int nOutput){
-		assert inputsList.size() == 4;
-		this.inputsList = inputsList;
+	    public MergeComponent(int nOutput){
+		super();
+		this.inputs = new ArrayList<Integer>(nOutput);
 		this.outputs = new ArrayList<Integer>(nOutput);
 	    }
-	    @Override
-	    void constitutiveClause() {
+	    
+	    void constitutiveClause(){};
+	    void constitutiveClause(List<ArrayList<Integer>> inputsList) {
+		assert inputsList.size() == 4;
 		int k = this.outputs.size();
-		if(this.inputsList.get(1).size() == 0){
-		    this.outputs = this.inputsList.get(0);
+		if(inputsList.get(1).size() == 0){
+		    this.outputs = inputsList.get(0);
 		    return;
 		}
-		if(this.inputsList.get(0).size() == 1){
+		if(inputsList.get(0).size() == 1){
 		    SelectionComponent selcomp = new SelectionComponent(concatenate(inputsList), k);
 		    selcomp.constitutiveClause();
 		    return;
@@ -270,8 +271,8 @@ public class SelectionDelimeter extends GoalDelimeter {
 		List<ArrayList<Integer>> inputsListEven = new ArrayList<ArrayList<Integer>>(4);		    
 		int parity = 1;
 		int sizeOdd = 0, sizeEven = 0;
-		for(int i = 0, n = this.inputsList.size(); i < n; i++){
-		    for(int entry: this.inputsList.get(i))
+		for(int i = 0, n = inputsList.size(); i < n; i++){
+		    for(int entry: inputsList.get(i))
 			{
 			    parity++; parity %= 2;
 			    if(parity == 0)
@@ -286,15 +287,14 @@ public class SelectionDelimeter extends GoalDelimeter {
 		
 		int kOdd = sizeOdd < k/2 + 2? sizeOdd: k/2 + 2;
 		int kEven = sizeEven < k/2? sizeEven: k/2;
-		MergeComponent mergeOdd = new MergeComponent(inputsListOdd, kOdd);
-		mergeOdd.constitutiveClause();
+		MergeComponent mergeOdd = new MergeComponent(kOdd);
+		mergeOdd.constitutiveClause(inputsListOdd);
 		
-		MergeComponent mergeEven = new MergeComponent(inputsListEven, kEven);
-		mergeEven.constitutiveClause();
-
 		CombineComponent combComp = new CombineComponent(preffix(mergeOdd.outputs,kOdd),
 								 preffix(mergeEven.outputs,kEven), k);
 
+		MergeComponent mergeEven = new MergeComponent(kEven);
+		mergeEven.constitutiveClause(inputsListEven);
 		this.outputs.addAll(combComp.outputs);
 		this.outputs.addAll(suffix(mergeOdd.outputs, kOdd + 1));
 		this.outputs.addAll(suffix(mergeEven.outputs, kEven + 1));
