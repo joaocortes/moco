@@ -290,11 +290,10 @@ public class SelectionDelimeter extends GoalDelimeter {
 		MergeComponent mergeOdd = new MergeComponent(kOdd);
 		mergeOdd.constitutiveClause(inputsListOdd);
 		
-		CombineComponent combComp = new CombineComponent(preffix(mergeOdd.outputs,kOdd),
-								 preffix(mergeEven.outputs,kEven), k);
-
 		MergeComponent mergeEven = new MergeComponent(kEven);
 		mergeEven.constitutiveClause(inputsListEven);
+		CombineComponent combComp = new CombineComponent(k);
+		combComp.constitutiveClause(preffix(mergeOdd.outputs,kOdd), preffix(mergeEven.outputs,kEven));
 		this.outputs.addAll(combComp.outputs);
 		this.outputs.addAll(suffix(mergeOdd.outputs, kOdd + 1));
 		this.outputs.addAll(suffix(mergeEven.outputs, kEven + 1));
