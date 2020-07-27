@@ -85,6 +85,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    }
 
 	    public BaseComponent(List<Integer> inputs, int nOutput){
+		super();
 		this.inputs = inputs;
 		this.outputs = new ArrayList<Integer>(nOutput);
 	    }
@@ -190,7 +191,6 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 	
 	class CombineComponent extends BaseComponent{
-
 
 	    public CombineComponent(int nOutput){
 		this.outputs = new ArrayList<Integer>(nOutput);
