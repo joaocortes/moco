@@ -25,15 +25,21 @@ package org.sat4j.moco.problem;
 
 import org.sat4j.moco.util.Log;
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 
 import java.util.PriorityQueue;
     
 import java.util.Arrays;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+
+
 import java.util.Collection;
+import java.util.HashMap;
 
 
 import org.sat4j.core.ReadOnlyVec;
@@ -41,6 +47,7 @@ import org.sat4j.core.VecInt;
 import org.sat4j.core.Vec;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
+import org.sat4j.moco.problem.SelectionDelimeter.Circuit.SelectionComponent;
 import org.sat4j.specs.IVecInt;
 
 
@@ -316,6 +323,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	/**
 	 *Method that ooses the base to be used
 	 */
+
 	private void setBase(){
 	    this.base = new int[]{2};
 	    return;
@@ -331,7 +339,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    else return this.base[i];
 	}
 
-	public IVecInt expandValue(int value){
+	public  IVecInt expandValue(int value){
 	    IVecInt result = new VecInt(new int[]{});
 	    int i = 0;	
 	    while(value != 0){
@@ -358,12 +366,62 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    result.addAll(el);
 	return result;
     }    
+
+
+
     /**
      *setter of each circuit in this.circuits
      */
 
-    private void buildCircuit(int iObj){}
+    private void buildCircuit(int iObj){
+	Circuit circuit = this.circuits[iObj];
+	Objective ithObjective = this.instance.getObj(iObj);
+	HashMap<Integer, Integer> weights = this.getWeights(iObj);
+	List<IVecInt> digitsList = new ArrayList<IVecInt>();
+	int maxNDigits = 0;
+	IVecInt digits = new VecInt(new int[]{});
+	Map<Integer,ArrayList<Integer>> baseInputs= new HashMap<Integer, ArrayList<Integer>>();
+	for(Entry<Integer, Integer> entry: weights.entrySet()){
+	    int weight = entry.getValue();
+	    int lit = entry.getKey();
+	    digits = circuit.expandValue(weight);
+	    digitsList.add(digits);
+	    int nDigits = digits.size();
+	    if(maxNDigits < nDigits) maxNDigits = nDigits;
+	    for(int digitI = 0; digitI < maxNDigits; digitI++){
+		int ithBase = circuit.getBase(digitI);
+		int ithDigit = digits.get(digitI);
+		while( ithDigit > 0){
+		    baseInputs.get(ithBase).add(lit);
+		    ithDigit--;
+		}
 
+	    }
+	}
+	circuit.setPrimordialComponents(baseInputs);
+	    
+    }
+    
+    private HashMap<Integer, Integer> getWeights(int iObj){
+	Objective ithObjective = this.instance.getObj(iObj);
+	ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
+	IVecInt literals = ithObjective.getSubObjLits(0);
+	IVecInt weights = new VecInt(Arrays
+				     .stream(objectiveCoeffs.toArray())
+				     .mapToInt(s -> s.asIntExact())
+				     .toArray());
+	Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+	while(weights.size() > 0)
+	    {
+		int weight = weights.last();
+		weights.pop();
+		int lit = literals.last();
+		literals.pop();
+		result.put(lit, weight);
+	    }
+	return result;
+
+    }
     public boolean UpdateCurrentK(int iObj, int upperKD){return true;}
     public boolean isY(int id){return true;};
     public int getCurrentKD(int iObj){return 0;};
