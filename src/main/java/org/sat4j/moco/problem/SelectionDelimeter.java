@@ -77,8 +77,9 @@ public class SelectionDelimeter extends GoalDelimeter {
 
     class Circuit{
 	int iObj;
-	int[] base = null;
-
+	int[] bases = null;
+	ArrayList<SelectionComponent> primordialComponents = null;
+	
 
 	abstract class BaseComponent {
 
@@ -104,7 +105,12 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 
 	class SelectionComponent extends BaseComponent{
+	    int base = 0; 
 
+	    public SelectionComponent(List<Integer> inputs, int nOutput, int base){
+		super(inputs, nOutput);
+		this.base = base;
+	    }
 	    public SelectionComponent(List<Integer> inputs, int nOutput){
 		super(inputs, nOutput);
 	    }
@@ -315,7 +321,8 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 	public Circuit(int iObj){
 	    this.iObj = iObj;
-	    this.setBase();
+	    this.setBases();
+	    this.primordialComponents = new ArrayList<SelectionComponent>();
 	}
 
 
@@ -324,8 +331,8 @@ public class SelectionDelimeter extends GoalDelimeter {
 	 *Method that ooses the base to be used
 	 */
 
-	private void setBase(){
-	    this.base = new int[]{2};
+	private void setBases(){
+	    this.bases = new int[]{2};
 	    return;
 	}
 
