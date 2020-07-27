@@ -331,10 +331,13 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    else return this.base[i];
 	}
 
+	public IVecInt expandValue(int value){
+	    IVecInt result = new VecInt(new int[]{});
 	    int i = 0;	
-	    for(int b: this.base){
-		result[i] = weight % b;
-		weight = (weight - result[i]*b)/b;
+	    while(value != 0){
+		int base = getBase(i);
+		result.push(value % base);
+		value = (value - result.get(i)*base)/base;
 	    }
 	    return result;
 	}
