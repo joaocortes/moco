@@ -350,6 +350,14 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    return result;
 	}
 
+	public void setPrimordialComponents( Map<Integer,ArrayList<Integer>> baseInputs) {
+	    for(Entry<Integer, ArrayList<Integer>> entry : baseInputs.entrySet()) {
+		int base = entry.getKey();
+		ArrayList<Integer> inputs = entry.getValue();
+		SelectionComponent selComp = new SelectionComponent(inputs, inputs.size(), base);
+		this.primordialComponents.add(selComp);
+	    }
+	}
     }
 
     public ArrayList<Integer> suffix(List<Integer> seq, int window){
