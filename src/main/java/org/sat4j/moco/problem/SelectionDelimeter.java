@@ -321,9 +321,16 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    return;
 	}
 
+	/**
+	 *get Base element i.
+	 */
 
-	private int[] expandWeight(int weight){
-	    int[] result = new int[this.base.length];
+	private int getBase(int i){
+	    if(this.base.length < i)
+		return this.base[this.base.length -1];
+	    else return this.base[i];
+	}
+
 	    int i = 0;	
 	    for(int b: this.base){
 		result[i] = weight % b;
