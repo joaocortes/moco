@@ -78,9 +78,9 @@ public class SelectionDelimeter extends GoalDelimeter {
     class Circuit{
 	int iObj;
 	int[] bases = null;
-	ArrayList<SelectionComponent> primordialComponents = null;
+	int basesN = 0;
+	Map<Integer, ControlledSelectionComponent> controlledComponents = null;
 	
-
 	abstract class BaseComponent {
 
 	    protected Integer[] inputs;
