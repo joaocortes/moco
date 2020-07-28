@@ -83,19 +83,19 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 	abstract class BaseComponent {
 
-	    protected List<Integer> inputs;
-	    protected List<Integer> outputs;
-
+	    protected Integer[] inputs;
+	    protected  Integer[] outputs;
+	    int nOutputs = 0;
 
 	    public BaseComponent(){
-		this.inputs = new ArrayList<Integer>();
-		this.outputs =new ArrayList<Integer>();
 	    }
-
-	    public BaseComponent(List<Integer> inputs, int nOutput){
+	    public BaseComponent(int nOutputs){
+		this.outputs = new Integer[nOutputs];
+	    }
+	    public BaseComponent(Integer[] inputs, int nOutputs){
 		super();
 		this.inputs = inputs;
-		this.outputs = new ArrayList<Integer>(nOutput);
+		this.outputs = new Integer[nOutputs];
 	    }
 
 	    abstract void constitutiveClause();
@@ -105,20 +105,20 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 
 	class SelectionComponent extends BaseComponent{
-	    int base = 0; 
 
-	    public SelectionComponent(List<Integer> inputs, int nOutput, int base){
-		super(inputs, nOutput);
-		this.base = base;
+	    public SelectionComponent(Integer[] inputs){
+		super(inputs, inputs.length);
 	    }
-	    public SelectionComponent(List<Integer> inputs, int nOutput){
+
+	    public SelectionComponent(Integer[] inputs, int nOutput){
 		super(inputs, nOutput);
 	    }
+
 	    @Override
 	    void constitutiveClause() {
 	
-		int n = this.inputs.size();
-		int k = this.outputs.size();
+		int n = this.inputs.length;
+		int k = this.outputs.length;
 		int[] ns = new int[4];
 	    
 		if(n == 0 || k <=1){
@@ -173,27 +173,27 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 	class optimumComponent extends BaseComponent{
 	    boolean polarity = true;
-	    public optimumComponent(List<Integer> inputs, boolean polarity){
+	    public optimumComponent(Integer[] inputs, boolean polarity){
 		super(inputs, 1);
 		this.polarity = polarity;
-		this.outputs =  new ArrayList<Integer>(1);
+		this.outputs =  new Integer[1];
 	    }
 
-	    public optimumComponent(List<Integer> inputs){
+	    public optimumComponent(Integer[] inputs){
 		this(inputs, true);
 	    }
 
 	    @Override
 	    void constitutiveClause() {
-		this.outputs.add(getFreshVar());
+		this.outputs[0]=getFreshVar();
 		int[] intArray = null;
 		// polarity, then use a max component, else use min
 		    if(this.polarity)
-			intArray = Arrays.stream(this.inputs.toArray(new Integer[0])).mapToInt(Integer::intValue).toArray();
+			intArray = Arrays.stream(this.inputs).mapToInt(Integer::intValue).toArray();
 		    else
-			intArray = Arrays.stream(this.inputs.toArray(new Integer[0])).mapToInt(i -> -i).toArray();
+			intArray = Arrays.stream(this.inputs).mapToInt(i -> -i).toArray();
 		    for(int lit: intArray){
-			IVecInt clause = new VecInt(new int[]{-lit, this.outputs.get(0)});
+			IVecInt clause = new VecInt(new int[]{-lit, this.outputs[0]});
 			AddClause(clause);
 		    }
 
@@ -206,7 +206,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	class CombineComponent extends BaseComponent{
 
 	    public CombineComponent(int nOutput){
-		this.outputs = new ArrayList<Integer>(nOutput);
+		this.outputs = new Integer[nOutput];
 	    }
 
 	    // This is required by my stupidity.
@@ -220,31 +220,31 @@ public class SelectionDelimeter extends GoalDelimeter {
 		    List<Integer> pair = new ArrayList<Integer>(); 
 		    if(j % 2 == 0) {
 			pair = this.normalizedPair(input1, i + 2, input2, i);
-			optimumComponent max1 = new optimumComponent(pair, true);
+			optimumComponent max1 = new optimumComponent(pair.toArray(new Integer[0]), true);
 			max1.constitutiveClause();
 			pair = this.normalizedPair(input1, i + 1, input2, i - 1);
-			optimumComponent min = new optimumComponent(pair, false);
+			optimumComponent min = new optimumComponent(pair.toArray(new Integer[0]), false);
 			min.constitutiveClause();
 			pair.clear();
-			pair.add(max1.outputs.get(0));
-			pair.add(min.outputs.get(0));
-			optimumComponent max2 = new optimumComponent(pair, true);
+			pair.add(max1.outputs[0]);
+			pair.add(min.outputs[0]);
+			optimumComponent max2 = new optimumComponent(pair.toArray(new Integer[0]), true);
 			max2.constitutiveClause();
-			this.outputs.add(j, max2.outputs.get(0));
+			this.outputs[j] = max2.outputs[0];
 		    }
 		    else {
 			pair = this.normalizedPair(input1, i + 1, input2, i - 1);
-			optimumComponent max = new optimumComponent(pair, true);
+			optimumComponent max = new optimumComponent(pair.toArray(new Integer[0]), true);
 			max.constitutiveClause();
 			pair = this.normalizedPair(input1, i, input2, i - 2);
-			optimumComponent min1 = new optimumComponent(pair, false);
+			optimumComponent min1 = new optimumComponent(pair.toArray(new Integer[0]), false);
 			min1.constitutiveClause();
 			pair.clear();
-			pair.add(max.outputs.get(0));
-			pair.add(min1.outputs.get(0));
-			optimumComponent min2 = new optimumComponent(pair, false);
+			pair.add(max.outputs[0]);
+			pair.add(min1.outputs[0]);
+			optimumComponent min2 = new optimumComponent(pair.toArray(new Integer[0]), false);
 			min2.constitutiveClause();
-			this.outputs.add(j, min2.outputs.get(0));
+			this.outputs[j] = min2.outputs[0];
 
 		    }
 		}
@@ -309,7 +309,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 		MergeComponent mergeEven = new MergeComponent(kEven);
 		mergeEven.constitutiveClause(inputsListEven);
 		CombineComponent combComp = new CombineComponent(k);
-		combComp.constitutiveClause(preffix(mergeOdd.outputs,kOdd), preffix(mergeEven.outputs,kEven));
+		combComp.constitutiveClause(preffix(mergeOdd.outputs,kOdd).toArray(new Integer[0]), preffix(mergeEven.outputs,kEven).toArray(new Integer[0]));
 		this.outputs.addAll(combComp.outputs);
 		this.outputs.addAll(suffix(mergeOdd.outputs, kOdd + 1));
 		this.outputs.addAll(suffix(mergeEven.outputs, kEven + 1));
@@ -395,7 +395,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	List<IVecInt> digitsList = new ArrayList<IVecInt>();
 	int maxNDigits = 0;
 	IVecInt digits = new VecInt(new int[]{});
-	Map<Integer,ArrayList<Integer>> baseInputs= new HashMap<Integer, ArrayList<Integer>>();
+	Map<Integer,Integer[]> baseInputs= new HashMap<Integer, ArrayList<Integer>>();
 	for(Entry<Integer, Integer> entry: weights.entrySet()){
 	    int weight = entry.getValue();
 	    int lit = entry.getKey();
