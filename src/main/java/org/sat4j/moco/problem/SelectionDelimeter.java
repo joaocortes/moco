@@ -28,23 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
-import java.util.PriorityQueue;
-    
 import java.util.Arrays;
-import java.util.TreeMap;
 import java.util.Map.Entry;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
-
-
-import java.util.Collection;
 import java.util.HashMap;
 
 
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.VecInt;
-import org.sat4j.core.Vec;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit.SelectionComponent;
@@ -158,12 +148,33 @@ public class SelectionDelimeter extends GoalDelimeter {
 		    preffixes.add(preffix(selcomp.outputs, ki));
 		    concatenatedSuffixes.addAll(suffix(selcomp.outputs, ki + 1));
 		}
-		MergeComponent mergecomp = new MergeComponent(preffixes, k);
-		mergecomp.constitutiveClause();
+		MergeComponent mergecomp = new MergeComponent(k);
+		mergecomp.constitutiveClause(preffixes);
 		this.outputs = mergecomp.outputs;
 		this.outputs.addAll(concatenatedSuffixes);
 		return;
 	    }
+	}
+
+	class ControlledSelectionComponent{
+	    SelectionComponent selecComp = null;
+	    int base = 0;
+	    Integer[] realInputs = null;
+	    Integer[] auxiliaryInputs = null;
+
+	    public ControlledSelectionComponent(Integer[] inputs, int base){
+		this.base = base;
+		this.realInputs = inputs;
+		this.auxiliaryInputs = new Integer[this.realInputs.length];
+		Integer[] completeInputs = new Integer[2 * this.realInputs.length];
+		for(int i = 0, n = this.realInputs.length; i < n; i++){
+		    completeInputs[i] = this.realInputs[i];
+		    completeInputs[i + n] = this.auxiliaryInputs[i];
+}
+		this.selecComp = newp SelectionComponent(completeInputs);
+		controlledComponents.put(base, this);
+	    }
+
 	}
 
 	/**
@@ -339,9 +350,9 @@ public class SelectionDelimeter extends GoalDelimeter {
 	 */
 
 	private int getBase(int i){
-	    if(this.base.length < i)
-		return this.base[this.base.length -1];
-	    else return this.base[i];
+	    if(this.bases.length < i)
+		return this.bases[this.bases.length -1];
+	    else return this.bases[i];
 	}
 
 	public  IVecInt expandValue(int value){
@@ -355,22 +366,46 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    return result;
 	}
 
-	public void setPrimordialComponents( Map<Integer,ArrayList<Integer>> baseInputs) {
+	public void addCarryBits(ControlledSelectionComponent select1, ControlledSelectionComponent select2) {
+	    ArrayList<Integer> carryBits = new ArrayList<Integer>();
+	    int ratio = select2.base / select1.base;
+	    for(int i = 0, n = select1.selecComp.nOutputs; i<n; i++)
+
+		if()
+	}
+
+	public void setControlledComponents( Map<Integer, ArrayList<Integer>> baseInputs) {
+	    this.basesN = baseInputs.size();
 	    for(Entry<Integer, ArrayList<Integer>> entry : baseInputs.entrySet()) {
-		int base = entry.getKey();
-		ArrayList<Integer> inputs = entry.getValue();
-		SelectionComponent selComp = new SelectionComponent(inputs, inputs.size(), base);
-		this.primordialComponents.add(selComp);
+		Integer base = entry.getKey();
+		Integer[] inputs = entry.getValue().toArray(new Integer[0]);
+		ControlledSelectionComponent controlledComponent = new ControlledSelectionComponent(inputs, base);
+		
 	    }
 	}
-    }
 
+	public void (){
+
+	    for(Entry<Integer, ControlledSelectionComponent> entry: this.controlledComponents.values()){
+		int base = entry.getKey();
+		ControlledSelectionComponent  controlSelComp = entry.getValue();
+		
+	    }
+		
+	}
+
+    }
+ 
     public ArrayList<Integer> suffix(List<Integer> seq, int window){
 	return 	new ArrayList<Integer>(seq.subList(seq.size() - window , seq.size() - 1 ));
     }
 
-    public ArrayList<Integer> preffix(List<Integer> seq, int window){
-	return 	new ArrayList<Integer>(seq.subList(0 ,window - 1 ));
+    public Integer[] preffix(Integer[] seq, int window){
+	Integer[] result = new Integer[window];
+	for(int i = 0; i< window; i++)
+	    result[i] = seq[i];
+
+	return result;
     }
 
     public List<Integer> concatenate(List<ArrayList<Integer>> seq){
@@ -411,7 +446,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 	    }
 	}
-	circuit.setPrimordialComponents(baseInputs);
+	circuit.setControlledComponents(baseInputs);
 	    
     }
     
@@ -423,7 +458,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 				     .stream(objectiveCoeffs.toArray())
 				     .mapToInt(s -> s.asIntExact())
 				     .toArray());
-	Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+	HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
 	while(weights.size() > 0)
 	    {
 		int weight = weights.last();
