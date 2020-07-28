@@ -266,16 +266,14 @@ public class SelectionDelimeter extends GoalDelimeter {
 	class MergeComponent extends BaseComponent{
 	    public MergeComponent(int nOutput){
 		super();
-		this.inputs = new ArrayList<Integer>(nOutput);
-		this.outputs = new ArrayList<Integer>(nOutput);
 	    }
 	    
 	    void constitutiveClause(){};
 	    void constitutiveClause(List<ArrayList<Integer>> inputsList) {
 		assert inputsList.size() == 4;
-		int k = this.outputs.size();
+		int k = this.outputs.length;
 		if(inputsList.get(1).size() == 0){
-		    this.outputs = inputsList.get(0);
+		    this.outputs = inputsList.get(0).toArray(new Integer[0]);
 		    return;
 		}
 		if(inputsList.get(0).size() == 1){
@@ -322,7 +320,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	public Circuit(int iObj){
 	    this.iObj = iObj;
 	    this.setBases();
-	    this.primordialComponents = new ArrayList<SelectionComponent>();
+	    
 	}
 
 
