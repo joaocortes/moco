@@ -384,17 +384,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    }
 	}
 
-	public void (){
 
-	    for(Entry<Integer, ControlledSelectionComponent> entry: this.controlledComponents.values()){
-		int base = entry.getKey();
-		ControlledSelectionComponent  controlSelComp = entry.getValue();
-		
-	    }
-		
-	}
-
-    }
  
     public ArrayList<Integer> suffix(List<Integer> seq, int window){
 	return 	new ArrayList<Integer>(seq.subList(seq.size() - window , seq.size() - 1 ));
