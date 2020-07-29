@@ -401,8 +401,11 @@ public class SelectionDelimeter extends GoalDelimeter {
 
     }
  
-    public ArrayList<Integer> suffix(List<Integer> seq, int window){
-	return 	new ArrayList<Integer>(seq.subList(seq.size() - window , seq.size() - 1 ));
+    public ArrayList<Integer> suffix(Integer[] seq, int window){
+	ArrayList<Integer> result = new ArrayList<Integer>(window);
+	for(int i = 0; i< window; i++)
+	    result.add(seq[seq.length - window + i]);
+	return result;
     }
 
     public Integer[] preffix(Integer[] seq, int window){
