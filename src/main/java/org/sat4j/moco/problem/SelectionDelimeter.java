@@ -426,11 +426,12 @@ public class SelectionDelimeter extends GoalDelimeter {
 	return result;
     }
 
-    public List<Integer> concatenate(List<ArrayList<Integer>> seq){
+    public Integer[] concatenate(Integer[][] seq){
 	List<Integer> result = new ArrayList<Integer>();
-	for(ArrayList<Integer> el: seq)
-	    result.addAll(el);
-	return result;
+	for(Integer[] array: seq)
+	    for(Integer value: array)
+		result.add(value);
+	return result.toArray(new Integer[0]);
     }    
 
 
