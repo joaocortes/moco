@@ -64,6 +64,12 @@ public class SelectionDelimeter extends GoalDelimeter {
 	// Log.comment(5, "}");
     }
 
+    class SDIndex extends Index{
+	SDIndex(int iObj, int kD){
+	    this.iObj = iObj;
+	    this.kD = kD;
+	}
+    };
 
     class Circuit{
 	int iObj;
