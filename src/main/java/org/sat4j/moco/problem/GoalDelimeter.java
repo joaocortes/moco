@@ -3,6 +3,9 @@ package org.sat4j.moco.problem;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.IVecInt;
 import org.sat4j.moco.pb.PBSolver;
+
+import java.util.Map;
+
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.specs.ContradictionException;
 
@@ -30,6 +33,18 @@ public abstract class GoalDelimeter{
 	this.solver = solver;
 	this.firstVariable = solver.nVars() + 1;
 }
+    /**
+     *The inverse index map for the partial sum variables. For each
+     *ID, an index is associated
+     */
+
+    protected Map<Integer, GoalDelimeter.Index> auxVariablesInverseIndex  = null;
+    
+    protected abstract class Index{
+	int iObj = 0;
+	int kD = 0;
+	public Index(){};
+    };
 
     abstract public boolean UpdateCurrentK(int iObj, int upperKD);
     abstract public boolean isY(int id);
