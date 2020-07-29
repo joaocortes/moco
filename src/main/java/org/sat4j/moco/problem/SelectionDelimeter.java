@@ -229,8 +229,8 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    // This is required by my stupidity.
 	    void constitutiveClause(){};
 
-	    void constitutiveClause(List<Integer> input1, List<Integer> input2) {
-		int jMax = input1.size() + input2.size();
+	    void constitutiveClause(Integer[] input1, Integer[] input2) {
+		int jMax = input1.length + input2.length;
 		for(int j = 1; j < jMax; j++){
 		    // i is the index of the pair associated to j.
 		    int i = (j + 1) / 2 - 1;
@@ -269,12 +269,12 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    }
 
 
-	    private ArrayList<Integer> normalizedPair(List<Integer> list1, int index1,List<Integer> list2, int index2){
+	    private ArrayList<Integer> normalizedPair(Integer[] list1, int index1,Integer[] list2, int index2){
 		ArrayList<Integer> pair = new  ArrayList<Integer>();
-		if(index1 > 0 && index1 < list1.size())
-		    pair.add(list1.get(index1));
-		if(index2 > 0 && index2 < list2.size())
-		    pair.add(list2.get(index2));
+		if(index1 > 0 && index1 < list1.length)
+		    pair.add(list1[index1]);
+		if(index2 > 0 && index2 < list2.length)
+		    pair.add(list2[index2]);
 		return pair;
 	    }
 
@@ -324,12 +324,12 @@ public class SelectionDelimeter extends GoalDelimeter {
 		MergeComponent mergeEven = new MergeComponent(kEven);
 		mergeEven.constitutiveClause(inputsListEven);
 		CombineComponent combComp = new CombineComponent(k);
-		combComp.constitutiveClause(preffix(mergeOdd.outputs,kOdd).toArray(new Integer[0]), preffix(mergeEven.outputs,kEven).toArray(new Integer[0]));
-		this.outputs.addAll(combComp.outputs);
-		this.outputs.addAll(suffix(mergeOdd.outputs, kOdd + 1));
-		this.outputs.addAll(suffix(mergeEven.outputs, kEven + 1));
-
-		
+		combComp.constitutiveClause(preffix(mergeOdd.outputs,kOdd), preffix(mergeEven.outputs,kEven));
+		ArrayList<Integer> outputs = new ArrayList<Integer>();
+		outputs.addAll(Arrays.asList(combComp.outputs));
+		outputs.addAll(suffix(mergeOdd.outputs, kOdd + 1));
+		outputs.addAll(suffix(mergeEven.outputs, kEven + 1));
+		this.outputs = outputs.toArray(new Integer[0]);
 	    }
 	}
 
