@@ -149,12 +149,11 @@ public class SelectionDelimeter extends GoalDelimeter {
 		
 		List<Integer> concatenatedSuffixes = new ArrayList<Integer>();
 		int i = 0;
-		for(int ni: ns){
-		    
-		    ki = k < ni? k : ni;
-		    Integer[] slice = new Integer[ni];
-		    for(int i = 0; i < ni; i++)
-			slice[i] = this.inputs[offset + i];
+		for(int ithN: ns){
+		    ki = k < n? k : n;
+		    Integer[] slice = new Integer[ithN];
+		    for(int j = 0; j < ithN; j++)
+			slice[j] = this.inputs[offset + j];
 		    SelectionComponent selcomp = new SelectionComponent(slice, ki);
 		    preffixes[i] = preffix(selcomp.outputs, ki);
 		    i++;
