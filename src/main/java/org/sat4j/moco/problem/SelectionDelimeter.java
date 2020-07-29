@@ -174,11 +174,13 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    SelectionComponent selecComp = null;
 	    int base = 0;
 	    Integer[] realInputs = null;
+	    Integer[] outputs = null;
 	    Integer[] auxiliaryInputs = null;
 
 	    public ControlledSelectionComponent(Integer[] inputs, int base){
 		this.base = base;
 		this.realInputs = inputs;
+		this.outputs = this.selecComp.outputs;
 		this.auxiliaryInputs = new Integer[this.realInputs.length];
 		Integer[] completeInputs = new Integer[2 * this.realInputs.length];
 		for(int i = 0, n = this.realInputs.length; i < n; i++){
