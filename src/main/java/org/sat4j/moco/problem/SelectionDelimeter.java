@@ -374,17 +374,26 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    return carryBits;
 		    }
 
+
 	public void setControlledComponents( Map<Integer, ArrayList<Integer>> baseInputs) {
 	    this.basesN = baseInputs.size();
-	    for(Entry<Integer, ArrayList<Integer>> entry : baseInputs.entrySet()) {
+	    ControlledSelectionComponent lastContComp = null;
+	    int lastBase = 1;
+	    for(Entry<Integer, ArrayList<Integer>> entry : baseInputs.entrySet()){
 		Integer base = entry.getKey();
-		Integer[] inputs = entry.getValue().toArray(new Integer[0]);
-		ControlledSelectionComponent controlledComponent = new ControlledSelectionComponent(inputs, base);
-		
+		int ratio = base / lastBase;
+		ArrayList<Integer> inputs = entry.getValue();
+		if(lastContComp != null)
+		    inputs.addAll(getCarryBits(lastContComp, ratio));		    
+		inputs.addAll(entry.getValue());
+		ControlledSelectionComponent contComp =
+		    new ControlledSelectionComponent(inputs.toArray(new Integer[0]), base);
+		lastContComp = contComp;
+		lastBase = base;
 	    }
 	}
 
-
+    }
  
     public ArrayList<Integer> suffix(List<Integer> seq, int window){
 	return 	new ArrayList<Integer>(seq.subList(seq.size() - window , seq.size() - 1 ));
