@@ -162,8 +162,10 @@ public class SelectionDelimeter extends GoalDelimeter {
 		}
 		MergeComponent mergecomp = new MergeComponent(k);
 		mergecomp.constitutiveClause(preffixes);
-		this.outputs = mergecomp.outputs;
-		this.outputs.addAll(concatenatedSuffixes);
+		ArrayList<Integer> outputs = new ArrayList<Integer>();
+		
+		outputs.addAll(Arrays.asList(mergecomp.outputs));
+		outputs.addAll(concatenatedSuffixes);
 		return;
 	    }
 	}
@@ -292,14 +294,14 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    }
 	    
 	    void constitutiveClause(){};
-	    void constitutiveClause(List<ArrayList<Integer>> inputsList) {
-		assert inputsList.size() == 4;
+	    void constitutiveClause(Integer[][] inputsList) {
+		assert inputsList.length == 4;
 		int k = this.outputs.length;
-		if(inputsList.get(1).size() == 0){
-		    this.outputs = inputsList.get(0).toArray(new Integer[0]);
+		if(inputsList[1].length == 0){
+		    this.outputs = inputsList[0];
 		    return;
 		}
-		if(inputsList.get(0).size() == 1){
+		if(inputsList[0].length == 1){
 		    SelectionComponent selcomp = new SelectionComponent(concatenate(inputsList), k);
 		    selcomp.constitutiveClause();
 		    return;
@@ -308,8 +310,8 @@ public class SelectionDelimeter extends GoalDelimeter {
 		List<ArrayList<Integer>> inputsListEven = new ArrayList<ArrayList<Integer>>(4);		    
 		int parity = 1;
 		int sizeOdd = 0, sizeEven = 0;
-		for(int i = 0, n = inputsList.size(); i < n; i++){
-		    for(int entry: inputsList.get(i))
+		for(int i = 0, n = inputsList.length; i < n; i++){
+		    for(int entry: inputsList[i])
 			{
 			    parity++; parity %= 2;
 			    if(parity == 0)
