@@ -171,7 +171,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 		    completeInputs[i] = this.realInputs[i];
 		    completeInputs[i + n] = this.auxiliaryInputs[i];
 }
-		this.selecComp = newp SelectionComponent(completeInputs);
+		this.selecComp = new SelectionComponent(completeInputs);
 		controlledComponents.put(base, this);
 	    }
 
@@ -366,13 +366,13 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    return result;
 	}
 
-	public void addCarryBits(ControlledSelectionComponent select1, ControlledSelectionComponent select2) {
+	public ArrayList<Integer> getCarryBits(ControlledSelectionComponent select1, int ratio) {
 	    ArrayList<Integer> carryBits = new ArrayList<Integer>();
-	    int ratio = select2.base / select1.base;
 	    for(int i = 0, n = select1.selecComp.nOutputs; i<n; i++)
-
-		if()
-	}
+		if((i + 1) % ratio == 0)
+		    carryBits.add(select1.outputs[i]);
+	    return carryBits;
+		    }
 
 	public void setControlledComponents( Map<Integer, ArrayList<Integer>> baseInputs) {
 	    this.basesN = baseInputs.size();
