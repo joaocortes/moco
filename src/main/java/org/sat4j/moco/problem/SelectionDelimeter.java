@@ -37,7 +37,6 @@ import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
-import org.sat4j.moco.problem.SelectionDelimeter.Circuit.SelectionComponent;
 import org.sat4j.specs.IVecInt;
 
 
