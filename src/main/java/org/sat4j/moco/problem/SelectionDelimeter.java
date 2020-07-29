@@ -139,13 +139,19 @@ public class SelectionDelimeter extends GoalDelimeter {
 		int offset = 1;
 		int ki;
 
-		List<ArrayList<Integer>> preffixes = new ArrayList<ArrayList<Integer>>();
+		Integer[][] preffixes = new Integer[4][];
+		
 		List<Integer> concatenatedSuffixes = new ArrayList<Integer>();
+		int i = 0;
 		for(int ni: ns){
+		    
 		    ki = k < ni? k : ni;
-		    List<Integer> slice = this.inputs.subList(offset, offset + ni - 1);
+		    Integer[] slice = new Integer[ni];
+		    for(int i = 0; i < ni; i++)
+			slice[i] = this.inputs[offset + i];
 		    SelectionComponent selcomp = new SelectionComponent(slice, ki);
-		    preffixes.add(preffix(selcomp.outputs, ki));
+		    preffixes[i] = preffix(selcomp.outputs, ki);
+		    i++;
 		    concatenatedSuffixes.addAll(suffix(selcomp.outputs, ki + 1));
 		}
 		MergeComponent mergecomp = new MergeComponent(k);
@@ -427,7 +433,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	List<IVecInt> digitsList = new ArrayList<IVecInt>();
 	int maxNDigits = 0;
 	IVecInt digits = new VecInt(new int[]{});
-	Map<Integer,Integer[]> baseInputs= new HashMap<Integer, ArrayList<Integer>>();
+	Map<Integer,ArrayList<Integer>> baseInputs= new HashMap<Integer, ArrayList<Integer>>();
 	for(Entry<Integer, Integer> entry: weights.entrySet()){
 	    int weight = entry.getValue();
 	    int lit = entry.getKey();
