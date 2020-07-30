@@ -37,6 +37,7 @@ import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.problem.GoalDelimeter;
 import org.sat4j.moco.problem.SeqEncoder;
 import org.sat4j.moco.problem.GenTotalEncoder;
+import org.sat4j.moco.problem.SelectionDelimeter;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
@@ -97,9 +98,37 @@ public class UnsatSat extends algorithm {
 	else
 	    this.goalDelimeter = new SeqEncoder(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
+	this.exhaustedUpperKD =  new int[(this.problem.nObjs())];
     }
 
 
+    public UnsatSat(Instance m, String encoding ) {
+        // Log.comment(3, "in UnsatSat constructor");
+	this.problem = m;
+	this.result = new Result(m, true);
+	try {
+            this.solver = buildSolver();
+        }
+        catch (ContradictionException e) {
+            Log.comment(3, "Contradiction in ParetoMCS.buildSolver");
+            return;
+        }
+	this.realVariablesN = this.solver.nVars();
+	this.UpperKD =  new int[(this.problem.nObjs())];
+	switch(encoding){
+	case "SD":
+	    this.goalDelimeter = new SelectionDelimeter(m, solver);
+	    break;
+	case "GTE":	    
+	    this.goalDelimeter = new GenTotalEncoder(m, solver);
+	    break;
+	case "SWC":
+	    this.goalDelimeter = new SeqEncoder(m, solver);
+	default:
+	    this.goalDelimeter = new SeqEncoder(m, solver);
+	    break;
+	}
+    }
 
     /**
      * Applies the UnsatSat algorithm to the MOCO instance provided
