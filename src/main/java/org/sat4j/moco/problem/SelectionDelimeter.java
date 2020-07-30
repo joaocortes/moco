@@ -178,9 +178,12 @@ public class SelectionDelimeter extends GoalDelimeter {
 		    concatenatedSuffixes.addAll(suffix(selcomp.outputs, ki + 1));
 		}
 		MergeComponent mergecomp = new MergeComponent(k);
-		mergecomp.constitutiveClause(preffixes);
+		ArrayList<ArrayList<Integer>> preffixesArray = new ArrayList<ArrayList<Integer>>();
+		int iPreffix = 0;
+		for(Integer[] preffix: preffixes)
+		    preffixesArray.get(iPreffix).addAll(Arrays.asList(preffix));
+		mergecomp.constitutiveClause(preffixesArray);
 		ArrayList<Integer> outputs = new ArrayList<Integer>();
-		
 		outputs.addAll(Arrays.asList(mergecomp.outputs));
 		outputs.addAll(concatenatedSuffixes);
 		return;
