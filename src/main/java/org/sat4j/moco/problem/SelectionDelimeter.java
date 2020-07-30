@@ -52,11 +52,18 @@ import org.sat4j.specs.IVecInt;
 public class SelectionDelimeter extends GoalDelimeter {
 
     private Circuit[] circuits;
-    
+
+    /**
+     *The inverse index map for the partial sum variables. For each
+     *ID, an index is associated. I would like to 
+     */
+
+    protected InverseIndex<SDIndex>  auxVariablesInverseIndex  = null;
+
 
     public SelectionDelimeter(Instance instance, PBSolver solver) {
 	// Log.comment(5, "{ GenTotalEncoder");
-	
+	this.auxVariablesInverseIndex = new InverseIndex<SelectionDelimeter.SDIndex>() {};
 	this.circuits = new Circuit[this.instance.nObjs()];
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.circuits[iObj] = new Circuit(iObj);
@@ -67,9 +74,11 @@ public class SelectionDelimeter extends GoalDelimeter {
     }
 
     class SDIndex extends Index{
-	SDIndex(int iObj, int kD){
-	    this.iObj = iObj;
-	    this.kD = kD;
+	
+	int type = 0;
+	int base = 0;
+	SDIndex(int iObj, int kD, int type, int base){
+	    super(iObj, kD);
 	}
     };
 
