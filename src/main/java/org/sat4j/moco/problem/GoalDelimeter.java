@@ -7,7 +7,6 @@ import org.sat4j.moco.pb.PBSolver;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.specs.ContradictionException;
 
 public abstract class GoalDelimeter{
@@ -123,6 +122,7 @@ public abstract class GoalDelimeter{
     public void prettyPrintVariable(int literal){
 	Log.comment(6,prettyFormatVariable(literal));
     }
+    
     public void prettyPrintVariable(int literal, int level){
 	Log.comment(level,prettyFormatVariable(literal));
     }
