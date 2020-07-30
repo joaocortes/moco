@@ -86,8 +86,15 @@ public class SelectionDelimeter extends GoalDelimeter {
 	int iObj;
 	int[] bases = null;
 	int basesN = 0;
-	Map<Integer, ControlledSelectionComponent> controlledComponents = null;
+	SortedMap<Integer, ControlledSelectionComponent> controlledComponents = null;
 	
+	public Circuit(int iObj){
+	    this.iObj = iObj;
+	    this.setBases();
+	    controlledComponents = new TreeMap<Integer, ControlledSelectionComponent>();
+
+	}
+
 	abstract class BaseComponent {
 
 	    protected Integer[] inputs;
