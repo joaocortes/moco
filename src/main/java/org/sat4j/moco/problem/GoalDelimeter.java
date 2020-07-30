@@ -4,6 +4,7 @@ import org.sat4j.moco.util.Log;
 import org.sat4j.specs.IVecInt;
 import org.sat4j.moco.pb.PBSolver;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.sat4j.moco.pb.PBFactory;
@@ -28,22 +29,44 @@ public abstract class GoalDelimeter{
 
     public GoalDelimeter(){};
 
+
     public GoalDelimeter(Instance instance, PBSolver solver) {
 	this.instance = instance;	
 	this.solver = solver;
 	this.firstVariable = solver.nVars() + 1;
 }
-    /**
-     *The inverse index map for the partial sum variables. For each
-     *ID, an index is associated
-     */
 
-    protected Map<Integer, GoalDelimeter.Index> auxVariablesInverseIndex  = null;
     
+    protected abstract class InverseIndex<SIndex extends Index>{
+	
+	Map<Integer, SIndex> container = null;
+	public InverseIndex(){
+	    container = new HashMap<Integer, SIndex>();
+	};
+	public void putIndex(int varId,SIndex index) {
+	    this.container.put(varId, index);
+	};
+
+	public SIndex getIndex(int varId){
+	    return this.container.get(varId);
+	};
+	
+    }
+
     protected abstract class Index{
 	int iObj = 0;
 	int kD = 0;
 	public Index(){};
+	public Index(int iObj, int kD){
+	    this.iObj = iObj;
+	    this.kD = kD;
+	};
+	public int getIObj(){
+	    return this.iObj;
+}
+	public int getKD(){
+	    return this.kD;
+}
     };
 
     abstract public boolean UpdateCurrentK(int iObj, int upperKD);
