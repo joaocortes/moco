@@ -71,7 +71,13 @@ public abstract class GoalDelimeter{
     abstract public boolean UpdateCurrentK(int iObj, int upperKD);
     abstract public boolean isY(int id);
 
+    /**
+     * Generate the upper limit assumptions
+     */
+    abstract public IVecInt generateUpperBoundAssumptions(int[] UpperKD);
 
+
+;
 
     /**
      *Checks if a variable is an X(original) variable.
