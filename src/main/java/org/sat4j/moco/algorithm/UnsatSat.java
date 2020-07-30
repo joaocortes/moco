@@ -155,8 +155,7 @@ public class UnsatSat extends algorithm {
 	//	this.goalDelimeter.UpdateCurrentK(0, 2);
 	this.logUpperLimit();
 	this.preAssumptionsExtend();
-	currentAssumptions = this.generateUpperBoundAssumptions();
-
+	currentAssumptions = this.goalDelimeter.generateUpperBoundAssumptions(this.UpperKD);
 	while(goOn){
 	    ///log..
 	    this.logUpperLimit();
@@ -254,33 +253,6 @@ public class UnsatSat extends algorithm {
 	Log.comment(0, logExhaustedUpperKD );
     }
     
-    /**
-     * Generate the upper limit assumptions
-     */
-    public IVecInt generateUpperBoundAssumptions( ){
-	IVecInt assumptions = new VecInt(new int[]{});
-	
-	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    Objective ithObjective = this.problem.getObj(iObj);
-	    if(this.getUpperKD(iObj)  < ithObjective.getWeightDiff())
-		assumptions.push(-this.goalDelimeter.getY(iObj, this.getUpperKD(iObj) + 1));
-	    
-	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
-	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
-	    int sign = 1;
-	    int ithAbsoluteWeight;
-	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
-		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
-		sign = (ithAbsoluteWeight > 0? 1 : -1);
-		ithAbsoluteWeight *= sign;
-		if( ithAbsoluteWeight > this.getUpperKD(iObj))
-		    assumptions.push(- sign * objectiveLits.get(iX));
-	    }
-
-	}
-
-	return assumptions;
-    }
 
 
     /**
