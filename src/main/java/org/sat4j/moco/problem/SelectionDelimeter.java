@@ -26,6 +26,8 @@ package org.sat4j.moco.problem;
 import org.sat4j.moco.util.Log;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.ArrayList;
 
 import java.util.Arrays;
@@ -37,6 +39,7 @@ import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
+import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledSelectionComponent;
 import org.sat4j.specs.IVecInt;
 
 
