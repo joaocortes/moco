@@ -479,7 +479,6 @@ public class SelectionDelimeter extends GoalDelimeter {
 
     private void buildCircuit(int iObj){
 	Circuit circuit = this.circuits[iObj];
-	Objective ithObjective = this.instance.getObj(iObj);
 	HashMap<Integer, Integer> weights = this.getWeights(iObj);
 	List<IVecInt> digitsList = new ArrayList<IVecInt>();
 	int maxNDigits = 0;
@@ -526,12 +525,34 @@ public class SelectionDelimeter extends GoalDelimeter {
 	return result;
 
     }
+    /**
+     * This delimeter is not incremental. Therefore, this is a trivial
+     * operation.
+     */
     public boolean UpdateCurrentK(int iObj, int upperKD){return true;}
-    public boolean isY(int id){return true;};
+
+    public boolean isY(int id){
+	SDIndex index = auxVariablesInverseIndex.getIndex(id);
+	int iObj = index.getIObj();
+	return index.base == this.circuits[iObj].controlledComponents.lastKey();
+}
     public int getCurrentKD(int iObj){return 0;};
-    public int getIObjFromY(int id){return 0;};
-    public int getKDFromY(int id){return 0;};
-    public int getY(int iObj, int iKD){return 0;};
+    public int getIObjFromY(int id){
+	SDIndex index = this.auxVariablesInverseIndex.getIndex(id);
+	if(index!=null)
+	    return index.getIObj();
+	return 0;};
+    public int getKDFromY(int id){
+	SDIndex index = this.auxVariablesInverseIndex.getIndex(id);
+	if(index!=null)
+	    return index.getKD();
+	return 0;};
+
+    public int getY(int iObj, int iKD){
+	Circuit circuit = this.circuits[iObj];
+	ControlledSelectionComponent controlledComp =  circuit.controlledComponents.get(circuit.controlledComponents.lastKey());
+	return controlledComp.outputs[iKD];
+};
     public String prettyFormatVariable(int literal)   {return "";} ;
 
 
