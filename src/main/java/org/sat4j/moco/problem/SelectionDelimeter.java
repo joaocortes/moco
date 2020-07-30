@@ -199,9 +199,9 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 	    public ControlledSelectionComponent(Integer[] inputs, int base){
 		this.base = base;
-		this.realInputs = inputs;
-		this.outputs = this.selecComp.outputs;
-		this.auxiliaryInputs = new Integer[this.realInputs.length];
+		this.setOutputs(this.selecComp.outputs);
+		this.setInputs(inputs);
+		
 		Integer[] completeInputs = new Integer[2 * this.realInputs.length];
 		for(int i = 0, n = this.realInputs.length; i < n; i++){
 		    completeInputs[i] = this.realInputs[i];
@@ -210,7 +210,22 @@ public class SelectionDelimeter extends GoalDelimeter {
 		this.selecComp = new SelectionComponent(completeInputs);
 		controlledComponents.put(base, this);
 	    }
+	    public void setInputs(Integer[] realInputs){
+		this.realInputs = realInputs;
+		this.auxiliaryInputs = new Integer[this.realInputs.length];
+		for(int i = 0, n = this.auxiliaryInputs.length; i < n ; i++)
+		    this.auxiliaryInputs[i] = getFreshVar();
 
+	    }
+
+	    
+	    public void setOutputs(Integer[] outputs) {
+		this.outputs = outputs;
+		for(int outputI = 0, n = this.outputs.length;outputI < n; outputI++ ){
+		    int lit = this.outputs[outputI];
+		    auxVariablesInverseIndex.putIndex(lit, new SDIndex(iObj, outputI + 1, 1, base));
+}
+	    }
 	}
 
 	/**
