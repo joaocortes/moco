@@ -386,11 +386,6 @@ public class SelectionDelimeter extends GoalDelimeter {
 	}
 
 
-	public Circuit(int iObj){
-	    this.iObj = iObj;
-	    this.setBases();
-	    
-	}
 
 
 
