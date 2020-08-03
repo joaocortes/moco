@@ -45,14 +45,16 @@ import org.sat4j.moco.util.Real;
 
 abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
 
-    private Instance moco;
-    private LinearObj main_obj;
-
-    protected abstract chosenAlgorithm createInstance();
+    protected Instance moco;
+    protected LinearObj main_obj;
+    protected chosenAlgorithm solver;
+    protected abstract chosenAlgorithm instateAlgorithm();
+    
     
     @Before
     public void setUp() {
         this.moco = new Instance();
+	this.solver = null;
         this.moco.addConstr(PBFactory.instance().mkGE(new VecInt(new int[] { 1, 2, 3 }), 2));
         this.main_obj = new LinearObj(new VecInt(new int[] { 1, 2 }),
                                       new Vec<Real>(new Real[] { new Real(2), Real.ONE }));
@@ -61,9 +63,9 @@ abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
     
     @Test
     public void testSingleObjective() {
-        ChosenAlgorithm solver = new ChosenAlgorithm(this.moco);
-        solver.solve();
-        Result result = solver.getResult();
+	this.solver = this.instateAlgorithm(); 
+        this.solver.solve();
+        Result result = this.solver.getResult();
         assertTrue(result.isParetoFront());
         assertTrue(result.nSolutions() == 1);
         boolean[] solution = result.getAssignment(0);
@@ -80,9 +82,9 @@ abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
     @Test
     public void testUnsat() {
         this.moco.addConstr(PBFactory.instance().mkLE(new VecInt(new int[] { 1, 2, 3 }), 1));
-        ChosenAlgorithm solver = new ChosenAlgorithm(this.moco);
-        solver.solve();
-        Result result = solver.getResult();
+        this.solver = this.instateAlgorithm();
+        this.solver.solve();
+        Result result = this.solver.getResult();
         assertTrue(result.isParetoFront());
         assertTrue(result.nSolutions() == 0);
     }
@@ -90,9 +92,9 @@ abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
     @Test
     public void testObjectiveWorstCase() {
         this.moco.addConstr(PBFactory.instance().mkClause(new VecInt(new int[] { -3 })));
-        ChosenAlgorithm solver = new ChosenAlgorithm(this.moco);
-        solver.solve();
-        Result result = solver.getResult();
+	this.solver = this.instateAlgorithm();
+        this.solver.solve();
+        Result result = this.solver.getResult();
         assertTrue(result.isParetoFront());
         assertTrue(result.nSolutions() == 1);
         boolean[] solution = result.getAssignment(0);
@@ -149,9 +151,9 @@ abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
         LinearObj other_obj = new LinearObj(new VecInt(new int[] { -2, 3 }),
                                             new Vec<Real>(new Real[] { new Real(2), new Real(2) }));
         this.moco.addObj(other_obj);
-        ChosenAlgorithm solver = new ChosenAlgorithm(this.moco);
-        solver.solve();
-        Result result = solver.getResult();
+        this.solver = this.instateAlgorithm();
+        this.solver.solve();
+        Result result = this.solver.getResult();
         assertTrue(result.isParetoFront());
         assertTrue(result.nSolutions() == 2);
         boolean[][] front_sols = new boolean[][] { new boolean[] { false, true, true },
@@ -169,9 +171,9 @@ abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
                                              new Vec<Real>(new Real[] { Real.ONE.negate(), Real.ONE.negate() }));
         this.moco.addObj(other_obj1);
         this.moco.addObj(other_obj2);
-        ChosenAlgorithm solver = new ChosenAlgorithm(this.moco);
-        solver.solve();
-        Result result = solver.getResult();
+        this.solver = this.instateAlgorithm();
+        this.solver.solve();
+        Result result = this.solver.getResult();
         assertTrue(result.isParetoFront());
         assertTrue(result.nSolutions() == 2);
         boolean[][] front_sols = new boolean[][] { new boolean[] { false, true, true },
@@ -195,9 +197,9 @@ abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
         this.moco.addObj(other_obj2);
         this.moco.addObj(other_obj3);
         this.moco.addObj(other_obj4);
-        ChosenAlgorithm solver = new ChosenAlgorithm(this.moco);
-        solver.solve();
-        Result result = solver.getResult();
+	this.solver = this.instateAlgorithm();
+        this.solver.solve();
+        Result result = this.solver.getResult();
         assertTrue(result.isParetoFront());
         assertTrue(result.nSolutions() == 4);
         boolean[][] front_sols = new boolean[][] { new boolean[] { false, true, true },
@@ -221,9 +223,9 @@ abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
         DivObj other_obj = new DivObj(new Vec<PBExpr>(new PBExpr[] { num }),
                                       new Vec<PBExpr>(new PBExpr[] { den }));
         this.moco.addObj(other_obj);
-        ChosenAlgorithm solver = new ChosenAlgorithm(this.moco);
-        solver.solve();
-        Result result = solver.getResult();
+        this.solver = this.instateAlgorithm();
+        this.solver.solve();
+        Result result = this.solver.getResult();
         assertTrue(result.isParetoFront());
         assertTrue(result.nSolutions() == 2);
         boolean[][] front_sols = new boolean[][] { new boolean[] { false, true, true },
@@ -246,9 +248,9 @@ abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
         DivObj other_obj = new DivObj(new Vec<PBExpr>(new PBExpr[] { num1, num2 }),
                                       new Vec<PBExpr>(new PBExpr[] { den1, den2 }));
         this.moco.addObj(other_obj);
-        ChosenAlgorithm solver = new ChosenAlgorithm(this.moco);
-        solver.solve();
-        Result result = solver.getResult();
+        this.solver = this.instateAlgorithm();
+        this.solver.solve();
+        Result result = this.solver.getResult();
         assertTrue(result.isParetoFront());
         assertTrue(result.nSolutions() == 2);
         boolean[][] front_sols = new boolean[][] { new boolean[] { false, true, true },
