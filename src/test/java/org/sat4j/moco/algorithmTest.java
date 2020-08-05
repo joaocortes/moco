@@ -30,20 +30,15 @@ import org.junit.Test;
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.algorithm.algorithm;
-import org.sat4j.moco.algorithm.UnsatSat;
-import org.sat4j.moco.algorithm.UnsatSatMSU3;
-import org.sat4j.moco.algorithm.pMinimal;
-import org.sat4j.moco.algorithm.ParetoMCS;
+
 import org.sat4j.moco.analysis.Result;
-import org.sat4j.moco.pb.PBExpr;
 import org.sat4j.moco.pb.PBFactory;
-import org.sat4j.moco.problem.DivObj;
 import org.sat4j.moco.problem.LinearObj;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.util.Real;
 
-abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
+ public abstract class algorithmTest<chosenAlgorithm extends algorithm> {
 
     protected Instance moco;
     protected LinearObj main_obj;
@@ -124,7 +119,7 @@ abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
         return i;
     }
     
-    private void validateResult(Result result, Objective[] objs, boolean[][] front_sols, double[][] front_costs) {
+    protected void validateResult(Result result, Objective[] objs, boolean[][] front_sols, double[][] front_costs) {
         assert(front_costs.length == front_sols.length);
         boolean[] matched = new boolean[front_sols.length];
         for (int i = 0; i < matched.length; ++i) {
@@ -201,6 +196,7 @@ abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
         this.solver.solve();
         Result result = this.solver.getResult();
         assertTrue(result.isParetoFront());
+	System.out.println("t number of solutions: "+result.nSolutions());
         assertTrue(result.nSolutions() == 4);
         boolean[][] front_sols = new boolean[][] { new boolean[] { false, true, true },
                                                    new boolean[] { true, false, true },
@@ -214,64 +210,12 @@ abstract public class algorithmTest<chosenAlgorithm extends algorithm> {
         validateResult(result, objs, front_sols, front_costs);
     }
     
-    @Test
-    public void testDivReduction() {
-        PBExpr num = new PBExpr(new VecInt(new int[] { -2, 3 }),
-                                new Vec<Real>(new Real[] { new Real(2), new Real(2) }));
-        PBExpr den = new PBExpr(new VecInt(new int[] { 2, 3 }),
-                                new Vec<Real>(new Real[] { Real.ONE, Real.ONE }));
-        DivObj other_obj = new DivObj(new Vec<PBExpr>(new PBExpr[] { num }),
-                                      new Vec<PBExpr>(new PBExpr[] { den }));
-        this.moco.addObj(other_obj);
-        this.solver = this.instateAlgorithm();
-        this.solver.solve();
-        Result result = this.solver.getResult();
-        assertTrue(result.isParetoFront());
-        assertTrue(result.nSolutions() == 2);
-        boolean[][] front_sols = new boolean[][] { new boolean[] { false, true, true },
-                                                   new boolean[] { true, true, false } };
-        double[][] front_costs = new double[][] { new double[] { 1, 1 }, new double[] { 3, 0 } };
-        Objective[] objs = new Objective[] { this.main_obj, other_obj };
-        validateResult(result, objs, front_sols, front_costs);
-    }
-    
-    @Test
-    public void testSumOfDivReduction() {
-        PBExpr num1 = new PBExpr(new VecInt(new int[] { -2, 3 }),
-                                 new Vec<Real>(new Real[] { new Real(2), new Real(2) }));
-        PBExpr den1 = new PBExpr(new VecInt(new int[] { 2, 3 }),
-                                 new Vec<Real>(new Real[] { Real.ONE, Real.ONE }));
-        PBExpr num2 = new PBExpr(new VecInt(new int[] { -1, 3 }),
-                                 new Vec<Real>(new Real[] { new Real(2), new Real(2) }));
-        PBExpr den2 = new PBExpr(new VecInt(new int[] { 1, 2 }),
-                                 new Vec<Real>(new Real[] { Real.ONE, Real.ONE }));
-        DivObj other_obj = new DivObj(new Vec<PBExpr>(new PBExpr[] { num1, num2 }),
-                                      new Vec<PBExpr>(new PBExpr[] { den1, den2 }));
-        this.moco.addObj(other_obj);
-        this.solver = this.instateAlgorithm();
-        this.solver.solve();
-        Result result = this.solver.getResult();
-        assertTrue(result.isParetoFront());
-        assertTrue(result.nSolutions() == 2);
-        boolean[][] front_sols = new boolean[][] { new boolean[] { false, true, true },
-                                                   new boolean[] { true, true, false } };
-        double[][] front_costs = new double[][] { new double[] { 1, 5 }, new double[] { 3, 0 } };
-        Objective[] objs = new Objective[] { this.main_obj, other_obj };
-        validateResult(result, objs, front_sols, front_costs);
-    }
-    
 }
 
-class UnsatSatTest extends algorithmTest<UnsatSat> {
-    public UnsatSatTest(){};
-};
 
-class ParetoMCSTest algorithmTest<ParetoMCS> {
-    public ParetoMCSTest(){};
-};
-class UnsatSatMSU3Test extends algorithmTest<UnsatSatMSU3> {
-    public UnsatSatMSU3Test(){};
-};
-class pMinimalTest extends algorithmTest<pMinimal> {
-    public pMinimalTest(){};
-};
+
+
+
+
+
+
