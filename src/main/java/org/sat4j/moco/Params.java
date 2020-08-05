@@ -145,7 +145,7 @@ public class Params {
     /**
      *Stores the GD encoding to use.
      */
-    private boolean encodingGD = false;
+    private String encodingGD = "";
 
     /**
      * Stores the trivial threshold (number of trivially solved partitions in a row before merging the
@@ -163,7 +163,7 @@ public class Params {
         this.pmc = Integer.parseInt(DEFAULT_PMC);
         this.tt = Integer.parseInt(DEFAULT_TT);
 	this.algorithmI = Integer.parseInt(DEFAULT_ALGI);
-	this.encodingGD = true;
+	this.encodingGD = "";
     }
     
     /**
@@ -179,14 +179,7 @@ public class Params {
         this.pmc = Integer.parseInt(cl.getOptionValue("pmc", DEFAULT_PMC));
         this.tt = Integer.parseInt(cl.getOptionValue("tt", DEFAULT_TT));
 	this.algorithmI = Integer.parseInt(cl.getOptionValue("alg", DEFAULT_ALGI));
-
-	if(cl.getOptionValue("enc", DEFAULT_ENC).equals("GTE")){
-	    this.encodingGD = true;
-	}else
-	    if(cl.getOptionValue("enc", DEFAULT_ENC).equals("SWC"))
-		this.encodingGD = false;
-
-
+	this.encodingGD = cl.getOptionValue("enc", DEFAULT_ENC);
         if (cl.hasOption("t")) {
             this.timeout = Integer.parseInt(cl.getOptionValue("t"));
         }
@@ -254,8 +247,9 @@ public class Params {
      *Returns the algorithm to be used
      */
     public int getAlgorithmI(){return this.algorithmI;}
+
     /**
      *returns the goal delimeter (GD) encoding to be used
      */
-    public boolean getEncodingGD(){return this.encodingGD;}
+    public String getEncodingGD(){return this.encodingGD;}
 }
