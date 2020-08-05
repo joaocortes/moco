@@ -218,7 +218,7 @@ public class UnsatSat extends algorithm {
 		    this.logExhaustedUpperKD();
 		    this.updateUpperBound(currentExplanation);
 		    this.preAssumptionsExtend();
-		    currentAssumptions = this.generateUpperBoundAssumptions();
+		    currentAssumptions = this.goalDelimeter.generateUpperBoundAssumptions(this.UpperKD);
 
 		    }}
 	    }
