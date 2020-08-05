@@ -102,7 +102,7 @@ public class pMinimal extends algorithm {
 	// IVecInt currentXModel = new VecInt(new int[] {});
 	boolean[] currentXModelValues = new boolean[this.problem.nVars()];
 	IVecInt assumptions = new VecInt(new int[] {});
-	boolean sat = true;
+	boolean sat = false;
         Log.comment(3, "{ pMinimal.solve");
 	this.solver.check(assumptions);
 	sat = this.solver.isSat();
@@ -269,26 +269,13 @@ public class pMinimal extends algorithm {
 	return;
     }
 
+
     /**
      * The attained value of objective  in the interpretation of model 
      @param model
     */
     private int attainedValue(Objective objective, boolean[] XModelValues){
-	Log.comment(5, "In pMinimal.attainedValue");
-	int result = 0;
-	int objectiveNLit = objective.getTotalLits();
-	ReadOnlyVecInt objectiveLits = objective.getSubObjLits(0);
-	ReadOnlyVec<Real> objectiveCoeffs = objective.getSubObjCoeffs(0);
-	for(int iLit = 0; iLit < objectiveNLit; ++iLit  ){
-	    int coeff = objectiveCoeffs.get(iLit).asInt();
-	    int literal = objectiveLits.get(iLit);
-	    int id = this.solver.idFromLiteral(literal);
-	    if(XModelValues[id - 1])
-		result += coeff;
-	}
-	Log.comment(3, "attained value:" + result);
-	Log.comment(5, "}");
-	return result;
+	return 	objective.evaluate(XModelValues).asIntExact();
     }
     /**
      * Block the region dominated by the known models.
