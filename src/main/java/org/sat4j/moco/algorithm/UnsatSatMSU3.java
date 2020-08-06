@@ -90,7 +90,7 @@ public class UnsatSatMSU3 extends algorithm {
      * @param m The MOCO instance.
      */
 
-    public UnsatSatMSU3(Instance m, boolean encodingGD) {
+    public UnsatSatMSU3(Instance m, String encodingGD) {
         // Log.comment(3, "in UnsatSat constructor");
 	this.problem = m;
 	this.result = new Result(m, true);
