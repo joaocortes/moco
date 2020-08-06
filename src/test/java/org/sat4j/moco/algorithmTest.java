@@ -196,7 +196,18 @@ import org.sat4j.moco.util.Real;
         this.solver.solve();
         Result result = this.solver.getResult();
         assertTrue(result.isParetoFront());
-	System.out.println("t number of solutions: "+result.nSolutions());
+        for (int i = 0; i < result.nSolutions(); i++) {
+	    boolean[] assignment = result.getAssignment(i);
+	    double[] costs = result.getCosts(i);
+	    System.out.println("assignment:");
+	    for(boolean val: assignment)
+		System.out.println(val);
+	    System.out.println("costs:");
+	    for(double cost: costs)
+		System.out.println(cost);
+
+        }
+
         assertTrue(result.nSolutions() == 4);
         boolean[][] front_sols = new boolean[][] { new boolean[] { false, true, true },
                                                    new boolean[] { true, false, true },
