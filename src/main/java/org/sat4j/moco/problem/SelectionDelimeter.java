@@ -61,7 +61,9 @@ public class SelectionDelimeter extends GoalDelimeter {
 
     public SelectionDelimeter(Instance instance, PBSolver solver) {
 	// Log.comment(5, "{ GenTotalEncoder");
+	super(instance, solver);
 	this.auxVariablesInverseIndex = new InverseIndex<SelectionDelimeter.SDIndex>() {};
+	this.instance = instance;
 	this.circuits = new Circuit[this.instance.nObjs()];
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.circuits[iObj] = new Circuit(iObj);
@@ -86,9 +88,9 @@ public class SelectionDelimeter extends GoalDelimeter {
 	SortedMap<Integer, ControlledSelectionComponent> controlledComponents = null;
 	
 	public Circuit(int iObj){
+	    this.controlledComponents = new TreeMap<Integer, ControlledSelectionComponent>();
 	    this.iObj = iObj;
-	    this.setBases();
-	    controlledComponents = new TreeMap<Integer, ControlledSelectionComponent>();
+	    this.setRatios();
 
 	}
 
@@ -115,23 +117,30 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 
 	class SelectionComponent extends BaseComponent{
-
+	    int orderedOutput;
 	    public SelectionComponent(Integer[] inputs){
 		super(inputs, inputs.length);
 	    }
 
-	    public SelectionComponent(Integer[] inputs, int nOutput){
-		super(inputs, nOutput);
+	    public SelectionComponent(Integer[] inputs, int orderedOutput){
+		this.inputs = inputs;
+		this.outputs = new Integer[this.inputs.length]; 
+		this.orderedOutput = orderedOutput;
 	    }
 
 	    @Override
 	    void constitutiveClause() {
 	
 		int n = this.inputs.length;
-		int k = this.outputs.length;
+		int k = this.orderedOutput;
 		int[] ns = new int[4];
 	    
-		if(n == 0 || k <=1){
+
+		if(k == 0 || n <=1){
+		    this.outputs = this.inputs; 
+		    return;
+		}
+		if(k==1){
 		    optimumComponent sonoc = new optimumComponent(this.inputs);
 		    sonoc.constitutiveClause();
 		    this.outputs = sonoc.outputs;
@@ -144,19 +153,25 @@ public class SelectionDelimeter extends GoalDelimeter {
 		
 		}
 		else{
-		    // notice (k + 3) /4 is equivalent to floor((double)k / 4), if k is int.
-		    int tailValue;
-		    int largestPower  = (int) Math.pow(2 , Math.ceil(Math.log((k + 3 )/4)));
-		    if(largestPower <= n / 4)
-			tailValue = largestPower;
-		    else
-			tailValue = k / 4;
-		    for(int i = 1; i< 4; i++)
-			ns[i] =  tailValue;
-		    ns[0] = n - 3 * tailValue;
-		    
+		    for(int i = 0; i<4; i++){
+			ns[i] = k / 4;
+		    }
+
 		}
-		int offset = 1;
+	// else{
+		//     // notice (k + 3) /4 is equivalent to floor((double)k / 4), if k is int.
+		//     int tailValue;
+		//     int largestPower  = (int) Math.pow(2 , Math.ceil(Math.log((k + 3 )/4)));
+		//     if(largestPower <= n / 4)
+		// 	tailValue = largestPower;
+		//     else
+		// 	tailValue = k / 4;
+		//     for(int i = 1; i< 4; i++)
+		// 	ns[i] =  tailValue;
+		//     ns[0] = n - 3 * tailValue;
+		    
+		// }
+		int offset = 0;
 		int ki;
 
 		Integer[][] preffixes = new Integer[4][];
@@ -164,20 +179,21 @@ public class SelectionDelimeter extends GoalDelimeter {
 		List<Integer> concatenatedSuffixes = new ArrayList<Integer>();
 		int i = 0;
 		for(int ithN: ns){
-		    ki = k < n? k : n;
+		    if(k < ithN) ki = k; else ki = ithN;
 		    Integer[] slice = new Integer[ithN];
 		    for(int j = 0; j < ithN; j++)
 			slice[j] = this.inputs[offset + j];
-		    SelectionComponent selcomp = new SelectionComponent(slice, ki);
-		    preffixes[i] = preffix(selcomp.outputs, ki);
-		    i++;
-		    concatenatedSuffixes.addAll(suffix(selcomp.outputs, ki + 1));
+		    offset+=ithN;
+		    SelectionComponent selcomp = new SelectionComponent(slice, k);
+		    selcomp.constitutiveClause();
+		    preffixes[i++] = preffix(selcomp.outputs, ki);
+
+		    concatenatedSuffixes.addAll(suffix(selcomp.outputs, ki));
 		}
 		MergeComponent mergecomp = new MergeComponent(k);
 		ArrayList<ArrayList<Integer>> preffixesArray = new ArrayList<ArrayList<Integer>>();
-		int iPreffix = 0;
 		for(Integer[] preffix: preffixes)
-		    preffixesArray.get(iPreffix).addAll(Arrays.asList(preffix));
+		    preffixesArray.add(new ArrayList<Integer>(Arrays.asList(preffix)));
 		mergecomp.constitutiveClause(preffixesArray);
 		ArrayList<Integer> outputs = new ArrayList<Integer>();
 		outputs.addAll(Arrays.asList(mergecomp.outputs));
@@ -195,7 +211,6 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 	    public ControlledSelectionComponent(Integer[] inputs, int base){
 		this.base = base;
-		this.setOutputs(this.selecComp.outputs);
 		this.setInputs(inputs);
 		
 		Integer[] completeInputs = new Integer[2 * this.realInputs.length];
@@ -204,6 +219,8 @@ public class SelectionDelimeter extends GoalDelimeter {
 		    completeInputs[i + n] = this.auxiliaryInputs[i];
 		}
 		this.selecComp = new SelectionComponent(completeInputs);
+		this.selecComp.constitutiveClause();
+		this.setOutputs(this.selecComp.outputs);
 		controlledComponents.put(base, this);
 	    }
 	    public void setInputs(Integer[] realInputs){
@@ -217,7 +234,9 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    
 	    public void setOutputs(Integer[] outputs) {
 		this.outputs = outputs;
+
 		for(int outputI = 0, n = this.outputs.length;outputI < n; outputI++ ){
+
 		    int lit = this.outputs[outputI];
 		    auxVariablesInverseIndex.putIndex(lit, new SDIndex(iObj, outputI + 1, 1, base));
 		}
@@ -329,7 +348,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	class MergeComponent extends BaseComponent{
 
 	    public MergeComponent(int nOutput){
-		super();
+		super(nOutput);
 	    }
 	    
 	    void constitutiveClause(){};
@@ -346,6 +365,12 @@ public class SelectionDelimeter extends GoalDelimeter {
 		    this.outputs = inputsArray[0];
 		    return;
 		}
+		for(int i = 0, n = inputsArray.length; i < n; i++){
+		    for(Integer a: inputsArray[i])
+			System.out.println(a);
+			}
+
+
 		if(inputsArray[0].length == 1){
 		    SelectionComponent selcomp = new SelectionComponent(concatenate(inputsArray), k);
 		    selcomp.constitutiveClause();
@@ -353,10 +378,14 @@ public class SelectionDelimeter extends GoalDelimeter {
 		}
 		List<ArrayList<Integer>> inputsListOdd = new ArrayList<ArrayList<Integer>>(4);		    
 		List<ArrayList<Integer>> inputsListEven = new ArrayList<ArrayList<Integer>>(4);		    
+		for(int i = 0; i < 4; i++){
+		    inputsListOdd.add(new ArrayList<Integer>());
+		    inputsListEven.add(new ArrayList<Integer>());
+}
 		int parity = 1;
 		int sizeOdd = 0, sizeEven = 0;
 		for(int i = 0, n = inputsArray.length; i < n; i++){
-		    for(int entry: inputsArray[i])
+		    for(Integer entry: inputsArray[i])
 			{
 			    parity++; parity %= 2;
 			    if(parity == 0)
@@ -365,6 +394,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 				inputsListOdd.get(i).add(entry);
 				
 			}			
+		    
 		    sizeOdd += inputsListOdd.get(i).size();
 		    sizeEven += inputsListEven.get(i).size();
 		}
@@ -394,30 +424,36 @@ public class SelectionDelimeter extends GoalDelimeter {
 	 *Method that ooses the base to be used
 	 */
 
-	private void setBases(){
+	private void setRatios(){
 	    this.ratios = new int[]{2};
 	    return;
 	}
 
+	private int getRatio(int i){
+	    if(this.ratios.length <= i)
+		return this.ratios[this.ratios.length -1];
+	    else return this.ratios[i];
+	}
 	/**
 	 *get Base element i.
 	 */
 
-	private int getBase(int i){
-	    if(this.ratios.length < i)
-		return this.ratios[this.ratios.length -1];
-	    else return this.ratios[i];
+	private int getBase(int index){
+	    int result = 1;
+	    for(int j = 0; j <= index; j ++ )
+		result*= getRatio(j);
+	    return result;		
 	}
 
 	/**
-	 *get Base element i.
+	 *get the index of the base. If not a valid base, returns -1.
 	 */
 
 	private int getBaseI(int base){
 	    int i = 0;
-	    int candidate = 0;
+	    int candidate = 1;
 	    while(candidate < base)
-		candidate = this.getBase(i++);
+		candidate *= this.getRatio(i);
 	    if(candidate == base)
 		return i--;
 	    else
@@ -439,7 +475,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    ControlledSelectionComponent lastContComp = null;
 	    
 	    int iBase = 1; int lastIBase = iBase;
-	    ArrayList<Integer> inputs = null;
+	    ArrayList<Integer> inputs = new ArrayList<Integer>();
 	    // last base needed to expand the weights
 	    int maxBase = baseInputs.lastKey();
 	    do{
@@ -451,7 +487,8 @@ public class SelectionDelimeter extends GoalDelimeter {
 		ArrayList<Integer> inputsWeights = baseInputs.get(base);
 		if(lastContComp != null)
 		    inputs.addAll(getCarryBits(lastContComp, ratio));		    
-		inputs.addAll(inputsWeights);
+		if(inputsWeights!=null)
+		    inputs.addAll(inputsWeights);
 		if(base <= maxBase || inputs.size() > 0){
 		    ControlledSelectionComponent contComp =
 			new ControlledSelectionComponent(inputs.toArray(new Integer[0]), base);
@@ -497,6 +534,7 @@ public class SelectionDelimeter extends GoalDelimeter {
     }
 
     public Integer[] preffix(Integer[] seq, int window){
+	assert( window <= seq.length);
 	Integer[] result = new Integer[window];
 	for(int i = 0; i< window; i++)
 	    result[i] = seq[i];
@@ -536,7 +574,10 @@ public class SelectionDelimeter extends GoalDelimeter {
 		int ithBase = circuit.getBase(digitI);
 		int ithDigit = digits.get(digitI);
 		while( ithDigit > 0){
-		    baseInputs.get(ithBase).add(lit);
+		    if(baseInputs.containsKey(ithBase))
+			baseInputs.get(ithBase).add(lit);
+		    else
+			baseInputs.put(ithBase, new ArrayList<Integer>(Arrays.asList(new Integer[]{lit})));
 		    ithDigit--;
 		}
 
@@ -547,20 +588,14 @@ public class SelectionDelimeter extends GoalDelimeter {
     }
     
     private HashMap<Integer, Integer> getWeights(int iObj){
+	HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
 	Objective ithObjective = this.instance.getObj(iObj);
 	ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
 	IVecInt literals = ithObjective.getSubObjLits(0);
-	IVecInt weights = new VecInt(Arrays
-				     .stream(objectiveCoeffs.toArray())
-				     .mapToInt(s -> s.asIntExact())
-				     .toArray());
-	HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
-	while(weights.size() > 0)
+	for(int i = 0, n = objectiveCoeffs.size(); i < n; i++)
 	    {
-		int weight = weights.last();
-		weights.pop();
-		int lit = literals.last();
-		literals.pop();
+		int weight = objectiveCoeffs.get(i).asIntExact();
+		int lit = literals.get(i);
 		result.put(lit, weight);
 	    }
 	return result;
