@@ -567,19 +567,20 @@ public class SelectionDelimeter extends GoalDelimeter {
 	SortedMap<Integer,ArrayList<Integer>> baseInputs= new TreeMap<Integer, ArrayList<Integer>>();
 	for(Entry<Integer, Integer> entry: weights.entrySet()){
 	    int weight = entry.getValue();
+	    boolean weightSign = weight > 0;
 	    int lit = entry.getKey();
-	    digits = circuit.expandValue(weight);
+	    digits = circuit.expandValue(weightSign? weight: -weight);
 	    digitsList.add(digits);
 	    int nDigits = digits.size();
 	    if(maxNDigits < nDigits) maxNDigits = nDigits;
-	    for(int digitI = 0; digitI < maxNDigits; digitI++){
+	    for(int digitI = 0; digitI < nDigits; digitI++){
 		int ithBase = circuit.getBase(digitI);
 		int ithDigit = digits.get(digitI);
 		while( ithDigit > 0){
 		    if(baseInputs.containsKey(ithBase))
-			baseInputs.get(ithBase).add(lit);
+			baseInputs.get(ithBase).add(weightSign? lit: -lit);
 		    else
-			baseInputs.put(ithBase, new ArrayList<Integer>(Arrays.asList(new Integer[]{lit})));
+			baseInputs.put(ithBase, new ArrayList<Integer>(Arrays.asList(new Integer[]{weightSign? lit: -lit})));
 		    ithDigit--;
 		}
 
