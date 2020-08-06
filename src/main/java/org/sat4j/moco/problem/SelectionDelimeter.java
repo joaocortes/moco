@@ -25,7 +25,6 @@ package org.sat4j.moco.problem;
 
 import org.sat4j.moco.util.Log;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.ArrayList;
@@ -44,8 +43,7 @@ import org.sat4j.specs.IVecInt;
 
 
 /**
- * Class with the implementation of the generalized totalizor encoder.
- * Notice that the differential is both a value and an index starting at 0
+ * Class with the implementation of the Selection network based encoder.
  * @author Joao O'Neill Cortes
  */
 
@@ -74,7 +72,6 @@ public class SelectionDelimeter extends GoalDelimeter {
     }
 
     class SDIndex extends Index{
-	
 	int type = 0;
 	int base = 0;
 	SDIndex(int iObj, int kD, int type, int base){
@@ -84,7 +81,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 
     class Circuit{
 	int iObj;
-	int[] bases = null;
+	private int[] ratios = null;
 	int basesN = 0;
 	SortedMap<Integer, ControlledSelectionComponent> controlledComponents = null;
 	
@@ -115,7 +112,6 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    abstract void constitutiveClause();
 
 	}
-
 
 
 	class SelectionComponent extends BaseComponent{
@@ -206,7 +202,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 		for(int i = 0, n = this.realInputs.length; i < n; i++){
 		    completeInputs[i] = this.realInputs[i];
 		    completeInputs[i + n] = this.auxiliaryInputs[i];
-}
+		}
 		this.selecComp = new SelectionComponent(completeInputs);
 		controlledComponents.put(base, this);
 	    }
@@ -224,8 +220,13 @@ public class SelectionDelimeter extends GoalDelimeter {
 		for(int outputI = 0, n = this.outputs.length;outputI < n; outputI++ ){
 		    int lit = this.outputs[outputI];
 		    auxVariablesInverseIndex.putIndex(lit, new SDIndex(iObj, outputI + 1, 1, base));
-}
+		}
 	    }
+	    public Integer getOutput(Integer kD){
+		int index = kD - 1;
+		return this.outputs[index];
+	    }
+
 	}
 
 	/**
@@ -250,14 +251,14 @@ public class SelectionDelimeter extends GoalDelimeter {
 		this.outputs[0]=getFreshVar();
 		int[] intArray = null;
 		// polarity, then use a max component, else use min
-		    if(this.polarity)
-			intArray = Arrays.stream(this.inputs).mapToInt(Integer::intValue).toArray();
-		    else
-			intArray = Arrays.stream(this.inputs).mapToInt(i -> -i).toArray();
-		    for(int lit: intArray){
-			IVecInt clause = new VecInt(new int[]{-lit, this.outputs[0]});
-			AddClause(clause);
-		    }
+		if(this.polarity)
+		    intArray = Arrays.stream(this.inputs).mapToInt(Integer::intValue).toArray();
+		else
+		    intArray = Arrays.stream(this.inputs).mapToInt(i -> -i).toArray();
+		for(int lit: intArray){
+		    IVecInt clause = new VecInt(new int[]{-lit, this.outputs[0]});
+		    AddClause(clause);
+		}
 
 		return;
 	    }
@@ -364,8 +365,8 @@ public class SelectionDelimeter extends GoalDelimeter {
 				inputsListOdd.get(i).add(entry);
 				
 			}			
-		sizeOdd += inputsListOdd.get(i).size();
-		sizeEven += inputsListEven.get(i).size();
+		    sizeOdd += inputsListOdd.get(i).size();
+		    sizeEven += inputsListEven.get(i).size();
 		}
 		
 		int kOdd = sizeOdd < k/2 + 2? sizeOdd: k/2 + 2;
@@ -394,7 +395,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	 */
 
 	private void setBases(){
-	    this.bases = new int[]{2};
+	    this.ratios = new int[]{2};
 	    return;
 	}
 
@@ -403,21 +404,26 @@ public class SelectionDelimeter extends GoalDelimeter {
 	 */
 
 	private int getBase(int i){
-	    if(this.bases.length < i)
-		return this.bases[this.bases.length -1];
-	    else return this.bases[i];
+	    if(this.ratios.length < i)
+		return this.ratios[this.ratios.length -1];
+	    else return this.ratios[i];
 	}
 
-	public  IVecInt expandValue(int value){
-	    IVecInt result = new VecInt(new int[]{});
-	    int i = 0;	
-	    while(value != 0){
-		int base = getBase(i);
-		result.push(value % base);
-		value = (value - result.get(i)*base)/base;
-	    }
-	    return result;
+	/**
+	 *get Base element i.
+	 */
+
+	private int getBaseI(int base){
+	    int i = 0;
+	    int candidate = 0;
+	    while(candidate < base)
+		candidate = this.getBase(i++);
+	    if(candidate == base)
+		return i--;
+	    else
+		return -1;
 	}
+
 
 	public ArrayList<Integer> getCarryBits(ControlledSelectionComponent select1, int ratio) {
 	    ArrayList<Integer> carryBits = new ArrayList<Integer>();
@@ -425,29 +431,64 @@ public class SelectionDelimeter extends GoalDelimeter {
 		if((i + 1) % ratio == 0)
 		    carryBits.add(select1.outputs[i]);
 	    return carryBits;
-		    }
-
-
-	public void setControlledComponents( Map<Integer, ArrayList<Integer>> baseInputs) {
-	    this.basesN = baseInputs.size();
-	    ControlledSelectionComponent lastContComp = null;
-	    int lastBase = 1;
-	    for(Entry<Integer, ArrayList<Integer>> entry : baseInputs.entrySet()){
-		Integer base = entry.getKey();
-		int ratio = base / lastBase;
-		ArrayList<Integer> inputs = entry.getValue();
-		if(lastContComp != null)
-		    inputs.addAll(getCarryBits(lastContComp, ratio));		    
-		inputs.addAll(entry.getValue());
-		ControlledSelectionComponent contComp =
-		    new ControlledSelectionComponent(inputs.toArray(new Integer[0]), base);
-		lastContComp = contComp;
-		lastBase = base;
-	    }
 	}
 
+
+	public void setControlledComponents( SortedMap<Integer, ArrayList<Integer>> baseInputs) {
+	    this.basesN = baseInputs.size();
+	    ControlledSelectionComponent lastContComp = null;
+	    
+	    int iBase = 1; int lastIBase = iBase;
+	    ArrayList<Integer> inputs = null;
+	    // last base needed to expand the weights
+	    int maxBase = baseInputs.lastKey();
+	    do{
+		Integer base = this.getBase(iBase++);
+		Integer lastBase = this.getBase(lastIBase++);
+		if(inputs != null)
+		    inputs.clear();
+		int ratio = base / lastBase;
+		ArrayList<Integer> inputsWeights = baseInputs.get(base);
+		if(lastContComp != null)
+		    inputs.addAll(getCarryBits(lastContComp, ratio));		    
+		inputs.addAll(inputsWeights);
+		if(base <= maxBase || inputs.size() > 0){
+		    ControlledSelectionComponent contComp =
+			new ControlledSelectionComponent(inputs.toArray(new Integer[0]), base);
+		    lastContComp = contComp;
+		    lastBase = base;
+		} else
+		    break;
+	    }while(true);
+
+	}
+	
+	public int getNextValidRoof(int upperLimit){
+	    IVecInt digits = this.expandValue(upperLimit);
+	    int MSBase = this.getBase(digits.size());
+	    int MSDigit = digits.last();
+	    int MSRange = this.ratios[this.getBaseI(MSBase)] ;
+	    assert(MSDigit < MSRange - 1);
+	    return MSBase * (MSDigit + 1);
+	}
+
+
+    public IVecInt  expandValue(int value){
+
+	IVecInt digits = new VecInt(new int[]{});
+	int i = 0;
+	while(value != 0){
+	    int base = getBase(i);
+	    int digit = value % base;
+	    digits.push(digit);
+	    value = (value - digit*base)/base;
+	}
+
+	return digits;
     }
- 
+
+    } 
+
     public ArrayList<Integer> suffix(Integer[] seq, int window){
 	ArrayList<Integer> result = new ArrayList<Integer>(window);
 	for(int i = 0; i< window; i++)
@@ -483,7 +524,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	List<IVecInt> digitsList = new ArrayList<IVecInt>();
 	int maxNDigits = 0;
 	IVecInt digits = new VecInt(new int[]{});
-	Map<Integer,ArrayList<Integer>> baseInputs= new HashMap<Integer, ArrayList<Integer>>();
+	SortedMap<Integer,ArrayList<Integer>> baseInputs= new TreeMap<Integer, ArrayList<Integer>>();
 	for(Entry<Integer, Integer> entry: weights.entrySet()){
 	    int weight = entry.getValue();
 	    int lit = entry.getKey();
@@ -535,13 +576,14 @@ public class SelectionDelimeter extends GoalDelimeter {
 	SDIndex index = auxVariablesInverseIndex.getIndex(id);
 	int iObj = index.getIObj();
 	return index.base == this.circuits[iObj].controlledComponents.lastKey();
-}
+    }
     public int getCurrentKD(int iObj){return 0;};
     public int getIObjFromY(int id){
 	SDIndex index = this.auxVariablesInverseIndex.getIndex(id);
 	if(index!=null)
 	    return index.getIObj();
 	return 0;};
+
     public int getKDFromY(int id){
 	SDIndex index = this.auxVariablesInverseIndex.getIndex(id);
 	if(index!=null)
@@ -552,8 +594,43 @@ public class SelectionDelimeter extends GoalDelimeter {
 	Circuit circuit = this.circuits[iObj];
 	ControlledSelectionComponent controlledComp =  circuit.controlledComponents.get(circuit.controlledComponents.lastKey());
 	return controlledComp.outputs[iKD];
-};
+    };
+
     public String prettyFormatVariable(int literal)   {return "";} ;
 
+
+    /**
+     *UpperKD contains the inclusive upper limits of the truncated
+     *domain. Shall return the assumptions necessary to enforce the
+     *truncation.
+     */
+
+    public IVecInt generateUpperBoundAssumptions(int[] UpperKD){
+	IVecInt assumptions = new VecInt(new int[]{});
+	for(int iObj = 0, n = this.instance.nObjs(); iObj < n; iObj++) {
+	    int upperLimit = UpperKD[iObj];
+	    Circuit circuit = this.circuits[iObj];
+	    int nextValidRoof = circuit.getNextValidRoof(upperLimit);
+	    int diff = nextValidRoof - upperLimit - 1;
+	    IVecInt digits = new VecInt(new int[circuit.basesN]);
+	    digits = circuit.expandValue(diff);
+	    // add the desired constant, through the assumptions
+	    for(int i = 0, digitsN = circuit.basesN; i<digitsN; i++){
+		int base = circuit.getBase(i);
+		ControlledSelectionComponent contComp = circuit.controlledComponents.get(base);
+		assumptions.push(contComp.auxiliaryInputs[digits.get(i)]);
+	    }
+	    //add the upper limit restriction, through the MSDigit.
+	    int MSBBase = circuit.controlledComponents.lastKey();
+	    ControlledSelectionComponent MSBContComp = circuit.controlledComponents.get(MSBBase);
+	    assumptions.push(-MSBContComp.getOutput(digits.last() + 1));
+
+}
+	return assumptions;
+	
+	
+	
+    }
+    
 
 }
