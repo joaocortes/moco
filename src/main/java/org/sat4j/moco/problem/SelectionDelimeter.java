@@ -511,16 +511,18 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 
     public IVecInt  expandValue(int value){
-
+	
 	IVecInt digits = new VecInt(new int[]{});
 	int i = 0;
 	while(value != 0){
-	    int base = getBase(i);
-	    int digit = value % base;
+	    int ratio = getRatio(i++);
+	    int digit = (value % ratio);
 	    digits.push(digit);
-	    value = (value - digit*base)/base;
+	    value-=digit;
+	    value/=ratio;
 	}
-
+	if(digits.size()==0)
+	    digits.push(0);
 	return digits;
     }
 
