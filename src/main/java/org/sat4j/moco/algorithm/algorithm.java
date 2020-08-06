@@ -48,7 +48,7 @@ abstract public class  algorithm{
     }
 
     abstract public void prettyPrintVecInt(IVecInt vecInt, boolean clausing);
-
+    abstract public void solve();
 
 
 
