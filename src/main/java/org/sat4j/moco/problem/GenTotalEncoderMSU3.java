@@ -32,7 +32,9 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Collection;
 
+import org.sat4j.core.ReadOnlyVec;
 
+import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
@@ -226,7 +228,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 		 */
 
 		public int getCeilingKD (int iKD){
-
+		    if(this.containerAll == null)
+			return -1;
 		    Integer key =  this.containerAll.ceilingKey(iKD);
 		    if(key == null)
 			return -1;
@@ -870,9 +873,45 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter {
 	SumTree ithObjSumTree= this.sumTrees[iObj];
 	if(kD == ithObjSumTree.maxUpperLimit)
 	    return kD;
+	if(ithObjSumTree.parent == null)
+	    return -1;
 	int aproxNextKD = ithObjSumTree.parent.nodeVars.getCeilingKD(kD + 1);
 	if(aproxNextKD == -1)
 	    return kD;
 	return aproxNextKD;
+    }
+
+    
+    /**
+     * Generate the upper limit assumptions
+     */
+    public IVecInt generateUpperBoundAssumptions( int[] UpperKD){
+
+	IVecInt assumptions = new VecInt(new int[]{});
+	
+	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
+	    int IthUpperBound = this.nextKDValue(iObj, UpperKD[iObj]);
+	    Objective ithObjective = this.instance.getObj(iObj);
+	    if(UpperKD[iObj]  != IthUpperBound){
+		int newY = -this.getY(iObj, IthUpperBound);
+		if(newY!=0)
+		    assumptions.push(newY);
+	    }
+	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
+	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
+	    int sign;
+	    int ithAbsoluteWeight;
+
+	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
+		int ithX = objectiveLits.get(iX);
+		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
+		sign = (ithAbsoluteWeight > 0? 1 : -1);
+		ithAbsoluteWeight *= sign;
+		if(ithAbsoluteWeight > UpperKD[iObj])
+		    assumptions.push(-sign * ithX);
+	    }
+
+	}
+	return assumptions;
     }
 }

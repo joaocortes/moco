@@ -23,13 +23,13 @@
 package org.sat4j.moco.algorithm;
 
 import java.util.Vector;
+import java.util.logging.LogRecord;
+
 import org.sat4j.core.VecInt;
-import org.sat4j.moco.pb.ConstrID;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.util.Real;
-import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
@@ -98,17 +98,17 @@ public class pMinimal extends algorithm {
      */
 
     public void solve() {
-	IVecInt currentYModel = new VecInt(new int[] {});
+	// IVecInt currentYModel = new VecInt(new int[] {});
 	// IVecInt currentXModel = new VecInt(new int[] {});
 	boolean[] currentXModelValues = new boolean[this.problem.nVars()];
 	IVecInt assumptions = new VecInt(new int[] {});
-	boolean sat = true;
+	boolean sat = false;
         Log.comment(3, "{ pMinimal.solve");
 	this.solver.check(assumptions);
 	sat = this.solver.isSat();
 	while(sat){
 	    while(sat){		
-		currentYModel = this.getYModel();
+		// currentYModel = this.getYModel();
 		currentXModelValues = this.getXModelValues();
 		this.setAssumptions(assumptions, currentXModelValues);
 		this.solver.check(assumptions);
@@ -128,60 +128,11 @@ public class pMinimal extends algorithm {
 
     private void setAssumptions(IVecInt assumptions, boolean[] XModelValues){
 	int[] upperLimits = this.findUpperLimits(XModelValues);
-	// int literal, id;
-	// int currentKD, currentIObj;
 	for(int iObj = 0, n = this.problem.nObjs(); iObj < n; ++iObj)
 	    assumptions.push(-this.goalDelimeter.getY(iObj, upperLimits[iObj]));
-	// for(int i = 0, n = yModel.size(); i < n ; ++i){
-	//     literal = yModel.get(i);
-	//     boolean literalValue = this.solver.isLiteralPositive(literal);
-	//     id =  this.solver.idFromLiteral(literal);
-	//     if(literalValue){
-	// 	currentKD = this.goalDelimeter.getKDFromSTopVariable(literal);
-	// 	currentIObj = this.goalDelimeter.getObjFromSTopVariable(literal);
-	// 	if( currentKD < upperLimits[currentIObj])
-	// 	    assumptions.push(-id);
-	//     }
-	// }
     }
 
 
-
-
-    /**
-     * Generate the upper limit assumptions
-     */
-    public IVecInt generateUpperBoundAssumptions( ){
-	IVecInt assumptions = new VecInt(new int[]{});
-	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    assumptions.push(-this.goalDelimeter.getY(iObj, this.getUpperKD(iObj) + 1));
-	}
-	return assumptions;
-    }
-
-
-    /**
-     *If necessary for the construction of the current assumptions,
-     *initialize more of the domain of the sequential encoder
-     *differential k index
-     */
-
-    private void preAssumptionsExtend(){
-	int objN = this.problem.nObjs();
-	for(int iObj = 0; iObj < objN ; ++iObj){
-	    this.goalDelimeter.UpdateCurrentK(iObj, this.getUpperKD(iObj) + 1);
-	}
-    }
-
-    /**
-     *gets the current upper limit of the explored value of the
-     *differential k of the ithOjective
-     *@param iObj
-     */
-    
-    private int getUpperKD(int iObj){
-	return this.UpperKD[iObj];
-    }
 
     /**
      *Sets the current upper limit of the explored value of the
@@ -318,26 +269,13 @@ public class pMinimal extends algorithm {
 	return;
     }
 
+
     /**
      * The attained value of objective  in the interpretation of model 
      @param model
     */
     private int attainedValue(Objective objective, boolean[] XModelValues){
-	Log.comment(5, "In pMinimal.attainedValue");
-	int result = 0;
-	int objectiveNLit = objective.getTotalLits();
-	ReadOnlyVecInt objectiveLits = objective.getSubObjLits(0);
-	ReadOnlyVec<Real> objectiveCoeffs = objective.getSubObjCoeffs(0);
-	for(int iLit = 0; iLit < objectiveNLit; ++iLit  ){
-	    int coeff = objectiveCoeffs.get(iLit).asInt();
-	    int literal = objectiveLits.get(iLit);
-	    int id = this.solver.idFromLiteral(literal);
-	    if(XModelValues[id - 1])
-		result += coeff;
-	}
-	Log.comment(3, "attained value:" + result);
-	Log.comment(5, "}");
-	return result;
+	return 	objective.evaluate(XModelValues).asIntExact();
     }
     /**
      * Block the region dominated by the known models.
