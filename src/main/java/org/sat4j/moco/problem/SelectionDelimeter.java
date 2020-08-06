@@ -122,17 +122,17 @@ public class SelectionDelimeter extends GoalDelimeter {
 		super(inputs, inputs.length);
 	    }
 
-	    public SelectionComponent(Integer[] inputs, int orderedOutput){
+	    public SelectionComponent(Integer[] inputs, int nOutputs){
 		this.inputs = inputs;
-		this.outputs = new Integer[this.inputs.length]; 
-		this.orderedOutput = orderedOutput;
+		this.outputs = new Integer[this.nOutputs]; 
+		this.nOutputs = nOutputs;
 	    }
 
 	    @Override
 	    void constitutiveClause() {
 	
 		int n = this.inputs.length;
-		int k = this.orderedOutput;
+		int k = this.nOutputs;
 		int[] ns = new int[4];
 	    
 
@@ -176,7 +176,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 		Integer[][] preffixes = new Integer[4][];
 		
-		List<Integer> concatenatedSuffixes = new ArrayList<Integer>();
+		// List<Integer> concatenatedSuffixes = new ArrayList<Integer>();
 		int i = 0;
 		for(int ithN: ns){
 		    if(k < ithN) ki = k; else ki = ithN;
@@ -188,7 +188,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 		    selcomp.constitutiveClause();
 		    preffixes[i++] = preffix(selcomp.outputs, ki);
 
-		    concatenatedSuffixes.addAll(suffix(selcomp.outputs, ki));
+		    // concatenatedSuffixes.addAll(suffix(selcomp.outputs, ki));
 		}
 		MergeComponent mergecomp = new MergeComponent(k);
 		ArrayList<ArrayList<Integer>> preffixesArray = new ArrayList<ArrayList<Integer>>();
@@ -197,7 +197,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 		mergecomp.constitutiveClause(preffixesArray);
 		ArrayList<Integer> outputs = new ArrayList<Integer>();
 		outputs.addAll(Arrays.asList(mergecomp.outputs));
-		outputs.addAll(concatenatedSuffixes);
+		// outputs.addAll(concatenatedSuffixes);
 		return;
 	    }
 	}
