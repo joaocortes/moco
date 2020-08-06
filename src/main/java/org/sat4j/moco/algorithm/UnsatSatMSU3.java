@@ -90,7 +90,7 @@ public class UnsatSatMSU3 extends algorithm {
      * @param m The MOCO instance.
      */
 
-    public UnsatSatMSU3(Instance m, boolean encodingGD) {
+    public UnsatSatMSU3(Instance m, String encodingGD) {
         // Log.comment(3, "in UnsatSat constructor");
 	this.problem = m;
 	this.result = new Result(m, true);
@@ -147,7 +147,7 @@ public class UnsatSatMSU3 extends algorithm {
 	// Log.comment(3, "in UnsatSat.solve");
 	boolean goOn = true;
 	boolean goOn1 = true;
-	currentAssumptions = this.generateUpperBoundAssumptions();
+	currentAssumptions = this.goalDelimeter.generateUpperBoundAssumptions(this.UpperKD);
 	this.logUpperLimit();
 	this.logUpperBound();
 	Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
@@ -289,29 +289,7 @@ public class UnsatSatMSU3 extends algorithm {
      */
     public IVecInt generateUpperBoundAssumptions( ){
 	IVecInt assumptions = new VecInt(new int[]{});
-	
-	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    Objective ithObjective = this.problem.getObj(iObj);
-	    if(this.getUpperKD(iObj)  != this.getUpperBound(iObj)){
-		int newY = -this.goalDelimeter.getY(iObj, this.getUpperBound(iObj));
-		if(newY!=0)
-		    assumptions.push(newY);
-	    }
-	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
-	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
-	    int sign;
-	    int ithAbsoluteWeight;
-
-	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
-		int ithX = objectiveLits.get(iX);
-		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
-		sign = (ithAbsoluteWeight > 0? 1 : -1);
-		ithAbsoluteWeight *= sign;
-		if(ithAbsoluteWeight > this.getUpperKD(iObj))
-		    assumptions.push(-sign * ithX);
-	    }
-
-	}
+	assumptions = this.goalDelimeter.generateUpperBoundAssumptions(UpperKD);
 	for(Integer x: this.coveredLiterals.keySet())
 	    assumptions.push(x);
 
