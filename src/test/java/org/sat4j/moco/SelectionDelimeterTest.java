@@ -36,18 +36,20 @@ import org.sat4j.moco.algorithm.algorithm;
 
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.pb.PBFactory;
+import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.util.Real;
+import org.sat4j.specs.ContradictionException;
 import org.sat4j.moco.problem.LinearObj;
 
-public class SDTest {
+public class SelectionDelimeterTest {
     protected SelectionDelimeter sd = null;
     protected Instance moco;
     protected LinearObj main_obj;
     protected UnsatSat solver;
 
-    public SDTest(){};
+    public SelectionDelimeterTest(){};
     @Before
     public void partialSetUp() {
 	    this.moco = new Instance();
@@ -55,8 +57,40 @@ public class SDTest {
 	    this.main_obj = new LinearObj(new VecInt(new int[] { 1, 2 }),
                                       new Vec<Real>(new Real[] { new Real(2), Real.ONE }));
 	    this.moco.addObj(this.main_obj);
-	    this.solver = new UnsatSat(moco, "SD");
+	    PBSolver pbSolver;
+
+	    
+	    try {
+		pbSolver = buildSolver();
+
+	    }
+	    catch (ContradictionException e) {
+            return;
+        }
+	    this.solver = new UnsatSat(moco);
+	    this.sd  = new SelectionDelimeter(moco, pbSolver);
+
+	    
+    }
+    @Test
+    public void testDigits(){}
+
+
+        /**
+     * Creates a PB oracle initialized with the MOCO's constraints.
+     * @return The oracle.
+     * @throws ContradictionException if the oracle detects that the
+     * MOCO's constraint set is unsatisfiable.
+     */
+    private PBSolver buildSolver() throws ContradictionException {
+        // Log.comment(5, "in UnsatSat.buildSolver");
+        PBSolver solver = new PBSolver();
+        solver.newVars(this.moco.nVars());
+        for (int i = 0; i < this.moco.nConstrs(); ++i) {
+            solver.addConstr(this.moco.getConstr(i));
+        }
+        // Log.comment(5, "out UnsatSat.buildSolver");
+        return solver;
     }
 
-    
 }
