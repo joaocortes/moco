@@ -81,6 +81,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	int iObj;
 	private int[] ratios = null;
 	int basesN = 0;
+	
 	SortedMap<Integer, ControlledSelectionComponent> controlledComponents = null;
 	
 	public Circuit(int iObj){
@@ -445,53 +446,6 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 
 
-	/**
-	 *Method that ooses the base to be used
-	 */
-
-	private void setRatios(){
-	    this.ratios = new int[]{2};
-	    return;
-	}
-
-	private int getRatio(int i){
-	    if(this.ratios.length <= i)
-		return this.ratios[this.ratios.length -1];
-	    else return this.ratios[i];
-	}
-	/**
-	 *get Base element i.
-	 */
-
-	private int getBase(int index){
-	    int result = 1;
-	    for(int j = 0; j < index; j ++ )
-		result*= getRatio(j);
-	    return result;		
-	}
-
-	/**
-	 *get the index of the base. If not a valid base, returns -1.
-	 */
-
-	private int getBaseI(int base){
-	    int i = 0;
-	    int candidate = 1;
-	    while(candidate < base)
-		candidate *= this.getRatio(i++);
-	    if(candidate == base)
-		return i+1;
-	    else
-		return -1;
-	}
-
-	public ArrayList<Integer> getCarryBits(ControlledSelectionComponent select1, int ratio) {
-	    ArrayList<Integer> carryBits = new ArrayList<Integer>();
-	    for(int i = 0, n = select1.outputs.length; i<n; i++)
-		if((i + 1) % ratio == 0)
-		    carryBits.add(select1.outputs[i]);
-	    return carryBits;
-	}
 
 
 	public void setControlledComponents( SortedMap<Integer, ArrayList<Integer>> baseInputs) {
@@ -535,21 +489,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	}
 
 
-    public IVecInt  expandValue(int value){
-	
-	IVecInt digits = new VecInt(new int[]{});
-	int i = 0;
-	while(value != 0){
-	    int ratio = getRatio(i++);
-	    int digit = (value % ratio);
-	    digits.push(digit);
-	    value-=digit;
-	    value/=ratio;
-	}
-	if(digits.size()==0)
-	    digits.push(0);
-	return digits;
-    }
+
 	/**
 	 *Enforces a sequential relation between the variables.
 	 */
