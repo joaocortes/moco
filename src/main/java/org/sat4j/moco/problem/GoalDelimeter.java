@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.sat4j.specs.ContradictionException;
 
+
 public abstract class GoalDelimeter{
 
     /**
@@ -36,11 +37,12 @@ public abstract class GoalDelimeter{
 }
 
     
-    protected abstract class InverseIndex<SIndex extends Index>{
+    static protected class Librarian<SIndex extends Index>{
 	
-	Map<Integer, SIndex> container = null;
-	public InverseIndex(){
-	    container = new HashMap<Integer, SIndex>();
+	private Map<Integer, SIndex> container = null;
+
+	 public Librarian(){
+	    this.container = new HashMap<Integer, SIndex>();
 	};
 	public void putIndex(int varId,SIndex index) {
 	    this.container.put(varId, index);
@@ -52,7 +54,7 @@ public abstract class GoalDelimeter{
 	
     }
 
-    protected abstract class Index{
+    static protected abstract class Index{
 	int iObj = 0;
 	int kD = 0;
 	public Index(){};

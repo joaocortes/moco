@@ -74,14 +74,13 @@ public class UnsatSat extends algorithm {
      */
     private int realVariablesN = 0;
 
-
     /**
      * Creates an instance of a MOCO solver, for a given instance,
      * that applies the Pareto-MCS algorithm.
      * @param m The MOCO instance.
      */
 
-    public UnsatSat(Instance m, boolean encodingGD) {
+    public UnsatSat(Instance m) {
         // Log.comment(3, "in UnsatSat constructor");
 	this.problem = m;
 	this.result = new Result(m, true);
@@ -93,28 +92,23 @@ public class UnsatSat extends algorithm {
             return;
         }
 	this.realVariablesN = this.solver.nVars();
-	if(encodingGD)
-	    this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
-	else
-	    this.goalDelimeter = new SeqEncoder(this.problem,this.solver);
 	this.UpperKD =  new int[(this.problem.nObjs())];
 	this.exhaustedUpperKD =  new int[(this.problem.nObjs())];
     }
 
 
+    public UnsatSat(Instance m, boolean encodingGD) {
+
+	this(m);
+	if(encodingGD)
+	    this.goalDelimeter = new GenTotalEncoder(this.problem,this.solver);
+	else
+	    this.goalDelimeter = new SeqEncoder(this.problem,this.solver);
+    }
+
+
     public UnsatSat(Instance m, String encoding ) {
-        // Log.comment(3, "in UnsatSat constructor");
-	this.problem = m;
-	this.result = new Result(m, true);
-	try {
-            this.solver = buildSolver();
-        }
-        catch (ContradictionException e) {
-            Log.comment(3, "Contradiction in ParetoMCS.buildSolver");
-            return;
-        }
-	this.realVariablesN = this.solver.nVars();
-	this.UpperKD =  new int[(this.problem.nObjs())];
+	this(m);
 	switch(encoding){
 	case "SD":
 	    this.goalDelimeter = new SelectionDelimeter(m, solver);
