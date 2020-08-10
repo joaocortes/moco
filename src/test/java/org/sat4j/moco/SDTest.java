@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
+import org.sat4j.moco.algorithm.UnsatSat;
 import org.sat4j.moco.algorithm.algorithm;
 
 import org.sat4j.moco.analysis.Result;
@@ -44,17 +45,18 @@ public class SDTest {
     protected SelectionDelimeter sd = null;
     protected Instance moco;
     protected LinearObj main_obj;
-    protected chosenAlgorithm solver;
-    protected abstract chosenAlgorithm instateAlgorithm();
+    protected UnsatSat solver;
 
     public SDTest(){};
     @Before
     public void partialSetUp() {
 	    this.moco = new Instance();
-	    this.sd = null;
 	    this.moco.addConstr(PBFactory.instance().mkGE(new VecInt(new int[] { 1, 2, 3 }), 2));
 	    this.main_obj = new LinearObj(new VecInt(new int[] { 1, 2 }),
                                       new Vec<Real>(new Real[] { new Real(2), Real.ONE }));
 	    this.moco.addObj(this.main_obj);
+	    this.solver = new UnsatSat(moco, "SD");
     }
+
+    
 }
