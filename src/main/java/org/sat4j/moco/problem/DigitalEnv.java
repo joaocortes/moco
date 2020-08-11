@@ -52,11 +52,16 @@ public class DigitalEnv {
     /**
      *Default bases is simply binary
      */
-    DigitalEnv(){this.ratios = new int[]{2};}
+    DigitalEnv(){
+	this.basesN = 1;
+	this.ratios = new int[]{2};
+}
 
     DigitalEnv(int[] ratios){
+	this.basesN = 1;
 	this.setRatios(ratios);
     }
+
 
     public DigitalNumber toDigital(int value){
 
@@ -71,6 +76,8 @@ public class DigitalEnv {
 	    value/=ratio;
 	    base *= ratio;
 	}
+	if(i > this.basesN )
+	    this.basesN = i;
 	if(digits.size()==0)
 	    digits.put(1, 0);
 	return new DigitalNumber(digits);
