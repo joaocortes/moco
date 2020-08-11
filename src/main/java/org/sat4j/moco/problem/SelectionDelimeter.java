@@ -535,6 +535,13 @@ public class SelectionDelimeter extends GoalDelimeter {
 	return result.toArray(new Integer[0]);
     }    
 
+    public ArrayList<Integer> getCarryBits(int[] outputs, int ratio) {
+	ArrayList<Integer> carryBits = new ArrayList<Integer>();
+	for(int i = 0, n = outputs.length; i<n; i++)
+	    if((i + 1) % ratio == 0)
+		carryBits.add(outputs[i]);
+	return carryBits;
+    }
 
 
     /**
