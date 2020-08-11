@@ -36,7 +36,7 @@ import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
-import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledSelectionComponent;
+import org.sat4j.moco.problem.DigitalEnv.DigitalNumber;
 import org.sat4j.specs.IVecInt;
 
 /**
@@ -44,26 +44,24 @@ import org.sat4j.specs.IVecInt;
  * @author Joao O'Neill Cortes
  */
 
-public class SelectionDelimeter extends GoalDelimeter {
+public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex> {
 
     private Circuit[] circuits;
-
+    
     public SelectionDelimeter(Instance instance, PBSolver solver) {
 	// Log.comment(5, "{ GenTotalEncoder");
 	super(instance, solver);
-	this.librarian = new Librarian<Index>();
-
+	this.librarian = new Librarian<SDIndex>();
 	this.instance = instance;
 	this.circuits = new Circuit[this.instance.nObjs()];
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.circuits[iObj] = new Circuit(iObj);
-	    this.buildCircuit(iObj);
 	}
 
 	// Log.comment(5, "}");
     }
 
-    static class SDIndex extends Index{
+    static class SDIndex extends GoalDelimeter.Index{
 
 	private int type = 0;
 	private int base = 0;
@@ -78,20 +76,21 @@ public class SelectionDelimeter extends GoalDelimeter {
     };
 
     class Circuit{
-
-	int iObj;
-	private int[] ratios = null;
-	int basesN = 0;
 	
+	
+	int iObj;
+	DigitalEnv digitalEnv;
+
 	SortedMap<Integer, ControlledSelectionComponent> controlledComponents = null;
 	
 	public Circuit(int iObj){
 	    this.controlledComponents = new TreeMap<Integer, ControlledSelectionComponent>();
 	    this.iObj = iObj;
-	    this.setRatios();
+	    digitalEnv = new DigitalEnv();
 
 	}
 
+	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
 	abstract class BaseComponent {
 
 	    protected Integer[] inputs;
@@ -117,8 +116,6 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    abstract void constitutiveClause();
 
 	}
-
-
 	class SelectionComponent extends BaseComponent{
 	    public SelectionComponent(Integer[] inputs){
 		super(inputs, inputs.length);
@@ -204,7 +201,6 @@ public class SelectionDelimeter extends GoalDelimeter {
 		return;
 	    }
 	}
-
 	class ControlledSelectionComponent{
 	    SelectionComponent selecComp = null;
 	    int base = 0;
@@ -232,7 +228,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    }
 	    public void setInputs(Integer[] realInputs){
 		this.realInputs = realInputs;
-		int ratio = getRatio(getBaseI(base));
+		int ratio = digitalEnv.getRatio(digitalEnv.getBaseI(base));
 		this.auxiliaryInputs = new Integer[ratio - 1];
 		for(int i = 0, n = this.auxiliaryInputs.length; i < n ; i++)
 		    this.auxiliaryInputs[i] = getFreshVar();
@@ -255,12 +251,10 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    }
 
 	}
-
 	/**
 	 *Component with 2 inputs that selects either the max or min
 	 *entry, according to its polarity
 	 */
-
 	class optimumComponent extends BaseComponent{
 	    boolean polarity = true;
 	    public optimumComponent(Integer[] inputs, boolean polarity){
@@ -289,8 +283,6 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    }
 
 	}
-
-	
 	class CombineComponent extends BaseComponent{
 
 	    public CombineComponent(int sortedPortionN){
@@ -351,7 +343,6 @@ public class SelectionDelimeter extends GoalDelimeter {
 	    }
 
 	}
-
 	class MergeComponent extends BaseComponent{
 	    int sortedPortionN;
 	    public MergeComponent(int sortedPortionN){
@@ -450,21 +441,19 @@ public class SelectionDelimeter extends GoalDelimeter {
 
 
 	public void setControlledComponents( SortedMap<Integer, ArrayList<Integer>> baseInputs) {
-	    this.basesN = this.getBaseI(baseInputs.lastKey());
 	    ControlledSelectionComponent lastContComp = null;
 	    ArrayList<Integer> inputs = new ArrayList<Integer>();
 	    // last base needed to expand the weights
 	    int ratioI = 0;
 	    int base = 1;
 	    int ratio = 1;
-	    int maxBase = baseInputs.lastKey();
 
 	    do{
 		base *=ratio;
 		inputs.clear();
 		ArrayList<Integer> inputsWeights = baseInputs.get(base);
 		if(lastContComp != null)
-		    inputs.addAll(getCarryBits(lastContComp, ratio));		    
+		    inputs.addAll(getCarryBits(lastContComp.outputs, ratio));		    
 		if(inputsWeights!=null)
 		    inputs.addAll(inputsWeights);
 		if(base <= maxBase || inputs.size() > 0){
@@ -535,7 +524,7 @@ public class SelectionDelimeter extends GoalDelimeter {
 	return result.toArray(new Integer[0]);
     }    
 
-    public ArrayList<Integer> getCarryBits(int[] outputs, int ratio) {
+    public ArrayList<Integer> getCarryBits(Integer[] outputs, int ratio) {
 	ArrayList<Integer> carryBits = new ArrayList<Integer>();
 	for(int i = 0, n = outputs.length; i<n; i++)
 	    if((i + 1) % ratio == 0)
@@ -556,10 +545,11 @@ public class SelectionDelimeter extends GoalDelimeter {
 	IVecInt digits = new VecInt(new int[]{});
 	SortedMap<Integer,ArrayList<Integer>> baseInputs= new TreeMap<Integer, ArrayList<Integer>>();
 	for(Entry<Integer, Integer> entry: weights.entrySet()){
+	    DigitalEnv digitalEnv = circuit.getDigitalEnv();
 	    int weight = entry.getValue();
 	    boolean weightSign = weight > 0;
 	    int lit = entry.getKey();
-	    digits = circuit.expandValue(weightSign? weight: -weight);
+	    DigitalNumber digits = circuit.to(weightSign? weight: -weight);
 	    digitsList.add(digits);
 	    int nDigits = digits.size();
 	    if(maxNDigits < nDigits) maxNDigits = nDigits;
