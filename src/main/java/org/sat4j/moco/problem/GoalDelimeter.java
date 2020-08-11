@@ -36,7 +36,17 @@ public abstract class GoalDelimeter{
 	this.firstVariable = solver.nVars() + 1;
 }
 
+    public void setSolver(PBSolver solver){this.solver = solver;}
+    public PBSolver getSolver(){return this.solver;}
+
+    public void setInstance(Instance instance){this.instance = instance;}
+    public Instance getInstance(){return this.instance;}
+
+    public int getFirstVariable(){return this.firstVariable;}
+    public void setFirstVariable(int firstVariable){ this.firstVariable = firstVariable;}
     
+
+
     static protected class Librarian<SIndex extends Index>{
 	
 	private Map<Integer, SIndex> container = null;
