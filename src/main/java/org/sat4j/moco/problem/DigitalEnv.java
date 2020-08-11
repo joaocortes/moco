@@ -24,9 +24,10 @@ package org.sat4j.moco.problem;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
+
+
 
 
 /**
@@ -37,9 +38,20 @@ import java.util.Map.Entry;
 
 public class DigitalEnv {
 
+    /**
+     *List of ratios. The last one will be repeated if needed.
+     */
     private int[] ratios;
+
+    /**
+     *Last valid digit
+     */
+
     private int basesN;
 
+    /**
+     *Default bases is simply binary
+     */
     DigitalEnv(){this.ratios = new int[]{2};}
 
     DigitalEnv(int[] ratios){
@@ -84,11 +96,6 @@ public class DigitalEnv {
      *get Base element i.
      */
 
-	private int getRatio(int i){
-	    if(this.ratios.length <= i)
-		return this.ratios[this.ratios.length -1];
-	    else return this.ratios[i];
-	}
     public int getBase(int index){
 	int result = 1;
 	for(int j = 0; j < index; j ++ )
@@ -96,74 +103,61 @@ public class DigitalEnv {
 	return result;		
     }
 
-	/**
-	 *get Base element i.
-	 */
+    /**
+     *get the index of the base. If not a valid base, returns -1.
+     */
 
-	public int getBase(int index){
-	    int result = 1;
-	    for(int j = 0; j < index; j ++ )
-		result*= getRatio(j);
-	    return result;		
-	}
+    public int getBaseI(int base){
+	int i = 0;
+	int candidate = 1;
+	while(candidate < base)
+	    candidate *= this.getRatio(i++);
+	if(candidate == base)
+	    return i+1;
+	else
+	    return -1;
+    }
 
-	/**
-	 *get the index of the base. If not a valid base, returns -1.
-	 */
 
-	public int getBaseI(int base){
-	    int i = 0;
-	    int candidate = 1;
-	    while(candidate < base)
-		candidate *= this.getRatio(i++);
-	    if(candidate == base)
-		return i+1;
-	    else
-		return -1;
-	}
-
-	public ArrayList<Integer> getCarryBits(int[] outputs, int ratio) {
-	    ArrayList<Integer> carryBits = new ArrayList<Integer>();
-	    for(int i = 0, n = outputs.length; i<n; i++)
-		if((i + 1) % ratio == 0)
-		    carryBits.add(outputs[i]);
-	    return carryBits;
-	}
 
 
     class DigitalNumber implements Iterable<Integer>{
 
-	SortedMap<Integer, Integer> digits;
+	private SortedMap<Integer, Integer> digits;
 
 	public DigitalNumber(SortedMap<Integer, Integer> digits){
 	    this.digits = digits;
 	}
-	public Iterator<Integer> iterator(){
-	    return new CustomIterator1();	
+
+	public DigitalNumber plusInt(int value){
+	    int result = toInt(this);
+	    result += value;
+	    return toDigital(result);
+	}
+	public int MSB(){
+	    Integer result = digits.getOrDefault(getBase(basesN), 0);
+	    return result;
 	}
 
-	public Iterator<Integer> iterator(int type){
-	    switch(type){
-	    case 1:
-		return new CustomIterator1();
-		break;
-	    case 2:
-		return new CustomIterator2();
-		break;
-	    default:
-		return new CustomIterator1();
-	    }
+	public IteratorJumps iterator(){
+	    return new IteratorJumps();	
 	}
-	class CustomIterator1 implements Iterator<Integer>{
+
+	public IteratorContiguous iterator2(){
+	    return new IteratorContiguous();	
+	}
+
+	class IteratorJumps implements Iterator<Integer>{
 	    Iterator<Entry<Integer, Integer>>  current = digits.entrySet().iterator();
 	    public boolean hasNext(){return current.hasNext();}
 	    public Integer next(){return current.next().getValue();}
 	    public Integer currentBase(){return current.next().getKey();};
 	}
 
-	class CustomIterator2 implements Iterator<Integer>{
-	    int iBase = 0;
-	    int currentBase = 1;
+
+	class IteratorContiguous implements Iterator<Integer>{
+	    private int iBase = 0;
+	    private int currentBase = 1;
 	    public boolean hasNext(){if(iBase < basesN  - 1) return true; else return false;}
 	    public Integer next(){
 		iBase++;
@@ -174,6 +168,7 @@ public class DigitalEnv {
 	    public int getIBase(){
 		return iBase;
 	    }
+	    public int currentBase(){return this.currentBase;}
 	}
     }
 }
