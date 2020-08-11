@@ -64,6 +64,15 @@ public class DigitalEnv {
 	return new DigitalNumber(digits);
     }
 
+    public int toInt(DigitalNumber number){
+	DigitalNumber.IteratorJumps iterator = number.iterator();
+	int result = 0;
+	while(iterator.hasNext()){
+	    result += iterator.next() * iterator.currentBase();
+	}
+	return result;    
+    }
+    
 
 	private void setRatios(int[] ratios){this.ratios = ratios;}
 
