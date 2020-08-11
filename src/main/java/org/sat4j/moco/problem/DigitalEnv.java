@@ -92,8 +92,10 @@ public class DigitalEnv {
 	return result;    
     }
     
-    private void setRatios(int[] ratios){this.ratios = ratios;}
-    private int getRatio(int i){
+    public void setRatios(int[] ratios){this.ratios = ratios;}
+    public void setBasesN(int basesN){this.basesN = basesN;}
+    public int setBasesN(){return this.basesN;}
+    public int getRatio(int i){
 	if(this.ratios.length <= i)
 	    return this.ratios[this.ratios.length -1];
 	else return this.ratios[i];
