@@ -73,14 +73,28 @@ public class DigitalEnv {
 	return result;    
     }
     
+    private void setRatios(int[] ratios){this.ratios = ratios;}
+    private int getRatio(int i){
+	if(this.ratios.length <= i)
+	    return this.ratios[this.ratios.length -1];
+	else return this.ratios[i];
+    }
 
-	private void setRatios(int[] ratios){this.ratios = ratios;}
+    /**
+     *get Base element i.
+     */
 
 	private int getRatio(int i){
 	    if(this.ratios.length <= i)
 		return this.ratios[this.ratios.length -1];
 	    else return this.ratios[i];
 	}
+    public int getBase(int index){
+	int result = 1;
+	for(int j = 0; j < index; j ++ )
+	    result*= getRatio(j);
+	return result;		
+    }
 
 	/**
 	 *get Base element i.
