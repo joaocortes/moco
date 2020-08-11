@@ -22,29 +22,16 @@
  *******************************************************************************/
 package org.sat4j.moco.problem;
 
-import org.sat4j.moco.util.Log;
-import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import java.util.Arrays;
 import java.util.Map.Entry;
-import java.util.HashMap;
-
-
-import org.sat4j.core.ReadOnlyVec;
-import org.sat4j.core.VecInt;
-import org.sat4j.moco.util.Real;
-import org.sat4j.moco.pb.PBSolver;
-import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledSelectionComponent;
-import org.sat4j.specs.IVecInt;
 
 
 /**
- * Class with the implementation of the Selection network based encoder.
+ * Class with the implementation of Digital environment, for
+ * representation of numbers in arbitrary multi radix bases
  * @author Joao O'Neill Cortes
  */
 
@@ -60,18 +47,20 @@ public class DigitalEnv {
 
     public DigitalNumber expandValue(int value){
 
-	Map<Integer, Integer> digits = new HashMap<Integer, Integer>();
+	SortedMap<Integer, Integer> digits = new TreeMap<Integer, Integer>();
 	int i = 0;
+	int base = 1;
 	while(value != 0){
 	    int ratio = getRatio(i++);
 	    int digit = (value % ratio);
-	    digits.push(digit);
+	    digits.put(base, digit);
 	    value-=digit;
 	    value/=ratio;
+	    base *= ratio;
 	}
 	if(digits.size()==0)
-	    digits.push(0);
-	return Digits(digits);
+	    digits.put(1, 0);
+	return new DigitalNumber(digits);
     }
 
 
@@ -87,7 +76,7 @@ public class DigitalEnv {
 	 *get Base element i.
 	 */
 
-	private int getBase(int index){
+	public int getBase(int index){
 	    int result = 1;
 	    for(int j = 0; j < index; j ++ )
 		result*= getRatio(j);
@@ -98,7 +87,7 @@ public class DigitalEnv {
 	 *get the index of the base. If not a valid base, returns -1.
 	 */
 
-	private int getBaseI(int base){
+	public int getBaseI(int base){
 	    int i = 0;
 	    int candidate = 1;
 	    while(candidate < base)
@@ -109,29 +98,58 @@ public class DigitalEnv {
 		return -1;
 	}
 
-	public ArrayList<Integer> getCarryBits(ControlledSelectionComponent select1, int ratio) {
+	public ArrayList<Integer> getCarryBits(int[] outputs, int ratio) {
 	    ArrayList<Integer> carryBits = new ArrayList<Integer>();
-	    for(int i = 0, n = select1.outputs.length; i<n; i++)
+	    for(int i = 0, n = outputs.length; i<n; i++)
 		if((i + 1) % ratio == 0)
-		    carryBits.add(select1.outputs[i]);
+		    carryBits.add(outputs[i]);
 	    return carryBits;
 	}
 
 
-    class Digits implements Iterable<int[]> {
+    class DigitalNumber implements Iterable<Integer>{
 
-	int[] digits;
+	SortedMap<Integer, Integer> digits;
 
-	public Digits(int[] digits){
+	public DigitalNumber(SortedMap<Integer, Integer> digits){
 	    this.digits = digits;
 	}
-	public Iterator<int[]> iterator(){
-	    return Arrays.asList(this.digits).iterator();
-	};
+	public Iterator<Integer> iterator(){
+	    return new CustomIterator1();	
+	}
 
+	public Iterator<Integer> iterator(int type){
+	    switch(type){
+	    case 1:
+		return new CustomIterator1();
+		break;
+	    case 2:
+		return new CustomIterator2();
+		break;
+	    default:
+		return new CustomIterator1();
+	    }
+	}
+	class CustomIterator1 implements Iterator<Integer>{
+	    Iterator<Entry<Integer, Integer>>  current = digits.entrySet().iterator();
+	    public boolean hasNext(){return current.hasNext();}
+	    public Integer next(){return current.next().getValue();}
+	    public Integer currentBase(){return current.next().getKey();};
+	}
 
-}
-    
-
-    
+	class CustomIterator2 implements Iterator<Integer>{
+	    int iBase = 0;
+	    int currentBase = 1;
+	    public boolean hasNext(){if(iBase < basesN  - 1) return true; else return false;}
+	    public Integer next(){
+		iBase++;
+		currentBase *= getRatio(iBase);
+		Integer result = digits.get(currentBase);
+		if(result == null) return 0; else return result;
+	    }
+	    public int getIBase(){
+		return iBase;
+	    }
+	}
+    }
 }
