@@ -10,7 +10,7 @@ import java.util.Map;
 import org.sat4j.specs.ContradictionException;
 
 
-public abstract class GoalDelimeter{
+public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
 
     /**
      * the instance to be solved
@@ -21,7 +21,7 @@ public abstract class GoalDelimeter{
      */
     protected PBSolver solver = null;
 
-    protected Librarian<? extends Index> librarian = null;
+    protected Librarian librarian = null;
 
     /**
      *First solver variable that pertains to the goal delimeter
@@ -30,7 +30,9 @@ public abstract class GoalDelimeter{
 
     protected int firstVariable = 0;
 
-    public GoalDelimeter(){};
+    public GoalDelimeter(){
+	this.librarian = new Librarian();
+    };
 
 
     public GoalDelimeter(Instance instance, PBSolver solver) {
@@ -50,18 +52,19 @@ public abstract class GoalDelimeter{
     
 
 
-    static protected class Librarian<SIndex extends Index>{
+    protected class Librarian{
 	
-	private Map<Integer, SIndex> library = null;
+	private Map<Integer, PIndex> library = null;
 
 	 public Librarian(){
-	    this.library = new HashMap<Integer, SIndex>();
+	    this.library = new HashMap<Integer, PIndex>();
 	};
-	public void putIndex(int varId,SIndex index) {
+
+	public  void putIndex(int varId, PIndex index) {
 	    this.library.put(varId, index);
 	};
 
-	public SIndex getIndex(int varId){
+	public PIndex getIndex(int varId){
 	    return this.library.get(varId);
 	};
 	
@@ -112,6 +115,7 @@ public abstract class GoalDelimeter{
     abstract public int getY(int iObj, int iKD);
 
     abstract public String prettyFormatVariable(int literal);    
+
     public String prettyFormatVecInt(IVecInt vecInt){
 	 String result = "";
 	 for(int j = 0; j < vecInt.size(); ++j)
