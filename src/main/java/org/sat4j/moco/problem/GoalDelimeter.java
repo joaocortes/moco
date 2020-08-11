@@ -13,11 +13,11 @@ import org.sat4j.specs.ContradictionException;
 public abstract class GoalDelimeter{
 
     /**
-     *Acess to the instance to be solved
+     * the instance to be solved
      */
     protected Instance instance = null;
     /**
-     *Access to the solver being used
+     * the solver being used
      */
     protected PBSolver solver = null;
 
@@ -27,6 +27,7 @@ public abstract class GoalDelimeter{
      *First solver variable that pertains to the goal delimeter
      *encoding
      */
+
     protected int firstVariable = 0;
 
     public GoalDelimeter(){};
@@ -111,15 +112,12 @@ public abstract class GoalDelimeter{
     abstract public int getY(int iObj, int iKD);
 
     abstract public String prettyFormatVariable(int literal);    
-
-
-     public String prettyFormatVecInt(IVecInt vecInt){
+    public String prettyFormatVecInt(IVecInt vecInt){
 	 String result = "";
 	 for(int j = 0; j < vecInt.size(); ++j)
 	     result += this.prettyFormatVariable(vecInt.get(j));
 	 return result;
      }
-
     public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){
 	if(clausing)
 	    Log.clausing(this.prettyFormatVecInt(vecInt));
@@ -127,22 +125,17 @@ public abstract class GoalDelimeter{
 	    Log.comment(6, this.prettyFormatVecInt(vecInt));
 	return;
     }
-
     public void prettyPrintVecInt(IVecInt vecInt){
 	Log.comment(2, prettyFormatVecInt(vecInt));
 	return;
      }
-
     public void prettyPrintVecInt(IVecInt vecInt, int level){
 	Log.comment(level, prettyFormatVecInt(vecInt));
 	return;
      }
-
-   
     public void prettyPrintVariable(int literal){
 	Log.comment(6,prettyFormatVariable(literal));
     }
-    
     public void prettyPrintVariable(int literal, int level){
 	Log.comment(level,prettyFormatVariable(literal));
     }
