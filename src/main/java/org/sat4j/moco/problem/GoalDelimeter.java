@@ -47,9 +47,21 @@ public abstract class GoalDelimeter{
     
 
 
-    static interface Librarian{
-	abstract public void putIndex(int varId,Index index);
-	abstract public Index getIndex(int varId);
+    static protected class Librarian<SIndex extends Index>{
+	
+	private Map<Integer, SIndex> container = null;
+
+	 public Librarian(){
+	    this.container = new HashMap<Integer, SIndex>();
+	};
+	public void putIndex(int varId,SIndex index) {
+	    this.container.put(varId, index);
+	};
+
+	public SIndex getIndex(int varId){
+	    return this.container.get(varId);
+	};
+	
     }
 
     static protected abstract class Index{
