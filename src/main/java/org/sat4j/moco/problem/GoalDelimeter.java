@@ -21,6 +21,8 @@ public abstract class GoalDelimeter{
      */
     protected PBSolver solver = null;
 
+    protected Librarian<? extends Index> librarian = null;
+
     /**
      *First solver variable that pertains to the goal delimeter
      *encoding
@@ -49,17 +51,17 @@ public abstract class GoalDelimeter{
 
     static protected class Librarian<SIndex extends Index>{
 	
-	private Map<Integer, SIndex> container = null;
+	private Map<Integer, SIndex> library = null;
 
 	 public Librarian(){
-	    this.container = new HashMap<Integer, SIndex>();
+	    this.library = new HashMap<Integer, SIndex>();
 	};
 	public void putIndex(int varId,SIndex index) {
-	    this.container.put(varId, index);
+	    this.library.put(varId, index);
 	};
 
 	public SIndex getIndex(int varId){
-	    return this.container.get(varId);
+	    return this.library.get(varId);
 	};
 	
     }
