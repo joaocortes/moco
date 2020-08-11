@@ -51,7 +51,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     public SelectionDelimeter(Instance instance, PBSolver solver) {
 	// Log.comment(5, "{ GenTotalEncoder");
 	super(instance, solver);
-	this.librarian = new Librarian<SDIndex>();
 	this.instance = instance;
 	this.circuits = new Circuit[this.instance.nObjs()];
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
