@@ -41,11 +41,12 @@ public class DigitalEnv {
     private int basesN;
 
     DigitalEnv(){this.ratios = new int[]{2};}
+
     DigitalEnv(int[] ratios){
 	this.setRatios(ratios);
     }
 
-    public DigitalNumber expandValue(int value){
+    public DigitalNumber toDigital(int value){
 
 	SortedMap<Integer, Integer> digits = new TreeMap<Integer, Integer>();
 	int i = 0;
