@@ -22,11 +22,6 @@
  *******************************************************************************/
 package org.sat4j.moco.problem;
 
-import org.junit.jupiter.api.Nested;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.jupiter.api.Test;
-
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -100,14 +95,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    digitalEnv = new DigitalEnv();
 
 	}
-    /**
-     *setter of each circuit in this.circuits
-     */
+	/**
+	 *setter of each circuit in this.circuits
+	 */
 
-    public void buildCircuit(){
-	this.setControlledComponents(getInputsFromWeights(this.iObj));
+	public void buildCircuit(){
+	    this.setControlledComponents(getInputsFromWeights(this.iObj));
 	    
-    }
+	}
     
 
 	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
@@ -178,7 +173,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    }
 
 		}
-	// else{
+		// else{
 		//     // notice (k + 3) /4 is equivalent to floor((double)k / 4), if k is int.
 		//     int tailValue;
 		//     int largestPower  = (int) Math.pow(2 , Math.ceil(Math.log((k + 3 )/4)));
@@ -307,7 +302,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	    public CombineComponent(int sortedPortionN){
 		this.sortedPortionN = sortedPortionN;
-    }
+	    }
 
 	    // This is required by my stupidity.
 	    void constitutiveClause(){};
@@ -411,41 +406,41 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    toCombine1 = selcomp1.outputs;
 		    toCombine2 = selcomp2.outputs;
 		}else{
-		List<ArrayList<Integer>> inputsListOdd = new ArrayList<ArrayList<Integer>>(4);		    
-		List<ArrayList<Integer>> inputsListEven = new ArrayList<ArrayList<Integer>>(4);		    
-		for(int i = 0; i < 4; i++){
-		    inputsListOdd.add(new ArrayList<Integer>());
-		    inputsListEven.add(new ArrayList<Integer>());
-}
-		int parity = 1;
-		int sizeOdd = 0, sizeEven = 0;
-		for(int i = 0, n = inputsArray.length; i < n; i++){
-		    parity = 1;
-		    for(Integer entry: inputsArray[i])
-			{
-			    parity++; parity %= 2;
-			    if(parity == 0)
-				inputsListEven.get(i).add(entry);
-			    else
-				inputsListOdd.get(i).add(entry);
+		    List<ArrayList<Integer>> inputsListOdd = new ArrayList<ArrayList<Integer>>(4);		    
+		    List<ArrayList<Integer>> inputsListEven = new ArrayList<ArrayList<Integer>>(4);		    
+		    for(int i = 0; i < 4; i++){
+			inputsListOdd.add(new ArrayList<Integer>());
+			inputsListEven.add(new ArrayList<Integer>());
+		    }
+		    int parity = 1;
+		    int sizeOdd = 0, sizeEven = 0;
+		    for(int i = 0, n = inputsArray.length; i < n; i++){
+			parity = 1;
+			for(Integer entry: inputsArray[i])
+			    {
+				parity++; parity %= 2;
+				if(parity == 0)
+				    inputsListEven.get(i).add(entry);
+				else
+				    inputsListOdd.get(i).add(entry);
 				
-			}			
+			    }			
 		    
-		    sizeOdd += inputsListOdd.get(i).size();
-		    sizeEven += inputsListEven.get(i).size();
-		}
+			sizeOdd += inputsListOdd.get(i).size();
+			sizeEven += inputsListEven.get(i).size();
+		    }
 		
-		int kOdd = sizeOdd < k/2 + 2? sizeOdd: k/2 + 2;
-		int kEven = sizeEven < k/2? sizeEven: k/2;
-		MergeComponent mergeOdd = new MergeComponent(kOdd);
-		mergeOdd.constitutiveClause(inputsListOdd);
+		    int kOdd = sizeOdd < k/2 + 2? sizeOdd: k/2 + 2;
+		    int kEven = sizeEven < k/2? sizeEven: k/2;
+		    MergeComponent mergeOdd = new MergeComponent(kOdd);
+		    mergeOdd.constitutiveClause(inputsListOdd);
 		
-		MergeComponent mergeEven = new MergeComponent(kEven);
-		mergeEven.constitutiveClause(inputsListEven);
-		toCombine1 = preffix(mergeOdd.outputs,kOdd);
-		toCombine2 = preffix(mergeEven.outputs,kEven);
-		suffix.addAll(suffix(mergeOdd.outputs, mergeOdd.outputs.length - kOdd));
-		suffix.addAll(suffix(mergeEven.outputs, mergeEven.outputs.length - kEven));
+		    MergeComponent mergeEven = new MergeComponent(kEven);
+		    mergeEven.constitutiveClause(inputsListEven);
+		    toCombine1 = preffix(mergeOdd.outputs,kOdd);
+		    toCombine2 = preffix(mergeEven.outputs,kEven);
+		    suffix.addAll(suffix(mergeOdd.outputs, mergeOdd.outputs.length - kOdd));
+		    suffix.addAll(suffix(mergeEven.outputs, mergeEven.outputs.length - kEven));
 		}
 		CombineComponent combComp = new CombineComponent(k);
 		combComp.constitutiveClause(toCombine1, toCombine2);
@@ -514,11 +509,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    IVecInt clause = new VecInt(new int[] {-variable, pastVariable});
 		    AddClause(clause);
 		    pastVariable = variable;
-}
+		}
 
-}
-
-
+	}
 
     } 
 
@@ -673,15 +666,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	
 	
     }
-    
-    @Nested
-    static public class CircuitInlineTest{
-	// public CircuitInlineTest(){}
-	@Test
-	public void testEnforceOrder(){
 
-	    assertTrue("lala", false);
-	}
 
-    }
 }
