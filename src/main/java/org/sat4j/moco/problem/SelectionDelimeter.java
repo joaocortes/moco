@@ -22,6 +22,11 @@
  *******************************************************************************/
 package org.sat4j.moco.problem;
 
+import org.junit.jupiter.api.Nested;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -48,16 +53,23 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
     private Circuit[] circuits;
     
-    public SelectionDelimeter(Instance instance, PBSolver solver) {
-	// Log.comment(5, "{ GenTotalEncoder");
+    public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit) {
 	super(instance, solver);
 	this.instance = instance;
 	this.circuits = new Circuit[this.instance.nObjs()];
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    this.circuits[iObj] = new Circuit(iObj);
+	    Circuit circuit  = new Circuit(iObj);
+	    this.circuits[iObj] = circuit;
+	    if(buildCircuit)
+		circuit.buildCircuit();
 	}
 
 	// Log.comment(5, "}");
+    }
+
+    public SelectionDelimeter(Instance instance, PBSolver solver) {
+	this(instance, solver, true);
+
     }
 
     static class SDIndex extends GoalDelimeter.Index{
@@ -88,6 +100,15 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    digitalEnv = new DigitalEnv();
 
 	}
+    /**
+     *setter of each circuit in this.circuits
+     */
+
+    public void buildCircuit(){
+	this.setControlledComponents(getInputsFromWeights(this.iObj));
+	    
+    }
+    
 
 	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
 	abstract class BaseComponent {
@@ -440,41 +461,42 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 
 	public void setControlledComponents( SortedMap<Integer, ArrayList<Integer>> baseInputs) {
-	    ControlledSelectionComponent lastContComp = null;
-	    ArrayList<Integer> inputs = new ArrayList<Integer>();
-	    // last base needed to expand the weights
-	    int ratioI = 0;
-	    int base = 1;
-	    int ratio = 1;
+	    // ControlledSelectionComponent lastContComp = null;
+	    // ArrayList<Integer> inputs = new ArrayList<Integer>();
+	    // // last base needed to expand the weights
+	    // int ratioI = 0;
+	    // int base = 1;
+	    // int ratio = 1;
 
-	    do{
-		base *=ratio;
-		inputs.clear();
-		ArrayList<Integer> inputsWeights = baseInputs.get(base);
-		if(lastContComp != null)
-		    inputs.addAll(getCarryBits(lastContComp.outputs, ratio));		    
-		if(inputsWeights!=null)
-		    inputs.addAll(inputsWeights);
-		if(base <= maxBase || inputs.size() > 0){
-		    ControlledSelectionComponent contComp =
-			new ControlledSelectionComponent(inputs.toArray(new Integer[0]), base);
-		    lastContComp = contComp;
-		} else
-		    break;
-		ratio = this.getRatio(ratioI++);
-	    }while(true);
+	    // do{
+	    // 	base *=ratio;
+	    // 	inputs.clear();
+	    // 	ArrayList<Integer> inputsWeights = baseInputs.get(base);
+	    // 	if(lastContComp != null)
+	    // 	    inputs.addAll(getCarryBits(lastContComp.outputs, ratio));		    
+	    // 	if(inputsWeights!=null)
+	    // 	    inputs.addAll(inputsWeights);
+	    // 	if(base <= maxBase || inputs.size() > 0){
+	    // 	    ControlledSelectionComponent contComp =
+	    // 		new ControlledSelectionComponent(inputs.toArray(new Integer[0]), base);
+	    // 	    lastContComp = contComp;
+	    // 	} else
+	    // 	    break;
+	    // 	ratio = this.getRatio(ratioI++);
+	    // }while(true);
 
 	}
 	
 	public int getNextValidRoof(int upperLimit){
-	    IVecInt digits = this.expandValue(upperLimit);
-	    int MSBase = this.getBase(this.basesN);
-	    for(int digit: digits.toArray())
-		System.out.println(digit);
-	    int MSDigit = digits.last();
-	    int MSRange = this.getRatio(this.getBaseI(MSBase)) ;
-	    assert(MSDigit < MSRange - 1);
-	    return MSBase * (MSDigit + 1);
+	    // IVecInt digits = this.expandValue(upperLimit);
+	    // int MSBase = this.getBase(this.basesN);
+	    // for(int digit: digits.toArray())
+	    // 	System.out.println(digit);
+	    // int MSDigit = digits.last();
+	    // int MSRange = this.getRatio(this.getBaseI(MSBase)) ;
+	    // assert(MSDigit < MSRange - 1);
+	    // return MSBase * (MSDigit + 1);
+	    return 1;
 	}
 
 
@@ -495,6 +517,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 }
 
 }
+
+
 
     } 
 
@@ -532,43 +556,40 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     }
 
 
-    /**
-     *setter of each circuit in this.circuits
-     */
-
-    private void buildCircuit(int iObj){
+    protected SortedMap<Integer,ArrayList<Integer>> getInputsFromWeights(int iObj){
 	Circuit circuit = this.circuits[iObj];
-	HashMap<Integer, Integer> weights = this.getWeights(iObj);
-	List<IVecInt> digitsList = new ArrayList<IVecInt>();
-	int maxNDigits = 0;
-	IVecInt digits = new VecInt(new int[]{});
+	DigitalEnv digitalEnv = circuit.getDigitalEnv();
+	
 	SortedMap<Integer,ArrayList<Integer>> baseInputs= new TreeMap<Integer, ArrayList<Integer>>();
+	HashMap<Integer, Integer> weights = this.getWeights(iObj);
+	List<DigitalNumber> digitsList = new ArrayList<DigitalNumber>();
+	int maxNDigits = 0;
+	// IVecInt digits = new VecInt(new int[]{});
 	for(Entry<Integer, Integer> entry: weights.entrySet()){
-	    DigitalEnv digitalEnv = circuit.getDigitalEnv();
 	    int weight = entry.getValue();
 	    boolean weightSign = weight > 0;
 	    int lit = entry.getKey();
-	    DigitalNumber digits = circuit.to(weightSign? weight: -weight);
+	    DigitalNumber digits = digitalEnv.toDigital(weightSign? weight: -weight);
 	    digitsList.add(digits);
-	    int nDigits = digits.size();
-	    if(maxNDigits < nDigits) maxNDigits = nDigits;
-	    for(int digitI = 0; digitI < nDigits; digitI++){
-		int ithBase = circuit.getBase(digitI);
-		int ithDigit = digits.get(digitI);
-		while( ithDigit > 0){
-		    if(baseInputs.containsKey(ithBase))
-			baseInputs.get(ithBase).add(weightSign? lit: -lit);
-		    else
-			baseInputs.put(ithBase, new ArrayList<Integer>(Arrays.asList(new Integer[]{weightSign? lit: -lit})));
-		    ithDigit--;
+	    // if(maxNDigits < nDigits) maxNDigits = nDigits;
+	    DigitalNumber.IteratorContiguous iterator = digits.iterator2();
+	    while(iterator.hasNext())
+		{
+		    int ithDigit = iterator.next();
+		    int ithBase = iterator.currentBase();
+		    while( ithDigit > 0){
+			if(baseInputs.containsKey(ithBase))
+			    baseInputs.get(ithBase).add(weightSign? lit: -lit);
+			else
+			    baseInputs.put(ithBase, new ArrayList<Integer>(Arrays.asList(new Integer[]{weightSign? lit: -lit})));
+			ithDigit--;
 		}
 
 	    }
 	}
-	circuit.setControlledComponents(baseInputs);
-	    
-    }
-    
+	return baseInputs;
+
+}
     private HashMap<Integer, Integer> getWeights(int iObj){
 	HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
 	Objective ithObjective = this.instance.getObj(iObj);
@@ -583,6 +604,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	return result;
 
     }
+
     /**
      * This delimeter is not incremental. Therefore, this is a trivial
      * operation.
@@ -609,7 +631,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
     public int getY(int iObj, int iKD){
 	Circuit circuit = this.circuits[iObj];
-	ControlledSelectionComponent controlledComp =  circuit.controlledComponents.get(circuit.controlledComponents.lastKey());
+	Circuit.ControlledSelectionComponent controlledComp =  circuit.controlledComponents.get(circuit.controlledComponents.lastKey());
 	return controlledComp.outputs[iKD];
     };
 
@@ -629,21 +651,21 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    Circuit circuit = this.circuits[iObj];
 	    int nextValidRoof = circuit.getNextValidRoof(upperLimit);
 	    int diff = nextValidRoof - upperLimit - 1;
-	    IVecInt digits = new VecInt(new int[circuit.basesN]);
-	    digits = circuit.expandValue(diff);
+	    // IVecInt digits = new VecInt(new int[circuit.basesN]);
+	    // digits = circuit.expandValue(diff);
 	    // add the desired constant, through the assumptions
-	    for(int i = 0, digitsN = circuit.basesN; i<digitsN; i++){
-		int base = circuit.getBase(i);
-		ControlledSelectionComponent contComp = circuit.controlledComponents.get(base);
-		assumptions.push(contComp.auxiliaryInputs[digits.get(i)]);
-	    }
-	    //add the upper limit restriction, through the MSDigit.
-	    Integer MSBBase = circuit.getBase(circuit.basesN);
-	    ControlledSelectionComponent MSBContComp = circuit.controlledComponents.get(MSBBase);
-	    int MSDigit = 0;
-	    if(digits.size() >= circuit.basesN)
-		MSDigit = digits.get(circuit.basesN);
-	    assumptions.push(-MSBContComp.getOutput(MSDigit + 1));
+	    // for(int i = 0, digitsN = circuit.basesN; i<digitsN; i++){
+	    // 	int base = circuit.getBase(i);
+	    // 	Circuit.ControlledSelectionComponent contComp = circuit.controlledComponents.get(base);
+	    // 	assumptions.push(contComp.auxiliaryInputs[digits.get(i)]);
+	    // }
+	    // //add the upper limit restriction, through the MSDigit.
+	    // Integer MSBBase = circuit.getBase(circuit.basesN);
+	    // Circuit.ControlledSelectionComponent MSBContComp = circuit.controlledComponents.get(MSBBase);
+	    // int MSDigit = 0;
+	    // if(digits.size() >= circuit.basesN)
+	    // 	MSDigit = digits.get(circuit.basesN);
+	    // assumptions.push(-MSBContComp.getOutput(MSDigit + 1));
 
 }
 	return assumptions;
@@ -652,5 +674,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	
     }
     
+    @Nested
+    static public class CircuitInlineTest{
+	// public CircuitInlineTest(){}
+	@Test
+	public void testEnforceOrder(){
 
+	    assertTrue("lala", false);
+	}
+
+    }
 }
