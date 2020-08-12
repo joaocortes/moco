@@ -22,26 +22,21 @@
  *******************************************************************************/
 package org.sat4j.moco;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.sat4j.moco.problem.SelectionDelimeter;
-
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.algorithm.UnsatSat;
-import org.sat4j.moco.algorithm.algorithm;
-
-import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
+import org.sat4j.moco.problem.DigitalEnv;
 import org.sat4j.moco.problem.Instance;
-import org.sat4j.moco.problem.Objective;
+import org.sat4j.moco.problem.LinearObj;
+import org.sat4j.moco.problem.SelectionDelimeter;
 import org.sat4j.moco.util.Real;
 import org.sat4j.specs.ContradictionException;
-import org.sat4j.moco.problem.LinearObj;
 
 public class SelectionDelimeterTest {
     protected SelectionDelimeter sd = null;
@@ -55,7 +50,7 @@ public class SelectionDelimeterTest {
 	    this.moco = new Instance();
 	    this.moco.addConstr(PBFactory.instance().mkGE(new VecInt(new int[] { 1, 2, 3 }), 2));
 	    this.main_obj = new LinearObj(new VecInt(new int[] { 1, 2 }),
-                                      new Vec<Real>(new Real[] { new Real(2), Real.ONE }));
+                                      new Vec<Real>(new Real[] { new Real(9), Real.ONE }));
 	    this.moco.addObj(this.main_obj);
 	    PBSolver pbSolver;
 
@@ -68,12 +63,54 @@ public class SelectionDelimeterTest {
             return;
         }
 	    this.solver = new UnsatSat(moco);
-	    this.sd  = new SelectionDelimeter(moco, pbSolver);
+	    this.sd  = new SelectionDelimeter(moco, pbSolver,false);
 
 	    
     }
     @Test
-    public void testDigits(){}
+    public void testDigits(){
+	int[] ratios = new int[]{2};
+	DigitalEnv digitalEnv = new DigitalEnv(ratios);
+	DigitalEnv.DigitalNumber digitalNumber = digitalEnv.toDigital(9);
+	int digit0 = digitalNumber.getDigit(1);
+	assertTrue("digit0 fails", digit0 == 1);
+	int digit1 = digitalNumber.getDigit(2);
+	assertTrue("digit1 fails", digit1 == 0);
+	int digit2 = digitalNumber.getDigit(4);
+	assertTrue("digit2 fails", digit2 == 0);
+	int digit3 = digitalNumber.getDigit(8);
+	assertTrue("digit3 fails", digit3 == 1);
+    }
+
+    @Test
+    public void testDigitsMulti(){
+	int[] ratios = new int[]{2, 3};
+	DigitalEnv digitalEnv = new DigitalEnv(ratios);
+	DigitalEnv.DigitalNumber digitalNumber = digitalEnv.toDigital(8);
+	int digit0 = digitalNumber.getDigitI(0);
+	assertTrue("digit0 fails", digit0 == 0);
+	int digit1 = digitalNumber.getDigitI(1);
+	assertTrue("digit1 fails: " + digit1, digit1 == 1);
+	int digit2 = digitalNumber.getDigitI(2);
+	assertTrue("digit2 fails", digit2 == 1);
+	int digit3 = digitalNumber.getDigitI(4);
+	assertTrue("digit3 fails", digit3 == 0);
+    }
+
+    @Test
+    public void testWeightExpansion(){
+	int[] ratios = new int[]{2, 3};
+	DigitalEnv digitalEnv = new DigitalEnv(ratios);
+	DigitalEnv.DigitalNumber digitalNumber = digitalEnv.toDigital(8);
+	int digit0 = digitalNumber.getDigitI(0);
+	assertTrue("digit0 fails", digit0 == 0);
+	int digit1 = digitalNumber.getDigitI(1);
+	assertTrue("digit1 fails: " + digit1, digit1 == 1);
+	int digit2 = digitalNumber.getDigitI(2);
+	assertTrue("digit2 fails", digit2 == 1);
+	int digit3 = digitalNumber.getDigitI(4);
+	assertTrue("digit3 fails", digit3 == 0);
+    }
 
 
         /**
