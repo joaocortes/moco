@@ -52,16 +52,15 @@ public class DigitalEnv {
     /**
      *Default bases is simply binary
      */
-    DigitalEnv(){
+    public DigitalEnv(){
 	this.basesN = 1;
 	this.ratios = new int[]{2};
 }
 
-    DigitalEnv(int[] ratios){
+    public DigitalEnv(int[] ratios){
 	this.basesN = 1;
 	this.setRatios(ratios);
     }
-
 
     public DigitalNumber toDigital(int value){
 
@@ -71,7 +70,7 @@ public class DigitalEnv {
 	while(value != 0){
 	    int ratio = getRatio(i++);
 	    int digit = (value % ratio);
-	    digits.put(base, digit);
+	    digits.put(base, digit);  
 	    value-=digit;
 	    value/=ratio;
 	    base *= ratio;
@@ -82,7 +81,6 @@ public class DigitalEnv {
 	    digits.put(1, 0);
 	return new DigitalNumber(digits);
     }
-
     public int toInt(DigitalNumber number){
 	DigitalNumber.IteratorJumps iterator = number.iterator();
 	int result = 0;
@@ -130,7 +128,7 @@ public class DigitalEnv {
 
 
 
-    class DigitalNumber implements Iterable<Integer>{
+    public class DigitalNumber implements Iterable<Integer>{
 
 	private SortedMap<Integer, Integer> digits;
 
@@ -147,23 +145,20 @@ public class DigitalEnv {
 	    Integer result = digits.getOrDefault(getBase(basesN), 0);
 	    return result;
 	}
-
+	public int getDigit(int base){return this.digits.get(base);}
+	public int getDigitI(int i){return this.digits.getOrDefault(getBase(i),0);}
 	public IteratorJumps iterator(){
 	    return new IteratorJumps();	
 	}
-
 	public IteratorContiguous iterator2(){
 	    return new IteratorContiguous();	
 	}
-
 	class IteratorJumps implements Iterator<Integer>{
 	    Iterator<Entry<Integer, Integer>>  current = digits.entrySet().iterator();
 	    public boolean hasNext(){return current.hasNext();}
 	    public Integer next(){return current.next().getValue();}
 	    public Integer currentBase(){return current.next().getKey();};
 	}
-
-
 	class IteratorContiguous implements Iterator<Integer>{
 	    private int iBase = 0;
 	    private int currentBase = 1;
