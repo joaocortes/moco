@@ -70,13 +70,13 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
             <!-- <scope>test</scope> -->
         </dependency>
     </dependencies>
     
     <build>
-      <!-- <testSourceDirectory>${project.basedir}/src</testSourceDirectory> -->
+      <testSourceDirectory>${project.basedir}/src/</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -90,23 +90,24 @@
                     </archive>
                 </configuration>
             </plugin>
-            <!-- <plugin> -->
-            <!--     <groupId>org.apache.maven.plugins</groupId> -->
-            <!--     <artifactId>maven-surefire-plugin</artifactId> -->
-            <!--     <version>3.0.0-M4</version> -->
-            <!--     <configuration> -->
-	    <!-- 	  <!-\- <configuration> -\-> -->
-	    <!-- 	  <!-\-   <!-\\- <includes> -\\-> -\-> -->
-	    <!-- 	  <!-\-   <!-\\-   <include>*.java</include> -\\-> -\-> -->
-	    <!-- 	  <!-\-   <!-\\- </includes> -\\-> -\-> -->
-	    <!-- 	  <!-\-   </configuration>                     -\-> -->
-	    <!-- 	    <archive> -->
-            <!--             <manifest> -->
-            <!--                 <mainClass>org.sat4j.moco.Launcher</mainClass> -->
-            <!--             </manifest> -->
-            <!--         </archive> -->
-            <!--     </configuration> -->
-            <!-- </plugin> -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+	    	    <includes>
+	    	      <include>*.java</include>
+	    	    </includes>
+	    	    <excludes>
+	    	      <exclude>UnsatSatMSU3nada.java</exclude>
+	    	    </excludes>
+	    	    <archive>
+                        <manifest>
+                            <mainClass>org.sat4j.moco.Launcher</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
