@@ -569,23 +569,26 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    digitsList.add(digits);
 	    // if(maxNDigits < nDigits) maxNDigits = nDigits;
 	    DigitalNumber.IteratorContiguous iterator = digits.iterator2();
+
+	    int ithDigit = 0;
+	    int ithBase = 1;
 	    while(iterator.hasNext())
 		{
-		    int ithDigit = iterator.next();
-		    int ithBase = iterator.currentBase();
+		    ithBase = iterator.currentBase();
+		    ithDigit = iterator.next();
 		    while( ithDigit > 0){
 			if(baseInputs.containsKey(ithBase))
 			    baseInputs.get(ithBase).add(weightSign? lit: -lit);
 			else
 			    baseInputs.put(ithBase, new ArrayList<Integer>(Arrays.asList(new Integer[]{weightSign? lit: -lit})));
 			ithDigit--;
-		}
+		    }
 
-	    }
+		}
 	}
 	return baseInputs;
 
-}
+    }
     private HashMap<Integer, Integer> getWeights(int iObj){
 	HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
 	Objective ithObjective = this.instance.getObj(iObj);
