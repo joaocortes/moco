@@ -552,10 +552,13 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     }
 
 
+    /**
+     *Generates the inputs created by the weights of the objective
+     *function iObj
+     */
     protected SortedMap<Integer,ArrayList<Integer>> getInputsFromWeights(int iObj){
 	Circuit circuit = this.circuits[iObj];
 	DigitalEnv digitalEnv = circuit.getDigitalEnv();
-	
 	SortedMap<Integer,ArrayList<Integer>> baseInputs= new TreeMap<Integer, ArrayList<Integer>>();
 	HashMap<Integer, Integer> weights = this.getWeights(iObj);
 	List<DigitalNumber> digitsList = new ArrayList<DigitalNumber>();
