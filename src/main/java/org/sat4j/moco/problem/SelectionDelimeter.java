@@ -393,15 +393,18 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    
 		    ArrayList<Integer> smallerInput1 = new ArrayList<Integer>();
 		    ArrayList<Integer> smallerInput2 = new ArrayList<Integer>();
+		    {
+			int i = 0;
+			for(; i < 1; i++)
+			    smallerInput1.addAll(inputsList.get(i));
+			for(; i < 4; i++)
+			    smallerInput2.addAll(inputsList.get(i));
+		    }
 
-		    for(int i = 0; i < 1; i++)
-			smallerInput1.addAll(inputsList.get(i));
-		    for(int i = 3; i < 4; i++)
-			smallerInput2.addAll(inputsList.get(i));
-		    SelectionComponent selcomp1 = new SelectionComponent(smallerInput1.toArray(new Integer[0]), 1);
+		    SelectionComponent selcomp1 = new SelectionComponent(smallerInput1.toArray(new Integer[0]), k);
 		    selcomp1.constitutiveClause();
 		    SelectionComponent selcomp2 = new SelectionComponent(smallerInput2.toArray(new Integer[0]), k);
-		    selcomp1.constitutiveClause();
+		    selcomp2.constitutiveClause();
 		    toCombine1 = selcomp1.outputs;
 		    toCombine2 = selcomp2.outputs;
 		}else{
