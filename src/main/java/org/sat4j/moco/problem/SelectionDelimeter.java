@@ -630,9 +630,11 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	return 0;};
 
     public int getY(int iObj, int iKD){
+
+	int index  = this.kDToIndex(iKD);
 	Circuit circuit = this.circuits[iObj];
 	Circuit.ControlledSelectionComponent controlledComp =  circuit.controlledComponents.get(circuit.controlledComponents.lastKey());
-	return controlledComp.outputs[iKD];
+	return controlledComp.outputs[index];
     };
 
     public String prettyFormatVariable(int literal)   {return "";} ;
