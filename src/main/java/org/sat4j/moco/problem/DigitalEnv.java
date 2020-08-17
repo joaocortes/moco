@@ -184,5 +184,15 @@ public class DigitalEnv {
 	    }
 	    public int currentBase(){return this.currentBase;}
 	}
+
+	/**
+	 * returns the most significant digit of DigitalNumber, that
+	 * is, the last nonzero digit.
+	 */
+	public int getMSB(){
+	    int MSBase =  this.digits.lastKey();
+	    return this.getDigit(MSBase);
+	}
     }
+
 }
