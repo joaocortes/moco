@@ -62,6 +62,8 @@ public class DigitalEnv {
 	this.setRatios(ratios);
     }
 
+    public int getMSB(DigitalNumber digital){return digital.getDigitI(basesN); }
+
     public DigitalNumber toDigital(int value){
 
 	SortedMap<Integer, Integer> digits = new TreeMap<Integer, Integer>();
