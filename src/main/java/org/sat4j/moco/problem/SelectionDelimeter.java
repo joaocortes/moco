@@ -123,6 +123,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	public ControlledSelectionComponent getControlledComponentBase(int base){return this.controlledComponents.get(base);}
 
+	abstract class BaseComponent implements Iterable<Integer>{
 
 	    protected Integer[] inputs;
 	    protected  Integer[] outputs;
