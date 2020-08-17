@@ -612,6 +612,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
     public boolean isY(int id){
 	SDIndex index = librarian.getIndex(id);
+	if(index == null) return false;
 	int iObj = index.getIObj();
 	return index.base == this.circuits[iObj].controlledComponents.lastKey();
     }
