@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.HashMap;
+import java.util.Iterator;
 
 
 import org.sat4j.core.ReadOnlyVec;
@@ -37,6 +38,7 @@ import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.DigitalEnv.DigitalNumber;
+import org.sat4j.moco.problem.DigitalEnv.DigitalNumber.IteratorContiguous;
 import org.sat4j.specs.IVecInt;
 
 /**
