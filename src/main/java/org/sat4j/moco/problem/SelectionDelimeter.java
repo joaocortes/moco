@@ -802,8 +802,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    currentBase = iterator.currentBase();
 		    currentDigit = iterator.next();
 		    clause.push(i);
-
-		    upperVar = circuit.getControlledComponentBase(currentBase).getOutput(this.kDToIndex(currentDigit + 1))
+		    upperVar = circuit.getControlledComponentBase(currentBase).getOutput(this.kDToIndex(currentDigit + 1));
 			}
 		if(i == range && iterator.hasNext()){
 		    iterator = digits.iterator2();		    
@@ -813,6 +812,5 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		}
 	    }
 	    }
-
     }
-}
+
