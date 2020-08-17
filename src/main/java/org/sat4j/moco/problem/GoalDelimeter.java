@@ -36,6 +36,7 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
 
 
     public GoalDelimeter(Instance instance, PBSolver solver) {
+	this();
 	this.instance = instance;	
 	this.solver = solver;
 	this.firstVariable = solver.nVars() + 1;
