@@ -447,8 +447,22 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		this.outputs = outputs.toArray(new Integer[0]);
 	    }
 	}
+	    /**
+	     *returns the Mod of its count of true inputs. Assumes
+	     *inputs are sorted by value.
+	     */
+	class ModComponent extends BaseComponent{
+	    int base = 1;
+	    public ModComponent(Integer[] inputs, int base){
+		this.base = base;
+		this.inputs = inputs;
+	    }
 
+	    public void constitutiveClause(){
+		return;
 
+}
+	    
 	}
 	class ControlledSelectionComponent{
 	    SelectionComponent selecComp = null;
