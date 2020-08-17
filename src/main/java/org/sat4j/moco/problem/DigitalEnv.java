@@ -170,12 +170,14 @@ public class DigitalEnv {
 	class IteratorContiguous implements Iterator<Integer>{
 	    private int iBase = 0;
 	    private int currentBase = 1;
-	    public boolean hasNext(){if(iBase < basesN  - 1) return true; else return false;}
+	    
+	    public boolean hasNext(){if(iBase < basesN) return true; else return false;}
 	    public Integer next(){
-		iBase++;
-		currentBase *= getRatio(iBase);
 		Integer result = digits.get(currentBase);
+		currentBase *= getRatio(iBase);
+		iBase++;
 		if(result == null) return 0; else return result;
+		
 	    }
 	    public int getIBase(){
 		return iBase;
