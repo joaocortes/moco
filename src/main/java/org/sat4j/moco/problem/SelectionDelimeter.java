@@ -455,13 +455,49 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	     *inputs are sorted by value.
 	     */
 	class ModComponent extends BaseComponent{
-	    int base = 1;
-	    public ModComponent(Integer[] inputs, int base){
-		this.base = base;
+	    int modN = 0;
+	    public ModComponent(Integer[] inputs, int modN){
+		this.modN = modN;
 		this.inputs = inputs;
 	    }
 
 	    public void constitutiveClause(){
+		if(this.inputs.length <= this.modN){
+		    this.outputs = new Integer[this.inputs.length < this.modN - 1? this.inputs.length: this.modN - 1];
+		    IVecInt clause = new VecInt(3);
+		    int MSB = this.inputs[this.inputs.length];
+		    for(int i = 0, n = this.outputs.length; i < n; i++){
+			int input = this.inputs[i];
+			int output = getFreshVar();
+			this.outputs[i] = output;
+			clause.clear();
+			clause.push(-input); clause.push(output); clause.push(MSB);
+			AddClause(clause);
+			//TODO: do I need the double implication?			
+		    }
+}
+		// will store one conjunction for each value in the
+		// range modN - 1
+		IVecInt[] clauses = new VecInt[this.modN - 1];
+		for(int i = 0; i < this.modN - 1; i++)
+		    clauses[i] = new VecInt();
+
+		{ 
+		    int i = 0; int n = this.outputs.length;
+		    while(i < n){
+			Integer[] slice = new Integer[n - i > this.modN? this.modN: n - i];
+			while(n - i  <= this.modN && i < n)
+			    slice[i % modN] = this.inputs[i++];
+			ModComponent modComponent = new ModComponent(slice, this.modN);
+			modComponent.constitutiveClause();
+			for(int k = 0; i < this.modN - 1; k++){
+			    int lit = modComponent.getIthOutput(k);
+			    clauses[k].push(lit);
+			}		
+		    }
+		    for(IVecInt clause: clauses )
+			AddClause(clause);
+		}
 		return;
 
 }
