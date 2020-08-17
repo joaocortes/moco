@@ -650,25 +650,63 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    int diff = nextValidRoof - upperLimit;
 	    DigitalNumber digits = ithDigitalEnv.toDigital(diff);
 	    // add the desired constant, through the assumptions
-	    // for(int i = 0, digitsN = circuit.basesN; i<digitsN; i++){
-	    // 	int base = circuit.getBase(i);
-	    // 	Circuit.ControlledSelectionComponent contComp = circuit.controlledComponents.get(base);
-	    // 	assumptions.push(contComp.auxiliaryInputs[digits.get(i)]);
-	    // }
-	    // //add the upper limit restriction, through the MSDigit.
-	    // Integer MSBBase = circuit.getBase(circuit.basesN);
-	    // Circuit.ControlledSelectionComponent MSBContComp = circuit.controlledComponents.get(MSBBase);
-	    // int MSDigit = 0;
-	    // if(digits.size() >= circuit.basesN)
-	    // 	MSDigit = digits.get(circuit.basesN);
-	    // assumptions.push(-MSBContComp.getOutput(MSDigit + 1));
+	    int base = 1;
+	    DigitalNumber.IteratorJumps iterator = digits.iterator();
+	    while(iterator.hasNext()){
+		base = iterator.currentBase();
+		int digit = iterator.next();
+		if(digit != 0){
+	    	Circuit.ControlledSelectionComponent contComp = circuit.controlledComponents.get(base);
+		int index = this.kDToIndex(digit);
+	    	assumptions.push(contComp.auxiliaryInputs[index]);} 
+	    }
+	    Circuit.ControlledSelectionComponent MSBContComp = circuit.controlledComponents.get(base);
+	    int MSDigit = digits.getMSB();
+	    assert MSDigit != 0;
+	    int index = this.kDToIndex(MSDigit);
+	    assumptions.push(-MSBContComp.getOutput(index));
 
-}
+	}
 	return assumptions;
 	
 	
+ 
 	
     }
 
+    public int kDToIndex(int kD){
+	return kD  - 1;
 
+    }
+
+    public IVecInt uglyUpperBoundClause(int iObj, int upperLimit){
+	Circuit circuit = this.getIthCircuit(iObj);
+	DigitalNumber digits = circuit.getDigitalEnv().toDigital(upperLimit);
+	IteratorContiguous iterator = digits.iterator2();
+	IVecInt clause = new VecInt(new int[]{});
+	int range = 0;
+	int i = 0;
+	int currentBase = 1;
+	int currentDigit = 0;
+	int equalVar = 0;
+	int upperVar = 0;
+	while(iterator.hasNext() && i <= range)
+	    {
+		if(i < range){
+		    currentBase = iterator.currentBase();
+		    currentDigit = iterator.next();
+		    clause.push(i);
+
+		    upperVar = circuit.getControlledComponentBase(currentBase).getOutput(this.kDToIndex(currentDigit + 1))
+			}
+		if(i == range && iterator.hasNext()){
+		    iterator = digits.iterator2();		    
+		    range++;
+		    i = 0;
+		    clause.clear();
+		}
+	    }
+	    }
+
+    }
 }
