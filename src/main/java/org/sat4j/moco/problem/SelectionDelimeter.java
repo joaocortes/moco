@@ -120,7 +120,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	}
 
 	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
-	abstract class BaseComponent {
+
+	public ControlledSelectionComponent getControlledComponentBase(int base){return this.controlledComponents.get(base);}
+
 
 	    protected Integer[] inputs;
 	    protected  Integer[] outputs;
