@@ -259,66 +259,17 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    preffixesArray.add(new ArrayList<Integer>(Arrays.asList(preffix)));
 		mergecomp.constitutiveClause(preffixesArray);
 		ArrayList<Integer> outputs = new ArrayList<Integer>();
-		outputs.addAll(Arrays.asList(mergecomp.outputs));
+		this.outputs = mergecomp.outputs;
 		// outputs.addAll(concatenatedSuffixes);
+		//TODO add outputs....
 		return;
 	    }
-	}
-	class ControlledSelectionComponent{
-	    SelectionComponent selecComp = null;
-	    int base = 0;
-	    Integer[] realInputs = null;
-	    Integer[] outputs = null;
-	    Integer[] auxiliaryInputs = null;
-
-	    public ControlledSelectionComponent(Integer[] inputs, int base){
-		this.base = base;
-		this.setInputs(inputs);
-		
-		Integer[] completeInputs = new Integer[this.realInputs.length + this.auxiliaryInputs.length];
-		int i = 0;
-		int n = this.realInputs.length;
-		int m = this.auxiliaryInputs.length;
-		for(; i < n; i++)
-		    completeInputs[i] = this.realInputs[i];
-		for(; i < m + n; i++)
-		    completeInputs[i] = this.auxiliaryInputs[i - n];
-
-		this.selecComp = new SelectionComponent(completeInputs);
-		this.selecComp.constitutiveClause();
-		this.setOutputs(this.selecComp.outputs);
-		controlledComponents.put(base, this);
-	    }
-	    public void setInputs(Integer[] realInputs){
-		this.realInputs = realInputs;
-		int ratio = digitalEnv.getRatio(digitalEnv.getBaseI(base));
-		this.auxiliaryInputs = new Integer[ratio - 1];
-		for(int i = 0, n = this.auxiliaryInputs.length; i < n ; i++)
-		    this.auxiliaryInputs[i] = getFreshVar();
-		enforceOrder(this.auxiliaryInputs);
-
-	    }
-
-	    
-	    public void setOutputs(Integer[] outputs) {
-		this.outputs = outputs;
-		enforceOrder(this.outputs);
-		for(int outputI = 0, n = this.outputs.length;outputI < n; outputI++ ){
-		    int lit = this.outputs[outputI];
-		    librarian.putIndex(lit, new SDIndex(iObj, outputI + 1, 1, base));
-		}
-	    }
-	    public Integer getOutput(Integer kD){
-		int index = kD;
-		return this.outputs[index];
-	    }
-
 	}
 	/**
 	 *Component with 2 inputs that selects either the max or min
 	 *entry, according to its polarity
 	 */
-	class optimumComponent extends BaseComponent{
+	class optimumComponent extends SortedComponent{
 	    boolean polarity = true;
 	    public optimumComponent(Integer[] inputs, boolean polarity){
 		super(inputs, 1);
@@ -498,35 +449,93 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	}
 
 
+	}
+	class ControlledSelectionComponent{
+	    SelectionComponent selecComp = null;
+	    int base = 0;
+	    Integer[] realInputs = null;
+	    Integer[] outputs = null;
+	    Integer[] auxiliaryInputs = null;
 
+	    /**
+	     *range is the exclusive upper value the unary output may represent.
+	     */
+	    public ControlledSelectionComponent(Integer[] inputs, int base, int range){
+		this.base = base;
+		this.setInputs(inputs,  range);
+		Integer[] completeInputs = new Integer[this.realInputs.length + this.auxiliaryInputs.length];
+		int i = 0;
+		int n = this.realInputs.length;
+		int m = this.auxiliaryInputs.length;
+		for(; i < n; i++)
+		    completeInputs[i] = this.realInputs[i];
+		for(; i < m + n; i++)
+		    completeInputs[i] = this.auxiliaryInputs[i - n];
 
+		this.selecComp = new SelectionComponent(completeInputs);
+		this.selecComp.constitutiveClause();
+		this.setOutputs(this.selecComp.outputs);
+		controlledComponents.put(base, this);
+	    }
 
+	    public void setInputs(Integer[] realInputs, int range){
+		this.realInputs = realInputs;
+		// the 0 has no variable associated, hence the -1
+		this.auxiliaryInputs = new Integer[range - 1];
+		for(int i = 0, n = this.auxiliaryInputs.length; i < n ; i++)
+		    this.auxiliaryInputs[i] = getFreshVar();
+		enforceOrder(this.auxiliaryInputs);
 
+	    }
 
+	    
+	    public void setOutputs(Integer[] outputs) {
+		this.outputs = outputs;
+		enforceOrder(this.outputs);
+		for(int outputI = 0, n = this.outputs.length;outputI < n; outputI++ ){
+		    int lit = this.outputs[outputI];
+		    librarian.putIndex(lit, new SDIndex(iObj, outputI + 1, 1, base));
+		}
+	    }
+	    public Integer getOutput(Integer index){
+		return this.outputs[index];
+	    }
+
+	    public Integer getAuxiliarInput (Integer index){
+		return this.auxiliaryInputs[index];
+	    }
+
+	}
 	public void setControlledComponents( SortedMap<Integer, ArrayList<Integer>> baseInputs) {
-	    // ControlledSelectionComponent lastContComp = null;
-	    // ArrayList<Integer> inputs = new ArrayList<Integer>();
-	    // // last base needed to expand the weights
-	    // int ratioI = 0;
-	    // int base = 1;
-	    // int ratio = 1;
-
-	    // do{
-	    // 	base *=ratio;
-	    // 	inputs.clear();
-	    // 	ArrayList<Integer> inputsWeights = baseInputs.get(base);
-	    // 	if(lastContComp != null)
-	    // 	    inputs.addAll(getCarryBits(lastContComp.outputs, ratio));		    
-	    // 	if(inputsWeights!=null)
-	    // 	    inputs.addAll(inputsWeights);
-	    // 	if(base <= maxBase || inputs.size() > 0){
-	    // 	    ControlledSelectionComponent contComp =
-	    // 		new ControlledSelectionComponent(inputs.toArray(new Integer[0]), base);
-	    // 	    lastContComp = contComp;
-	    // 	} else
-	    // 	    break;
-	    // 	ratio = this.getRatio(ratioI++);
-	    // }while(true);
+	    ControlledSelectionComponent lastContComp = null;
+	    ArrayList<Integer> inputs = new ArrayList<Integer>();
+	    // last base needed to expand the weights
+	    int ratioI = 0;
+	    int base = 1;
+	    int ratio = 1;
+	    int maxBase = baseInputs.lastKey();
+	    
+	    do{
+	    	ratio = this.digitalEnv.getRatio(ratioI++);
+	    	inputs.clear();
+	    	ArrayList<Integer> inputsWeights = baseInputs.get(base);
+	    	if(lastContComp != null)
+	    	    inputs.addAll(getCarryBits(lastContComp.outputs, ratio));		    
+	    	if(inputsWeights!=null)
+	    	    inputs.addAll(inputsWeights);
+		if(base == maxBase) ratio = 1;
+	    	if(base < maxBase){
+	    	    ControlledSelectionComponent contComp =
+	    		new ControlledSelectionComponent(inputs.toArray(new Integer[0]), base, ratio);
+	    	    lastContComp = contComp;
+	    	} else{
+		    
+	    	    ControlledSelectionComponent contComp =
+	    		new ControlledSelectionComponent(inputs.toArray(new Integer[0]), base, 1);
+	    	    break;
+		}
+		base *=ratio;
+	    }while(true);
 
 	}
 	
