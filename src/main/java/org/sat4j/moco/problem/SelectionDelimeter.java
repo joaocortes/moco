@@ -131,11 +131,42 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	    public BaseComponent(){
 	    }
-	    public BaseComponent(int sortedPortionN){
-		this.sortedPortionN = sortedPortionN;
-		    
+
+	    Integer getIthInput(int i){return this.inputs[i];}
+	    Integer getIthOutput(int i){return this.outputs[i];}
+
+	    abstract void constitutiveClause();
+
+	    /**
+	     *Iterates the inputs
+	     */
+	    public IteratorInputs iterator(){return new IteratorInputs();}
+
+	    /**
+	     *Iterates the outputs
+	     */
+	    public IteratorOutputs iteratorOutputs(){return new IteratorOutputs();}
+
+	    class IteratorOutputs implements Iterator<Integer>{
+		Iterator<Integer> iterator = Arrays.asList(outputs).iterator();
+		public Integer next(){return iterator.next();}
+		public boolean hasNext(){return iterator.hasNext();}
 	    }
-	    public BaseComponent(Integer[] inputs, int sortedPortionN){
+	    class IteratorInputs implements Iterator<Integer>{
+		Iterator<Integer> iterator = Arrays.asList(inputs).iterator();
+		public Integer next(){return iterator.next();}
+		public boolean hasNext(){return iterator.hasNext();}
+	    }
+	}
+
+	abstract class SortedComponent extends BaseComponent{
+
+	    int sortedPortionN = 0;
+
+	    public SortedComponent(int sortedPortionN){
+		this.sortedPortionN = sortedPortionN;
+	    }
+	    public SortedComponent(Integer[] inputs, int sortedPortionN){
 		super();
 		this.inputs = inputs;
 		this.outputs = new Integer[inputs.length];
