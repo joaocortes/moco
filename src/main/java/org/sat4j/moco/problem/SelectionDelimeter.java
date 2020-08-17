@@ -163,6 +163,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	    int sortedPortionN = 0;
 
+	    public SortedComponent(){super();}
 	    public SortedComponent(int sortedPortionN){
 		this.sortedPortionN = sortedPortionN;
 	    }
