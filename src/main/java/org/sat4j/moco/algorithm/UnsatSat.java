@@ -56,7 +56,7 @@ public class UnsatSat extends algorithm {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private GoalDelimeter goalDelimeter = null;
+    private GoalDelimeter<?> goalDelimeter = null;
 
     /**
      * Last explored differential k, for each objective function.
