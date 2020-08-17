@@ -645,10 +645,10 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	for(int iObj = 0, n = this.instance.nObjs(); iObj < n; iObj++) {
 	    int upperLimit = UpperKD[iObj];
 	    Circuit circuit = this.circuits[iObj];
+	    DigitalEnv ithDigitalEnv = circuit.getDigitalEnv();
 	    int nextValidRoof = circuit.getNextValidRoof(upperLimit);
-	    int diff = nextValidRoof - upperLimit - 1;
-	    // IVecInt digits = new VecInt(new int[circuit.basesN]);
-	    // digits = circuit.expandValue(diff);
+	    int diff = nextValidRoof - upperLimit;
+	    DigitalNumber digits = ithDigitalEnv.toDigital(diff);
 	    // add the desired constant, through the assumptions
 	    // for(int i = 0, digitsN = circuit.basesN; i<digitsN; i++){
 	    // 	int base = circuit.getBase(i);
