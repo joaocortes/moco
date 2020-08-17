@@ -179,7 +179,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    abstract void constitutiveClause();
 
 	}
-	class SelectionComponent extends BaseComponent{
+	class SelectionComponent extends SortedComponent{
 	    public SelectionComponent(Integer[] inputs){
 		super(inputs, inputs.length);
 	    }
@@ -346,7 +346,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 	}
-	class CombineComponent extends BaseComponent{
+	class CombineComponent extends SortedComponent{
 
 	    public CombineComponent(int sortedPortionN){
 		this.sortedPortionN = sortedPortionN;
@@ -406,7 +406,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 	}
-	class MergeComponent extends BaseComponent{
+	class MergeComponent extends SortedComponent{
 	    int sortedPortionN;
 	    public MergeComponent(int sortedPortionN){
 		this.sortedPortionN = sortedPortionN;
