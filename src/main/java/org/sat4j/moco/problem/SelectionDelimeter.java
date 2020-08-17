@@ -69,6 +69,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
     }
 
+    public Circuit getIthCircuit(int i){return this.circuits[i];}
     static class SDIndex extends GoalDelimeter.Index{
 
 	private int type = 0;
