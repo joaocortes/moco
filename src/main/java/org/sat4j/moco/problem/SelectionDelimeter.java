@@ -107,6 +107,17 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    
 	}
     
+	public int getNextValidRoof(int upperLimit){
+	    DigitalNumber digits = this.getDigitalEnv().toDigital(upperLimit);
+	    int basesN = this.getDigitalEnv().getBasesN();
+	    for(int digit: digits)
+	    	System.out.println(digit);
+	    int MSDigit = this.getDigitalEnv().getMSB(digits);
+	    int MSRange = this.digitalEnv.getRatio(this.getDigitalEnv().getBasesN());
+	    assert(MSDigit <= MSRange - 1);
+	    int MSBase = this.getDigitalEnv().getBase(basesN - 1);
+	    return MSBase * (MSDigit + 1);
+	}
 
 	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
 	abstract class BaseComponent {
@@ -485,17 +496,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	}
 	
-	public int getNextValidRoof(int upperLimit){
-	    // IVecInt digits = this.expandValue(upperLimit);
-	    // int MSBase = this.getBase(this.basesN);
-	    // for(int digit: digits.toArray())
-	    // 	System.out.println(digit);
-	    // int MSDigit = digits.last();
-	    // int MSRange = this.getRatio(this.getBaseI(MSBase)) ;
-	    // assert(MSDigit < MSRange - 1);
-	    // return MSBase * (MSDigit + 1);
-	    return 1;
-	}
 
 
 
