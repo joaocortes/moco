@@ -156,17 +156,17 @@ public class DigitalEnv {
 	    return new IteratorContiguous();	
 	}
 	class IteratorJumps implements Iterator<Integer>{
+	    int currentBase = 1;
 	    Iterator<Entry<Integer, Integer>>  current = digits.entrySet().iterator();
 	    public boolean hasNext(){return current.hasNext();}
-	    public Integer next(){return current.next().getValue();}
-	    public Integer currentBase(){return current.next().getKey();};
 	    public Integer next(){ 
 		Entry<Integer, Integer> currentEntry = current.next();
 		this.currentBase = currentEntry.getKey();
 		return currentEntry.getValue();
 	    }
-	    public Integer currentBase(){return currentBase;};
+	    public Integer currentBase(){return currentBase;}
 	}
+
 	class IteratorContiguous implements Iterator<Integer>{
 	    private int iBase = 0;
 	    private int currentBase = 1;
