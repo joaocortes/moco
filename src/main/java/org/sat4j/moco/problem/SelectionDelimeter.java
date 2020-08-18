@@ -451,10 +451,10 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		this.outputs = outputs.toArray(new Integer[0]);
 	    }
 	}
-	    /**
-	     *returns the Mod of its count of true inputs. Assumes
-	     *inputs are sorted by value.
-	     */
+	/**
+	 *returns the Mod of the counts of 1 inputs. Assumes
+	 *inputs are sorted by value.
+	 */
 	class ModComponent extends BaseComponent{
 	    int modN = 0;
 	    public ModComponent(Integer[] inputs, int modN){
@@ -476,7 +476,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 			AddClause(clause);
 			//TODO: do I need the double implication?			
 		    }
-}
+		}
 		// will store one conjunction for each value in the
 		// range modN - 1
 		IVecInt[] clauses = new VecInt[this.modN - 1];
@@ -501,7 +501,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		}
 		return;
 
-}
+	    }
 	    
 	}
 	class ControlledSelectionComponent{
