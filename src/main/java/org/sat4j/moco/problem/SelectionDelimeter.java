@@ -762,9 +762,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		base = iterator.currentBase();
 		int digit = iterator.next();
 		if(digit != 0){
-	    	Circuit.ControlledSelectionComponent contComp = circuit.controlledComponents.get(base);
-		int index = this.kDToIndex(digit);
-	    	assumptions.push(contComp.auxiliaryInputs[index]);} 
+		    Circuit.ControlledSelectionComponent contComp = circuit.controlledComponents.get(base);
+		    int index = this.kDToIndex(digit);
+		    assumptions.push(contComp.auxiliaryInputs[index]);} 
 	    }
 	    Circuit.ControlledSelectionComponent MSBContComp = circuit.controlledComponents.get(base);
 	    int MSDigit = digits.getMSB();
