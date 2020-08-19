@@ -580,6 +580,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    int base = 1;
 	    int ratio = 1;
 	    int maxBase = baseInputs.lastKey();
+	    ControlledComponent contComp;
 	    
 	    do{
 	    	ratio = this.digitalEnv.getRatio(ratioI++);
@@ -591,12 +592,12 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    	    inputs.addAll(inputsWeights);
 		if(base == maxBase) ratio = 1;
 	    	if(base < maxBase){
-	    	    ControlledComponent contComp =
+		    contComp =
 	    		new ControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
 	    	    lastContComp = contComp;
 	    	} else{
 		    
-	    	    ControlledComponent contComp =
+		    contComp =
 	    		new ControlledComponent(inputs.toArray(new Integer[0]), base, 1);
 	    	    break;
 		}
