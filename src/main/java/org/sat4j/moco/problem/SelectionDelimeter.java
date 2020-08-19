@@ -515,60 +515,42 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    
 	}
 	class ControlledComponent{
-	    SelectionComponent selecComp = null;
+	    BaseComponent comp = null;
 	    int base = 0;
-	    Integer[] realInputs = null;
+	    Integer[] inputs = null;
 	    Integer[] outputs = null;
-	    Integer[] auxiliaryInputs = null;
 
 	    /**
 	     *range is the exclusive upper value the unary output may represent.
 	     */
 	    public ControlledComponent(Integer[] inputs, int base, int range){
 		this.base = base;
-		this.setInputs(inputs,  range);
-		Integer[] completeInputs = new Integer[this.realInputs.length + this.auxiliaryInputs.length];
-		int i = 0;
-		int n = this.realInputs.length;
-		int m = this.auxiliaryInputs.length;
-		for(; i < n; i++)
-		    completeInputs[i] = this.realInputs[i];
-		for(; i < m + n; i++)
-		    completeInputs[i] = this.auxiliaryInputs[i - n];
+		this.setInputs(inputs);
 
-		this.selecComp = new SelectionComponent(completeInputs);
-		this.selecComp.constitutiveClause();
-		this.setOutputs(this.selecComp.outputs);
+		SelectionComponent selecComp = new SelectionComponent(this.inputs);
+		selecComp.constitutiveClause();
+		ModComponent modComponent = new ModComponent(selecComp.outputs, range);
+		this.comp = modComponent;
+		this.comp.constitutiveClause();
 		controlledComponents.put(base, this);
 	    }
 
-	    public void setInputs(Integer[] realInputs, int range){
-		this.realInputs = realInputs;
-		// the 0 has no variable associated, hence the -1
-		this.auxiliaryInputs = new Integer[range - 1];
-		for(int i = 0, n = this.auxiliaryInputs.length; i < n ; i++)
-		    this.auxiliaryInputs[i] = getFreshVar();
-		enforceOrder(this.auxiliaryInputs);
-
+	    public void setInputs(Integer[] inputs){
+		this.inputs = inputs;
 	    }
 
 	    
-	    int getInputsSize(){return this.selecComp.getInputsSize();}
-	    int getOutputsSize(){return this.selecComp.getOutputsSize();}
+	    int getInputsSize(){return this.comp.getInputsSize();}
+	    int getOutputsSize(){return this.comp.getOutputsSize();}
 	    public void setOutputs(Integer[] outputs) {
 		this.outputs = outputs;
 		enforceOrder(this.outputs);
-		for(int outputI = 0, n = this.outputs.length;outputI < n; outputI++ ){
-		    int lit = this.outputs[outputI];
-		}
 	    }
+
 	    public Integer getIthOutput(Integer index){
 		return this.outputs[index];
 	    }
 
-	    public Integer getAuxiliarInput (Integer index){
-		return this.auxiliaryInputs[index];
-	    }
 
 	}
 	public void setControlledComponents( SortedMap<Integer, ArrayList<Integer>> baseInputs) {
