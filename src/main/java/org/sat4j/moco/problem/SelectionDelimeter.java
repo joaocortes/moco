@@ -776,32 +776,53 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
     }
 
-    public IVecInt uglyUpperBoundClause(int iObj, int upperLimit){
+    /**
+     *Adds the upper bound clauses  that enforce the inclusive
+     *upper limit upperLimit. Returns the blocking variables.
+     *@return blocking variables
+     *@param upperLimit inclusive upper limit
+     *@param iObj the objective index
+     */
+    public int uglyUpperBoundClause(int iObj, int upperLimit){
 	Circuit circuit = this.getIthCircuit(iObj);
 	DigitalNumber digits = circuit.getDigitalEnv().toDigital(upperLimit);
 	IteratorContiguous iterator = digits.iterator2();
-	IVecInt clause = new VecInt(new int[]{});
-	int range = 0;
-	int i = 0;
-	int currentBase = 1;
-	int currentDigit = 0;
-	int equalVar = 0;
-	int upperVar = 0;
-	while(iterator.hasNext() && i <= range)
-	    {
-		if(i < range){
-		    currentBase = iterator.currentBase();
-		    currentDigit = iterator.next();
-		    clause.push(i);
-		    upperVar = circuit.getControlledComponentBase(currentBase).getOutput(this.kDToIndex(currentDigit + 1));
-			}
-		if(i == range && iterator.hasNext()){
-		    iterator = digits.iterator2();		    
-		    range++;
-		    i = 0;
-		    clause.clear();
-		}
+
+	int activator = getFreshVar();
+	IVecInt clause = new VecInt(new int[]{activator});
+	librarian.putIndex(activator, new SDIndex(iObj, upperLimit));
+	
+	int base0 = 1;
+	int base = 1;
+	int digit = 0;
+	int ratio;
+	int lit = 0;
+	while(iterator.hasNext()){
+	    digit = iterator.next();
+	    base = iterator.currentBase();
+	    ratio = base/base0;
+	    base0 = base;
+	    if(digit + 1 < ratio){
+		lit = digitalLiteral(iObj, base, digit + 1);
+		clause.push(-lit);
+		AddClause(clause);
 	    }
-	    }
+	    AddClause(clause);
+	    clause.pop();
+	    lit = digitalLiteral(iObj, base, digit);
+	    if(lit != 0)
+		clause.push(-lit);
+	}
+	return 0;
     }
 
+    public int digitalLiteral(int iObj, int base, int value){
+	if( value == 0)
+	    return 0;
+	Circuit circuit = this.getIthCircuit(iObj);
+	int index = this.unaryToIndex(value);
+	if(index > circuit.getControlledComponentBase(base).getOutputsSize()) 
+	    index = circuit.getControlledComponentBase(base).getOutputsSize();
+	return circuit.getControlledComponentBase(base).getIthOutput(index);
+    } 
+}
