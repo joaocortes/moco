@@ -90,10 +90,10 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	int iObj;
 	DigitalEnv digitalEnv;
 
-	SortedMap<Integer, ControlledSelectionComponent> controlledComponents = null;
+	SortedMap<Integer, ControlledComponent> controlledComponents = null;
 	
 	public Circuit(int iObj){
-	    this.controlledComponents = new TreeMap<Integer, ControlledSelectionComponent>();
+	    this.controlledComponents = new TreeMap<Integer, ControlledComponent>();
 	    this.iObj = iObj;
 	    digitalEnv = new DigitalEnv();
 
@@ -121,7 +121,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
 
-	public ControlledSelectionComponent getControlledComponentBase(int base){return this.controlledComponents.get(base);}
+	public ControlledComponent getControlledComponentBase(int base){return this.controlledComponents.get(base);}
 
 	abstract class BaseComponent implements Iterable<Integer>{
 
@@ -504,7 +504,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 	    
 	}
-	class ControlledSelectionComponent{
+	class ControlledComponent{
 	    SelectionComponent selecComp = null;
 	    int base = 0;
 	    Integer[] realInputs = null;
@@ -514,7 +514,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    /**
 	     *range is the exclusive upper value the unary output may represent.
 	     */
-	    public ControlledSelectionComponent(Integer[] inputs, int base, int range){
+	    public ControlledComponent(Integer[] inputs, int base, int range){
 		this.base = base;
 		this.setInputs(inputs,  range);
 		Integer[] completeInputs = new Integer[this.realInputs.length + this.auxiliaryInputs.length];
@@ -561,7 +561,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	}
 	public void setControlledComponents( SortedMap<Integer, ArrayList<Integer>> baseInputs) {
-	    ControlledSelectionComponent lastContComp = null;
+	    ControlledComponent lastContComp = null;
 	    ArrayList<Integer> inputs = new ArrayList<Integer>();
 	    // last base needed to expand the weights
 	    int ratioI = 0;
@@ -579,13 +579,13 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    	    inputs.addAll(inputsWeights);
 		if(base == maxBase) ratio = 1;
 	    	if(base < maxBase){
-	    	    ControlledSelectionComponent contComp =
-	    		new ControlledSelectionComponent(inputs.toArray(new Integer[0]), base, ratio);
+	    	    ControlledComponent contComp =
+	    		new ControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
 	    	    lastContComp = contComp;
 	    	} else{
 		    
-	    	    ControlledSelectionComponent contComp =
-	    		new ControlledSelectionComponent(inputs.toArray(new Integer[0]), base, 1);
+	    	    ControlledComponent contComp =
+	    		new ControlledComponent(inputs.toArray(new Integer[0]), base, 1);
 	    	    break;
 		}
 		base *=ratio;
@@ -731,9 +731,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
     public int getY(int iObj, int iKD){
 
-	int index  = this.kDToIndex(iKD);
+	int index  = this.unaryToIndex(iKD);
 	Circuit circuit = this.circuits[iObj];
-	Circuit.ControlledSelectionComponent controlledComp =  circuit.controlledComponents.get(circuit.controlledComponents.lastKey());
+	Circuit.ControlledComponent controlledComp =  circuit.controlledComponents.get(circuit.controlledComponents.lastKey());
 	return controlledComp.outputs[index];
     };
 
@@ -762,15 +762,15 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		base = iterator.currentBase();
 		int digit = iterator.next();
 		if(digit != 0){
-		    Circuit.ControlledSelectionComponent contComp = circuit.controlledComponents.get(base);
-		    int index = this.kDToIndex(digit);
+		    Circuit.ControlledComponent contComp = circuit.controlledComponents.get(base);
+		    int index = this.unaryToIndex(digit);
 		    assumptions.push(contComp.auxiliaryInputs[index]);} 
 	    }
-	    Circuit.ControlledSelectionComponent MSBContComp = circuit.controlledComponents.get(base);
+	    Circuit.ControlledComponent MSBContComp = circuit.controlledComponents.get(base);
 	    int MSDigit = digits.getMSB();
 	    assert MSDigit != 0;
-	    int index = this.kDToIndex(MSDigit);
-	    assumptions.push(-MSBContComp.getOutput(index));
+	    int index = this.unaryToIndex(MSDigit);
+	    assumptions.push(-MSBContComp.getIthOutput(index));
 
 	}
 	return assumptions;
@@ -780,7 +780,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	
     }
 
-    public int kDToIndex(int kD){
+    public int unaryToIndex(int kD){
 	return kD  - 1;
 
     }
