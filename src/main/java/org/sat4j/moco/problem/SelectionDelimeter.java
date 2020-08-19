@@ -56,9 +56,12 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	this.circuits = new Circuit[this.instance.nObjs()];
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    Circuit circuit  = new Circuit(iObj);
+	    Objective ithObjective = this.getInstance().getObj(iObj);
 	    this.circuits[iObj] = circuit;
 	    if(buildCircuit)
 		circuit.buildCircuit();
+	    for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++)
+		this.uglyUpperBoundClause(iObj, kD);
 	}
 
 	// Log.comment(5, "}");
