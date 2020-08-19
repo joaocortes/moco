@@ -50,8 +50,11 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
     private Circuit[] circuits;
     
+    private HashMap<SDIndex, Integer> yMap = null;
+
     public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit) {
 	super(instance, solver);
+	this.yMap = new HashMap<SDIndex, Integer>();
 	this.instance = instance;
 	this.circuits = new Circuit[this.instance.nObjs()];
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
@@ -796,8 +799,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	int activator = getFreshVar();
 	IVecInt clause = new VecInt(new int[]{activator});
-	librarian.putIndex(activator, new SDIndex(iObj, upperLimit));
-	
+	SDIndex sDIndex = new SDIndex(iObj, upperLimit);
+	librarian.putIndex(activator, sDIndex);
+	yMap.put(sDIndex, activator);
 	int base0 = 1;
 	int base = 1;
 	int digit = 0;
