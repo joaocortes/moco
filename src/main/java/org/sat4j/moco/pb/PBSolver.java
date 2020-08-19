@@ -355,6 +355,26 @@ public class PBSolver {
     }
 
 
+    /**
+     * Adds a removable clause to the PB solver.
+     * @param setOfLiterals
+     * @return A constraint ID object that can be used to remove the
+     * clause in the future through {@link #removeConstr(ConstrID)} or
+     * {@link #removeConstrs(IVec)}.
+     * @throws ContradictionException if the solver detects that the
+     * addition of {@code setOfLiterals} would cause the formula to
+     * become unsatisfiable.
+     */
+
+    public ConstrID addRemovableClause(IVecInt setOfLiterals) throws ContradictionException {
+	this.newVar();
+        int act = this.nVars();
+        ConstrID id = ConstrID.mkFresh();
+        this.act_map.put(id, act);
+	this.solver.addClause(setOfLiterals);
+        return id;
+    }
+
 
     /**
      * returns the the id of the literal
