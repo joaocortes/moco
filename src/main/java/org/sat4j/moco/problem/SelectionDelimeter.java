@@ -839,8 +839,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    return 0;
 	Circuit circuit = this.getIthCircuit(iObj);
 	int index = this.unaryToIndex(value);
-	if(index > circuit.getControlledComponentBase(base).getOutputsSize()) 
-	    index = circuit.getControlledComponentBase(base).getOutputsSize();
+	if(index > circuit.getControlledComponentBase(base).getOutputsSize())  
+	    index = circuit.getControlledComponentBase(base).getOutputsSize() - 1;
 	return circuit.getControlledComponentBase(base).getIthOutput(index);
     } 
 }
