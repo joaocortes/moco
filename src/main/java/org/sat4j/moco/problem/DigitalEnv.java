@@ -189,6 +189,18 @@ public class DigitalEnv {
 	}
 
 	/**
+	 *minimal number of digits necessary to represent the corresponding value
+	 */
+
+	public int size(){
+	    int result = 0;
+	    Integer key = digits.lastKey();
+	    if(key == null)
+		return 0;
+	    result = getBaseI(digits.lastKey());
+	    return result;
+	}
+	/**
 	 * returns the most significant digit of DigitalNumber, that
 	 * is, the last nonzero digit.
 	 */
