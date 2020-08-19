@@ -127,7 +127,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	    Integer getIthInput(int i){return this.inputs[i];}
 	    Integer getIthOutput(int i){return this.outputs[i];}
-
+	    int getInputsSize(){return this.inputs.length;}
+	    int getOutputsSize(){return this.outputs.length;}
 	    abstract void constitutiveClause();
 
 	    /**
@@ -536,6 +537,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 	    
+	    int getInputsSize(){return this.selecComp.getInputsSize();}
+	    int getOutputsSize(){return this.selecComp.getOutputsSize();}
 	    public void setOutputs(Integer[] outputs) {
 		this.outputs = outputs;
 		enforceOrder(this.outputs);
