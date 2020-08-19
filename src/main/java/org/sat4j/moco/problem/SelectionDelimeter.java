@@ -72,16 +72,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     public Circuit getIthCircuit(int i){return this.circuits[i];}
     static class SDIndex extends GoalDelimeter.Index{
 
-	private int type = 0;
-	private int base = 0;
-
-	SDIndex(int iObj, int kD, int type, int base){
+	SDIndex(int iObj, int kD){
 	    super(iObj, kD);
-	    this.type = type;
-	    this.base = base;
 	}
-	int getType(){return this.type;}
-	int getBase(){return this.base;}
     };
 
     class Circuit{
@@ -548,7 +541,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		enforceOrder(this.outputs);
 		for(int outputI = 0, n = this.outputs.length;outputI < n; outputI++ ){
 		    int lit = this.outputs[outputI];
-		    librarian.putIndex(lit, new SDIndex(iObj, outputI + 1, 1, base));
 		}
 	    }
 	    public Integer getOutput(Integer index){
@@ -713,8 +705,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     public boolean isY(int id){
 	SDIndex index = librarian.getIndex(id);
 	if(index == null) return false;
-	int iObj = index.getIObj();
-	return index.base == this.circuits[iObj].controlledComponents.lastKey();
+	return true;
     }
     public int getCurrentKD(int iObj){return 0;};
     public int getIObjFromY(int id){
