@@ -270,10 +270,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		for(Integer[] preffix: preffixes)
 		    preffixesArray.add(new ArrayList<Integer>(Arrays.asList(preffix)));
 		mergecomp.constitutiveClause(preffixesArray);
-		ArrayList<Integer> outputs = new ArrayList<Integer>();
+		// ArrayList<Integer> outputs = new ArrayList<Integer>();
 		this.outputs = mergecomp.outputs;
 		// outputs.addAll(concatenatedSuffixes);
-		//TODO add outputs....
 		return;
 	    }
 	}
