@@ -671,7 +671,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	SortedMap<Integer,ArrayList<Integer>> baseInputs= new TreeMap<Integer, ArrayList<Integer>>();
 	HashMap<Integer, Integer> weights = this.getWeights(iObj);
 	List<DigitalNumber> digitsList = new ArrayList<DigitalNumber>();
-	int maxNDigits = 0;
 	// IVecInt digits = new VecInt(new int[]{});
 	for(Entry<Integer, Integer> entry: weights.entrySet()){
 	    int weight = entry.getValue();
