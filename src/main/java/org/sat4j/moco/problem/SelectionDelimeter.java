@@ -50,13 +50,13 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
     private Circuit[] circuits;
     
-    private HashMap<SDIndex, Integer> yMap = null;
+    private int[][] yTable = null;
 
     public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit) {
 	super(instance, solver);
-	this.yMap = new HashMap<SDIndex, Integer>();
 	this.instance = instance;
 	this.circuits = new Circuit[this.instance.nObjs()];
+	this.initializeYTable();
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    Circuit circuit  = new Circuit(iObj);
 	    Objective ithObjective = this.getInstance().getObj(iObj);
@@ -70,6 +70,17 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	// Log.comment(5, "}");
     }
 
+    /**
+     * Initialize the container of the Y variables
+     */
+     private void initializeYTable(){
+	this.yTable = new int[this.instance.nObjs()][];
+	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
+	    Objective ithObj = instance.getObj(iObj);
+	    this.yTable[iObj] = new int[ithObj.getWeightDiff()];
+
+       }
+     }
     public SelectionDelimeter(Instance instance, PBSolver solver) {
 	this(instance, solver, true);
 
@@ -729,12 +740,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    return index.getKD();
 	return 0;};
 
-    public int getY(int iObj, int iKD){
-
-	int index  = this.unaryToIndex(iKD);
-	Circuit circuit = this.circuits[iObj];
-	Circuit.ControlledComponent controlledComp =  circuit.controlledComponents.get(circuit.controlledComponents.lastKey());
-	return controlledComp.outputs[index];
+    public int getY(int iObj, int kD){
+	int index  = this.unaryToIndex(kD);
+	return this.yTable[iObj][index];
     };
 
     public String prettyFormatVariable(int literal)   {return "";} ;
@@ -801,7 +809,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	IVecInt clause = new VecInt(new int[]{activator});
 	SDIndex sDIndex = new SDIndex(iObj, upperLimit);
 	librarian.putIndex(activator, sDIndex);
-	yMap.put(sDIndex, activator);
+	this.yTable[iObj][unaryToIndex(upperLimit)] = activator;
 	int base0 = 1;
 	int base = 1;
 	int digit = 0;
