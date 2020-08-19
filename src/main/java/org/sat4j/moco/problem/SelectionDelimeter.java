@@ -546,7 +546,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    int lit = this.outputs[outputI];
 		}
 	    }
-	    public Integer getOutput(Integer index){
+	    public Integer getIthOutput(Integer index){
 		return this.outputs[index];
 	    }
 
