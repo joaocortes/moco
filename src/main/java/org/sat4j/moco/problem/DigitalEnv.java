@@ -144,11 +144,14 @@ public class DigitalEnv {
 	    return toDigital(result);
 	}
 	public int MSB(){
-	    Integer result = digits.getOrDefault(getBase(basesN), 0);
-	    return result;
+	    Integer key = digits.lastKey();
+	    if(key == null)
+		return 0;
+	    return digits.get(key);
 	}
 	public int getDigit(int base){return this.digits.get(base);}
 	public int getDigitI(int i){return this.digits.getOrDefault(getBase(i),0);}
+
 	public IteratorJumps iterator(){
 	    return new IteratorJumps();	
 	}
