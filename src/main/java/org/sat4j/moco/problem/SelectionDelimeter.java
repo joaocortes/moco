@@ -795,8 +795,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	int ratio;
 	int lit = 0;
 	while(iterator.hasNext()){
-	    digit = iterator.next();
 	    base = iterator.currentBase();
+	    digit = iterator.next();
 	    ratio = base/base0;
 	    base0 = base;
 	    if(digit + 1 < ratio){
