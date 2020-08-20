@@ -522,17 +522,13 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	class ControlledComponent{
 	    BaseComponent comp = null;
 	    int base = 0;
-	    Integer[] inputs = null;
-	    Integer[] outputs = null;
 
 	    /**
 	     *range is the exclusive upper value the unary output may represent.
 	     */
 	    public ControlledComponent(Integer[] inputs, int base, int range){
 		this.base = base;
-		this.setInputs(inputs);
-
-		SelectionComponent selecComp = new SelectionComponent(this.inputs);
+		SelectionComponent selecComp = new SelectionComponent(inputs);
 		selecComp.constitutiveClause();
 		ModComponent modComponent = new ModComponent(selecComp.outputs, range);
 		this.comp = modComponent;
