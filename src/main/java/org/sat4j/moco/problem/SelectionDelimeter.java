@@ -762,7 +762,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	IteratorContiguous iterator = digits.iterator2();
 
 	int activator = getFreshVar();
-	IVecInt clause = new VecInt(new int[]{activator});
+	IVecInt clause = new VecInt(circuit.getDigitalEnv().getBasesN());
+	clause.push(activator);
 	SDIndex sDIndex = new SDIndex(iObj, upperLimit);
 	librarian.putIndex(activator, sDIndex);
 	this.yTable[iObj][unaryToIndex(upperLimit)] = activator;
