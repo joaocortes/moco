@@ -135,7 +135,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	    protected Integer[] inputs;
 	    protected  Integer[] outputs;
-	    int sortedPortionN = 0;
 
 	    public BaseComponent(){
 	    }
