@@ -94,9 +94,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	}
     };
 
-    class Circuit{
-	
-	
     public class GoalManager{
 	int iObj;
 	Circuit circuit;
@@ -110,14 +107,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	}
     }
 
+    public class Circuit{
 	SortedMap<Integer, ControlledComponent> controlledComponents = null;
 	
-	public Circuit(int iObj){
+	public Circuit(){
 	    this.controlledComponents = new TreeMap<Integer, ControlledComponent>();
-	    this.iObj = iObj;
-	    digitalEnv = new DigitalEnv();
 
 	}
+
 	/**
 	 *setter of each circuit in this.circuits
 	 */
