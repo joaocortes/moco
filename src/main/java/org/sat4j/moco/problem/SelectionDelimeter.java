@@ -99,8 +99,18 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     class Circuit{
 	
 	
+    public class GoalManager{
 	int iObj;
+	Circuit circuit;
 	DigitalEnv digitalEnv;
+
+	GoalManager(int iObj){
+	    this.iObj = iObj;
+	    this.circuit = new Circuit();
+	    this.digitalEnv = new DigitalEnv();
+	    
+	}
+    }
 
 	SortedMap<Integer, ControlledComponent> controlledComponents = null;
 	
