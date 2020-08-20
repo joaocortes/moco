@@ -118,8 +118,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    this.setControlledComponents(getInputsFromWeights(this.iObj));
 	    
 	}
-    
-	public int getNextValidRoof(int upperLimit){
+    	public int getNextValidRoof(int upperLimit){
 	    DigitalNumber digits = this.getDigitalEnv().toDigital(upperLimit);
 	    int basesN = this.getDigitalEnv().getBasesN();
 	    for(int digit: digits)
@@ -130,11 +129,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    int MSBase = this.getDigitalEnv().getBase(basesN - 1);
 	    return MSBase * (MSDigit + 1);
 	}
-
 	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
-
 	public ControlledComponent getControlledComponentBase(int base){return this.controlledComponents.get(base);}
-
 	abstract class BaseComponent implements Iterable<Integer>{
 
 	    protected Integer[] inputs;
@@ -173,7 +169,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		public boolean hasNext(){return iterator.hasNext();}
 	    }
 	}
-
 	abstract class SortedComponent extends BaseComponent{
 
 	    int sortedPortionN = 0;
@@ -720,8 +715,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	return this.yTable[iObj][index];
     };
 
-    public String prettyFormatVariable(int literal)   {return "";} ;
-
+    public String prettyFormatVariable(int literal)   {return "";}
 
     /**
      *UpperKD contains the inclusive upper limits of the truncated
