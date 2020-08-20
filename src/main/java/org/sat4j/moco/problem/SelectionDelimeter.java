@@ -472,7 +472,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 	    public void constitutiveClause(){
-		this.outputs = new Integer[this.inputs.length < this.modN - 1? this.inputs.length: this.modN - 1];
+		this.outputs = new Integer[this.inputs.length < this.modN ? this.inputs.length: this.modN - 1];
 		if(this.inputs.length <= this.modN){
 	
 		    IVecInt clause = new VecInt(3);
@@ -495,6 +495,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    clauses[i] = new VecInt();
 
 		{ 
+		    int shift = 0;
 		    int i = 0; int n = this.getOutputsSize();
 		    while(i < n){
 			Integer[] slice = new Integer[n - i > this.modN? this.modN: n - i];
@@ -502,6 +503,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 			    slice[i % modN] = this.inputs[i++];
 			ModComponent modComponent = new ModComponent(slice, this.modN);
 			modComponent.constitutiveClause();
+			for(int lit: modComponent.outputs)
+			    this.outputs[shift++] = lit;
 			for(int k = 0; i < this.modN - 1; k++){
 			    int lit = modComponent.getIthOutput(k);
 			    clauses[k].push(lit);
