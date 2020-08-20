@@ -173,5 +173,4 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
 	return true;
     }
 
-
 }
