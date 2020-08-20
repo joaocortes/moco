@@ -717,43 +717,31 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     public String prettyFormatVariable(int literal)   {return "";}
 
     /**
-     *UpperKD contains the inclusive upper limits of the truncated
-     *domain. Shall return the assumptions necessary to enforce the
-     *truncation.
+     * Generate the upper limit assumptions
      */
-
     public IVecInt generateUpperBoundAssumptions(int[] UpperKD){
+
 	IVecInt assumptions = new VecInt(new int[]{});
-	for(int iObj = 0, n = this.instance.nObjs(); iObj < n; iObj++) {
-	    int upperLimit = UpperKD[iObj];
-	    Circuit circuit = this.circuits[iObj];
-	    DigitalEnv ithDigitalEnv = circuit.getDigitalEnv();
-	    int nextValidRoof = circuit.getNextValidRoof(upperLimit);
-	    int diff = nextValidRoof - upperLimit;
-	    DigitalNumber digits = ithDigitalEnv.toDigital(diff);
-	    // add the desired constant, through the assumptions
-	    int base = 1;
-	    DigitalNumber.IteratorJumps iterator = digits.iterator();
-	    while(iterator.hasNext()){
-		base = iterator.currentBase();
-		int digit = iterator.next();
-		if(digit != 0){
-		    Circuit.ControlledComponent contComp = circuit.controlledComponents.get(base);
-		    int index = this.unaryToIndex(digit);
-		    assumptions.push(contComp.auxiliaryInputs[index]);} 
+	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
+	    Objective ithObjective = this.instance.getObj(iObj);
+	    if(UpperKD[iObj]  < ithObjective.getWeightDiff())
+		assumptions.push(-this.getY(iObj, UpperKD[iObj] + 1));
+	    
+	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
+	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
+	    int sign = 1;
+	    int ithAbsoluteWeight;
+	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
+		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
+		sign = (ithAbsoluteWeight > 0? 1 : -1);
+		ithAbsoluteWeight *= sign;
+		if( ithAbsoluteWeight > UpperKD[iObj])
+		    assumptions.push(- sign * objectiveLits.get(iX));
 	    }
-	    Circuit.ControlledComponent MSBContComp = circuit.controlledComponents.get(base);
-	    int MSDigit = digits.getMSB();
-	    assert MSDigit != 0;
-	    int index = this.unaryToIndex(MSDigit);
-	    assumptions.push(-MSBContComp.getIthOutput(index));
 
 	}
+
 	return assumptions;
-	
-	
- 
-	
     }
 
     public int unaryToIndex(int kD){
