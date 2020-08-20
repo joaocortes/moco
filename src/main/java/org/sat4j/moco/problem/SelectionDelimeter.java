@@ -132,6 +132,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 			}while(true);
 		    
 		    }
+		    public int getFreshVar1(){return getFreshVar();}
+		    public boolean AddClause1(IVecInt setOfLiterals){return AddClause(setOfLiterals);}
 		};
 	    this.digitalEnv = new DigitalEnv();
 	    
@@ -199,15 +201,16 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	}
     }
 
-    public class Circuit{
+    static abstract public class Circuit{
 	SortedMap<Integer, ControlledComponent> controlledComponents = null;
 	
 	public Circuit(){
 	    this.controlledComponents = new TreeMap<Integer, ControlledComponent>();
-
 	}
 
-	public void buildCircuit(){}
+	abstract public int getFreshVar1();
+	abstract public boolean AddClause1(IVecInt setOfLiterals);
+	abstract public void buildCircuit();
 
 	public ControlledComponent getControlledComponentBase(int base){return this.controlledComponents.get(base);}
 	abstract class BaseComponent implements Iterable<Integer>{
@@ -371,14 +374,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	    @Override
 	    void constitutiveClause() {
-		this.outputs[0]=getFreshVar();
+		this.outputs[0]=getFreshVar1();
 		if(this.inputs.length == 0)
 		    return;
 		int sign;
 		if(this.polarity) sign = 1; else sign = -1;
 		for(int lit: this.inputs){
 		    IVecInt clause = new VecInt(new int[]{-sign * lit, this.outputs[0]});
-		    AddClause(clause);
+		    AddClause1(clause);
 		}
 
 		return;
@@ -558,11 +561,11 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    int MSB = this.inputs[this.inputs.length - 1];
 		    for(int i = 0, n = this.getOutputsSize(); i < n; i++){
 			int input = this.inputs[i];
-			int output = getFreshVar();
+			int output = getFreshVar1();
 			this.outputs[i] = output;
 			clause.clear();
 			clause.push(-input); clause.push(output); clause.push(MSB);
-			AddClause(clause);
+			AddClause1(clause);
 			//TODO: do I need the double implication?			
 		    }
 		    return;
@@ -590,7 +593,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 			}		
 		    }
 		    for(IVecInt clause: clauses )
-			AddClause(clause);
+			AddClause1(clause);
 		}
 		return;
 
@@ -645,7 +648,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    for(int variable: variables)
 		if(pastVariable != 0){
 		    IVecInt clause = new VecInt(new int[] {-variable, pastVariable});
-		    AddClause(clause);
+		    AddClause1(clause);
 		    pastVariable = variable;
 		}
 
