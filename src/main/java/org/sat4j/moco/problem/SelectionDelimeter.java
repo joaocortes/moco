@@ -780,8 +780,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		lit = digitalLiteral(iObj, base, digit + 1);
 		clause.push(-lit);
 		AddClause(clause);
+		clause.pop();
 	    }
-	    clause.pop();
 	    lit = digitalLiteral(iObj, base, digit);
 	    if(lit != 0){
 		clause.push(-lit);
