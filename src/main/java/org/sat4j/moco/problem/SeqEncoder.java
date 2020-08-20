@@ -164,7 +164,6 @@ import org.sat4j.specs.ContradictionException;
        }
      }
 
-     
     /**
      * Initialize the container of the Sequential variables
      */
