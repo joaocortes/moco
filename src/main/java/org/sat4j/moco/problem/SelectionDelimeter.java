@@ -50,21 +50,19 @@ import org.sat4j.specs.IVecInt;
 
 public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex> {
 
-    private Circuit[] circuits;
+    private GoalManager[] goalManagers;
     
     private int[][] yTable = null;
 
     public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit) {
 	super(instance, solver);
 	this.instance = instance;
-	this.circuits = new Circuit[this.instance.nObjs()];
+	this.goalManagers = new GoalManager[this.instance.nObjs()];
 	this.initializeYTable();
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    Circuit circuit  = new Circuit(iObj);
 	    Objective ithObjective = this.getInstance().getObj(iObj);
-	    this.circuits[iObj] = circuit;
 	    if(buildCircuit)
-		circuit.buildCircuit();
+		goalManagers[iObj].circuit.buildCircuit(iObj);
 	    for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++)
 		this.uglyUpperBoundClause(iObj, kD);
 	}
