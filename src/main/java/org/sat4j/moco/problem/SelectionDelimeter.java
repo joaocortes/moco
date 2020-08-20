@@ -101,7 +101,37 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	ObjManager(int iObj){
 	    this.iObj = iObj;
-	    this.circuit = new Circuit();
+	    this.circuit = new Circuit(){
+		    public void buildCircuit(){
+			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
+			ControlledComponent lastContComp = null;
+			ArrayList<Integer> inputs = new ArrayList<Integer>();
+			// last base needed to expand the weights
+			int ratioI = 0;
+			int base = 1;
+			int ratio = 1;
+			int maxBase = baseInputs.lastKey();
+			ControlledComponent contComp;
+	    
+			do{
+			    ratio = this.digitalEnv.getRatio(ratioI++);
+			    inputs.clear();
+			    ArrayList<Integer> inputsWeights = baseInputs.get(base);
+			    if(lastContComp != null)
+				inputs.addAll(getCarryBits(lastContComp.getInputs(), ratio));		    
+			    if(inputsWeights!=null)
+				inputs.addAll(inputsWeights);
+			    if(base <= maxBase || inputs.size() != 0){
+				contComp =
+				    new ControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
+				lastContComp = contComp;
+			    } else{break;}
+			    base *=ratio;
+			}while(true);
+		    
+		    }
+		};
+	    this.circuit.buildCircuit();
 	    this.digitalEnv = new DigitalEnv();
 	    
 	}
@@ -168,37 +198,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	}
 
-	/**
-	 *setter of each circuit in this.circuits
-	 */
-	public void buildCircuit(int iObj){
-	    SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
-	    ControlledComponent lastContComp = null;
-	    ArrayList<Integer> inputs = new ArrayList<Integer>();
-	    // last base needed to expand the weights
-	    int ratioI = 0;
-	    int base = 1;
-	    int ratio = 1;
-	    int maxBase = baseInputs.lastKey();
-	    ControlledComponent contComp;
-	    
-	    do{
-	    	ratio = this.digitalEnv.getRatio(ratioI++);
-	    	inputs.clear();
-	    	ArrayList<Integer> inputsWeights = baseInputs.get(base);
-	    	if(lastContComp != null)
-	    	    inputs.addAll(getCarryBits(lastContComp.getInputs(), ratio));		    
-	    	if(inputsWeights!=null)
-	    	    inputs.addAll(inputsWeights);
-	    	if(base <= maxBase || inputs.size() != 0){
-		    contComp =
-	    		new ControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
-	    	    lastContComp = contComp;
-	    	} else{break;}
-		base *=ratio;
-	    }while(true);
-		    
-	}
+	public void buildCircuit(){}
 
 	public ControlledComponent getControlledComponentBase(int base){return this.controlledComponents.get(base);}
 	abstract class BaseComponent implements Iterable<Integer>{
