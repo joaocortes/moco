@@ -86,7 +86,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
     }
 
-    public Circuit getIthCircuit(int i){return this.circuits[i];}
+    public ObjManager getIthObjManager(int i){return this.objManagers[i];}
     static class SDIndex extends GoalDelimeter.Index{
 
 	SDIndex(int iObj, int kD){
@@ -765,8 +765,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
      *@param iObj the objective index
      */
     public int uglyUpperBoundClause(int iObj, int upperLimit){
-	Circuit circuit = this.getIthCircuit(iObj);
-	DigitalNumber digits = circuit.getDigitalEnv().toDigital(upperLimit);
+	ObjManager objManager = this.getIthObjManager(iObj);
+	DigitalNumber digits = objManager.getDigitalEnv().toDigital(upperLimit);
 	IteratorContiguous iterator = digits.iterator2();
 
 	int activator = getFreshVar();
@@ -802,7 +802,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     public int digitalLiteral(int iObj, int base, int value){
 	if( value == 0)
 	    return 0;
-	Circuit circuit = this.getIthCircuit(iObj);
+	Circuit circuit = this.getIthObjManager(iObj);
 	int index = this.unaryToIndex(value);
 	if(index > circuit.getControlledComponentBase(base).getOutputsSize())  
 	    index = circuit.getControlledComponentBase(base).getOutputsSize() - 1;
