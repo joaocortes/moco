@@ -565,7 +565,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    	    inputs.addAll(getCarryBits(lastContComp.getInputs(), ratio));		    
 	    	if(inputsWeights!=null)
 	    	    inputs.addAll(inputsWeights);
-	    	if(base <= maxBase){
+	    	if(base <= maxBase || inputs.size() != 0){
 		    contComp =
 	    		new ControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
 	    	    lastContComp = contComp;
