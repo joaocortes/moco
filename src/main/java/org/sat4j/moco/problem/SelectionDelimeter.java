@@ -105,6 +105,59 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    this.digitalEnv = new DigitalEnv();
 	    
 	}
+
+
+    /**
+     *Generates the inputs created by the weights of the objective
+     *function iObj
+     */
+    protected SortedMap<Integer,ArrayList<Integer>> getInputsFromWeights(int iObj){
+	DigitalEnv digitalEnv = this.getDigitalEnv();
+	SortedMap<Integer,ArrayList<Integer>> baseInputs= new TreeMap<Integer, ArrayList<Integer>>();
+	HashMap<Integer, Integer> weights = getWeights(iObj);
+	List<DigitalNumber> digitsList = new ArrayList<DigitalNumber>();
+	// IVecInt digits = new VecInt(new int[]{});
+	for(Entry<Integer, Integer> entry: weights.entrySet()){
+	    int weight = entry.getValue();
+	    boolean weightSign = weight > 0;
+	    int lit = entry.getKey();
+	    DigitalNumber digits = digitalEnv.toDigital(weightSign? weight: -weight);
+	    digitsList.add(digits);
+	    // if(maxNDigits < nDigits) maxNDigits = nDigits;
+	    DigitalNumber.IteratorContiguous iterator = digits.iterator2();
+
+	    int ithDigit = 0;
+	    int ithBase = 1;
+	    while(iterator.hasNext())
+		{
+		    ithBase = iterator.currentBase();
+		    ithDigit = iterator.next();
+		    while( ithDigit > 0){
+			if(baseInputs.containsKey(ithBase))
+			    baseInputs.get(ithBase).add(weightSign? lit: -lit);
+			else
+			    baseInputs.put(ithBase, new ArrayList<Integer>(Arrays.asList(new Integer[]{weightSign? lit: -lit})));
+			ithDigit--;
+		    }
+
+		}
+	}
+	return baseInputs;
+
+    }
+    	public int getNextValidRoof(int upperLimit){
+	    DigitalNumber digits = this.getDigitalEnv().toDigital(upperLimit);
+	    int basesN = this.getDigitalEnv().getBasesN();
+	    for(int digit: digits)
+	    	System.out.println(digit);
+	    int MSDigit = this.getDigitalEnv().getMSB(digits);
+	    int MSRange = this.digitalEnv.getRatio(this.getDigitalEnv().getBasesN());
+	    assert(MSDigit <= MSRange - 1);
+	    int MSBase = this.getDigitalEnv().getBase(basesN - 1);
+	    return MSBase * (MSDigit + 1);
+	}
+	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
+
     }
 
     public class Circuit{
@@ -148,18 +201,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    
 	}
 
-    	public int getNextValidRoof(int upperLimit){
-	    DigitalNumber digits = this.getDigitalEnv().toDigital(upperLimit);
-	    int basesN = this.getDigitalEnv().getBasesN();
-	    for(int digit: digits)
-	    	System.out.println(digit);
-	    int MSDigit = this.getDigitalEnv().getMSB(digits);
-	    int MSRange = this.digitalEnv.getRatio(this.getDigitalEnv().getBasesN());
-	    assert(MSDigit <= MSRange - 1);
-	    int MSBase = this.getDigitalEnv().getBase(basesN - 1);
-	    return MSBase * (MSDigit + 1);
-	}
-	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
 	public ControlledComponent getControlledComponentBase(int base){return this.controlledComponents.get(base);}
 	abstract class BaseComponent implements Iterable<Integer>{
 
@@ -638,45 +679,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     }
 
 
-    /**
-     *Generates the inputs created by the weights of the objective
-     *function iObj
-     */
-    protected SortedMap<Integer,ArrayList<Integer>> getInputsFromWeights(int iObj){
-	Circuit circuit = this.circuits[iObj];
-	DigitalEnv digitalEnv = circuit.getDigitalEnv();
-	SortedMap<Integer,ArrayList<Integer>> baseInputs= new TreeMap<Integer, ArrayList<Integer>>();
-	HashMap<Integer, Integer> weights = this.getWeights(iObj);
-	List<DigitalNumber> digitsList = new ArrayList<DigitalNumber>();
-	// IVecInt digits = new VecInt(new int[]{});
-	for(Entry<Integer, Integer> entry: weights.entrySet()){
-	    int weight = entry.getValue();
-	    boolean weightSign = weight > 0;
-	    int lit = entry.getKey();
-	    DigitalNumber digits = digitalEnv.toDigital(weightSign? weight: -weight);
-	    digitsList.add(digits);
-	    // if(maxNDigits < nDigits) maxNDigits = nDigits;
-	    DigitalNumber.IteratorContiguous iterator = digits.iterator2();
-
-	    int ithDigit = 0;
-	    int ithBase = 1;
-	    while(iterator.hasNext())
-		{
-		    ithBase = iterator.currentBase();
-		    ithDigit = iterator.next();
-		    while( ithDigit > 0){
-			if(baseInputs.containsKey(ithBase))
-			    baseInputs.get(ithBase).add(weightSign? lit: -lit);
-			else
-			    baseInputs.put(ithBase, new ArrayList<Integer>(Arrays.asList(new Integer[]{weightSign? lit: -lit})));
-			ithDigit--;
-		    }
-
-		}
-	}
-	return baseInputs;
-
-    }
     private HashMap<Integer, Integer> getWeights(int iObj){
 	HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
 	Objective ithObjective = this.instance.getObj(iObj);
