@@ -476,8 +476,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 	    public void constitutiveClause(){
+		this.outputs = new Integer[this.inputs.length < this.modN - 1? this.inputs.length: this.modN - 1];
 		if(this.inputs.length <= this.modN){
-		    this.outputs = new Integer[this.inputs.length < this.modN - 1? this.inputs.length: this.modN - 1];
+	
 		    IVecInt clause = new VecInt(3);
 		    int MSB = this.inputs[this.inputs.length - 1];
 		    for(int i = 0, n = this.getOutputsSize(); i < n; i++){
@@ -489,6 +490,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 			AddClause(clause);
 			//TODO: do I need the double implication?			
 		    }
+		    return;
 		}
 		// will store one conjunction for each value in the
 		// range modN - 1
