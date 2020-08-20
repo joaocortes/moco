@@ -13,7 +13,7 @@
     <profile>
         <id>inline</id>
         <properties>
-	  <myTestSourceDirectory>${project.basedir}/src/main/</myTestSourceDirectory>
+	  <myTestSourceDirectory>${project.basedir}/src/test/</myTestSourceDirectory>
         </properties>
     </profile>
     <profile>
@@ -93,7 +93,7 @@
     </dependencies>
     
     <build>
-      <testSourceDirectory>${myTestSourceDirectory}</testSourceDirectory>
+      <!-- <testSourceDirectory>${myTestSourceDirectory}</testSourceDirectory> -->
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
