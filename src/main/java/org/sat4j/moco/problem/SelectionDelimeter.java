@@ -142,6 +142,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    public BaseComponent(){
 	    }
 
+	    Integer[] getInputs(){return this.inputs;}
+	    Integer[] getOutputs(){return this.outputs;}
 	    Integer getIthInput(int i){return this.inputs[i];}
 	    Integer getIthOutput(int i){return this.outputs[i];}
 	    int getInputsSize(){return this.inputs.length;}
@@ -461,6 +463,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		this.outputs = outputs.toArray(new Integer[0]);
 	    }
 	}
+
 	/**
 	 *returns the Mod of the counts of 1 inputs. Assumes
 	 *inputs are sorted by value.
@@ -476,8 +479,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		if(this.inputs.length <= this.modN){
 		    this.outputs = new Integer[this.inputs.length < this.modN - 1? this.inputs.length: this.modN - 1];
 		    IVecInt clause = new VecInt(3);
-		    int MSB = this.inputs[this.inputs.length];
-		    for(int i = 0, n = this.outputs.length; i < n; i++){
+		    int MSB = this.inputs[this.inputs.length - 1];
+		    for(int i = 0, n = this.getOutputsSize(); i < n; i++){
 			int input = this.inputs[i];
 			int output = getFreshVar();
 			this.outputs[i] = output;
@@ -494,7 +497,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    clauses[i] = new VecInt();
 
 		{ 
-		    int i = 0; int n = this.outputs.length;
+		    int i = 0; int n = this.getOutputsSize();
 		    while(i < n){
 			Integer[] slice = new Integer[n - i > this.modN? this.modN: n - i];
 			while(n - i  <= this.modN && i < n)
@@ -535,20 +538,17 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		controlledComponents.put(base, this);
 	    }
 
-	    public void setInputs(Integer[] inputs){
-		this.inputs = inputs;
-	    }
 
-	    
+	    public Integer[] getInputs(){return this.comp.getInputs();}
+	    public Integer[] getOutputs(){return this.comp.getOutputs();}
 	    int getInputsSize(){return this.comp.getInputsSize();}
 	    int getOutputsSize(){return this.comp.getOutputsSize();}
-	    public void setOutputs(Integer[] outputs) {
-		this.outputs = outputs;
-		enforceOrder(this.outputs);
-	    }
 
+	    public int getIthInput(int index){
+		return this.comp.getIthInput(index);
+	    }
 	    public Integer getIthOutput(Integer index){
-		return this.outputs[index];
+		return this.comp.getIthOutput(index);
 	    }
 
 
@@ -568,7 +568,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    	inputs.clear();
 	    	ArrayList<Integer> inputsWeights = baseInputs.get(base);
 	    	if(lastContComp != null)
-	    	    inputs.addAll(getCarryBits(lastContComp.outputs, ratio));		    
+	    	    inputs.addAll(getCarryBits(lastContComp.getInputs(), ratio));		    
 	    	if(inputsWeights!=null)
 	    	    inputs.addAll(inputsWeights);
 		if(base == maxBase) ratio = 1;
