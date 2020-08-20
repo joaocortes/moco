@@ -60,9 +60,10 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	this.objManagers = new ObjManager[this.instance.nObjs()];
 	this.initializeYTable();
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
+	    this.objManagers[iObj] = new ObjManager(iObj);
 	    Objective ithObjective = this.getInstance().getObj(iObj);
 	    if(buildCircuit)
-		objManagers[iObj].circuit.buildCircuit(iObj);
+		objManagers[iObj].circuit.buildCircuit();
 	    for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++)
 		this.uglyUpperBoundClause(iObj, kD);
 	}
@@ -101,6 +102,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	ObjManager(int iObj){
 	    this.iObj = iObj;
+
 	    this.circuit = new Circuit(){
 		    public void buildCircuit(){
 			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
@@ -114,7 +116,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 			ControlledComponent contComp;
 	    
 			do{
-			    ratio = this.digitalEnv.getRatio(ratioI++);
+			    ratio = digitalEnv.getRatio(ratioI++);
 			    inputs.clear();
 			    ArrayList<Integer> inputsWeights = baseInputs.get(base);
 			    if(lastContComp != null)
@@ -131,50 +133,49 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    
 		    }
 		};
-	    this.circuit.buildCircuit();
 	    this.digitalEnv = new DigitalEnv();
 	    
 	}
 
 
-    /**
-     *Generates the inputs created by the weights of the objective
-     *function iObj
-     */
-    protected SortedMap<Integer,ArrayList<Integer>> getInputsFromWeights(int iObj){
-	DigitalEnv digitalEnv = this.getDigitalEnv();
-	SortedMap<Integer,ArrayList<Integer>> baseInputs= new TreeMap<Integer, ArrayList<Integer>>();
-	HashMap<Integer, Integer> weights = getWeights(iObj);
-	List<DigitalNumber> digitsList = new ArrayList<DigitalNumber>();
-	// IVecInt digits = new VecInt(new int[]{});
-	for(Entry<Integer, Integer> entry: weights.entrySet()){
-	    int weight = entry.getValue();
-	    boolean weightSign = weight > 0;
-	    int lit = entry.getKey();
-	    DigitalNumber digits = digitalEnv.toDigital(weightSign? weight: -weight);
-	    digitsList.add(digits);
-	    // if(maxNDigits < nDigits) maxNDigits = nDigits;
-	    DigitalNumber.IteratorContiguous iterator = digits.iterator2();
+	/**
+	 *Generates the inputs created by the weights of the objective
+	 *function iObj
+	 */
+	protected SortedMap<Integer,ArrayList<Integer>> getInputsFromWeights(int iObj){
+	    DigitalEnv digitalEnv = this.getDigitalEnv();
+	    SortedMap<Integer,ArrayList<Integer>> baseInputs= new TreeMap<Integer, ArrayList<Integer>>();
+	    HashMap<Integer, Integer> weights = getWeights(iObj);
+	    List<DigitalNumber> digitsList = new ArrayList<DigitalNumber>();
+	    // IVecInt digits = new VecInt(new int[]{});
+	    for(Entry<Integer, Integer> entry: weights.entrySet()){
+		int weight = entry.getValue();
+		boolean weightSign = weight > 0;
+		int lit = entry.getKey();
+		DigitalNumber digits = digitalEnv.toDigital(weightSign? weight: -weight);
+		digitsList.add(digits);
+		// if(maxNDigits < nDigits) maxNDigits = nDigits;
+		DigitalNumber.IteratorContiguous iterator = digits.iterator2();
 
-	    int ithDigit = 0;
-	    int ithBase = 1;
-	    while(iterator.hasNext())
-		{
-		    ithBase = iterator.currentBase();
-		    ithDigit = iterator.next();
-		    while( ithDigit > 0){
-			if(baseInputs.containsKey(ithBase))
-			    baseInputs.get(ithBase).add(weightSign? lit: -lit);
-			else
-			    baseInputs.put(ithBase, new ArrayList<Integer>(Arrays.asList(new Integer[]{weightSign? lit: -lit})));
-			ithDigit--;
+		int ithDigit = 0;
+		int ithBase = 1;
+		while(iterator.hasNext())
+		    {
+			ithBase = iterator.currentBase();
+			ithDigit = iterator.next();
+			while( ithDigit > 0){
+			    if(baseInputs.containsKey(ithBase))
+				baseInputs.get(ithBase).add(weightSign? lit: -lit);
+			    else
+				baseInputs.put(ithBase, new ArrayList<Integer>(Arrays.asList(new Integer[]{weightSign? lit: -lit})));
+			    ithDigit--;
+			}
+
 		    }
+	    }
+	    return baseInputs;
 
-		}
 	}
-	return baseInputs;
-
-    }
     	public int getNextValidRoof(int upperLimit){
 	    DigitalNumber digits = this.getDigitalEnv().toDigital(upperLimit);
 	    int basesN = this.getDigitalEnv().getBasesN();
@@ -188,6 +189,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	}
 	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
 
+	public int digitalLiteral(int base, int value){
+	    if( value == 0)
+		return 0;
+	    int index = unaryToIndex(value);
+	    if(index > circuit.getControlledComponentBase(base).getOutputsSize())  
+		index = circuit.getControlledComponentBase(base).getOutputsSize() - 1;
+	    return circuit.getControlledComponentBase(base).getIthOutput(index);
+	}
     }
 
     public class Circuit{
@@ -785,12 +794,12 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    ratio = base/base0;
 	    base0 = base;
 	    if(digit + 1 < ratio){
-		lit = digitalLiteral(iObj, base, digit + 1);
+		lit = objManager.digitalLiteral(base, digit + 1);
 		clause.push(-lit);
 		AddClause(clause);
 		clause.pop();
 	    }
-	    lit = digitalLiteral(iObj, base, digit);
+	    lit = objManager.digitalLiteral(base, digit);
 	    if(lit != 0){
 		clause.push(-lit);
 		AddClause(clause);
@@ -798,14 +807,4 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	}
 	return 0;
     }
-
-    public int digitalLiteral(int iObj, int base, int value){
-	if( value == 0)
-	    return 0;
-	Circuit circuit = this.getIthObjManager(iObj);
-	int index = this.unaryToIndex(value);
-	if(index > circuit.getControlledComponentBase(base).getOutputsSize())  
-	    index = circuit.getControlledComponentBase(base).getOutputsSize() - 1;
-	return circuit.getControlledComponentBase(base).getIthOutput(index);
-    } 
 }
