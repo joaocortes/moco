@@ -172,7 +172,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	 *setter of each circuit in this.circuits
 	 */
 	public void buildCircuit(int iObj){
-	    this.iObj = iObj;
 	    SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
 	    ControlledComponent lastContComp = null;
 	    ArrayList<Integer> inputs = new ArrayList<Integer>();
