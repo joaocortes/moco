@@ -123,11 +123,36 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	/**
 	 *setter of each circuit in this.circuits
 	 */
-
-	public void buildCircuit(){
-	    this.setControlledComponents(getInputsFromWeights(this.iObj));
+	public void buildCircuit(int iObj){
+	    this.iObj = iObj;
+	    SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
+	    ControlledComponent lastContComp = null;
+	    ArrayList<Integer> inputs = new ArrayList<Integer>();
+	    // last base needed to expand the weights
+	    int ratioI = 0;
+	    int base = 1;
+	    int ratio = 1;
+	    int maxBase = baseInputs.lastKey();
+	    ControlledComponent contComp;
 	    
+	    do{
+	    	ratio = this.digitalEnv.getRatio(ratioI++);
+	    	inputs.clear();
+	    	ArrayList<Integer> inputsWeights = baseInputs.get(base);
+	    	if(lastContComp != null)
+	    	    inputs.addAll(getCarryBits(lastContComp.getInputs(), ratio));		    
+	    	if(inputsWeights!=null)
+	    	    inputs.addAll(inputsWeights);
+	    	if(base <= maxBase || inputs.size() != 0){
+		    contComp =
+	    		new ControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
+	    	    lastContComp = contComp;
+	    	} else{break;}
+		base *=ratio;
+	    }while(true);
+		    
 	}
+
     	public int getNextValidRoof(int upperLimit){
 	    DigitalNumber digits = this.getDigitalEnv().toDigital(upperLimit);
 	    int basesN = this.getDigitalEnv().getBasesN();
@@ -560,33 +585,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 
 	}
-	public void setControlledComponents( SortedMap<Integer, ArrayList<Integer>> baseInputs) {
-	    ControlledComponent lastContComp = null;
-	    ArrayList<Integer> inputs = new ArrayList<Integer>();
-	    // last base needed to expand the weights
-	    int ratioI = 0;
-	    int base = 1;
-	    int ratio = 1;
-	    int maxBase = baseInputs.lastKey();
-	    ControlledComponent contComp;
-	    
-	    do{
-	    	ratio = this.digitalEnv.getRatio(ratioI++);
-	    	inputs.clear();
-	    	ArrayList<Integer> inputsWeights = baseInputs.get(base);
-	    	if(lastContComp != null)
-	    	    inputs.addAll(getCarryBits(lastContComp.getInputs(), ratio));		    
-	    	if(inputsWeights!=null)
-	    	    inputs.addAll(inputsWeights);
-	    	if(base <= maxBase || inputs.size() != 0){
-		    contComp =
-	    		new ControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
-	    	    lastContComp = contComp;
-	    	} else{break;}
-		base *=ratio;
-	    }while(true);
 
-	}
 	
 
 
