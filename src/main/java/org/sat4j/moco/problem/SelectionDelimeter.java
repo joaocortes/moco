@@ -540,6 +540,23 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		outputs.addAll(Arrays.asList(combComp.outputs));
 		this.outputs = outputs.toArray(new Integer[0]);
 	    }
+
+	    public ArrayList<Integer> suffix(Integer[] seq, int window){
+		ArrayList<Integer> result = new ArrayList<Integer>(window);
+		for(int i = 0; i< window; i++)
+		    result.add(seq[seq.length - window + i ]);
+		return result;
+	    }
+
+	    public Integer[] preffix(Integer[] seq, int window){
+		if(window > seq.length)
+		    return new Integer[0];
+		Integer[] result = new Integer[window];
+		for(int i = 0; i< window; i++)
+		    result[i] = seq[i];
+
+		return result;
+	    }
 	}
 
 	/**
@@ -656,22 +673,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
     } 
 
-    public ArrayList<Integer> suffix(Integer[] seq, int window){
-	ArrayList<Integer> result = new ArrayList<Integer>(window);
-	for(int i = 0; i< window; i++)
-	    result.add(seq[seq.length - window + i ]);
-	return result;
-    }
-
-    public Integer[] preffix(Integer[] seq, int window){
-	if(window > seq.length)
-	    return new Integer[0];
-	Integer[] result = new Integer[window];
-	for(int i = 0; i< window; i++)
-	    result[i] = seq[i];
-
-	return result;
-    }
 
     public Integer[] concatenate(Integer[][] seq){
 	List<Integer> result = new ArrayList<Integer>();
