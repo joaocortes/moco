@@ -62,10 +62,11 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.objManagers[iObj] = new ObjManager(iObj);
 	    Objective ithObjective = this.getInstance().getObj(iObj);
-	    if(buildCircuit)
+	    if(buildCircuit){
 		objManagers[iObj].circuit.buildCircuit();
-	    for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++)
-		this.uglyUpperBoundClause(iObj, kD);
+		for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++)
+		    this.uglyUpperBoundClause(iObj, kD);
+	    }
 	}
 
 	// Log.comment(5, "}");
@@ -102,7 +103,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	ObjManager(int iObj){
 	    this.iObj = iObj;
-
+	    
 	    this.circuit = new Circuit(){
 		    public void buildCircuit(){
 			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
