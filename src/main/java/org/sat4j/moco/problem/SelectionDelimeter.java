@@ -564,7 +564,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	 *returns the Mod of the counts of 1 inputs. Assumes
 	 *inputs are sorted by value.
 	 */
-	class ModComponent extends BaseComponent{
+	public class ModComponent extends BaseComponent{
 	    int modN = 0;
 	    public ModComponent(Integer[] inputs, int modN){
 		this.modN = modN;
