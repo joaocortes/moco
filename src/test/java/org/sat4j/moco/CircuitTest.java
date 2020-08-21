@@ -210,4 +210,109 @@ public class CircuitTest {
     }
 
 
+    @Test
+    public void CombineComponentTest(){
+	int sortedPortionN = 8;
+	Random rand = new Random();
+	Integer[] inputsSize = new Integer[]{4,4};
+	Integer[][] inputs = new Integer[2][];
+	Integer[][] inputValues = new Integer[2][];
+	for(int k = 0; k < 2; k++){
+	    inputs[k] = new Integer[inputsSize[k]];
+	    inputValues[k] = new Integer[inputsSize[k]];
+	    for(int i = 0; i < inputs[k].length; i++){
+		this.pbSolver.newVar();
+		inputs[k][i] =  this.pbSolver.nVars();
+	    }}
+	//Each input shall be a sorted sequence
+	inputValues[0][0] = 1; inputValues[0][1] = 1; inputValues[0][2] = 0; inputValues[0][3] = 0; 
+
+	inputValues[1][0] = 1; inputValues[1][1] = 1; inputValues[1][2] = 1; inputValues[1][3] = 1; 
+	int expectedTrueN = 0;
+	IVecInt assumptions = new VecInt();
+	for( int i = 0; i < 2; i++)
+	    for(int k = 0,n = inputValues[i].length; k < n; k++){
+		if(inputValues[i][k] == 1){
+		    assumptions.push(inputs[i][k]);
+		    expectedTrueN++;
+		}
+		else
+		    assumptions.push(-inputs[i][k]);
+	    }
+	
+	// for( int i = 0; i < 2; i++)
+	//     for(int k = 0,n = inputValues[i].length; k < n; k++){
+	// 	int random = rand.nextInt(2);
+	// 	System.out.println("random is " + random);
+	// 	inputValues[i][k] = random;
+	// 	if(random == 1)
+	// 	    assumptions.push(inputs[i][k]);
+	// 	else
+	// 	    assumptions.push(-inputs[i][k]);
+	//     }
+	Circuit circuit = new Circuit(){
+		public void buildCircuit(){
+		    SelectionDelimeter.Circuit.CombineComponent comp = new SelectionDelimeter.Circuit.CombineComponent(sortedPortionN);
+		    comp.constitutiveClause(inputs[0], inputs[1]);
+		    new ControlledComponent(0, comp);
+		}
+
+
+		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
+
+		public boolean AddClause1(IVecInt setOfLiterals){
+		    try{
+			pbSolver.AddClause(setOfLiterals);
+		    } catch (ContradictionException e) {return false;} return true;
+		}
+	    };
+
+	circuit.buildCircuit();
+	ControlledComponent comp1 = circuit.getControlledComponentBase(0);
+	comp1.getOutputs();
+	List<Integer> sorted = new ArrayList<Integer>(Arrays.asList(inputValues[0]));
+	sorted.addAll(Arrays.asList(inputValues[1]));
+	Collections.sort(sorted);
+	Collections.reverse(sorted);
+	sorted.subList(0, sortedPortionN - 1);
+	pbSolver.check(assumptions);
+	for(int value: sorted)
+	    System.out.println(value);
+
+	List<Integer> obtainedSorted = new ArrayList<Integer>();
+	Iterator<Integer> iterator = comp1.iteratorOutputs();
+	while(iterator.hasNext())
+	    if(pbSolver.modelValue(iterator.next()))
+		obtainedSorted.add(1);
+	    else
+		obtainedSorted.add(0);
+	for(int value: obtainedSorted)
+	    System.out.println(value);
+	{int n = obtainedSorted.size();
+	    assertTrue("lengths are different!",n == sorted.size());
+	    for(int i = 0; i < n; i++  )
+		assertTrue("failing " + i +"'th comparison", obtainedSorted.get(i) == sorted.get(i));
+		    
+	    return;
+	}
+
+    }
+    public IVecInt buildAssumption(Integer[] inputValues, Integer[] inputs){
+	IVecInt assumptions = new VecInt();
+	for(int i = 0, n = inputValues.length; i < n; i++){
+	    if(inputValues[i] == 1)
+	        assumptions.push(inputs[i]);
+	    else
+	        assumptions.push(-inputs[i]);
+	}
+	return assumptions;
+    }
+
+    public void fillInputWithVars(Integer[] inputs){
+	for(int i = 0; i < inputs.length; i++){
+	    this.pbSolver.newVar();
+	    inputs[i] =  this.pbSolver.nVars();
+	}
+
+    }
 }
