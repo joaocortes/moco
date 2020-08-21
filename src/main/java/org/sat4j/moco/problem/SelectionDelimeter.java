@@ -126,13 +126,24 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 				inputs.addAll(inputsWeights);
 			    if(base <= maxBase || inputs.size() != 0){
 				contComp =
-				    new ControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
+				    buildControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
 				lastContComp = contComp;
 			    } else{break;}
 			    base *=ratio;
 			}while(true);
 		    
 		    }
+	    /**
+	     *range is the exclusive upper value the unary output may represent.
+	     */
+	    public ControlledComponent buildControlledComponent(Integer[] inputs, int base, int range){
+		SelectionComponent selecComp = new SelectionComponent(inputs);
+		selecComp.constitutiveClause();
+		ModComponent modComponent = new ModComponent(selecComp.outputs, range);
+		modComponent.constitutiveClause();
+		ControlledComponent result  = new ControlledComponent(base, modComponent);
+		return result;
+	    }
 		    public int getFreshVar1(){return getFreshVar();}
 		    public boolean AddClause1(IVecInt setOfLiterals){return AddClause(setOfLiterals);}
 		};
@@ -625,17 +636,16 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    /**
 	     *range is the exclusive upper value the unary output may represent.
 	     */
-	    public ControlledComponent(Integer[] inputs, int base, int range){
-		this.base = base;
-		SelectionComponent selecComp = new SelectionComponent(inputs);
-		selecComp.constitutiveClause();
-		ModComponent modComponent = new ModComponent(selecComp.outputs, range);
-		this.comp = modComponent;
-		this.comp.constitutiveClause();
-		controlledComponents.put(base, this);
+	    public ControlledComponent(int base, BaseComponent comp ){
+		this.setComp(comp);
+		this.setBase(base);
+		this.addControledComponent();
 	    }
 
-
+	    public Iterator<Integer> iteratorOutputs(){return this.comp.iteratorOutputs();}
+	    public void setBase(int base){this.base = base;}
+	    public void setComp(BaseComponent comp){this.comp = comp;}
+	    public void addControledComponent(){controlledComponents.put(this.base, this);}
 	    public Integer[] getInputs(){return this.comp.getInputs();}
 	    public Integer[] getOutputs(){return this.comp.getOutputs();}
 	    int getInputsSize(){return this.comp.getInputsSize();}
