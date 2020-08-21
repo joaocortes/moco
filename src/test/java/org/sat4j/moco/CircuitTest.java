@@ -89,21 +89,21 @@ public class CircuitTest {
 	    };
 	circuit.buildCircuit();
 	IVecInt assumptions = new VecInt();
-	    int value = modN + 1;
+	int value = modN + 1;
 	{
 	    int i = 0;
 	    for(;i < value; i++)
 		assumptions.push(inputs[i]);
 	    for(;i < inputs.length; i++)
 		assumptions.push(-inputs[i]);
-}
+	}
 	pbSolver.check(assumptions);
 	int result = 0;
 	for(int lit: inputs)
 	    if(pbSolver.modelValue(lit))
 		result++;
 	assertTrue("result:" + result + " value:" + value,result == value);
-}
+    }
 
     @Test
     public void SelectionComponentTest(){
