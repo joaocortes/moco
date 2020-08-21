@@ -169,5 +169,45 @@ public class CircuitTest {
 	return;
     }
 
+    @Test void OptimumComponentTest(){
+	Integer[] inputs = new Integer[4];
+	this.fillInputWithVars(inputs);
+	Circuit circuit = new Circuit(){
+		public void buildCircuit(){
+		    optimumComponent comp = new optimumComponent(inputs);
+		    comp.constitutiveClause();
+		    new ControlledComponent(0, comp);
+		}
+
+
+		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
+
+		public boolean AddClause1(IVecInt setOfLiterals){
+		    try{
+			pbSolver.AddClause(setOfLiterals);
+		    } catch (ContradictionException e) {return false;} return true;
+		}
+	    };
+	circuit.buildCircuit();
+	Integer[] inputValues = new Integer[inputs.length];
+	inputValues[0] = 0; inputValues[1] = 0; inputValues[2] = 0; inputValues[3] = 1; 
+	IVecInt assumptions = this.buildAssumption(inputValues, inputs);
+	int expected = 0;
+	for(int value: inputValues)
+	    if(value == 1){
+		expected = 1;
+		break;
+	    }
+	ControlledComponent comp = circuit.getControlledComponentBase(0);
+	Integer[] output = comp.getOutputs();
+	this.pbSolver.check(assumptions);
+	Log.comment("expected is " + expected);
+	assertTrue("length is not 1", output.length == 1);
+	if(this.pbSolver.modelValue(output[0]))
+	    assertTrue("value is not correct", expected == 1);
+	else
+	    assertTrue("value is not correct", expected == 0);
+    }
+
 
 }
