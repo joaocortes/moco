@@ -222,13 +222,13 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    public BaseComponent(){
 	    }
 
-	    Integer[] getInputs(){return this.inputs;}
-	    Integer[] getOutputs(){return this.outputs;}
-	    Integer getIthInput(int i){return this.inputs[i];}
-	    Integer getIthOutput(int i){return this.outputs[i];}
-	    int getInputsSize(){return this.inputs.length;}
-	    int getOutputsSize(){return this.outputs.length;}
-	    abstract void constitutiveClause();
+	    public Integer[] getInputs(){return this.inputs;}
+	    public Integer[] getOutputs(){return this.outputs;}
+	    public Integer getIthInput(int i){return this.inputs[i];}
+	    public Integer getIthOutput(int i){return this.outputs[i];}
+	    public int getInputsSize(){return this.inputs.length;}
+	    public int getOutputsSize(){return this.outputs.length;}
+	    public abstract void constitutiveClause();
 
 	    /**
 	     *Iterates the inputs
@@ -272,7 +272,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    abstract void constitutiveClause();
 
 	}
-	class SelectionComponent extends SortedComponent{
+	public class SelectionComponent extends SortedComponent{
 	    public SelectionComponent(Integer[] inputs){
 		super(inputs, inputs.length);
 	    }
@@ -282,7 +282,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 	    @Override
-	    void constitutiveClause() {
+	    public void constitutiveClause() {
 	
 		int n = this.inputs.length;
 		int k = this.sortedPortionN;
