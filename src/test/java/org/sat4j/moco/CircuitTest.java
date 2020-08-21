@@ -26,10 +26,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
@@ -43,7 +45,11 @@ import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.LinearObj;
 import org.sat4j.moco.problem.SelectionDelimeter;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit;
+import org.sat4j.moco.problem.SelectionDelimeter.Circuit.BaseComponent;
+import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledComponent;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ModComponent;
+import org.sat4j.moco.problem.SelectionDelimeter.Circuit.optimumComponent;
+import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
