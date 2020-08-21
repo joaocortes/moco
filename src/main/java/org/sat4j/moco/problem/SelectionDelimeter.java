@@ -391,11 +391,17 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    return;
 		int sign;
 		if(this.polarity) sign = 1; else sign = -1;
+		IVecInt clause = new VecInt();
 		for(int lit: this.inputs){
-		    IVecInt clause = new VecInt(new int[]{-sign * lit, this.outputs[0]});
+		    clause = new VecInt(new int[]{-sign * lit, sign*this.outputs[0]});
 		    AddClause1(clause);
 		}
-
+		clause.clear();
+		clause.push(-sign*this.outputs[0]);
+		for(int lit: this.inputs){
+		    clause.push(sign * lit);
+		}
+		AddClause1(clause);
 		return;
 	    }
 
