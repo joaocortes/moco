@@ -23,8 +23,13 @@
 package org.sat4j.moco;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Random;
 
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
@@ -56,7 +61,7 @@ public class CircuitTest {
     
     @Test
     public void ModuleComponentTest(){
-	int modN = 5;
+	int modN = 2;
 	Integer[] inputs = new Integer[2 * modN];
 	for(int i = 0; i < inputs.length; i++){
 	    this.pbSolver.newVar();
@@ -66,11 +71,6 @@ public class CircuitTest {
 		public void buildCircuit(){
 		    ModComponent modComponent = new ModComponent(inputs, modN);
 		    modComponent.constitutiveClause();
-		    Iterator<Integer> iterator = modComponent.iteratorOutputs();
-		    while(iterator.hasNext()){
-			System.out.println(iterator.next().toString());
-			
-}
 		}
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
 
@@ -97,10 +97,71 @@ public class CircuitTest {
 	    if(pbSolver.modelValue(lit))
 		result++;
 	assertTrue("result:" + result + " value:" + value,result == value);
-	SelectionDelimeter.Circuit.ModComponent modComponent = circuit.new ModComponent(inputs, modN);
-	modComponent.constitutiveClause();
-	return;
 }
+
+    @Test
+    public void SelectionComponentTest(){
+	int sortedPortionN = 4;
+	Random rand = new Random();
+	int inputsLength = 4;
+	Integer[] inputs = new Integer[inputsLength];
+	Integer[] inputValues = new Integer[inputsLength];
+	for(int i = 0; i < inputs.length; i++){
+	    this.pbSolver.newVar();
+	    inputs[i] =  this.pbSolver.nVars();
+	}
+
+	IVecInt assumptions = new VecInt();
+	// for( int i = 0; i < inputs.length; i++){
+	//     int random = rand.nextInt(2);
+	//     System.out.println("random is " + random);
+	//     inputValues[i] = random;
+	//     if(random == 1)
+	// 	assumptions.push(inputs[i]);
+	//     else
+	// 	assumptions.push(-inputs[i]);
+	// }
+	assumptions.push(inputs[0]);
+	inputValues[0]=1;
+	assumptions.push(inputs[3]);
+	inputValues[3]=1;
+	assumptions.push(-inputs[2]);
+	inputValues[2]=0;
+	assumptions.push(-inputs[1]);
+	inputValues[1]=0;
+	Circuit circuit = new Circuit(){
+		public void buildCircuit(){
+		    SelectionComponent comp = new SelectionComponent(inputs, sortedPortionN);
+		    comp.constitutiveClause();
+		}
+		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
+
+		public boolean AddClause1(IVecInt setOfLiterals){
+		    // this.prettyPrintVecInt(setOfLiterals,true);
+		    try{
+			pbSolver.AddClause(setOfLiterals);
+		    } catch (ContradictionException e) {return false;} return true;
+		}
+	    };
+
+
+	circuit.buildCircuit();
+	List<Integer> sorted = Arrays.asList(inputValues);
+	Collections.sort(sorted);
+	Collections.reverse(sorted);
+	sorted.subList(0, sortedPortionN - 1);
+	pbSolver.check(assumptions);
+	for(int value: sorted)
+	    System.out.println(value);
+
+	for(int i = 0, n = sortedPortionN ; i < n; i++)
+	    if(sorted.get(i) == 1)
+		assertTrue(pbSolver.modelValue(inputs[i]));
+	    else 
+		assertFalse(pbSolver.modelValue(inputs[i]));
+
+	return;
+    }
 
 
 }
