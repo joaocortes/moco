@@ -214,7 +214,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	abstract public void buildCircuit();
 
 	public ControlledComponent getControlledComponentBase(int base){return this.controlledComponents.get(base);}
-	abstract class BaseComponent implements Iterable<Integer>{
+	abstract public class BaseComponent implements Iterable<Integer>{
 
 	    protected Integer[] inputs;
 	    protected  Integer[] outputs;
@@ -361,7 +361,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	 *Component with 2 inputs that selects either the max or min
 	 *entry, according to its polarity
 	 */
-	class optimumComponent extends SortedComponent{
+	public class optimumComponent extends SortedComponent{
 	    boolean polarity = true;
 	    public optimumComponent(Integer[] inputs, boolean polarity){
 		super(inputs, 1);
@@ -374,7 +374,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 	    @Override
-	    void constitutiveClause() {
+	    public void constitutiveClause() {
 		this.outputs[0]=getFreshVar1();
 		if(this.inputs.length == 0)
 		    return;
@@ -389,7 +389,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 	}
-	class CombineComponent extends SortedComponent{
+	public class CombineComponent extends SortedComponent{
 
 	    public CombineComponent(int sortedPortionN){
 		this.sortedPortionN = sortedPortionN;
@@ -398,7 +398,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    // This is required by my stupidity.
 	    void constitutiveClause(){};
 
-	    void constitutiveClause(Integer[] input1, Integer[] input2) {
+	    public void constitutiveClause(Integer[] input1, Integer[] input2) {
 		int jMax = input1.length + input2.length;
 		this.outputs = new Integer[jMax < this.sortedPortionN? jMax : this.sortedPortionN];
 		for(int j = 0; j < jMax; j++){
@@ -449,14 +449,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 	}
-	class MergeComponent extends SortedComponent{
+	public class MergeComponent extends SortedComponent{
 	    int sortedPortionN;
 	    public MergeComponent(int sortedPortionN){
 		this.sortedPortionN = sortedPortionN;
 	    }
 	    
-	    void constitutiveClause(){};
-	    void constitutiveClause(List<ArrayList<Integer>> inputsList) {
+	    public void constitutiveClause(){};
+	    public void constitutiveClause(List<ArrayList<Integer>> inputsList) {
 
 		assert inputsList.size() == 4;
 		
@@ -618,7 +618,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 	    
 	}
-	class ControlledComponent{
+	public class ControlledComponent{
 	    BaseComponent comp = null;
 	    int base = 0;
 
