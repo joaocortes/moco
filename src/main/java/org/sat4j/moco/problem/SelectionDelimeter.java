@@ -428,10 +428,11 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		this.outputs = new Integer[jMax < this.sortedPortionN? jMax : this.sortedPortionN];
 		for(int j = 0; j < jMax && j < this.getOutputsSize(); j++){
 		    // i is the index of the pair associated to j.
-		    int i = j / 2 ;
+		    int i = (j + 1) / 2 ;
 		    List<Integer> pair = new ArrayList<Integer>(); 
-		    if(j % 2 == 1) {
-			optimumComponent max1 this.normalizedPair(input1, i + 2, input2, i, true);
+		    if(j % 2 == 0) {
+			pair = this.normalizedPair(input1, i + 2, input2, i);
+			optimumComponent max1 = new optimumComponent(pair.toArray(new Integer[0]), true);
 			max1.constitutiveClause();
 			pair = this.normalizedPair(input1, i + 1, input2, i - 1);
 			optimumComponent min = new optimumComponent(pair.toArray(new Integer[0]), false);
