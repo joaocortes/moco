@@ -399,6 +399,18 @@ public class CircuitTest {
 	return assumptions;
     }
 
+    public boolean AddClause(IVecInt setOfLiterals, boolean print){
+	if(print)
+	    {
+		Log.comment("clause:");
+		for(int lit: setOfLiterals.toArray())
+		    Log.comment("lit:"+ lit);
+		System.out.println();
+	    }
+	try{
+	    pbSolver.AddClause(setOfLiterals);
+	} catch (ContradictionException e) {return false;} return true;
+    }
     public void fillInputWithVars(Integer[] inputs){
 	for(int i = 0; i < inputs.length; i++){
 	    this.pbSolver.newVar();
