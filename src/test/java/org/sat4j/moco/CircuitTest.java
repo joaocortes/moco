@@ -169,6 +169,97 @@ public class CircuitTest {
 	return;
     }
 
+    @Test void MergeComponentTest(){
+	int sortedPortionN = 16;
+	
+	List<ArrayList<Integer>> inputsList = new ArrayList<ArrayList<Integer>>(4);		    
+	Integer[] inputs = new Integer[16];
+	this.fillInputWithVars(inputs);
+	for(int i = 0; i < 4; i++)
+	    inputsList.add(new ArrayList<Integer>());
+
+	{
+	    int n = inputs.length;
+	    int i = 0;
+	    for(; i < n / 4; i++)
+		inputsList.get(0).add(inputs[i]);
+	    for(; i < 2 * n / 4; i++)
+		inputsList.get(1).add(inputs[i]);
+	    for(; i < 3 * n / 4; i++)
+		inputsList.get(2).add(inputs[i]);
+	    for(; i < n ; i++)
+		inputsList.get(3).add(inputs[i]);
+	}
+
+		Circuit circuit = new Circuit(){
+		public void buildCircuit(){
+		    MergeComponent comp = new MergeComponent(sortedPortionN);
+		    comp.constitutiveClause(inputsList);
+		    new ControlledComponent(0, comp);
+		}
+
+
+		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
+
+		public boolean AddClause1(IVecInt setOfLiterals){
+		    try{
+			pbSolver.AddClause(setOfLiterals);
+		    } catch (ContradictionException e) {return false;} return true;
+		}
+	    };
+	circuit.buildCircuit();
+	Integer[] inputValues = new Integer[inputs.length];
+	inputValues[0] = 0;
+	inputValues[1] = 0; 
+	inputValues[2] = 0; 
+	inputValues[3] = 1; 
+	inputValues[4] = 1; 
+	inputValues[5] = 1; 
+	inputValues[6] = 1; 
+	inputValues[7] = 1; 
+	inputValues[8] = 1; 
+	inputValues[9] = 1; 
+	inputValues[10] = 1; 
+	inputValues[11] = 1; 
+	inputValues[12] = 1; 
+	inputValues[13] = 1; 
+	inputValues[14] = 1; 
+	inputValues[15] = 1; 
+
+	circuit.buildCircuit();
+	ControlledComponent comp1 = circuit.getControlledComponentBase(0);
+	comp1.getOutputs();
+	List<Integer> sorted = new ArrayList<Integer>(Arrays.asList(inputValues));
+	sorted.addAll(Arrays.asList(inputValues[1]));
+	Collections.sort(sorted);
+	Collections.reverse(sorted);
+	// sorted.subList(0, sortedPortionN - 1);
+	for(int value: sorted)
+	    System.out.println(value);
+
+	IVecInt assumptions = this.buildAssumption(inputValues, inputs);
+	pbSolver.check(assumptions);
+
+	List<Integer> obtainedSorted = new ArrayList<Integer>();
+	Iterator<Integer> iterator = comp1.iteratorOutputs();
+	while(iterator.hasNext())
+	    if(pbSolver.modelValue(iterator.next()))
+		obtainedSorted.add(1);
+	    else
+		obtainedSorted.add(0);
+	for(int value: obtainedSorted)
+	    System.out.println(value);
+
+	{int n = obtainedSorted.size();
+	    assertTrue("lengths are different!", n == sorted.size());
+	    for(int i = 0; i < n; i++  )
+		assertTrue("failing " + i +"'th comparison", obtainedSorted.get(i) == sorted.get(i));
+		    
+	    return;
+	}
+
+    }
+
     @Test void OptimumComponentTest(){
 	Integer[] inputs = new Integer[4];
 	this.fillInputWithVars(inputs);
