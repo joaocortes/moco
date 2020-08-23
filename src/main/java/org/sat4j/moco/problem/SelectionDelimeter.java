@@ -380,10 +380,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		this.polarity = polarity;
 		this.outputs =  new Integer[1];
 	    }
-	    public optimumComponent(int input){
-		this.inputs = new Integer[]{input};
-		this.outputs = new Integer[1];
-}
 	    public optimumComponent(Integer[] inputs){
 		this(inputs, true);
 	    }
