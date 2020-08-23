@@ -374,12 +374,16 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	 */
 	public class optimumComponent extends SortedComponent{
 	    boolean polarity = true;
+
 	    public optimumComponent(Integer[] inputs, boolean polarity){
 		super(inputs, 1);
 		this.polarity = polarity;
 		this.outputs =  new Integer[1];
 	    }
-
+	    public optimumComponent(int input){
+		this.inputs = new Integer[]{input};
+		this.outputs = new Integer[1];
+}
 	    public optimumComponent(Integer[] inputs){
 		this(inputs, true);
 	    }
@@ -389,6 +393,10 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		this.outputs[0]=getFreshVar1();
 		if(this.inputs.length == 0)
 		    return;
+		if(this.inputs.length == 1){
+		    this.outputs[0] = this.inputs[0];
+		    return;
+		}
 		int sign;
 		if(this.polarity) sign = 1; else sign = -1;
 		IVecInt clause = new VecInt();
