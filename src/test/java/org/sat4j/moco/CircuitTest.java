@@ -262,10 +262,11 @@ public class CircuitTest {
 
     @Test void OptimumComponentTest(){
 	Integer[] inputs = new Integer[4];
+	boolean polarity = true;
 	this.fillInputWithVars(inputs);
 	Circuit circuit = new Circuit(){
 		public void buildCircuit(){
-		    optimumComponent comp = new optimumComponent(inputs);
+		    optimumComponent comp = new optimumComponent(inputs, polarity);
 		    comp.constitutiveClause();
 		    new ControlledComponent(0, comp);
 		}
@@ -274,19 +275,18 @@ public class CircuitTest {
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
 
 		public boolean AddClause1(IVecInt setOfLiterals){
-		    try{
-			pbSolver.AddClause(setOfLiterals);
-		    } catch (ContradictionException e) {return false;} return true;
+		    return AddClause(setOfLiterals, true);
 		}
 	    };
 	circuit.buildCircuit();
 	Integer[] inputValues = new Integer[inputs.length];
-	inputValues[0] = 0; inputValues[1] = 0; inputValues[2] = 0; inputValues[3] = 1; 
+	inputValues[0] = 0; inputValues[1] = 1; inputValues[2] = 0; inputValues[3] = 1; 
 	IVecInt assumptions = this.buildAssumption(inputValues, inputs);
-	int expected = 0;
+	int compareTo; if(polarity) compareTo = 1; else compareTo = 0;
+	int expected = (compareTo + 1) % 2;
 	for(int value: inputValues)
-	    if(value == 1){
-		expected = 1;
+	    if(value == compareTo){
+		expected = compareTo;
 		break;
 	    }
 	ControlledComponent comp = circuit.getControlledComponentBase(0);
@@ -317,9 +317,8 @@ public class CircuitTest {
 	    }}
 	//Each input shall be a sorted sequence
 	inputValues[0][0] = 1; inputValues[0][1] = 1; inputValues[0][2] = 0; inputValues[0][3] = 0; 
-
 	inputValues[1][0] = 1; inputValues[1][1] = 1; inputValues[1][2] = 1; inputValues[1][3] = 1; 
-	int expectedTrueN = 0;
+
 	IVecInt assumptions = new VecInt();
 	for( int i = 0; i < 2; i++)
 	    for(int k = 0,n = inputValues[i].length; k < n; k++){
