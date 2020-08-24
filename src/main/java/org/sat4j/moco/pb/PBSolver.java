@@ -51,7 +51,7 @@ public class PBSolver {
      * An instance of the underlying SAT4J PB solver.
      */
     private IPBSolver solver = null;
-    
+
     /**
      * Boolean used to store the satisfiability of the PB instance of the last call to {@link #check()}
      * or {@link #check(IVecInt)}.
@@ -83,6 +83,11 @@ public class PBSolver {
 
     private int clausesN = 0;
     
+    /**
+     *Constant variable;
+     */
+    private int constantID ;
+
     public int getClausesN(){
 	return this.clausesN;
     }
@@ -90,7 +95,17 @@ public class PBSolver {
     /**
      * Creates an instance of a PB solver.
      */
-    public PBSolver() { this.solver = SolverFactory.newDefault(); }
+    public PBSolver() {
+	this.solver = SolverFactory.newDefault(); 
+	this.newVar();
+
+	this.constantID = this.nVars();
+	try{
+	    this.AddClause(new VecInt(new int[]{this.constantID}));
+	}catch(ContradictionException exception){
+	    throw new RuntimeException("Contradition exception while adding constant value", exception);
+	};
+    }
     
     /**
      * Creates a new Boolean variable in the PB solver.
@@ -375,12 +390,24 @@ public class PBSolver {
         return id;
     }
 
+    
 
+    /**
+     * returns the literal that represents the logic {@code value}
+     * @param value
+     * @return A literal
+     */
+    public int constantLiteral(boolean value){
+	if(value)
+	    return  this.constantID;
+	else 
+	    return -this.constantID;}
     /**
      * returns the the id of the literal
      * @param literal
      * @return id
      */
+
 
     public int idFromLiteral(int literal){
 	int id = this.isLiteralPositive(literal) ? literal: -literal;
