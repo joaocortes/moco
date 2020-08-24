@@ -447,10 +447,10 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    	for(int i = 0; i < 2; i++){
 		    int current = forcedValue(lists[i], indexes[i]);
 		    if(current == constantFlag)
-			return this.constantLiteral(polarity);
+			return solver.constantLiteral(polarity);
 		    if(current == identityFlag)
 			if(identity){
-			    return getSolver().constantLiteral(!polarity);
+			    return solver.constantLiteral(!polarity);
 			}else
 			    if(i == 0)
 				identity = true;
