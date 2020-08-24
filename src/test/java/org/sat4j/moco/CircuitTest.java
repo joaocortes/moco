@@ -73,7 +73,7 @@ public class CircuitTest {
 	    this.pbSolver.newVar();
 	    inputs[i] =  this.pbSolver.nVars();
 	}
-	Circuit circuit = new Circuit(){
+	Circuit circuit = new Circuit(pbSolver){
 		public void buildCircuit(){
 		    ModComponent modComponent = new ModComponent(inputs, modN);
 		    modComponent.constitutiveClause();
@@ -135,7 +135,7 @@ public class CircuitTest {
 	inputValues[2]=0;
 	assumptions.push(-inputs[1]);
 	inputValues[1]=0;
-	Circuit circuit = new Circuit(){
+	Circuit circuit = new Circuit(this.pbSolver){
 		public void buildCircuit(){
 		    SelectionComponent comp = new SelectionComponent(inputs, sortedPortionN);
 		    comp.constitutiveClause();
@@ -172,7 +172,7 @@ public class CircuitTest {
     @Test void OptimumComponentTest(){
 	Integer[] inputs = new Integer[4];
 	this.fillInputWithVars(inputs);
-	Circuit circuit = new Circuit(){
+	Circuit circuit = new Circuit(pbSolver){
 		public void buildCircuit(){
 		    optimumComponent comp = new optimumComponent(inputs);
 		    comp.constitutiveClause();
@@ -250,7 +250,7 @@ public class CircuitTest {
 	// 	else
 	// 	    assumptions.push(-inputs[i][k]);
 	//     }
-	Circuit circuit = new Circuit(){
+	Circuit circuit = new Circuit(pbSolver){
 		public void buildCircuit(){
 		    SelectionDelimeter.Circuit.CombineComponent comp = new SelectionDelimeter.Circuit.CombineComponent(sortedPortionN);
 		    comp.constitutiveClause(inputs[0], inputs[1]);
