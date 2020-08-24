@@ -413,31 +413,20 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    	for(int j = 0; j < jMax; j++){
 	    	    // i is the index of the pair associated to j.
 	    	    int i = (j + 1) / 2 ;
-	    	    int first, second;
 	    	    Integer[] pair;
 	    	    if(j % 2 == 1){
-	    		int max1output = optimumOutput(input2, i, pair, i, false);
-	    		pair = this.normalizedPair(input1, i + 1, input2, i - 1);
-	    		optimumComponent min = new optimumComponent(pair.toArray(new Integer[0]), false);
-	    		min.constitutiveClause();
-	    		pair.clear();
-	    		pair.add(max1.outputs[0]);
-	    		pair.add(min.outputs[0]);
-	    		optimumComponent max2 = new optimumComponent(pair.toArray(new Integer[0]), true);
+	    		int max1Output = OptimumOutput(input2, i, input2, i, true);
+	    		int minOutput = OptimumOutput(input1, i + 1, input2, i - 1, false);
+			pair = new Integer[]{max1Output, minOutput};
+	    		optimumComponent max2 = new optimumComponent(pair, true);
 	    		max2.constitutiveClause();
 	    		this.outputs[j] = max2.outputs[0];
 	    	    }
 	    	    else {
-	    		pair = this.normalizedPair(input1, i + 1, input2, i - 1);
-	    		optimumComponent max = new optimumComponent(pair.toArray(new Integer[0]), true);
-	    		max.constitutiveClause();
-	    		pair = this.normalizedPair(input1, i, input2, i - 2);
-	    		optimumComponent min1 = new optimumComponent(pair.toArray(new Integer[0]), false);
-	    		min1.constitutiveClause();
-	    		pair.clear();
-	    		pair.add(max.outputs[0]);
-	    		pair.add(min1.outputs[0]);
-	    		optimumComponent min2 = new optimumComponent(pair.toArray(new Integer[0]), false);
+			int maxOutput= this.OptimumOutput(input1, i + 1, input2, i - 1, true);
+	    		int min1Output = this.OptimumOutput(input1, i, input2, i - 2, false);
+			pair = new Integer[]{maxOutput, min1Output};
+	    		optimumComponent min2 = new optimumComponent(pair, false);
 	    		min2.constitutiveClause();
 	    		this.outputs[j] = min2.outputs[0];
 
@@ -447,58 +436,45 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 
-	    private Integer OptimumOutput(Integer[] list1, int index1,Integer[] list2, int index2, boolean polarity){
-	    	int sign = -1; if(polarity) sign = 1;
-	    	pair = this.normalizedPair(list1, i + 2, list2, i);
-	    	optimumComponent max1 = new optimumComponent(pair.toArray(new Integer[0]), true);
-	    	max1.constitutiveClause();
-	    	Integer[] forcedValues = new Integer[2];
-		
-	    	Integer[][] lists;
-	    	lists[0] = list1;
-	    	lists[1] = list2;
-	    	if(index1 < 0)
-	    	    forcedValues[0] = 1;
-	    	if(index2 < 0)
-	    	    forcedValues[1] = 1;
-		
-	    	if(index1 >= list1.length)
-	    	    forcedValues[0] = -1;
-	    	if(index2 >= list2.length)
-	    	    forcedValues[1] = -1;
-
-	    	boolean simplify = false;		
-	    	boolean identity = false;
+	    private Integer OptimumOutput(Integer[] list0, int index0,Integer[] list1, int index1, boolean polarity){
+		final int identityFlag = polarity? 0: 1;
+		final int constantFlag = (identityFlag + 1) % 2;
+		boolean identity = false;
+	    	Integer[][] lists = new Integer[2][];
+	    	lists[0] = list0;
+	    	lists[1] = list1;
+		Integer[] indexes = new Integer[]{index0, index1};
 	    	for(int i = 0; i < 2; i++){
-	    	    if(forcedValues[i] == 0) 
-	    		continue;
-	    	    if(forcedValues[i] == sign){
-			
-	    		simplify = true;
-	    		break;}
-	    	}
+		    int current = forcedValue(lists[i], indexes[i]);
+		    if(current == constantFlag)
+			return this.constantLiteral(polarity);
+		    if(current == identityFlag)
+			if(identity){
+			    return getSolver().constantLiteral(!polarity);
+			}else
+			    if(i == 0)
+				identity = true;
+			    else{
+				return list0[index0];
+			    }
+		}
+		if(identity)
+		    return list1[index1];
 
-	    	if(simplify){
-	    	    int result = getFreshVar1();
-	    	    AddClause1(new VecInt(new int[]{ sign * result}));
-	    	    return result;
-	    	}
-	    	for(int i = 0; i < 2; i++){
-	    	    if(forcedValues[i] == identityValue){
-	    		identity = true;
-	    		break;}
-	    	}
-			
+		Integer[] inputs = new Integer[]{list0[index0], list1[index1]};
+		optimumComponent optComp = new optimumComponent(inputs , polarity);
+	    	optComp.constitutiveClause();
+		return optComp.getIthOutput(0);
 	    }
-		    
-	    if(forcedValues)
-	    	pair.add(list1[index1]);
-	    if(index2 > 0 && index2 < list2.length)
-	    	pair.add(list2[index2]);
-	    return pair.toArray(new Integer[0]);
-	}
-	    
 
+	    private int forcedValue(Integer[] list, int index){
+		if(list.length >= index)
+		    return 0;
+		if(list.length < 0)
+		    return 1;
+		return -1;
+		    }
+	}
 	public class MergeComponent extends SortedComponent{
 	    int sortedPortionN;
 	    public MergeComponent(int sortedPortionN){
