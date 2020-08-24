@@ -703,24 +703,22 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     }
 
 
-	/**
-	 *Enforces a sequential relation between the variables.
-	 */
-	public void enforceOrder(Integer[] variables){
-	    int pastVariable = 0;
-	    if(variables.length <=1)
-		return;
+    /**
+     *Enforces a sequential relation between the variables.
+     */
+    public void enforceOrder(Integer[] variables){
+	int pastVariable = 0;
+	if(variables.length <=1)
+	    return;
 	    
-	    for(int variable: variables)
-		if(pastVariable != 0){
-		    IVecInt clause = new VecInt(new int[] {-variable, pastVariable});
-		    AddClause1(clause);
-		    pastVariable = variable;
-		}
+	for(int variable: variables)
+	    if(pastVariable != 0){
+		IVecInt clause = new VecInt(new int[] {-variable, pastVariable});
+		AddClause(clause);
+		pastVariable = variable;
+	    }
 
-	}
-
-    } 
+    }
 
 
     public Integer[] concatenate(Integer[][] seq){
