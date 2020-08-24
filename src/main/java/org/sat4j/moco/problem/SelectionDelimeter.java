@@ -75,14 +75,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     /**
      * Initialize the container of the Y variables
      */
-     private void initializeYTable(){
+    private void initializeYTable(){
 	this.yTable = new int[this.instance.nObjs()][];
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
 	    Objective ithObj = instance.getObj(iObj);
 	    this.yTable[iObj] = new int[ithObj.getWeightDiff()];
 
-       }
-     }
+	}
+    }
     public SelectionDelimeter(Instance instance, PBSolver solver) {
 	this(instance, solver, true);
 
@@ -133,17 +133,17 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 			}while(true);
 		    
 		    }
-	    /**
-	     *range is the exclusive upper value the unary output may represent.
-	     */
-	    public ControlledComponent buildControlledComponent(Integer[] inputs, int base, int range){
-		SelectionComponent selecComp = new SelectionComponent(inputs);
-		selecComp.constitutiveClause();
-		ModComponent modComponent = new ModComponent(selecComp.outputs, range);
-		modComponent.constitutiveClause();
-		ControlledComponent result  = new ControlledComponent(base, modComponent);
-		return result;
-	    }
+		    /**
+		     *range is the exclusive upper value the unary output may represent.
+		     */
+		    public ControlledComponent buildControlledComponent(Integer[] inputs, int base, int range){
+			SelectionComponent selecComp = new SelectionComponent(inputs);
+			selecComp.constitutiveClause();
+			ModComponent modComponent = new ModComponent(selecComp.outputs, range);
+			modComponent.constitutiveClause();
+			ControlledComponent result  = new ControlledComponent(base, modComponent);
+			return result;
+		    }
 		    public int getFreshVar1(){return getFreshVar();}
 		    public boolean AddClause1(IVecInt setOfLiterals){return AddClause(setOfLiterals);}
 		};
@@ -406,44 +406,43 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    // This is required by my stupidity.
 	    public void constitutiveClause(){};
 
-	    public void constitutiveClause(Integer[] input1, Integer[] input2) {
-		int jMax = input1.length + input2.length;
-		this.outputs = new Integer[jMax < this.sortedPortionN? jMax : this.sortedPortionN];
-		for(int j = 0; j < jMax; j++){
-		    // i is the index of the pair associated to j.
-		    int i = (j + 1) / 2 ;
-		    List<Integer> pair = new ArrayList<Integer>(); 
-		    if(j % 2 == 0) {
-			pair = this.normalizedPair(input1, i + 2, input2, i);
-			optimumComponent max1 = new optimumComponent(pair.toArray(new Integer[0]), true);
-			max1.constitutiveClause();
-			pair = this.normalizedPair(input1, i + 1, input2, i - 1);
-			optimumComponent min = new optimumComponent(pair.toArray(new Integer[0]), false);
-			min.constitutiveClause();
-			pair.clear();
-			pair.add(max1.outputs[0]);
-			pair.add(min.outputs[0]);
-			optimumComponent max2 = new optimumComponent(pair.toArray(new Integer[0]), true);
-			max2.constitutiveClause();
-			this.outputs[j] = max2.outputs[0];
-		    }
-		    else {
-			pair = this.normalizedPair(input1, i + 1, input2, i - 1);
-			optimumComponent max = new optimumComponent(pair.toArray(new Integer[0]), true);
-			max.constitutiveClause();
-			pair = this.normalizedPair(input1, i, input2, i - 2);
-			optimumComponent min1 = new optimumComponent(pair.toArray(new Integer[0]), false);
-			min1.constitutiveClause();
-			pair.clear();
-			pair.add(max.outputs[0]);
-			pair.add(min1.outputs[0]);
-			optimumComponent min2 = new optimumComponent(pair.toArray(new Integer[0]), false);
-			min2.constitutiveClause();
-			this.outputs[j] = min2.outputs[0];
+	    public void constitutiveClause(Integer[] input1, Integer[] input2){
+	    	int jMax = input1.length + input2.length;
+	    	this.outputs = new Integer[jMax < this.sortedPortionN? jMax : this.sortedPortionN];
+	    	for(int j = 0; j < jMax; j++){
+	    	    // i is the index of the pair associated to j.
+	    	    int i = (j + 1) / 2 ;
+	    	    int first, second;
+	    	    Integer[] pair;
+	    	    if(j % 2 == 1){
+	    		int max1output = optimumOutput(input2, i, pair, i, false);
+	    		pair = this.normalizedPair(input1, i + 1, input2, i - 1);
+	    		optimumComponent min = new optimumComponent(pair.toArray(new Integer[0]), false);
+	    		min.constitutiveClause();
+	    		pair.clear();
+	    		pair.add(max1.outputs[0]);
+	    		pair.add(min.outputs[0]);
+	    		optimumComponent max2 = new optimumComponent(pair.toArray(new Integer[0]), true);
+	    		max2.constitutiveClause();
+	    		this.outputs[j] = max2.outputs[0];
+	    	    }
+	    	    else {
+	    		pair = this.normalizedPair(input1, i + 1, input2, i - 1);
+	    		optimumComponent max = new optimumComponent(pair.toArray(new Integer[0]), true);
+	    		max.constitutiveClause();
+	    		pair = this.normalizedPair(input1, i, input2, i - 2);
+	    		optimumComponent min1 = new optimumComponent(pair.toArray(new Integer[0]), false);
+	    		min1.constitutiveClause();
+	    		pair.clear();
+	    		pair.add(max.outputs[0]);
+	    		pair.add(min1.outputs[0]);
+	    		optimumComponent min2 = new optimumComponent(pair.toArray(new Integer[0]), false);
+	    		min2.constitutiveClause();
+	    		this.outputs[j] = min2.outputs[0];
 
-		    }
-		}
-		return;
+	    	    }
+	    	}
+	    	return;
 	    }
 
 
