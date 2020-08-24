@@ -262,7 +262,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		public boolean hasNext(){return iterator.hasNext();}
 	    }
 	}
-	abstract class SortedComponent extends BaseComponent{
+	public abstract class SortedComponent extends BaseComponent{
 
 	    int sortedPortionN = 0;
 
@@ -279,9 +279,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		else
 		    this.sortedPortionN = this.outputs.length;
 	    }
-
-	    abstract void constitutiveClause();
-
 	}
 	public class SelectionComponent extends SortedComponent{
 	    public SelectionComponent(Integer[] inputs){
@@ -407,7 +404,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 	    // This is required by my stupidity.
-	    void constitutiveClause(){};
+	    public void constitutiveClause(){};
 
 	    public void constitutiveClause(Integer[] input1, Integer[] input2) {
 		int jMax = input1.length + input2.length;
@@ -662,7 +659,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	}
 
 	
-
+    }
 
 
 	/**
