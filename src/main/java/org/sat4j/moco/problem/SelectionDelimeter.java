@@ -446,16 +446,58 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 
-	    private ArrayList<Integer> normalizedPair(Integer[] list1, int index1,Integer[] list2, int index2){
-		ArrayList<Integer> pair = new  ArrayList<Integer>();
-		if(index1 > 0 && index1 < list1.length)
-		    pair.add(list1[index1]);
-		if(index2 > 0 && index2 < list2.length)
-		    pair.add(list2[index2]);
-		return pair;
-	    }
+	    private Integer OptimumOutput(Integer[] list1, int index1,Integer[] list2, int index2, boolean polarity){
+	    	int sign = -1; if(polarity) sign = 1;
+	    	pair = this.normalizedPair(list1, i + 2, list2, i);
+	    	optimumComponent max1 = new optimumComponent(pair.toArray(new Integer[0]), true);
+	    	max1.constitutiveClause();
+	    	Integer[] forcedValues = new Integer[2];
+		
+	    	Integer[][] lists;
+	    	lists[0] = list1;
+	    	lists[1] = list2;
+	    	if(index1 < 0)
+	    	    forcedValues[0] = 1;
+	    	if(index2 < 0)
+	    	    forcedValues[1] = 1;
+		
+	    	if(index1 >= list1.length)
+	    	    forcedValues[0] = -1;
+	    	if(index2 >= list2.length)
+	    	    forcedValues[1] = -1;
 
+	    	boolean simplify = false;		
+	    	boolean identity = false;
+	    	for(int i = 0; i < 2; i++){
+	    	    if(forcedValues[i] == 0) 
+	    		continue;
+	    	    if(forcedValues[i] == sign){
+			
+	    		simplify = true;
+	    		break;}
+	    	}
+
+	    	if(simplify){
+	    	    int result = getFreshVar1();
+	    	    AddClause1(new VecInt(new int[]{ sign * result}));
+	    	    return result;
+	    	}
+	    	for(int i = 0; i < 2; i++){
+	    	    if(forcedValues[i] == identityValue){
+	    		identity = true;
+	    		break;}
+	    	}
+			
+	    }
+		    
+	    if(forcedValues)
+	    	pair.add(list1[index1]);
+	    if(index2 > 0 && index2 < list2.length)
+	    	pair.add(list2[index2]);
+	    return pair.toArray(new Integer[0]);
 	}
+	    
+
 	public class MergeComponent extends SortedComponent{
 	    int sortedPortionN;
 	    public MergeComponent(int sortedPortionN){
@@ -819,3 +861,5 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	return 0;
     }
 }
+
+
