@@ -51,7 +51,6 @@ import org.sat4j.specs.IVecInt;
 public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex> {
 
     private ObjManager[] objManagers;
-    
     private int[][] yTable = null;
 
     public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit) {
@@ -104,7 +103,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	ObjManager(int iObj){
 	    this.iObj = iObj;
 	    
-	    this.circuit = new Circuit(){
+	    this.circuit = new Circuit(getSolver()){
 		    public void buildCircuit(){
 			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
 			ControlledComponent lastContComp = null;
@@ -132,6 +131,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 			    base *=ratio;
 			}while(true);
 		    
+
 		    }
 		    /**
 		     *range is the exclusive upper value the unary output may represent.
@@ -202,7 +202,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    return MSBase * (MSDigit + 1);
 	}
 	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
-
 	public int digitalLiteral(int base, int value){
 	    if( value == 0)
 		return 0;
@@ -214,9 +213,11 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     }
 
     static abstract public class Circuit{
+	PBSolver solver;
 	SortedMap<Integer, ControlledComponent> controlledComponents = null;
 	
-	public Circuit(){
+	public Circuit(PBSolver solver){
+	    this.solver = solver;
 	    this.controlledComponents = new TreeMap<Integer, ControlledComponent>();
 	}
 
