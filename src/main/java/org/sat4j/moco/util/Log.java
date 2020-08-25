@@ -52,6 +52,9 @@ public class Log {
      * If true, then assignments are not logged.
      */
     private static boolean suppress_assign = false;
+    public Log(int verbosity){
+	setVerbosity(verbosity);
+}
     
     /**
      * Sets the verbosity level of the logger.
