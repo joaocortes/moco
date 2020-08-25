@@ -493,9 +493,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    
 	    public void constitutiveClause(){};
 	    public void constitutiveClause(List<ArrayList<Integer>> inputsList) {
-
-		assert inputsList.size() == 4;
-		
 		ArrayList<Integer> outputs = new ArrayList<Integer>();
 		ArrayList<Integer> suffix = new ArrayList<Integer>();
 		Integer[] toCombine1;
@@ -512,11 +509,11 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		}
 		this.outputs = new Integer[inputN];
 		int k = this.sortedPortionN;
+
 		if(inputsArray[1].length == 0){
 		    this.outputs = inputsArray[0];
 		    return;
 		}
-
 		if(inputsArray[0].length == 1){
 		    
 		    ArrayList<Integer> smallerInput1 = new ArrayList<Integer>();
