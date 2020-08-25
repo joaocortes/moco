@@ -478,9 +478,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 
 	    private int forcedValue(Integer[] list, int index){
-		if(list.length >= index)
+		if(list.length <= index)
 		    return 0;
-		if(list.length < 0)
+		if(index < 0)
 		    return 1;
 		return -1;
 		    }
