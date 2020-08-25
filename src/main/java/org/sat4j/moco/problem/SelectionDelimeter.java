@@ -422,7 +422,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    	this.outputs = new Integer[jMax < this.sortedPortionN? jMax : this.sortedPortionN];
 	    	for(int j = 0; j < jMax; j++){
 	    	    // i is the index of the pair associated to j.
-	    	    int i = (j + 1) / 2 ;
+	    	    int i = j / 2 ;
 	    	    Integer[] pair;
 	    	    if(j % 2 == 1){
 	    		int max1Output = OptimumOutput(input2, i + 2, input2, i, true);
