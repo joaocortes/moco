@@ -151,15 +151,12 @@ public class CircuitTest {
 		}
 	    };
 
-
 	circuit.buildCircuit();
 	List<Integer> sorted = Arrays.asList(inputValues);
 	Collections.sort(sorted);
 	Collections.reverse(sorted);
 	sorted.subList(0, sortedPortionN - 1);
 	pbSolver.check(assumptions);
-	for(int value: sorted)
-	    System.out.println(value);
 
 	for(int i = 0, n = sortedPortionN ; i < n; i++)
 	    if(sorted.get(i) == 1)
@@ -235,8 +232,6 @@ public class CircuitTest {
 	Collections.sort(sorted);
 	Collections.reverse(sorted);
 	// sorted.subList(0, sortedPortionN - 1);
-	for(int value: sorted)
-	    System.out.println(value);
 
 	IVecInt assumptions = this.buildAssumption(inputValues, inputs);
 	pbSolver.check(assumptions);
@@ -248,8 +243,6 @@ public class CircuitTest {
 		obtainedSorted.add(1);
 	    else
 		obtainedSorted.add(0);
-	for(int value: obtainedSorted)
-	    System.out.println(value);
 
 	{int n = obtainedSorted.size();
 	    assertTrue("lengths are different!", n == sorted.size());
