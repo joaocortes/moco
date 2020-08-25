@@ -60,6 +60,7 @@ public class CircuitTest {
     protected LinearObj main_obj;
     protected UnsatSat solver;
     protected PBSolver pbSolver = new PBSolver();
+    static {Log.setVerbosity(6);}
     @Before
     public void partialSetUp() {
 
