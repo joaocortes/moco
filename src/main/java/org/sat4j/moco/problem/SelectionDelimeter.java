@@ -425,7 +425,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    	    int i = (j + 1) / 2 ;
 	    	    Integer[] pair;
 	    	    if(j % 2 == 1){
-	    		int max1Output = OptimumOutput(input2, i, input2, i, true);
+	    		int max1Output = OptimumOutput(input2, i + 2, input2, i, true);
 	    		int minOutput = OptimumOutput(input1, i + 1, input2, i - 1, false);
 			pair = new Integer[]{max1Output, minOutput};
 	    		optimumComponent max2 = new optimumComponent(pair, true);
