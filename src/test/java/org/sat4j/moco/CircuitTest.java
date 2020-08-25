@@ -254,7 +254,7 @@ public class CircuitTest {
 
     @Test void OptimumComponentTest(){
 	Integer[] inputs = new Integer[4];
-	boolean polarity = true;
+	boolean polarity = false;
 	this.fillInputWithVars(inputs);
 	Circuit circuit = new Circuit(pbSolver){
 		public void buildCircuit(){
@@ -378,7 +378,7 @@ public class CircuitTest {
 		Log.comment("clause:");
 		for(int lit: setOfLiterals.toArray())
 		    Log.comment("lit:"+ lit);
-		System.out.println();
+		Log.comment("");
 	    }
 	try{
 	    pbSolver.AddClause(setOfLiterals);
