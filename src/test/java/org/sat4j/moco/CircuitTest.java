@@ -189,7 +189,7 @@ public class CircuitTest {
 		inputsList.get(3).add(inputs[i]);
 	}
 
-		Circuit circuit = new Circuit(){
+		Circuit circuit = new Circuit(this.pbSolver){
 		public void buildCircuit(){
 		    MergeComponent comp = new MergeComponent(sortedPortionN);
 		    comp.constitutiveClause(inputsList);
