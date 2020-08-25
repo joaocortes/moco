@@ -214,7 +214,7 @@ public class CircuitTest {
     @Test
     public void CombineComponentTest(){
 	Random rand = new Random();
-	Integer[] inputsSize = new Integer[]{4,4};
+	Integer[] inputsSize = new Integer[]{2,2};
 	int sortedPortionN = inputsSize[0] + inputsSize[1];
 	Integer[][] inputs = new Integer[2][];
 	Integer[][] inputValues = new Integer[2][];
@@ -226,9 +226,9 @@ public class CircuitTest {
 		inputs[k][i] =  this.pbSolver.nVars();
 	    }}
 	//Each input shall be a sorted sequence
-	inputValues[0][0] = 1; inputValues[0][1] = 1; inputValues[0][2] = 0; inputValues[0][3] = 0; 
+	inputValues[0][0] = 1; inputValues[0][1] = 1; // inputValues[0][2] = 0; inputValues[0][3] = 0; 
 
-	inputValues[1][0] = 1; inputValues[1][1] = 1; inputValues[1][2] = 1; inputValues[1][3] = 1; 
+	inputValues[1][0] = 1; inputValues[1][1] = 0; // inputValues[1][2] = 1; inputValues[1][3] = 1; 
 	int expectedTrueN = 0;
 	IVecInt assumptions = new VecInt();
 	for( int i = 0; i < 2; i++)
