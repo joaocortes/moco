@@ -296,7 +296,7 @@ public class CircuitTest {
     @Test
     public void CombineComponentTest(){
 	Random rand = new Random();
-	Integer[] inputsSize = new Integer[]{2,2};
+	Integer[] inputsSize = new Integer[]{5,4};
 	int sortedPortionN = inputsSize[0] + inputsSize[1];
 	Integer[][] inputs = new Integer[2][];
 	Integer[][] inputValues = new Integer[2][];
@@ -308,31 +308,18 @@ public class CircuitTest {
 		inputs[k][i] =  this.pbSolver.nVars();
 	    }}
 	//Each input shall be a sorted sequence
-	inputValues[0][0] = 1; inputValues[0][1] = 1; // inputValues[0][2] = 0; inputValues[0][3] = 0; 
-
-	inputValues[1][0] = 1; inputValues[1][1] = 0; // inputValues[1][2] = 1; inputValues[1][3] = 1; 
-	int expectedTrueN = 0;
+	inputValues[0][0] = 1; inputValues[0][1] = 1; inputValues[0][2] = 1; inputValues[0][3] = 1; inputValues[0][4] = 0; 
+	inputValues[1][0] = 1; inputValues[1][1] = 1; inputValues[1][2] = 0; inputValues[1][3] = 0; 
 	IVecInt assumptions = new VecInt();
 	for( int i = 0; i < 2; i++)
 	    for(int k = 0,n = inputValues[i].length; k < n; k++){
 		if(inputValues[i][k] == 1){
 		    assumptions.push(inputs[i][k]);
-		    expectedTrueN++;
 		}
 		else
 		    assumptions.push(-inputs[i][k]);
 	    }
 	
-	// for( int i = 0; i < 2; i++)
-	//     for(int k = 0,n = inputValues[i].length; k < n; k++){
-	// 	int random = rand.nextInt(2);
-	// 	System.out.println("random is " + random);
-	// 	inputValues[i][k] = random;
-	// 	if(random == 1)
-	// 	    assumptions.push(inputs[i][k]);
-	// 	else
-	// 	    assumptions.push(-inputs[i][k]);
-	//     }
 	Circuit circuit = new Circuit(pbSolver){
 		public void buildCircuit(){
 		    SelectionDelimeter.Circuit.CombineComponent comp = new SelectionDelimeter.Circuit.CombineComponent(sortedPortionN);
