@@ -368,8 +368,6 @@ public class CircuitTest {
 	Collections.reverse(sorted);
 	sorted.subList(0, sortedPortionN - 1);
 	pbSolver.check(assumptions);
-	for(int value: sorted)
-	    System.out.println(value);
 
 	List<Integer> obtainedSorted = new ArrayList<Integer>();
 	Iterator<Integer> iterator = comp1.iteratorOutputs();
@@ -378,8 +376,6 @@ public class CircuitTest {
 		obtainedSorted.add(1);
 	    else
 		obtainedSorted.add(0);
-	for(int value: obtainedSorted)
-	    System.out.println(value);
 	{int n = obtainedSorted.size();
 	    assertTrue("lengths are different!",n == sorted.size());
 	    for(int i = 0; i < n; i++  )
