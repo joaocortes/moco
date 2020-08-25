@@ -213,9 +213,9 @@ public class CircuitTest {
 
     @Test
     public void CombineComponentTest(){
-	int sortedPortionN = 8;
 	Random rand = new Random();
 	Integer[] inputsSize = new Integer[]{4,4};
+	int sortedPortionN = inputsSize[0] + inputsSize[1];
 	Integer[][] inputs = new Integer[2][];
 	Integer[][] inputValues = new Integer[2][];
 	for(int k = 0; k < 2; k++){
