@@ -200,9 +200,7 @@ public class CircuitTest {
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
 
 		public boolean AddClause1(IVecInt setOfLiterals){
-		    try{
-			pbSolver.AddClause(setOfLiterals);
-		    } catch (ContradictionException e) {return false;} return true;
+		    return AddClause(setOfLiterals, true);
 		}
 	    };
 	circuit.buildCircuit();
@@ -346,13 +344,7 @@ public class CircuitTest {
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
 
 		public boolean AddClause1(IVecInt setOfLiterals){
-		    try{
-			Log.comment("clause:");
-			    for(int i = 0, n = setOfLiterals.size(); i < n; i++)
-				Log.comment(""+setOfLiterals.get(i));
-			Log.comment("");
-			pbSolver.AddClause(setOfLiterals);
-		    } catch (ContradictionException e) {return false;} return true;
+		    return AddClause(setOfLiterals, true);
 		}
 	    };
 
