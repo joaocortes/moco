@@ -226,7 +226,6 @@ public class CircuitTest {
 	ControlledComponent comp1 = circuit.getControlledComponentBase(0);
 	comp1.getOutputs();
 	List<Integer> sorted = new ArrayList<Integer>(Arrays.asList(inputValues));
-	sorted.addAll(Arrays.asList(inputValues[1]));
 	Collections.sort(sorted);
 	Collections.reverse(sorted);
 	// sorted.subList(0, sortedPortionN - 1);
