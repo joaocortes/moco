@@ -356,10 +356,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    // concatenatedSuffixes.addAll(suffix(selcomp.outputs, ki));
 		}
 		MergeComponent mergecomp = new MergeComponent(k);
-		ArrayList<ArrayList<Integer>> preffixesArray = new ArrayList<ArrayList<Integer>>();
-		for(Integer[] preffix: preffixes)
-		    preffixesArray.add(new ArrayList<Integer>(Arrays.asList(preffix)));
-		mergecomp.constitutiveClause(preffixesArray);
+		mergecomp.constitutiveClause(preffixes);
 		// ArrayList<Integer> outputs = new ArrayList<Integer>();
 		this.outputs = mergecomp.outputs;
 		// outputs.addAll(concatenatedSuffixes);
@@ -492,21 +489,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 	    
 	    public void constitutiveClause(){};
-	    public void constitutiveClause(List<ArrayList<Integer>> inputsList) {
+	    public void constitutiveClause(Integer[][] inputsArray) {
 		ArrayList<Integer> outputs = new ArrayList<Integer>();
 		ArrayList<Integer> suffix = new ArrayList<Integer>();
-		Integer[] toCombine1;
-		Integer[] toCombine2;
+		Integer[][] toCombine = new Integer[2][];
+
 		if(this.sortedPortionN == 0)
 		    return;
-		Integer[][] inputsArray = new Integer[4][];
-		int iInput = 0;
 		int inputN = 0;
-		for(ArrayList<Integer> input: inputsList){
-		    inputN+=input.size();
-		    inputsArray[iInput++] = input.toArray(new Integer[0]);
-
-		}
 		this.outputs = new Integer[inputN];
 		int k = this.sortedPortionN;
 
@@ -514,16 +504,18 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    this.outputs = inputsArray[0];
 		    return;
 		}
+
 		if(inputsArray[0].length == 1){
-		    
+		    //TODO: use the special selector, see Karpinsky,
+		    //Encoding Cardinality Constraints
 		    ArrayList<Integer> smallerInput1 = new ArrayList<Integer>();
 		    ArrayList<Integer> smallerInput2 = new ArrayList<Integer>();
 		    {
 			int i = 0;
 			for(; i < 1; i++)
-			    smallerInput1.addAll(inputsList.get(i));
+			    smallerInput1.addAll(Arrays.asList(inputsArray[i]));
 			for(; i < 4; i++)
-			    smallerInput2.addAll(inputsList.get(i));
+			    smallerInput2.addAll(Arrays.asList(inputsArray[i]));
 		    }
 
 		    SelectionComponent selcomp1 = new SelectionComponent(smallerInput1.toArray(new Integer[0]), k);
@@ -533,28 +525,31 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    toCombine1 = selcomp1.outputs;
 		    toCombine2 = selcomp2.outputs;
 		}else{
-		    List<ArrayList<Integer>> inputsListOdd = new ArrayList<ArrayList<Integer>>(4);		    
-		    List<ArrayList<Integer>> inputsListEven = new ArrayList<ArrayList<Integer>>(4);		    
+		    int sizeOdd = 0, sizeEven = 0;
+		    Integer[][] inputsListOdd = new Integer[4][];
+		    Integer[][] inputsListEven = new Integer[4][];
+
 		    for(int i = 0; i < 4; i++){
-			inputsListOdd.add(new ArrayList<Integer>());
-			inputsListEven.add(new ArrayList<Integer>());
+			int length = inputsArray[i].length;
+			inputsListOdd[i] = new Integer[length / 2]; 
+			inputsListEven[i] = new Integer[(length + 1) / 2]; 
+			sizeOdd += inputsListOdd[i].length;
+			sizeEven += inputsListEven[i].length;
 		    }
 		    boolean parity = false;
-		    int sizeOdd = 0, sizeEven = 0;
 		    for(int i = 0, n = inputsArray.length; i < n; i++){
 			parity = true;
+			int j = 0;
 			for(Integer entry: inputsArray[i])
 			    {
 				parity = !parity;
 				if(parity)
-				    inputsListEven.get(i).add(entry);
+				    inputsListEven[i][j] = entry;
 				else
-				    inputsListOdd.get(i).add(entry);
-				
+				    inputsListOdd[i][j] = entry;
+				j++;
 			    }			
 		    
-			sizeOdd += inputsListOdd.get(i).size();
-			sizeEven += inputsListEven.get(i).size();
 		    }
 		
 		    int kOdd = sizeOdd < k/2 + 2? sizeOdd: k/2 + 2;
@@ -606,6 +601,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	    public void constitutiveClause(){
 		this.outputs = new Integer[this.inputs.length < this.modN ? this.inputs.length: this.modN - 1];
+
 		if(this.inputs.length <= this.modN){
 	
 		    IVecInt clause = new VecInt(3);
