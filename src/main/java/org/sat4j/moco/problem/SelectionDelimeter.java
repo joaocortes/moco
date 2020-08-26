@@ -306,6 +306,11 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    this.outputs = sonoc.outputs;
 		    return;
 		}
+		if(n <= 4){
+		    IVecInt clause = new VecInt(new int[]{});
+		    this.recurseSpecialCase(0, 0, clause);
+		    return;
+	}
 		if(n < 8 || k == n){
 		    for(int i = 0; i<4; i++){
 			ns[i] = (n + 3 - i )/ 4;
@@ -354,6 +359,26 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		mergecomp.constitutiveClause(preffixes);
 		// ArrayList<Integer> outputs = new ArrayList<Integer>();
 		this.outputs = mergecomp.outputs;
+		return;
+	    }
+	    public void recurseSpecialCase(int depth,int first ,IVecInt clause){
+
+		if(depth == this.outputs.length || first == this.inputs.length)
+		    return;
+		Integer currentOutput = this.getIthOutput(depth);
+		if(currentOutput == null){
+		    currentOutput = getFreshVar1();
+		    this.outputs[depth] = currentOutput;
+		}
+		 
+		for(int i = first, n = this.inputs.length;i < n; i++){
+		    clause.push(-this.getIthInput(i));
+		    clause.push(currentOutput);
+		    AddClause1(clause);
+		    clause.pop();
+		    recurseSpecialCase(depth + 1, i + 1, clause);
+		    clause.pop();
+		}
 		return;
 	    }
 	}
