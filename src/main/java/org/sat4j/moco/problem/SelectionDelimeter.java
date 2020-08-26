@@ -519,36 +519,37 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    return;
 		}
 
-		int sizeOdd = 0, sizeEven = 0;
 		// parit, index of input array, index of input literal;
 		Integer[][][] inputsListSplit = new Integer[2][4][];
-
+		Integer[] sizes = new Integer[2];
+		sizes[0] = 0; sizes[1] = 0;
 		for(int i = 0; i < 4; i++){
 		    int length = inputsArray[i].length;
-		    inputsListSplit[0][i] = new Integer[(length ) / 2]; 
+		    inputsListSplit[0][i] = new Integer[(length + 1) / 2]; 
 		    inputsListSplit[1][i] = new Integer[length / 2]; 
-		    sizeOdd += inputsListSplit[1][i].length;
-		    sizeEven += inputsListSplit[0][i].length;
-		}
-		for(int i = 0, n = inputsArray.length; i < n; i++)
+		    sizes[1] += inputsListSplit[1][i].length;
+		    sizes[0] += inputsListSplit[0][i].length;
+
 		    for(int j = 0, n1 = inputsArray[i].length; j < n1; j++)
 			inputsListSplit[j % 2][i][j/2] = inputsArray[i][j];
+		}
+
 		
 		Integer[] ks = new Integer[2];
-		ks[1] = sizeOdd < k/2 + 2? sizeOdd: k/2 + 2;
-		ks[0]= sizeEven < k/2? sizeEven: k/2;
+		ks[0] = sizes[0] < k/2 + 2? sizes[0]: k/2 + 2;
+		ks[1]= sizes[1] < k/2? sizes[1]: k/2;
 		MergeComponent[] mergeComp = new MergeComponent[2];
-
-		mergeComp[1] = new MergeComponent(ks[1]);
-		mergeComp[1].constitutiveClause(inputsListSplit[1]);
 
 		mergeComp[0] = new MergeComponent(ks[0]);
 		mergeComp[0].constitutiveClause(inputsListSplit[0]);
 
-		toCombine[0] = preffix(mergeComp[1].outputs,ks[1]);
-		toCombine[1] = preffix(mergeComp[0].outputs,ks[0]);
-		suffix.addAll(suffix(mergeComp[1].outputs, mergeComp[1].outputs.length - ks[1]));
-		suffix.addAll(suffix(mergeComp[0].outputs, mergeComp[0].outputs.length - ks[0]));
+		mergeComp[1] = new MergeComponent(ks[1]);
+		mergeComp[1].constitutiveClause(inputsListSplit[1]);
+
+		toCombine[0] = preffix(mergeComp[0].outputs,ks[0]);
+		toCombine[1] = preffix(mergeComp[1].outputs,ks[1]);
+		// suffix.addAll(suffix(mergeComp[1].outputs, mergeComp[1].outputs.length - ks[1]));
+		// suffix.addAll(suffix(mergeComp[0].outputs, mergeComp[0].outputs.length - ks[0]));
 		
 		CombineComponent combComp = new CombineComponent(k);
 		combComp.constitutiveClause(toCombine[0], toCombine[1]);
