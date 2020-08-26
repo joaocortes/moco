@@ -338,7 +338,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 		Integer[][] preffixes = new Integer[4][];
 		
-		// List<Integer> concatenatedSuffixes = new ArrayList<Integer>();
 		int i = 0;
 		for(int ithN: ns){
 		    if(k < ithN) ki = k; else ki = ithN;
@@ -350,13 +349,11 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    selcomp.constitutiveClause();
 		    preffixes[i++] = selcomp.outputs;
 
-		    // concatenatedSuffixes.addAll(suffix(selcomp.outputs, ki));
 		}
 		MergeComponent mergecomp = new MergeComponent(k);
 		mergecomp.constitutiveClause(preffixes);
 		// ArrayList<Integer> outputs = new ArrayList<Integer>();
 		this.outputs = mergecomp.outputs;
-		// outputs.addAll(concatenatedSuffixes);
 		return;
 	    }
 	}
@@ -477,7 +474,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		if(index < 0)
 		    return 1;
 		return -1;
-		    }
+	    }
 	}
 	public class MergeComponent extends SortedComponent{
 	    int sortedPortionN;
@@ -496,12 +493,10 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		int inputN = 0;
 		this.outputs = new Integer[inputN];
 		int k = this.sortedPortionN;
-
 		if(inputsArray[1].length == 0){
 		    this.outputs = inputsArray[0];
 		    return;
 		}
-
 		if(inputsArray[0].length == 1){
 		    //TODO: use the special selector, see Karpinsky,
 		    //Encoding Cardinality Constraints
