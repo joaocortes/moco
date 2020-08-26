@@ -274,11 +274,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    public SortedComponent(Integer[] inputs, int sortedPortionN){
 		super();
 		this.inputs = inputs;
-		this.outputs = new Integer[inputs.length];
-		if(this.outputs.length > sortedPortionN) 
-		    this.sortedPortionN = sortedPortionN;
-		else
-		    this.sortedPortionN = this.outputs.length;
+		this.sortedPortionN = sortedPortionN;
+		this.outputs = new Integer[sortedPortionN];
 	    }
 	}
 	public class SelectionComponent extends SortedComponent{
