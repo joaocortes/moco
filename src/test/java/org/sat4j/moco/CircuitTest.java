@@ -371,11 +371,15 @@ public class CircuitTest {
     }
 
     public boolean AddClause(IVecInt setOfLiterals, boolean print){
+	int lit;
 	if(print)
 	    {
 		Log.comment("clause:");
-		for(int lit: setOfLiterals.toArray())
-		    Log.comment("lit:"+ lit);
+		for(int i = 0, n = setOfLiterals.size(); i < n; i++){
+		    lit = setOfLiterals.get(i);
+		Log.comment("lit:"+ lit);
+		}
+		
 		Log.comment("");
 	    }
 	try{
