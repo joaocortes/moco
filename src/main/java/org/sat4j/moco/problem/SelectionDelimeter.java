@@ -539,14 +539,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 			inputsListOdd.add(new ArrayList<Integer>());
 			inputsListEven.add(new ArrayList<Integer>());
 		    }
-		    int parity = 1;
+		    boolean parity = false;
 		    int sizeOdd = 0, sizeEven = 0;
 		    for(int i = 0, n = inputsArray.length; i < n; i++){
-			parity = 1;
+			parity = true;
 			for(Integer entry: inputsArray[i])
 			    {
-				parity++; parity %= 2;
-				if(parity == 0)
+				parity = !parity;
+				if(parity)
 				    inputsListEven.get(i).add(entry);
 				else
 				    inputsListOdd.get(i).add(entry);
