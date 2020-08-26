@@ -139,6 +139,8 @@ public class CircuitTest {
 		public void buildCircuit(){
 		    SelectionComponent comp = new SelectionComponent(inputs, sortedPortionN);
 		    comp.constitutiveClause();
+		    new ControlledComponent(0, comp);
+
 		}
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
 
@@ -152,13 +154,15 @@ public class CircuitTest {
 	Collections.sort(sorted);
 	Collections.reverse(sorted);
 	sorted.subList(0, sortedPortionN - 1);
+	ControlledComponent controlledComp =  circuit.getControlledComponentBase(0);
+	Integer[] outputs = controlledComp.getOutputs();
 	pbSolver.check(assumptions);
 
 	for(int i = 0, n = sortedPortionN ; i < n; i++)
 	    if(sorted.get(i) == 1)
-		assertTrue(pbSolver.modelValue(inputs[i]));
+		assertTrue(pbSolver.modelValue(outputs[i]));
 	    else 
-		assertFalse(pbSolver.modelValue(inputs[i]));
+		assertFalse(pbSolver.modelValue(outputs[i]));
 
 	return;
     }
