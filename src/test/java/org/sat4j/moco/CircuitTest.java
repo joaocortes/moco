@@ -240,7 +240,7 @@ public class CircuitTest {
 	    else
 		obtainedSorted.add(0);
 
-	{int n = obtainedSorted.size();
+	{n = obtainedSorted.size();
 	    assertTrue("lengths are different!", n == sorted.size());
 	    for(int i = 0; i < n; i++  )
 		assertTrue("failing " + i +"'th comparison", obtainedSorted.get(i) == sorted.get(i));
