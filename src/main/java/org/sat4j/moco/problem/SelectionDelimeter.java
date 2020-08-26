@@ -522,50 +522,44 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    selcomp1.constitutiveClause();
 		    SelectionComponent selcomp2 = new SelectionComponent(smallerInput2.toArray(new Integer[0]), k);
 		    selcomp2.constitutiveClause();
-		    toCombine1 = selcomp1.outputs;
-		    toCombine2 = selcomp2.outputs;
-		}else{
-		    int sizeOdd = 0, sizeEven = 0;
-		    Integer[][] inputsListOdd = new Integer[4][];
-		    Integer[][] inputsListEven = new Integer[4][];
-
-		    for(int i = 0; i < 4; i++){
-			int length = inputsArray[i].length;
-			inputsListOdd[i] = new Integer[length / 2]; 
-			inputsListEven[i] = new Integer[(length + 1) / 2]; 
-			sizeOdd += inputsListOdd[i].length;
-			sizeEven += inputsListEven[i].length;
-		    }
-		    boolean parity = false;
-		    for(int i = 0, n = inputsArray.length; i < n; i++){
-			parity = true;
-			int j = 0;
-			for(Integer entry: inputsArray[i])
-			    {
-				parity = !parity;
-				if(parity)
-				    inputsListEven[i][j] = entry;
-				else
-				    inputsListOdd[i][j] = entry;
-				j++;
-			    }			
-		    
-		    }
-		
-		    int kOdd = sizeOdd < k/2 + 2? sizeOdd: k/2 + 2;
-		    int kEven = sizeEven < k/2? sizeEven: k/2;
-		    MergeComponent mergeOdd = new MergeComponent(kOdd);
-		    mergeOdd.constitutiveClause(inputsListOdd);
-		
-		    MergeComponent mergeEven = new MergeComponent(kEven);
-		    mergeEven.constitutiveClause(inputsListEven);
-		    toCombine1 = preffix(mergeOdd.outputs,kOdd);
-		    toCombine2 = preffix(mergeEven.outputs,kEven);
-		    suffix.addAll(suffix(mergeOdd.outputs, mergeOdd.outputs.length - kOdd));
-		    suffix.addAll(suffix(mergeEven.outputs, mergeEven.outputs.length - kEven));
+		    toCombine[0]  = selcomp1.outputs;
+		    toCombine[1] = selcomp2.outputs;
+		    return;
 		}
+
+		int sizeOdd = 0, sizeEven = 0;
+		// parit, index of input array, index of input literal;
+		Integer[][][] inputsListSplit = new Integer[2][4][];
+
+		for(int i = 0; i < 4; i++){
+		    int length = inputsArray[i].length;
+		    inputsListSplit[0][i] = new Integer[(length ) / 2]; 
+		    inputsListSplit[1][i] = new Integer[length / 2]; 
+		    sizeOdd += inputsListSplit[1][i].length;
+		    sizeEven += inputsListSplit[0][i].length;
+		}
+		for(int i = 0, n = inputsArray.length; i < n; i++)
+		    for(int j = 0, n1 = inputsArray[i].length; j < n1; j++)
+			inputsListSplit[j % 2][i][j/2] = inputsArray[i][j];
+		
+		Integer[] ks = new Integer[2];
+		ks[1] = sizeOdd < k/2 + 2? sizeOdd: k/2 + 2;
+		ks[0]= sizeEven < k/2? sizeEven: k/2;
+		MergeComponent[] mergeComp = new MergeComponent[2];
+
+		mergeComp[1] = new MergeComponent(ks[1]);
+		mergeComp[1].constitutiveClause(inputsListSplit[1]);
+
+		mergeComp[0] = new MergeComponent(ks[0]);
+		mergeComp[0].constitutiveClause(inputsListSplit[0]);
+
+		toCombine[0] = preffix(mergeComp[1].outputs,ks[1]);
+		toCombine[1] = preffix(mergeComp[0].outputs,ks[0]);
+		suffix.addAll(suffix(mergeComp[1].outputs, mergeComp[1].outputs.length - ks[1]));
+		suffix.addAll(suffix(mergeComp[0].outputs, mergeComp[0].outputs.length - ks[0]));
+		
 		CombineComponent combComp = new CombineComponent(k);
-		combComp.constitutiveClause(toCombine1, toCombine2);
+		combComp.constitutiveClause(toCombine[0], toCombine[1]);
 		outputs.addAll(Arrays.asList(combComp.outputs));
 		this.outputs = outputs.toArray(new Integer[0]);
 	    }
