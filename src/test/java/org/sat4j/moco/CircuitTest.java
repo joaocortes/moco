@@ -143,10 +143,7 @@ public class CircuitTest {
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
 
 		public boolean AddClause1(IVecInt setOfLiterals){
-		    // this.prettyPrintVecInt(setOfLiterals,true);
-		    try{
-			pbSolver.AddClause(setOfLiterals);
-		    } catch (ContradictionException e) {return false;} return true;
+		    return AddClause(setOfLiterals, true);
 		}
 	    };
 
