@@ -169,30 +169,29 @@ public class CircuitTest {
 
     @Test void MergeComponentTest(){
 	int sortedPortionN = 16;
-	
-	List<ArrayList<Integer>> inputsList = new ArrayList<ArrayList<Integer>>(4);		    
 	Integer[] inputs = new Integer[16];
 	this.fillInputWithVars(inputs);
-	for(int i = 0; i < 4; i++)
-	    inputsList.add(new ArrayList<Integer>());
-
+	Integer[][] inputsArray = new Integer[4][];
+	int n = inputs.length;
 	{
-	    int n = inputs.length;
 	    int i = 0;
-	    for(; i < n / 4; i++)
-		inputsList.get(0).add(inputs[i]);
-	    for(; i < 2 * n / 4; i++)
-		inputsList.get(1).add(inputs[i]);
-	    for(; i < 3 * n / 4; i++)
-		inputsList.get(2).add(inputs[i]);
-	    for(; i < n ; i++)
-		inputsList.get(3).add(inputs[i]);
+	    int m = 0;
+	    int i0 = 0;
+	    for(; m < 4 - 1; m++){
+		inputsArray[m] = new Integer[n / 4];
+		i0 = i;
+		for(; i < (m + 1) * n / 4; i++)
+		    inputsArray[m][i - i0 ] = inputs[i];
+	    }
+	    inputsArray[m] = new Integer[n - 3 * n / 4];
+	    i0 = i;
+	    for(; i < n; i++)
+		inputsArray[m][i - i0] = inputs[i];
 	}
-
-		Circuit circuit = new Circuit(this.pbSolver){
+	Circuit circuit = new Circuit(this.pbSolver){
 		public void buildCircuit(){
 		    MergeComponent comp = new MergeComponent(sortedPortionN);
-		    comp.constitutiveClause(inputsList);
+		    comp.constitutiveClause(inputsArray);
 		    new ControlledComponent(0, comp);
 		}
 
