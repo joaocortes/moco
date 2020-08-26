@@ -61,10 +61,9 @@ public class CircuitTest {
     protected UnsatSat solver;
     protected PBSolver pbSolver = new PBSolver();
     static {Log.setVerbosity(6);}
-    @Before
-    public void partialSetUp() {
 
-    }
+    @Before
+    public void partialSetUp() {}
     
     @Test
     public void ModuleComponentTest(){
