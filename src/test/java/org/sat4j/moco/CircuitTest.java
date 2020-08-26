@@ -157,6 +157,20 @@ public class CircuitTest {
 	ControlledComponent controlledComp =  circuit.getControlledComponentBase(0);
 	Integer[] outputs = controlledComp.getOutputs();
 	pbSolver.check(assumptions);
+	Integer[] obtainedSorted = new Integer[sorted.size()];
+	for(int i = 0, n = sortedPortionN ; i < n; i++)
+	    if(pbSolver.modelValue(outputs[i]))
+		obtainedSorted[i] = 1;
+	    else 
+		obtainedSorted[i] = 0;
+	
+	Log.comment("obtained sorted:");
+	for(int value: obtainedSorted)
+	    Log.comment("" + value);
+
+	Log.comment("sorted:");
+	for(int value: sorted)
+	    Log.comment("" + value);
 
 	for(int i = 0, n = sortedPortionN ; i < n; i++)
 	    if(sorted.get(i) == 1)
