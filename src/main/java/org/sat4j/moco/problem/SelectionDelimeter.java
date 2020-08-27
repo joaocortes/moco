@@ -582,15 +582,15 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		mergeComp[1] = new MergeComponent(ks[1]);
 		mergeComp[1].constitutiveClause(inputsListSplit[1]);
 
-		toCombine[0] = preffix(mergeComp[0].outputs,ks[0]);
-		toCombine[1] = preffix(mergeComp[1].outputs,ks[1]);
-		// suffix.addAll(suffix(mergeComp[1].outputs, mergeComp[1].outputs.length - ks[1]));
-		// suffix.addAll(suffix(mergeComp[0].outputs, mergeComp[0].outputs.length - ks[0]));
+		toCombine[0] = mergeComp[0].getOutputs();
+		toCombine[1] = mergeComp[1].getOutputs();
+
 		}		
 		CombineComponent combComp = new CombineComponent(k);
 		combComp.constitutiveClause(toCombine[0], toCombine[1]);
 		outputs.addAll(Arrays.asList(combComp.outputs));
 		this.outputs = outputs.toArray(new Integer[0]);
+		return;
 	    }
 
 	    public ArrayList<Integer> suffix(Integer[] seq, int window){
