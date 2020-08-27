@@ -222,7 +222,7 @@ public class CircuitTest {
 		    return AddClause(setOfLiterals, true);
 		}
 	    };
-	circuit.buildCircuit();
+
 	Integer[] inputValues = new Integer[inputs.length];
 	inputValues[0] = 0;
 	inputValues[1] = 0; 
