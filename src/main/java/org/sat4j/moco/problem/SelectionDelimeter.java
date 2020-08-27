@@ -634,7 +634,11 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    public void constitutiveClause(){
 		this.outputs = new Integer[this.inputs.length < this.modN ? this.inputs.length: this.modN - 1];
 
-		if(this.inputs.length <= this.modN){
+		if(this.inputs.length < this.modN){
+		    this.outputs = this.inputs;
+		    return;
+}
+		if(this.inputs.length == this.modN){
 	
 		    IVecInt clause = new VecInt(3);
 		    int MSB = this.inputs[this.inputs.length - 1];
