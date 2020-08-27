@@ -63,7 +63,7 @@ public class SelectionDelimeterTest {
             return;
         }
 	    this.solver = new UnsatSat(moco);
-	    this.sd  = new SelectionDelimeter(moco, pbSolver,false);
+	    this.sd  = new SelectionDelimeter(moco, pbSolver,true);
 
 	    
     }
