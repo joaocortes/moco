@@ -346,9 +346,10 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		Integer[][] preffixes = new Integer[4][];
 		
 		int i = 0;
+		Integer[] slice;
 		for(int ithN: ns){
 		    if(k < ithN) ki = k; else ki = ithN;
-		    Integer[] slice = new Integer[ithN];
+		    slice = new Integer[ithN];
 		    for(int j = 0; j < ithN; j++)
 			slice[j] = this.inputs[offset + j];
 		    offset+=ithN;
