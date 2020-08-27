@@ -447,6 +447,15 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	    public void constitutiveClause(Integer[] input1, Integer[] input2){
 	    	int jMax = input1.length + input2.length;
+		this.inputs = new Integer[jMax];
+		{
+		    int i = 0;
+		    int n  = input1.length;
+			for(;i < n; i++)
+			    this.inputs[i] = input1[i];
+			for(;i < jMax; i++)		    
+			    this.inputs[i] = input2[i - n];
+		}
 	    	this.outputs = new Integer[jMax < this.sortedPortionN? jMax : this.sortedPortionN];
 	    	for(int j = 0; j < jMax; j++){
 	    	    // i is the index of the pair associated to j.
