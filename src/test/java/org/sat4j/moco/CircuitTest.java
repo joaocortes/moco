@@ -259,6 +259,13 @@ public class CircuitTest {
 		obtainedSorted.add(1);
 	    else
 		obtainedSorted.add(0);
+	Iterator<ControlledComponent> iteratorControlledComp = circuit.controlledCompIterator();
+	ControlledComponent next;
+	while(iteratorControlledComp.hasNext()) {
+	    next = iteratorControlledComp.next();
+	    auxGetValues(next);
+}
+
 
 	{n = obtainedSorted.size();
 	    assertTrue("lengths are different!" + n + " and " + sorted.size() , n == sorted.size());
@@ -268,6 +275,41 @@ public class CircuitTest {
 	    return;
 	}
 
+    }
+
+    private Integer[][] auxGetValues(ControlledComponent controlledComp){
+	Integer[][] results = new Integer[2][];
+	Integer[] outputs = controlledComp.getOutputs();
+	Integer[] inputs = controlledComp.getInputs();
+	Integer[] inputsValues = new Integer[inputs.length];
+	Log.comment("Looking at component " + controlledComp.getBase());
+	for(int i = 0, n = inputs.length; i < n; i++)
+	    if(pbSolver.modelValue(inputs[i]))
+		inputsValues[i] = 1;
+	    else
+		inputsValues[i] = 0;
+	
+	List<Integer> sorted = new ArrayList<Integer>(Arrays.asList(inputsValues));
+	Collections.sort(sorted);
+	Collections.reverse(sorted);
+	Log.comment("sorted inputs:");
+	for(int value: sorted)
+	    System.out.print(value + " ");
+	System.out.println();
+
+	Integer[] obtainedSorted = new Integer[outputs.length];
+	for(int i = 0, n = outputs.length; i < n; i++)
+	    if(pbSolver.modelValue(outputs[i]))
+		obtainedSorted[i] = 1;
+	    else
+		obtainedSorted[i] = 0;
+	Log.comment("outputs:");
+	for(int value: obtainedSorted)
+	    System.out.print(value + " ");
+	System.out.println();
+	results[0] = sorted.toArray(new Integer[0]);
+	results[1] = obtainedSorted;
+	return results;
     }
 
     @Test void OptimumComponentTest(){
