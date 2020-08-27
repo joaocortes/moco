@@ -685,6 +685,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	    public Iterator<Integer> iteratorOutputs(){return this.comp.iteratorOutputs();}
 	    public void setBase(int base){this.base = base;}
+	    public Integer getBase(){return this.base;}
 	    public void setComp(BaseComponent comp){this.comp = comp;}
 	    public void addControledComponent(){controlledComponents.put(this.base, this);}
 	    public Integer[] getInputs(){return this.comp.getInputs();}
