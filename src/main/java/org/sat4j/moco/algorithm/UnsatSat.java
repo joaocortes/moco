@@ -347,6 +347,7 @@ public class UnsatSat extends algorithm {
         for (int i = 0; i < this.problem.nConstrs(); ++i) {
             solver.addConstr(this.problem.getConstr(i));
         }
+	solver.setConstantID();
         // Log.comment(5, "out UnsatSat.buildSolver");
         return solver;
     }
