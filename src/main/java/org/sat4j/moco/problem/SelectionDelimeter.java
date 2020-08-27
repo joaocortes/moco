@@ -517,46 +517,45 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    int sortedPortionN;
 	    public MergeComponent(int sortedPortionN){
 		this.sortedPortionN = sortedPortionN;
+		int i = 0;
+		while(getControlledComponentBase(i) != null)
+		    i++;
+		ControlledComponent controlledComp = new ControlledComponent(i, this);
 	    }
 	    
 	    public void constitutiveClause(){};
 	    public void constitutiveClause(Integer[][] inputsArray) {
+		int totalInputSize = 0;
+		for(int i = 0; i < 4; i++)
+		    totalInputSize += inputsArray[i].length;
+		this.inputs = new Integer[totalInputSize];
+		{ int k = 0;
+		for(int i = 0; i < 4; i++)
+		    for(int j = 0, n = inputsArray[i].length;j < n; j++ )
+			this.inputs[k++] = inputsArray[i][j];
+		}
 		ArrayList<Integer> outputs = new ArrayList<Integer>();
-		ArrayList<Integer> suffix = new ArrayList<Integer>();
 		Integer[][] toCombine = new Integer[2][];
+		int k = this.sortedPortionN;
 
-		if(this.sortedPortionN == 0)
+		if(this.sortedPortionN == 0){
 		    return;
 		}
 
-
-		int k = this.sortedPortionN;
 		if(inputsArray[1].length == 0){
 		    this.outputs = inputsArray[0];
 		    return;
 		}
 		if(inputsArray[0].length == 1){
-		    //TODO: use the special selector, see Karpinsky,
-		    //Encoding Cardinality Constraints
-		    ArrayList<Integer> smallerInput1 = new ArrayList<Integer>();
-		    ArrayList<Integer> smallerInput2 = new ArrayList<Integer>();
-		    {
-			int i = 0;
-			for(; i < 1; i++)
-			    smallerInput1.addAll(Arrays.asList(inputsArray[i]));
-			for(; i < 4; i++)
-			    smallerInput2.addAll(Arrays.asList(inputsArray[i]));
-		    }
-
-		    SelectionComponent selcomp1 = new SelectionComponent(smallerInput1.toArray(new Integer[0]), k);
-		    selcomp1.constitutiveClause();
-		    SelectionComponent selcomp2 = new SelectionComponent(smallerInput2.toArray(new Integer[0]), k);
-		    selcomp2.constitutiveClause();
-		    toCombine[0]  = selcomp1.outputs;
-		    toCombine[1] = selcomp2.outputs;
+		    ArrayList<Integer> concatenatedInput = new ArrayList<Integer>();
+		    for(int i = 0; i < 4; i++)
+			concatenatedInput.addAll(Arrays.asList(inputsArray[i]));
+		    SelectionComponent selComp = new SelectionComponent(concatenatedInput.toArray(new Integer[0]), k);
+		    selComp.constitutiveClause();
+		    this.outputs = selComp.getOutputs();
+		    return;
 		}else{
-
-		// parit, index of input array, index of input literal;
+		// parity, index of input array, index of input literal;
 		Integer[][][] inputsListSplit = new Integer[2][4][];
 		Integer[] sizes = new Integer[2];
 		sizes[0] = 0; sizes[1] = 0;
