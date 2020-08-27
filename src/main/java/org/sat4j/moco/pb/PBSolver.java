@@ -99,12 +99,6 @@ public class PBSolver {
 	this.solver = SolverFactory.newDefault(); 
 	this.newVar();
 
-	this.constantID = this.nVars();
-	try{
-	    this.AddClause(new VecInt(new int[]{this.constantID}));
-	}catch(ContradictionException exception){
-	    throw new RuntimeException("Contradition exception while adding constant value", exception);
-	};
     }
     
     /**
@@ -440,4 +434,13 @@ public class PBSolver {
 	return statLog;
     }
     
+    public void setConstantID(){
+	this.constantID = this.nVars();
+	try{
+	    this.AddClause(new VecInt(new int[]{this.constantID}));
+	}catch(ContradictionException exception){
+	    throw new RuntimeException("Contradition exception while adding constant value", exception);
+	};
+
+}
 }
