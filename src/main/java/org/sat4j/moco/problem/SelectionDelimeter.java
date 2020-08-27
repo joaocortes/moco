@@ -515,8 +515,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 		if(this.sortedPortionN == 0)
 		    return;
-		int inputN = 0;
-		this.outputs = new Integer[inputN];
+		}
+
+
 		int k = this.sortedPortionN;
 		if(inputsArray[1].length == 0){
 		    this.outputs = inputsArray[0];
