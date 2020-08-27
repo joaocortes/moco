@@ -78,5 +78,24 @@ abstract public class  algorithm{
 	this.printFlightRecordParticular();
     }
     public void printFlightRecordParticular(){};
+
+    /**
+     * Creates a PB oracle initialized with the MOCO's constraints.
+     * @return The oracle.
+     * @throws ContradictionException if the oracle detects that the
+     * MOCO's constraint set is unsatisfiable.
+     */
+    protected PBSolver buildSolver() throws ContradictionException {
+        // Log.comment(5, "in Algorithm.buildSolver");
+        PBSolver solver = new PBSolver();
+        solver.newVars(this.problem.nVars());
+        for (int i = 0; i < this.problem.nConstrs(); ++i) {
+            solver.addConstr(this.problem.getConstr(i));
+        }
+	solver.setConstantID();
+        // Log.comment(5, "out UnsatSat.buildSolver");
+        return solver;
+    }
+
 }
 

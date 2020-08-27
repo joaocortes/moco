@@ -128,21 +128,6 @@ public class ParetoMCS extends algorithm {
         Log.comment(3, "out ParetoMCS.solve");
     }
     
-    /**
-     * Creates a PB oracle initialized with the MOCO's constraints.
-     * @return The oracle.
-     * @throws ContradictionException if the oracle detects that the MOCO's constraint set is unsatisfiable.
-     */
-    private PBSolver buildSolver() throws ContradictionException {
-        Log.comment(3, "{ ParetoMCS.buildSolver");
-        PBSolver solver = new PBSolver();
-        solver.newVars(this.problem.nVars());
-        for (int i = 0; i < this.problem.nConstrs(); ++i) {
-            solver.addConstr(this.problem.getConstr(i));
-        }
-        Log.comment(3, "out ParetoMCS.buildSolver");
-        return solver;
-    }
     
     /**
      * Builds a partition sequence of the literals in the objective functions to be used for stratified
