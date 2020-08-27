@@ -541,8 +541,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    selcomp2.constitutiveClause();
 		    toCombine[0]  = selcomp1.outputs;
 		    toCombine[1] = selcomp2.outputs;
-		    return;
-		}
+		}else{
 
 		// parit, index of input array, index of input literal;
 		Integer[][][] inputsListSplit = new Integer[2][4][];
@@ -575,7 +574,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		toCombine[1] = preffix(mergeComp[1].outputs,ks[1]);
 		// suffix.addAll(suffix(mergeComp[1].outputs, mergeComp[1].outputs.length - ks[1]));
 		// suffix.addAll(suffix(mergeComp[0].outputs, mergeComp[0].outputs.length - ks[0]));
-		
+		}		
 		CombineComponent combComp = new CombineComponent(k);
 		combComp.constitutiveClause(toCombine[0], toCombine[1]);
 		outputs.addAll(Arrays.asList(combComp.outputs));
