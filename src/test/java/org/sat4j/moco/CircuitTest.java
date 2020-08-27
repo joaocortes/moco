@@ -247,7 +247,7 @@ public class CircuitTest {
 	List<Integer> sorted = new ArrayList<Integer>(Arrays.asList(inputValues));
 	Collections.sort(sorted);
 	Collections.reverse(sorted);
-	// sorted.subList(0, sortedPortionN - 1);
+	sorted.subList(sortedPortionN, sorted.size()).clear();
 
 	IVecInt assumptions = this.buildAssumption(inputValues, inputs);
 	pbSolver.check(assumptions);
