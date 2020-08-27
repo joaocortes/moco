@@ -107,9 +107,9 @@ public class CircuitTest {
 
     @Test
     public void SelectionComponentTest(){
-	int sortedPortionN = 2;
-	Random rand = new Random();
 	int inputsLength = 4;
+	int sortedPortionN = inputsLength;
+	Random rand = new Random();
 	Integer[] inputs = new Integer[inputsLength];
 	Integer[] inputValues = new Integer[inputsLength];
 	Arrays.fill(inputValues, 0);
@@ -119,17 +119,10 @@ public class CircuitTest {
 	}
 
 	IVecInt assumptions = new VecInt();
-	// for( int i = 0; i < inputs.length; i++){
-	//     int random = rand.nextInt(2);
-	//     System.out.println("random is " + random);
-	//     inputValues[i] = random;
-	//     if(random == 1)
-	// 	assumptions.push(inputs[i]);
-	//     else
-	// 	assumptions.push(-inputs[i]);
-	// }
-	inputValues[0]=1; inputValues[1]=0; inputValues[2]=0;
-
+	for( int i = 0; i < inputs.length; i++){
+	    int random = rand.nextInt(2);
+	    inputValues[i] = random;
+	}
 	    for(int k = 0,n = inputValues.length; k < n; k++){
 		if(inputValues[k] == 1){
 		    assumptions.push(inputs[k]);
