@@ -228,14 +228,17 @@ public class CircuitTest {
 	inputValues[1] = 0; 
 	inputValues[2] = 0; 
 	inputValues[3] = 0; 
+
 	inputValues[4] = 1; 
 	inputValues[5] = 1; 
-	inputValues[6] = 0; 
-	inputValues[7] = 1; 
+	inputValues[6] = 1; 
+	inputValues[7] = 0; 
+
 	inputValues[8] = 1; 
 	inputValues[9] = 1; 
 	inputValues[10] = 0; 
-	inputValues[11] = 1; 
+	inputValues[11] = 0; 
+
 	inputValues[12] = 1; 
 	inputValues[13] = 1; 
 	inputValues[14] = 1; 
@@ -312,6 +315,7 @@ public class CircuitTest {
 	for(int value: obtainedSorted)
 	    System.out.print(value + " ");
 	System.out.println();
+
 	results[0] = sorted.toArray(new Integer[0]);
 	results[1] = obtainedSorted;
 	return results;
