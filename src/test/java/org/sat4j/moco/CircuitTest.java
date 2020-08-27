@@ -289,6 +289,11 @@ public class CircuitTest {
 	    else
 		inputsValues[i] = 0;
 	
+	Log.comment("unsorted inputs:");
+	for(int value: inputsValues)
+	    System.out.print(value + " ");
+	System.out.println();
+
 	List<Integer> sorted = new ArrayList<Integer>(Arrays.asList(inputsValues));
 	Collections.sort(sorted);
 	Collections.reverse(sorted);
