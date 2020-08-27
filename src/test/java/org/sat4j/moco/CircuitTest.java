@@ -365,7 +365,7 @@ public class CircuitTest {
     @Test
     public void CombineComponentTest(){
 	Random rand = new Random();
-	Integer[] inputsSize = new Integer[]{5,4};
+	Integer[] inputsSize = new Integer[]{8,8};
 	int sortedPortionN = inputsSize[0] + inputsSize[1];
 	Integer[][] inputs = new Integer[2][];
 	Integer[][] inputValues = new Integer[2][];
@@ -376,9 +376,9 @@ public class CircuitTest {
 		this.pbSolver.newVar();
 		inputs[k][i] =  this.pbSolver.nVars();
 	    }}
-	//Each input shall be a sorted sequence
-	inputValues[0][0] = 1; inputValues[0][1] = 1; inputValues[0][2] = 1; inputValues[0][3] = 1; inputValues[0][4] = 0; 
-	inputValues[1][0] = 1; inputValues[1][1] = 1; inputValues[1][2] = 0; inputValues[1][3] = 0; 
+	//Each input shall be a sorted sequence. The first input shall be heavier
+	inputValues[0] = new Integer[]{1, 1, 1, 1, 1, 1, 0, 0};
+	inputValues[1] = new Integer[]{1, 1, 1, 1, 0, 0, 0, 0};
 	IVecInt assumptions = new VecInt();
 	for( int i = 0; i < 2; i++)
 	    for(int k = 0,n = inputValues[i].length; k < n; k++){
@@ -421,6 +421,7 @@ public class CircuitTest {
 		obtainedSorted.add(1);
 	    else
 		obtainedSorted.add(0);
+
 	{int n = obtainedSorted.size();
 	    assertTrue("lengths are different!",n == sorted.size());
 	    for(int i = 0; i < n; i++  )
