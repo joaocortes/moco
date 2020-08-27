@@ -219,7 +219,7 @@ public class CircuitTest {
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
 
 		public boolean AddClause1(IVecInt setOfLiterals){
-		    return AddClause(setOfLiterals, true);
+		    return AddClause(setOfLiterals, false);
 		}
 	    };
 
@@ -227,14 +227,14 @@ public class CircuitTest {
 	inputValues[0] = 0;
 	inputValues[1] = 0; 
 	inputValues[2] = 0; 
-	inputValues[3] = 1; 
+	inputValues[3] = 0; 
 	inputValues[4] = 1; 
 	inputValues[5] = 1; 
-	inputValues[6] = 1; 
+	inputValues[6] = 0; 
 	inputValues[7] = 1; 
 	inputValues[8] = 1; 
 	inputValues[9] = 1; 
-	inputValues[10] = 1; 
+	inputValues[10] = 0; 
 	inputValues[11] = 1; 
 	inputValues[12] = 1; 
 	inputValues[13] = 1; 
@@ -243,13 +243,13 @@ public class CircuitTest {
 
 	circuit.buildCircuit();
 	ControlledComponent comp1 = circuit.getControlledComponentBase(0);
-	comp1.getOutputs();
 	List<Integer> sorted = new ArrayList<Integer>(Arrays.asList(inputValues));
 	Collections.sort(sorted);
 	Collections.reverse(sorted);
 	sorted.subList(sortedPortionN, sorted.size()).clear();
 
 	IVecInt assumptions = this.buildAssumption(inputValues, inputs);
+
 	pbSolver.check(assumptions);
 
 	List<Integer> obtainedSorted = new ArrayList<Integer>();
