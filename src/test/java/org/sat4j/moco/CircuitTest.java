@@ -107,11 +107,12 @@ public class CircuitTest {
 
     @Test
     public void SelectionComponentTest(){
-	int sortedPortionN = 4;
+	int sortedPortionN = 2;
 	Random rand = new Random();
 	int inputsLength = 4;
 	Integer[] inputs = new Integer[inputsLength];
 	Integer[] inputValues = new Integer[inputsLength];
+	Arrays.fill(inputValues, 0);
 	for(int i = 0; i < inputs.length; i++){
 	    this.pbSolver.newVar();
 	    inputs[i] =  this.pbSolver.nVars();
@@ -127,14 +128,16 @@ public class CircuitTest {
 	//     else
 	// 	assumptions.push(-inputs[i]);
 	// }
-	assumptions.push(inputs[0]);
-	inputValues[0]=1;
-	assumptions.push(inputs[3]);
-	inputValues[3]=1;
-	assumptions.push(-inputs[2]);
-	inputValues[2]=0;
-	assumptions.push(-inputs[1]);
-	inputValues[1]=0;
+	inputValues[0]=1; inputValues[1]=0; inputValues[2]=0;
+
+	    for(int k = 0,n = inputValues.length; k < n; k++){
+		if(inputValues[k] == 1){
+		    assumptions.push(inputs[k]);
+		}
+		else
+		    assumptions.push(-inputs[k]);
+	    }
+
 	Circuit circuit = new Circuit(this.pbSolver){
 		public void buildCircuit(){
 		    SelectionComponent comp = new SelectionComponent(inputs, sortedPortionN);
@@ -150,12 +153,15 @@ public class CircuitTest {
 	    };
 
 	circuit.buildCircuit();
-	List<Integer> sorted = Arrays.asList(inputValues);
+	List<Integer> sorted = new ArrayList<Integer>(Arrays.asList(inputValues));
 	Collections.sort(sorted);
 	Collections.reverse(sorted);
-	sorted.subList(0, sortedPortionN - 1);
+	sorted.subList(sortedPortionN,sorted.size()).clear();
 	ControlledComponent controlledComp =  circuit.getControlledComponentBase(0);
 	Integer[] outputs = controlledComp.getOutputs();
+
+	// assumptions.push(-controlledComp.getIthOutput(2));
+
 	pbSolver.check(assumptions);
 	Integer[] obtainedSorted = new Integer[sorted.size()];
 	for(int i = 0, n = sortedPortionN ; i < n; i++)
