@@ -224,8 +224,17 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	abstract public int getFreshVar1();
 	abstract public boolean AddClause1(IVecInt setOfLiterals);
 	abstract public void buildCircuit();
-
+	public ControlledCompIterator controlledCompIterator(){return new ControlledCompIterator();}
 	public ControlledComponent getControlledComponentBase(int base){return this.controlledComponents.get(base);}
+
+	class ControlledCompIterator implements Iterator<ControlledComponent>{
+	    Iterator<Integer> current  = controlledComponents.keySet().iterator();
+	    public ControlledComponent next(){
+		ControlledComponent next = getControlledComponentBase(current.next());
+		return next;
+ }
+	    public boolean hasNext(){return current.hasNext();}
+}
 	abstract public class BaseComponent implements Iterable<Integer>{
 
 	    protected Integer[] inputs;
