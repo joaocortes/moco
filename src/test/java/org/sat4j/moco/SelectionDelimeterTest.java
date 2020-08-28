@@ -152,4 +152,43 @@ public class SelectionDelimeterTest {
         return solver;
     }
 
+
+/**
+ * Enumerate all models of a DIMACS formula. Implement the enumeration
+ *
+ */
+
+
+    static public class MyModelIterator implements Iterator<boolean[]>{
+	private ISolver iterSolver = null;
+	IVecInt assumptions;
+	public MyModelIterator(ISolver solver, IVecInt assumptions){
+	    this.iterSolver = new ModelIterator(solver);
+	    this.iterSolver.setTimeout(10);
+	    this.assumptions = assumptions;
+	}
+
+
+	public boolean hasNext(){
+	    try{
+		if(this.iterSolver.isSatisfiable(this.assumptions)){
+		    return true;
+		}
+	    } catch(TimeoutException e){return false;}
+	    return false;
+	}
+	public boolean[] next(){
+	    int[] currentModel = new int[0];
+	    boolean[] currentAssignment = new boolean[this.iterSolver.nVars()];
+	    for(int i = 0, n = currentAssignment.length; i < n ; i++)
+		currentAssignment[i] = false;
+	    if(hasNext()){
+		currentModel = this.iterSolver.model(); 
+		for(int i = 0, n = currentModel.length;i < n ;i++)
+		    currentAssignment[currentModel[i]] = true;
+	    }
+	    return currentAssignment;
+	}
+
+    }
 }
