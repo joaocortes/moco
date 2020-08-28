@@ -218,6 +218,7 @@ public class DigitalEnv {
 	    public Integer next(){
 		Integer result = digits.get(currentBase);
 		if(reverse){
+		    if(iBase > 0)
 		    currentBase /= getRatio(iBase - 1);
 		    iBase--;
 		}else{
