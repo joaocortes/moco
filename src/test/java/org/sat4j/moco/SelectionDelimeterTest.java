@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.algorithm.UnsatSat;
@@ -45,7 +46,7 @@ public class SelectionDelimeterTest {
     protected UnsatSat solver;
 
     public SelectionDelimeterTest(){};
-    @Before
+    @BeforeEach
     public void partialSetUp() {
 	    this.moco = new Instance();
 	    this.moco.addConstr(PBFactory.instance().mkGE(new VecInt(new int[] { 1, 2, 3 }), 2));
