@@ -161,6 +161,9 @@ public class DigitalEnv {
 	public IteratorContiguous iterator2(){
 	    return new IteratorContiguous(false);	
 	}
+	public IteratorContiguous iterator3(){
+	    return new IteratorContiguous(true);	
+	}
 	class IteratorJumps implements Iterator<Integer>{
 	    int currentBase = 1;
 	    Iterator<Entry<Integer, Integer>>  current = digits.entrySet().iterator();
