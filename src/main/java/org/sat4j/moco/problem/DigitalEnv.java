@@ -24,8 +24,11 @@ package org.sat4j.moco.problem;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map.Entry;
+
+import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledComponent;
 
 
 
@@ -156,7 +159,7 @@ public class DigitalEnv {
 	    return new IteratorJumps();	
 	}
 	public IteratorContiguous iterator2(){
-	    return new IteratorContiguous();	
+	    return new IteratorContiguous(false);	
 	}
 	class IteratorJumps implements Iterator<Integer>{
 	    int currentBase = 1;
@@ -170,15 +173,54 @@ public class DigitalEnv {
 	    public Integer currentBase(){return currentBase;}
 	}
 
+	class IteratorJumpsReversed implements Iterator<Integer>{
+	    int currentBase = 1;
+	    Integer[] order = new Integer[digits.size()];
+	    public IteratorJumpsReversed(){
+		Iterator<Entry<Integer, Integer>>  iterator = digits.entrySet().iterator();
+		int i = digits.size() - 1;
+		while(iterator.hasNext())
+		    order[i--] = iterator.next().getKey();
+	    }
+	    Iterator<Integer> current = Arrays.asList(order).iterator();
+	    public boolean hasNext(){return current.hasNext();}
+	    public Integer next(){ 
+		this.currentBase = current.next();
+		return digits.get(this.currentBase);
+	    }
+	    public Integer currentBase(){return currentBase;}
+	}
+
 	class IteratorContiguous implements Iterator<Integer>{
 	    private int iBase = 0;
-	    private int currentBase = 1;
-	    
-	    public boolean hasNext(){if(iBase < basesN) return true; else return false;}
+	    private int currentBase;
+	    private int currentRatio;
+	    boolean reverse = false;
+
+	    public IteratorContiguous(){
+		this(false);
+	    }
+
+	    public IteratorContiguous(boolean reverse){
+		this.reverse = reverse;
+		if(reverse)
+		    iBase = getBasesN() - 1;
+		currentBase = getBase(iBase);
+	    }
+	    public boolean hasNext(){
+		if(reverse)
+		    if(iBase > -1) return true; else return false;
+		else
+		    if( iBase < basesN) return true; else return false;}
 	    public Integer next(){
 		Integer result = digits.get(currentBase);
-		currentBase *= getRatio(iBase);
-		iBase++;
+		if(reverse){
+		    currentBase /= getRatio(iBase - 1);
+		    iBase--;
+		}else{
+		    currentBase *= getRatio(iBase);
+		    iBase++;
+		}
 		if(result == null) return 0; else return result;
 		
 	    }
@@ -209,5 +251,5 @@ public class DigitalEnv {
 	    return this.getDigit(MSBase);
 	}
     }
-
+}
 }
