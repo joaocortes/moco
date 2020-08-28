@@ -880,13 +880,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    base0 = base;
 	    if(digit + 1 < ratio){
 		lit = objManager.digitalLiteral(base, digit + 1);
-		clause.push(-lit);
+		if(lit != 0)
+		    clause.push(-lit);
 		AddClause(clause);
 		clause.pop();
 	    }
 	    lit = objManager.digitalLiteral(base, digit);
 	    if(lit != 0){
-		clause.push(-lit);
+		clause.push(lit);
 		AddClause(clause);
 	    }
 	}
