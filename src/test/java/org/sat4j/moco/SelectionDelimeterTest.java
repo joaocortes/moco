@@ -114,6 +114,27 @@ public class SelectionDelimeterTest {
     }
 
 
+    @Test
+    public void delimitationTest(){
+	int[] upperBound = new int[]{1,1};
+	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
+	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
+	Iterator<boolean[]> iterator = new MyModelIterator((ISolver) this.pbSolver, assumptions);
+	while(iterator.hasNext()){
+	    boolean[] model = iterator.next();
+	    assertTrue("model " + model + "failed the test", this.testModel(model, upperBound));}
+}
+
+    private boolean testModel(boolean[] model, int[] upperBound){
+	for(int i = 0, n = this.moco.nObjs(); i < n; i++)
+	    if(this.moco.getObj(i).evaluate(model).asIntExact() < upperBound[i])
+		continue;
+	    else
+		return false;
+	return false;	
+
+}
+
         /**
      * Creates a PB oracle initialized with the MOCO's constraints.
      * @return The oracle.
