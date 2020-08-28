@@ -36,14 +36,20 @@ import org.sat4j.moco.problem.DigitalEnv;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.LinearObj;
 import org.sat4j.moco.problem.SelectionDelimeter;
+import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
 import org.sat4j.specs.ContradictionException;
+import org.sat4j.specs.ISolver;
+import org.sat4j.specs.IVecInt;
+import org.sat4j.specs.TimeoutException;
+import org.sat4j.tools.ModelIterator;
 
 public class SelectionDelimeterTest {
     protected SelectionDelimeter sd = null;
+    protected PBSolver pbSolver;
     protected Instance moco;
     protected LinearObj main_obj;
-    protected UnsatSat solver;
+    static{Log.setVerbosity(6);}
 
     public SelectionDelimeterTest(){};
     @BeforeEach
@@ -53,18 +59,15 @@ public class SelectionDelimeterTest {
 	    this.main_obj = new LinearObj(new VecInt(new int[] { 1, 2 }),
                                       new Vec<Real>(new Real[] { new Real(9), Real.ONE }));
 	    this.moco.addObj(this.main_obj);
-	    PBSolver pbSolver;
-
-	    
 	    try {
-		pbSolver = buildSolver();
+		this.pbSolver = buildSolver();
 
 	    }
 	    catch (ContradictionException e) {
+		Log.comment("Could not build the solver");
             return;
         }
-	    this.solver = new UnsatSat(moco);
-	    this.sd  = new SelectionDelimeter(moco, pbSolver,true);
+	    this.sd  = new SelectionDelimeter(moco, this.pbSolver,true);
 
 	    
     }
