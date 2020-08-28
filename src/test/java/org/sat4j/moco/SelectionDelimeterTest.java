@@ -24,8 +24,11 @@ package org.sat4j.moco;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Iterator;
+
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
