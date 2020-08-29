@@ -41,6 +41,7 @@ import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.DigitalEnv.DigitalNumber;
 import org.sat4j.moco.problem.DigitalEnv.DigitalNumber.IteratorContiguous;
+import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledComponent;
 import org.sat4j.specs.IVecInt;
 
 /**
