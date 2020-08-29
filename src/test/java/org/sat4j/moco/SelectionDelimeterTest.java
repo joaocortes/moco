@@ -222,7 +222,6 @@ public class SelectionDelimeterTest {
      * MOCO's constraint set is unsatisfiable.
      */
     private PBSolver buildSolver() throws ContradictionException {
-        // Log.comment(5, "in UnsatSat.buildSolver");
         PBSolver solver = new PBSolver();
         solver.newVars(this.moco.nVars());
         for (int i = 0; i < this.moco.nConstrs(); ++i) {
