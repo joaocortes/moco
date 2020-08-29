@@ -248,18 +248,17 @@ public class SelectionDelimeterTest {
 	    return this.pbSolver.isSat();
 	}
 	public boolean[] next(){
-	    int[] currentModel = new int[0];
 	    boolean[] currentAssignment = new boolean[this.pbSolver.nVars()];
-	    IVecInt notCorrent = new VecInt();
+	    IVecInt notCurrent = new VecInt();
 	    int litId;
 	    for(int i = 0, n = currentAssignment.length; i < n ; i++){
 		litId = i + 1;
 		currentAssignment[i] = this.pbSolver.modelValue(litId);
 		if(currentAssignment[i])
-		    notCorrent.push(-litId);
+		    notCurrent.push(-litId);
 	    }
 	    try {
-		this.pbSolver.AddClause(notCorrent);
+		this.pbSolver.AddClause(notCurrent);
 	    }
 	    catch (ContradictionException e) {
 		Log.comment(3, "Contradiction in ParetoMCS.buildSolver");
