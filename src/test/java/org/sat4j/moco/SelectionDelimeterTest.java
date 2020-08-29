@@ -242,6 +242,7 @@ public class SelectionDelimeterTest {
     static public class MyModelIterator implements Iterator<boolean[]>{
 	private PBSolver pbSolver;
 	IVecInt assumptions;
+	boolean contradiction = false;
 	public MyModelIterator(PBSolver solver, IVecInt assumptions){
 	    this.pbSolver =  solver;
 	    this.assumptions = assumptions;
@@ -250,6 +251,8 @@ public class SelectionDelimeterTest {
 
 	public boolean hasNext(){
 	    this.pbSolver.check(assumptions);
+	    if(contradiction)
+		return false;
 	    return this.pbSolver.isSat();
 	}
 	public boolean[] next(){
@@ -266,7 +269,8 @@ public class SelectionDelimeterTest {
 		this.pbSolver.AddClause(notCurrent);
 	    }
 	    catch (ContradictionException e) {
-		Log.comment(3, "Contradiction in ParetoMCS.buildSolver");
+		Log.comment(3, "Contradiction detected!");
+		this.contradiction = true;
 	    }
 	    
 
