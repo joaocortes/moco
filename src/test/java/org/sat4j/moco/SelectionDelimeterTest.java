@@ -144,6 +144,46 @@ public class SelectionDelimeterTest {
 	return false;	
 
 }
+    @Test
+    public void digitalCounterTest(){
+
+	boolean[] inputValues = new boolean[this.moco.nVars()];
+	inputValues[0] = true;
+	inputValues[1] = true;
+	IVecInt assumptions = new VecInt();
+	for(int i = 1, n = this.moco.nVars(); i <= n;i++)
+	    if(inputValues[i - 1])
+		assumptions.push(i);
+	    else
+		assumptions.push(-i);
+
+	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
+	boolean[] model;
+	while(iterator.hasNext()){
+	    model = iterator.next();
+	    this.testDigitalValues(model, inputValues);
+	}
+    }
+    private void testDigitalValues(boolean[] model, Integer[] inputValues){
+	for(int i = 0, n = this.moco.nObjs(); i < n; i++){
+	    ObjManager objManager  = this.sd.getIthObjManager(i);
+	    Objective objective = this.moco.getObj(i);
+	    int obtained = objective.evaluate(model).asIntExact();
+	    DigitalNumber digitalNumber = objManager.getDigitalEnv().toDigital(obtained);
+	    DigitalNumber.IteratorJumps iterator = digitalNumber.iterator();
+	    int digit0 = 0;
+	    int base = 0;
+	    while(iterator.hasNext()){
+		base = iterator.currentBase();
+		digit0 = iterator.next();
+		for(int digit = 0; digit < digit0; digit++)
+		    assertTrue("failing at base " + base + ", value" + digit,
+			       this.pbSolver.modelValue(objManager.digitalLiteral(base, digit )));
+}
+
+	    }
+
+}
 
         /**
      * Creates a PB oracle initialized with the MOCO's constraints.
