@@ -269,7 +269,8 @@ public class SelectionDelimeterTest {
 		    notCurrent.push(litId);
 
 	    }
-	    try {
+	    if(notCurrent.size() > 0)
+		try {
 		this.pbSolver.AddClause(notCurrent);
 	    }
 	    catch (ContradictionException e) {
