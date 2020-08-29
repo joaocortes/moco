@@ -69,9 +69,30 @@ public class SelectionDelimeterTest {
 		Log.comment("Could not build the solver");
             return;
         }
-	    this.sd  = new SelectionDelimeter(moco, this.pbSolver,true);
+	    this.sd  = new SelectionDelimeter(moco, this.pbSolver,true){
+		    /**
+		     *Adds the disjunction of setOfLiterals, and logs
+		     *@param setOfliterals
+		     */
 
-	    
+		    public boolean AddClause(IVecInt setOfLiterals){
+			Log.comment(6,"AddClause:");
+			this.prettyPrintVecInt(setOfLiterals,true);
+			try{
+			    this.solver.AddClause(setOfLiterals);
+			} catch (ContradictionException e) {
+			    Log.comment(2, "contradiction when adding clause: ");
+			    for(int j = 0; j < setOfLiterals.size(); ++j)
+				Log.comment(2, " " + setOfLiterals.get(j) + " " );
+			    return false;
+			}
+			return true;
+		    }
+
+};
+	    this.range = new VecInt(this.pbSolver.nVars());
+	    for(int i = 0, n = this.range.size(); i < n; i++)
+		this.range.push(i + 1);
     }
     @Test
     public void testDigits(){
