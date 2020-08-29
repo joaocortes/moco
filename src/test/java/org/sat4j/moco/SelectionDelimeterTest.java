@@ -241,8 +241,9 @@ public class SelectionDelimeterTest {
 
     static public class MyModelIterator implements Iterator<boolean[]>{
 	private PBSolver pbSolver;
-	IVecInt assumptions;
 	boolean contradiction = false;
+	final IVecInt assumptions;
+
 	public MyModelIterator(PBSolver solver, IVecInt assumptions){
 	    this.pbSolver =  solver;
 	    this.assumptions = assumptions;
@@ -264,6 +265,9 @@ public class SelectionDelimeterTest {
 		currentAssignment[i] = this.pbSolver.modelValue(litId);
 		if(currentAssignment[i])
 		    notCurrent.push(-litId);
+		else
+		    notCurrent.push(litId);
+
 	    }
 	    try {
 		this.pbSolver.AddClause(notCurrent);
