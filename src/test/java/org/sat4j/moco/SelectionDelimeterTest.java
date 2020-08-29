@@ -201,16 +201,19 @@ public class SelectionDelimeterTest {
 	    int base = 0;
 	    int lit = 0;
 	    while(iterator.hasNext()){
-		base = iterator.currentBase();
 		digit0 = iterator.next();
-		for(int digit = 0; digit < digit0; digit++)
-		    assertTrue("failing at base " + base + ", value" + digit,
-			       this.pbSolver.modelValue(objManager.digitalLiteral(base, digit )));
-}
-
+		base = iterator.currentBase();
+		for(int digit = 0; digit <= digit0; digit++){
+		    lit = objManager.digitalLiteral(base, digit );
+		    if(lit != 0)
+			assertTrue("failing at base " + base + ", value" + digit,
+				   this.pbSolver.modelValue(lit));
+		}
 	    }
 
-}
+	}
+
+    }
 
         /**
      * Creates a PB oracle initialized with the MOCO's constraints.
