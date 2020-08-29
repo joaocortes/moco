@@ -123,6 +123,12 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
 	     result += this.prettyFormatVariable(vecInt.get(j));
 	 return result;
      }
+    public String prettyFormatVecIntWithValues(IVecInt vecInt){
+	 String result = "";
+	 for(int j = 0; j < vecInt.size(); ++j)
+	     result += this.prettyFormatVariable(vecInt.get(j)) + " " +this.solver.modelValue(vecInt.get(j)) + "|\n";
+	 return result;
+     }
     public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){
 	if(clausing)
 	    Log.clausing(this.prettyFormatVecInt(vecInt));
