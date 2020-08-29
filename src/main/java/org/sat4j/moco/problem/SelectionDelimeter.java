@@ -210,8 +210,10 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    return MSBase * (MSDigit + 1);
 	}
 	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
+
 	public int digitalLiteral(int base, int value){
-	    if( value == 0)
+	    ControlledComponent component = circuit.getControlledComponentBase(base);
+	    if( value <= 0 || component.getOutputsSize() == 0)
 		return 0;
 	    int index = unaryToIndex(value);
 	    if(index > circuit.getControlledComponentBase(base).getOutputsSize())  
