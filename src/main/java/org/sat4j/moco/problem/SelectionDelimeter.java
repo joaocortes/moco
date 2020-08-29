@@ -868,40 +868,40 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
      *@param upperLimit inclusive upper limit
      *@param iObj the objective index
      */
+
     public int uglyUpperBoundClause(int iObj, int upperLimit){
 	ObjManager objManager = this.getIthObjManager(iObj);
-	DigitalNumber digits = objManager.getDigitalEnv().toDigital(upperLimit);
-	IteratorContiguous iterator = digits.iterator2();
-
+	DigitalEnv digitalEnv = objManager.getDigitalEnv();
+	DigitalNumber digits = digitalEnv.toDigital(upperLimit);
+	IteratorContiguous iterator = digits.iterator3();
 	int activator = getFreshVar();
 	IVecInt clause = new VecInt(new int[]{activator});
 	SDIndex sDIndex = new SDIndex(iObj, upperLimit);
 	librarian.putIndex(activator, sDIndex);
 	this.yTable[iObj][unaryToIndex(upperLimit)] = activator;
-	int base0 = 1;
-	int base = 1;
+	int base = iterator.currentBase();
 	int digit = 0;
 	int ratio;
 	int lit = 0;
 	while(iterator.hasNext()){
 	    base = iterator.currentBase();
+	    ratio = digitalEnv.getRatio(iterator.getIBase());
 	    digit = iterator.next();
-	    ratio = base/base0;
-	    base0 = base;
 	    if(digit + 1 < ratio){
 		lit = objManager.digitalLiteral(base, digit + 1);
-		if(lit != 0)
+		if(lit != 0){
 		    clause.push(-lit);
-		AddClause(clause);
-		clause.pop();
+		    AddClause(clause);
+		    clause.pop();
+		}
 	    }
 	    lit = objManager.digitalLiteral(base, digit);
 	    if(lit != 0){
-		clause.push(lit);
+		clause.push(-lit);
 		AddClause(clause);
 	    }
 	}
-	return 0;
+	return activator;
     }
 }
 
