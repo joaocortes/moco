@@ -95,7 +95,7 @@ public class SelectionDelimeterTest {
 
 };
 	    this.range = new VecInt(this.pbSolver.nVars());
-	    for(int i = 0, n = this.range.size(); i < n; i++)
+	    for(int i = 0, n = this.pbSolver.nVars(); i < n; i++)
 		this.range.push(i + 1);
     }
     @Test
