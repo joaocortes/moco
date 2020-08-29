@@ -825,7 +825,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    int k = kD; // + this.instance.getObj(iObj).getMinValue();
 	    return "Y[" + iObj + ", " + k +"]"+ "::" + literal + " ";
 	}
-	return "";
+	return literal + " ";
     }
 
     /**
