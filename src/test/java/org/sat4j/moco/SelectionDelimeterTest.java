@@ -58,9 +58,8 @@ public class SelectionDelimeterTest {
     @BeforeEach
     public void partialSetUp() {
 	    this.moco = new Instance();
-	    this.moco.addConstr(PBFactory.instance().mkGE(new VecInt(new int[] { 1, 2, 3 }), 2));
 	    this.main_obj = new LinearObj(new VecInt(new int[] { 1, 2 }),
-                                      new Vec<Real>(new Real[] { new Real(9), Real.ONE }));
+                                      new Vec<Real>(new Real[] { new Real(5), Real.ONE }));
 	    this.moco.addObj(this.main_obj);
 	    try {
 		this.pbSolver = buildSolver();
