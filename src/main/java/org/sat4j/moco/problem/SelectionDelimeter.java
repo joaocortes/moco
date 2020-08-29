@@ -242,9 +242,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    public ControlledComponent next(){
 		ControlledComponent next = getControlledComponentBase(current.next());
 		return next;
- }
+	    }
 	    public boolean hasNext(){return current.hasNext();}
-}
+	}
 	abstract public class BaseComponent implements Iterable<Integer>{
 
 	    protected Integer[] inputs;
@@ -331,7 +331,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    IVecInt clause = new VecInt(new int[]{});
 		    this.recurseSpecialCase(0, 0, clause);
 		    return;
-	}
+		}
 		if(n < 8 || k == n){
 		    for(int i = 0; i<4; i++){
 			ns[i] = (n + 3 - i )/ 4;
@@ -461,10 +461,10 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		{
 		    int i = 0;
 		    int n  = input1.length;
-			for(;i < n; i++)
-			    this.inputs[i] = input1[i];
-			for(;i < jMax; i++)		    
-			    this.inputs[i] = input2[i - n];
+		    for(;i < n; i++)
+			this.inputs[i] = input1[i];
+		    for(;i < jMax; i++)		    
+			this.inputs[i] = input2[i - n];
 		}
 	    	this.outputs = new Integer[jMax < this.sortedPortionN? jMax : this.sortedPortionN];
 	    	for(int j = 0; j < jMax; j++){
@@ -549,9 +549,9 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    totalInputSize += inputsArray[i].length;
 		this.inputs = new Integer[totalInputSize];
 		{ int k = 0;
-		for(int i = 0; i < 4; i++)
-		    for(int j = 0, n = inputsArray[i].length;j < n; j++ )
-			this.inputs[k++] = inputsArray[i][j];
+		    for(int i = 0; i < 4; i++)
+			for(int j = 0, n = inputsArray[i].length;j < n; j++ )
+			    this.inputs[k++] = inputsArray[i][j];
 		}
 		ArrayList<Integer> outputs = new ArrayList<Integer>();
 		Integer[][] toCombine = new Integer[2][];
@@ -574,35 +574,35 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    this.outputs = selComp.getOutputs();
 		    return;
 		}else{
-		// parity, index of input array, index of input literal;
-		Integer[][][] inputsListSplit = new Integer[2][4][];
-		Integer[] sizes = new Integer[2];
-		sizes[0] = 0; sizes[1] = 0;
-		for(int i = 0; i < 4; i++){
-		    int length = inputsArray[i].length;
-		    inputsListSplit[0][i] = new Integer[(length + 1) / 2]; 
-		    inputsListSplit[1][i] = new Integer[length / 2]; 
-		    sizes[1] += inputsListSplit[1][i].length;
-		    sizes[0] += inputsListSplit[0][i].length;
+		    // parity, index of input array, index of input literal;
+		    Integer[][][] inputsListSplit = new Integer[2][4][];
+		    Integer[] sizes = new Integer[2];
+		    sizes[0] = 0; sizes[1] = 0;
+		    for(int i = 0; i < 4; i++){
+			int length = inputsArray[i].length;
+			inputsListSplit[0][i] = new Integer[(length + 1) / 2]; 
+			inputsListSplit[1][i] = new Integer[length / 2]; 
+			sizes[1] += inputsListSplit[1][i].length;
+			sizes[0] += inputsListSplit[0][i].length;
 
-		    for(int j = 0, n1 = inputsArray[i].length; j < n1; j++)
-			inputsListSplit[j % 2][i][j/2] = inputsArray[i][j];
-		}
+			for(int j = 0, n1 = inputsArray[i].length; j < n1; j++)
+			    inputsListSplit[j % 2][i][j/2] = inputsArray[i][j];
+		    }
 
 		
-		Integer[] ks = new Integer[2];
-		ks[0] = sizes[0] < k/2 + 2? sizes[0]: k/2 + 2;
-		ks[1]= sizes[1] < k/2? sizes[1]: k/2;
-		MergeComponent[] mergeComp = new MergeComponent[2];
+		    Integer[] ks = new Integer[2];
+		    ks[0] = sizes[0] < k/2 + 2? sizes[0]: k/2 + 2;
+		    ks[1]= sizes[1] < k/2? sizes[1]: k/2;
+		    MergeComponent[] mergeComp = new MergeComponent[2];
 
-		mergeComp[0] = new MergeComponent(ks[0]);
-		mergeComp[0].constitutiveClause(inputsListSplit[0]);
+		    mergeComp[0] = new MergeComponent(ks[0]);
+		    mergeComp[0].constitutiveClause(inputsListSplit[0]);
 
-		mergeComp[1] = new MergeComponent(ks[1]);
-		mergeComp[1].constitutiveClause(inputsListSplit[1]);
+		    mergeComp[1] = new MergeComponent(ks[1]);
+		    mergeComp[1].constitutiveClause(inputsListSplit[1]);
 
-		toCombine[0] = mergeComp[0].getOutputs();
-		toCombine[1] = mergeComp[1].getOutputs();
+		    toCombine[0] = mergeComp[0].getOutputs();
+		    toCombine[1] = mergeComp[1].getOutputs();
 
 		}		
 		CombineComponent combComp = new CombineComponent(k);
@@ -647,7 +647,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		if(this.inputs.length < this.modN){
 		    this.outputs = this.inputs;
 		    return;
-}
+		}
 		if(this.inputs.length == this.modN){
 	
 		    IVecInt clause = new VecInt(3);
