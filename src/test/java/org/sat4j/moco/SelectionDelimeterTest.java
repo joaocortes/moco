@@ -55,6 +55,7 @@ public class SelectionDelimeterTest {
     protected PBSolver pbSolver;
     protected Instance moco;
     protected LinearObj main_obj;
+    protected IVecInt range;
     static{Log.setVerbosity(6);}
 
     public SelectionDelimeterTest(){};
