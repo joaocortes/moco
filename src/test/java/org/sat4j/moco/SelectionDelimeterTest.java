@@ -63,7 +63,7 @@ public class SelectionDelimeterTest {
     public void partialSetUp() {
 	    this.moco = new Instance();
 	    this.main_obj = new LinearObj(new VecInt(new int[] { 1, 2 }),
-                                      new Vec<Real>(new Real[] { new Real(5), Real.ONE }));
+					  new Vec<Real>(new Real[] { new Real(2), new Real(5) }));
 	    this.moco.addObj(this.main_obj);
 	    try {
 		this.pbSolver = buildSolver();
@@ -147,7 +147,7 @@ public class SelectionDelimeterTest {
 
 @Test
     public void delimitationTest(){
-	int[] upperBound = new int[]{4};
+	int[] upperBound = new int[]{};
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
 	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
@@ -158,22 +158,23 @@ public class SelectionDelimeterTest {
 	    model = iterator.next();
 	    assertTrue("model " + model + "failed the test", this.testUpperBound(model, upperBound));}
 	    assertTrue("0 models", modelN > 0);
+
     }
 
     private boolean testUpperBound(boolean[] model, int[] upperBound){
 	for(int i = 0, n = this.moco.nObjs(); i < n; i++)
-	    if(this.moco.getObj(i).evaluate(model).asIntExact() < upperBound[i])
+	    if(this.moco.getObj(i).evaluate(model).asIntExact() <= upperBound[i])
 		continue;
 	    else
 		return false;
-	return false;	
+	return true;	
 
 }
     @Test
     public void digitalCounterTest(){
 
 	boolean[] inputValues = new boolean[this.moco.nVars()];
-	inputValues[0] = true;
+	inputValues[0] = false;
 	inputValues[1] = true;
 	IVecInt assumptions = new VecInt();
 	for(int i = 1, n = this.moco.nVars(); i <= n;i++)
@@ -186,10 +187,10 @@ public class SelectionDelimeterTest {
 	boolean[] model;
 	while(iterator.hasNext()){
 	    model = iterator.next();
-	    this.testDigitalValues(model, inputValues);
+	    this.testDigitalValues(model);
 	}
     }
-    private void testDigitalValues(boolean[] model, Integer[] inputValues){
+    private void testDigitalValues(boolean[] model){
 	for(int i = 0, n = this.moco.nObjs(); i < n; i++){
 	    ObjManager objManager  = this.sd.getIthObjManager(i);
 	    Objective objective = this.moco.getObj(i);
@@ -198,6 +199,7 @@ public class SelectionDelimeterTest {
 	    DigitalNumber.IteratorJumps iterator = digitalNumber.iterator();
 	    int digit0 = 0;
 	    int base = 0;
+	    int lit = 0;
 	    while(iterator.hasNext()){
 		base = iterator.currentBase();
 		digit0 = iterator.next();
