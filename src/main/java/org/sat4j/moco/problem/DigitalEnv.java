@@ -164,7 +164,7 @@ public class DigitalEnv {
 	public IteratorContiguous iterator3(){
 	    return new IteratorContiguous(true);	
 	}
-	class IteratorJumps implements Iterator<Integer>{
+	public class IteratorJumps implements Iterator<Integer>{
 	    int currentBase = 1;
 	    Iterator<Entry<Integer, Integer>>  current = digits.entrySet().iterator();
 	    public boolean hasNext(){return current.hasNext();}
@@ -176,7 +176,7 @@ public class DigitalEnv {
 	    public Integer currentBase(){return currentBase;}
 	}
 
-	class IteratorJumpsReversed implements Iterator<Integer>{
+	public class IteratorJumpsReversed implements Iterator<Integer>{
 	    int currentBase = 1;
 	    Integer[] order = new Integer[digits.size()];
 	    public IteratorJumpsReversed(){
@@ -194,7 +194,7 @@ public class DigitalEnv {
 	    public Integer currentBase(){return currentBase;}
 	}
 
-	class IteratorContiguous implements Iterator<Integer>{
+	public class IteratorContiguous implements Iterator<Integer>{
 	    private int iBase = 0;
 	    private int currentBase;
 	    private int currentRatio;
