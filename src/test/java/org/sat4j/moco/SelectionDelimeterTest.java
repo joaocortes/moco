@@ -145,31 +145,6 @@ public class SelectionDelimeterTest {
 
 
 
-@Test
-    public void delimitationTest(){
-	int[] upperBound = new int[]{};
-	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
-	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
-	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
-	boolean[] model;
-	int modelN = 0;
-	while(iterator.hasNext()){
-	    modelN++;
-	    model = iterator.next();
-	    assertTrue("model " + model + "failed the test", this.testUpperBound(model, upperBound));}
-	    assertTrue("0 models", modelN > 0);
-
-    }
-
-    private boolean testUpperBound(boolean[] model, int[] upperBound){
-	for(int i = 0, n = this.moco.nObjs(); i < n; i++)
-	    if(this.moco.getObj(i).evaluate(model).asIntExact() <= upperBound[i])
-		continue;
-	    else
-		return false;
-	return true;	
-
-}
     @Test
     public void digitalCounterTest(){
 
@@ -214,6 +189,32 @@ public class SelectionDelimeterTest {
 	}
 
     }
+
+@Test
+    public void delimitationTest(){
+	int[] upperBound = new int[]{};
+	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
+	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
+	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
+	boolean[] model;
+	int modelN = 0;
+	while(iterator.hasNext()){
+	    modelN++;
+	    model = iterator.next();
+	    assertTrue("model " + model + "failed the test", this.testUpperBound(model, upperBound));}
+	    assertTrue("0 models", modelN > 0);
+
+    }
+
+    private boolean testUpperBound(boolean[] model, int[] upperBound){
+	for(int i = 0, n = this.moco.nObjs(); i < n; i++)
+	    if(this.moco.getObj(i).evaluate(model).asIntExact() <= upperBound[i])
+		continue;
+	    else
+		return false;
+	return true;	
+
+}
 
         /**
      * Creates a PB oracle initialized with the MOCO's constraints.
