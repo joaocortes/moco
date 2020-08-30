@@ -31,39 +31,32 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.logging.Logger;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.algorithm.UnsatSat;
-import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
-import org.sat4j.moco.problem.DigitalEnv;
-import org.sat4j.moco.problem.Instance;
-import org.sat4j.moco.problem.LinearObj;
 import org.sat4j.moco.problem.SelectionDelimeter;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit;
-import org.sat4j.moco.problem.SelectionDelimeter.Circuit.BaseComponent;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledComponent;
-import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ModComponent;
-import org.sat4j.moco.problem.SelectionDelimeter.Circuit.optimumComponent;
 import org.sat4j.moco.util.Log;
-import org.sat4j.moco.util.Real;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
 
 public class CircuitTest {
     protected SelectionDelimeter sd = null;
-    protected Instance moco;
-    protected LinearObj main_obj;
     protected UnsatSat solver;
     protected PBSolver pbSolver = new PBSolver();
     static {Log.setVerbosity(6);}
 
-    @Before
-    public void partialSetUp() {}
+    @BeforeEach
+    public void partialSetUp() {
+	pbSolver = new PBSolver();
+	this.pbSolver.setConstantID();
+
+
+}
     
     @Test
     public void ModuleComponentTest(){
