@@ -693,7 +693,28 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 	    
 	}
-	public class ControlledComponent{
+
+	public class DigitComponent extends SortedComponent{
+	    SelectionComponent selecComp;
+	    ModComponent modComponent;
+	    int range;
+
+	    public  DigitComponent(Integer[] inputs, int range){
+		super(inputs, inputs.length);
+		this.range = range;
+	    }
+
+	    public void constitutiveClause(){
+		this.selecComp = new SelectionComponent(inputs);
+		this.selecComp.constitutiveClause();
+		this.modComponent = new ModComponent(this.selecComp.outputs, this.range);
+		this.modComponent.constitutiveClause();
+		this.outputs = this.modComponent.getOutputs();
+	    };
+
+
+	}
+	public abstract class ControlledComponent{
 	    BaseComponent comp = null;
 	    int base = 0;
 
