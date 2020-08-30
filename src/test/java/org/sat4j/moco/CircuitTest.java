@@ -199,7 +199,7 @@ public class CircuitTest {
 		    MergeComponent comp = new MergeComponent(sortedPortionN);
 		    comp.constitutiveClause(inputsArray);
 		    new ControlledComponent(0, comp);
-		}
+		    }
 
 
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
