@@ -141,15 +141,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    
 
 		    }
+
 		    /**
 		     *range is the exclusive upper value the unary output may represent.
 		     */
 		    public ControlledComponent buildControlledComponent(Integer[] inputs, int base, int range){
-			SelectionComponent selecComp = new SelectionComponent(inputs);
-			selecComp.constitutiveClause();
-			ModComponent modComponent = new ModComponent(selecComp.outputs, range);
-			modComponent.constitutiveClause();
-			ControlledComponent result  = new ControlledComponent(base, modComponent);
+			DigitComponent digitComp = new DigitComponent(inputs, range);
+			digitComp.constitutiveClause();
+			ControlledComponent result  = new ControlledComponent(base, digitComp);
 			return result;
 		    }
 		    public int getFreshVar1(){return getFreshVar();}
