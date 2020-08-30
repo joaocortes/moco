@@ -97,110 +97,129 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	}
     };
 
-    public class ObjManager{
-	int iObj;
-	Circuit circuit;
-	DigitalEnv digitalEnv;
+public class ObjManager{
+    int iObj;
+    Circuit circuit;
+    DigitalEnv digitalEnv;
 
-	ObjManager(int iObj){
-	    this.iObj = iObj;
+    ObjManager(int iObj){
+	this.iObj = iObj;
 	    
-	    this.circuit = new Circuit(getSolver()){
-		    public void buildCircuit(){
-			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
-			ControlledComponent lastContComp = null;
-			ArrayList<Integer> inputs = new ArrayList<Integer>();
-			// last base needed to expand the weights
-			int ratioI = 0;
-			int base = 1;
-			int ratio = 1;
-			int maxBase = baseInputs.lastKey();
-			ControlledComponent contComp;
+	this.circuit = new Circuit(getSolver()){
+		public void buildCircuit(){
+		    SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
+		    ControlledComponent lastContComp = null;
+		    ArrayList<Integer> inputs = new ArrayList<Integer>();
+		    // last base needed to expand the weights
+		    int ratioI = 0;
+		    int base = 1;
+		    int ratio = 1;
+		    int maxBase = baseInputs.lastKey();
+		    ControlledComponent contComp;
 	    
-			do{
-			    ratio = digitalEnv.getRatio(ratioI++);
-			    inputs.clear();
-			    ArrayList<Integer> inputsWeights = baseInputs.get(base);
-			    if(lastContComp != null)
-				inputs.addAll(getCarryBits(lastContComp.getInputs(), ratio));		    
-			    if(inputsWeights!=null)
-				inputs.addAll(inputsWeights);
-			    if(base <= maxBase || inputs.size() != 0){
-				contComp =
-				    buildControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
-				lastContComp = contComp;
-			    } else{break;}
-			    base *=ratio;
-			}while(true);
+		    do{
+			ratio = digitalEnv.getRatio(ratioI++);
+			inputs.clear();
+			ArrayList<Integer> inputsWeights = baseInputs.get(base);
+			if(lastContComp != null)
+			    inputs.addAll(getCarryBits(lastContComp.getInputs(), ratio));		    
+			if(inputsWeights!=null)
+			    inputs.addAll(inputsWeights);
+			if(base <= maxBase || inputs.size() != 0){
+			    contComp =
+				buildControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
+			    lastContComp = contComp;
+			} else{break;}
+			base *=ratio;
+		    }while(true);
 		    
 
-		    }
+		}
 
-		    /**
-		     *range is the exclusive upper value the unary output may represent.
-		     */
-		    public ControlledComponent buildControlledComponent(Integer[] inputs, int base, int range){
-			DigitComponent digitComp = new DigitComponent(inputs, range);
-			digitComp.constitutiveClause();
-			ControlledComponent result  = new ControlledComponent(base, digitComp);
-			return result;
-		    }
-		    public int getFreshVar1(){return getFreshVar();}
-		    public boolean AddClause1(IVecInt setOfLiterals){return AddClause(setOfLiterals);}
-		};
-	    this.digitalEnv = new DigitalEnv();
+		/**
+		 *range is the exclusive upper value the unary output may represent.
+		 */
+		public ControlledComponent buildControlledComponent(Integer[] inputs, int base, int range){
+		    DigitComponent digitComp = new DigitComponent(inputs, range);
+		    digitComp.constitutiveClause();
+		    ControlledComponent result  = new ControlledComponent(base, digitComp);
+		    return result;
+		}
+		public int getFreshVar1(){return getFreshVar();}
+		public boolean AddClause1(IVecInt setOfLiterals){return AddClause(setOfLiterals);}
+	    };
+	this.digitalEnv = new DigitalEnv();
 	    
-	}
+    }
 
 
-	/**
-	 *Generates the inputs created by the weights of the objective
-	 *function iObj
-	 */
-	protected SortedMap<Integer,ArrayList<Integer>> getInputsFromWeights(int iObj){
-	    DigitalEnv digitalEnv = this.getDigitalEnv();
-	    SortedMap<Integer,ArrayList<Integer>> baseInputs= new TreeMap<Integer, ArrayList<Integer>>();
-	    HashMap<Integer, Integer> weights = getWeights(iObj);
-	    List<DigitalNumber> digitsList = new ArrayList<DigitalNumber>();
-	    // IVecInt digits = new VecInt(new int[]{});
-	    for(Entry<Integer, Integer> entry: weights.entrySet()){
-		int weight = entry.getValue();
-		boolean weightSign = weight > 0;
-		int lit = entry.getKey();
-		DigitalNumber digits = digitalEnv.toDigital(weightSign? weight: -weight);
-		digitsList.add(digits);
-		// if(maxNDigits < nDigits) maxNDigits = nDigits;
-		DigitalNumber.IteratorContiguous iterator = digits.iterator2();
+    /**
+     *Generates the inputs created by the weights of the objective
+     *function iObj
+     */
+    protected SortedMap<Integer,ArrayList<Integer>> getInputsFromWeights(int iObj){
+	DigitalEnv digitalEnv = this.getDigitalEnv();
+	SortedMap<Integer,ArrayList<Integer>> baseInputs= new TreeMap<Integer, ArrayList<Integer>>();
+	HashMap<Integer, Integer> weights = getWeights(iObj);
+	List<DigitalNumber> digitsList = new ArrayList<DigitalNumber>();
+	// IVecInt digits = new VecInt(new int[]{});
+	for(Entry<Integer, Integer> entry: weights.entrySet()){
+	    int weight = entry.getValue();
+	    boolean weightSign = weight > 0;
+	    int lit = entry.getKey();
+	    DigitalNumber digits = digitalEnv.toDigital(weightSign? weight: -weight);
+	    digitsList.add(digits);
+	    // if(maxNDigits < nDigits) maxNDigits = nDigits;
+	    DigitalNumber.IteratorContiguous iterator = digits.iterator2();
 
-		int ithDigit = 0;
-		int ithBase = 1;
-		while(iterator.hasNext())
-		    {
-			ithBase = iterator.currentBase();
-			ithDigit = iterator.next();
-			while( ithDigit > 0){
-			    if(baseInputs.containsKey(ithBase))
-				baseInputs.get(ithBase).add(weightSign? lit: -lit);
-			    else
-				baseInputs.put(ithBase, new ArrayList<Integer>(Arrays.asList(new Integer[]{weightSign? lit: -lit})));
-			    ithDigit--;
-			}
-
+	    int ithDigit = 0;
+	    int ithBase = 1;
+	    while(iterator.hasNext())
+		{
+		    ithBase = iterator.currentBase();
+		    ithDigit = iterator.next();
+		    while( ithDigit > 0){
+			if(baseInputs.containsKey(ithBase))
+			    baseInputs.get(ithBase).add(weightSign? lit: -lit);
+			else
+			    baseInputs.put(ithBase, new ArrayList<Integer>(Arrays.asList(new Integer[]{weightSign? lit: -lit})));
+			ithDigit--;
 		    }
-	    }
-	    return baseInputs;
 
+		}
 	}
-    	public int getNextValidRoof(int upperLimit){
-	    DigitalNumber digits = this.getDigitalEnv().toDigital(upperLimit);
-	    int basesN = this.getDigitalEnv().getBasesN();
-	    for(int digit: digits)
-	    	System.out.println(digit);
-	    int MSDigit = this.getDigitalEnv().getMSB(digits);
-	    int MSRange = this.digitalEnv.getRatio(this.getDigitalEnv().getBasesN());
-	    assert(MSDigit <= MSRange - 1);
-	    int MSBase = this.getDigitalEnv().getBase(basesN - 1);
-	    return MSBase * (MSDigit + 1);
+	return baseInputs;
+
+    }
+    public int getNextValidRoof(int upperLimit){
+	DigitalNumber digits = this.getDigitalEnv().toDigital(upperLimit);
+	int basesN = this.getDigitalEnv().getBasesN();
+	for(int digit: digits)
+	    System.out.println(digit);
+	int MSDigit = this.getDigitalEnv().getMSB(digits);
+	int MSRange = this.digitalEnv.getRatio(this.getDigitalEnv().getBasesN());
+	assert(MSDigit <= MSRange - 1);
+	int MSBase = this.getDigitalEnv().getBase(basesN - 1);
+	return MSBase * (MSDigit + 1);
+    }
+    public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
+
+    public int digitalLiteral(int base, int value){
+	ControlledComponent component = circuit.getControlledComponentBase(base);
+	if( value <= 0 || component.getOutputsSize() == 0)
+	    return 0;
+	int index = unaryToIndex(value);
+	if(index > circuit.getControlledComponentBase(base).getOutputsSize())  
+	    index = circuit.getControlledComponentBase(base).getOutputsSize() - 1;
+	return circuit.getControlledComponentBase(base).getIthOutput(index);
+    }
+    /**
+     *Adds the upper bound clauses  that enforce the inclusive
+     *upper limit upperLimit. Returns the blocking variables.
+     *@return blocking variables
+     *@param upperLimit inclusive upper limit
+     *@param iObj the objective index
+     */
 	}
 	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
 
