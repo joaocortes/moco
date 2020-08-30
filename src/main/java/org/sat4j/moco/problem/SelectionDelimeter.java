@@ -535,10 +535,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    int sortedPortionN;
 	    public MergeComponent(int sortedPortionN){
 		this.sortedPortionN = sortedPortionN;
-		int i = 0;
-		while(getControlledComponentBase(i) != null)
-		    i++;
-		ControlledComponent controlledComp = new ControlledComponent(i, this);
 	    }
 	    
 	    public void constitutiveClause(){};
@@ -713,14 +709,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 
 	}
-	public abstract class ControlledComponent{
+	public  class ControlledComponent{
 	    BaseComponent comp = null;
 	    int base = 0;
 
 	    /**
 	     *range is the exclusive upper value the unary output may represent.
 	     */
-	    public ControlledComponent(int base, BaseComponent comp ){
+	    public  ControlledComponent(int base, BaseComponent comp ){
 		this.setComp(comp);
 		this.setBase(base);
 		this.addControledComponent();
