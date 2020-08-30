@@ -229,6 +229,7 @@ public class SelectionDelimeterTest {
             solver.addConstr(this.moco.getConstr(i));
         }
         // Log.comment(5, "out UnsatSat.buildSolver");
+	solver.setConstantID();
         return solver;
     }
 
