@@ -220,19 +220,45 @@ public class ObjManager{
      *@param upperLimit inclusive upper limit
      *@param iObj the objective index
      */
-	}
-	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
 
-	public int digitalLiteral(int base, int value){
-	    ControlledComponent component = circuit.getControlledComponentBase(base);
-	    if( value <= 0 || component.getOutputsSize() == 0)
-		return 0;
-	    int index = unaryToIndex(value);
-	    if(index > circuit.getControlledComponentBase(base).getOutputsSize())  
-		index = circuit.getControlledComponentBase(base).getOutputsSize() - 1;
-	    return circuit.getControlledComponentBase(base).getIthOutput(index);
-	}
+
+    public int LexicographicOrder(int upperLimit){
+	DigitalNumber digits = digitalEnv.toDigital(upperLimit);
+	IteratorContiguous iterator = digits.iterator3();
+	int activator = getFreshVar();
+	IVecInt clause = new VecInt(new int[]{activator});
+	SDIndex sDIndex = new SDIndex(iObj, upperLimit);
+	librarian.putIndex(activator, sDIndex);
+	yTable[iObj][unaryToIndex(upperLimit)] = activator;
+	int base = iterator.currentBase();
+	int digit = 0;
+	int ratio;
+	int lit = 0;
+	this.LexicographicOrderRecurse(iterator, clause);
+	AddClause(clause);
+	return activator;
     }
+    private void LexicographicOrderRecurse(IteratorContiguous iterator, IVecInt clause){
+	int base = iterator.currentBase();
+	int ratio = digitalEnv.getRatio(iterator.getIBase());
+	int digit = iterator.next();
+	int lit = 0;
+	if(digit + 1 < ratio){
+	    lit = digitalLiteral(base, digit + 1);
+	    clause.push(-lit);
+	    AddClause(clause);
+	    clause.pop();
+	}
+	if(digit > 0){
+	    lit = digitalLiteral(base, digit);
+	    clause.push(-lit);
+	}
+	if(iterator.hasNext())
+	    this.LexicographicOrderRecurse(iterator, clause);
+    }
+	
+
+}
 
     static abstract public class Circuit{
 	PBSolver solver;
@@ -890,48 +916,6 @@ public class ObjManager{
 
     }
 
-    /**
-     *Adds the upper bound clauses  that enforce the inclusive
-     *upper limit upperLimit. Returns the blocking variables.
-     *@return blocking variables
-     *@param upperLimit inclusive upper limit
-     *@param iObj the objective index
-     */
-
-    public int uglyUpperBoundClause(int iObj, int upperLimit){
-	ObjManager objManager = this.getIthObjManager(iObj);
-	DigitalEnv digitalEnv = objManager.getDigitalEnv();
-	DigitalNumber digits = digitalEnv.toDigital(upperLimit);
-	IteratorContiguous iterator = digits.iterator3();
-	int activator = getFreshVar();
-	IVecInt clause = new VecInt(new int[]{activator});
-	SDIndex sDIndex = new SDIndex(iObj, upperLimit);
-	librarian.putIndex(activator, sDIndex);
-	this.yTable[iObj][unaryToIndex(upperLimit)] = activator;
-	int base = iterator.currentBase();
-	int digit = 0;
-	int ratio;
-	int lit = 0;
-	while(iterator.hasNext()){
-	    base = iterator.currentBase();
-	    ratio = digitalEnv.getRatio(iterator.getIBase());
-	    digit = iterator.next();
-	    if(digit + 1 < ratio){
-		lit = objManager.digitalLiteral(base, digit + 1);
-		if(lit != 0){
-		    clause.push(-lit);
-		    AddClause(clause);
-		    clause.pop();
-		}
-	    }
-	    lit = objManager.digitalLiteral(base, digit);
-	    if(lit != 0){
-		clause.push(-lit);
-		AddClause(clause);
-	    }
-	}
-	return activator;
-    }
 }
 
 
