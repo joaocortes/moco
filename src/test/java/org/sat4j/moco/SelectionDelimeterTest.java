@@ -61,42 +61,50 @@ public class SelectionDelimeterTest {
     public SelectionDelimeterTest(){};
     @BeforeEach
     public void partialSetUp() {
-	    this.moco = new Instance();
-	    this.main_obj = new LinearObj(new VecInt(new int[] { 1, 2 }),
-					  new Vec<Real>(new Real[] { new Real(2), new Real(5) }));
-	    this.moco.addObj(this.main_obj);
-	    try {
-		this.pbSolver = buildSolver();
+	this.moco = new Instance();
 
-	    }
-	    catch (ContradictionException e) {
-		Log.comment("Could not build the solver");
+// min: +2 x1 +9 x2 +5 x3 +7 x4
+// min: -8 x1 +3 x2 -1 x3 -1 x4
+
+	this.main_obj = new LinearObj(new VecInt(new int[] { 1, 2, 3, 4 }),
+				      new Vec<Real>(new Real[] { new Real(2), new Real(9), new Real(5), new Real(7) }));
+	this.moco.addObj(this.main_obj);
+
+	Objective second_obj =  new LinearObj(new VecInt(new int[] { 1,2,3,4}),
+					      new Vec<Real>(new Real[] {new Real(-8), new Real(3), new Real(-1), new Real(-1) }));
+	this.moco.addObj(second_obj);
+	try {
+	    this.pbSolver = buildSolver();
+
+	}
+	catch (ContradictionException e) {
+	    Log.comment("Could not build the solver");
             return;
         }
-	    this.sd  = new SelectionDelimeter(moco, this.pbSolver,true){
-		    /**
-		     *Adds the disjunction of setOfLiterals, and logs
-		     *@param setOfliterals
-		     */
+	this.sd  = new SelectionDelimeter(moco, this.pbSolver,true){
+		/**
+		 *Adds the disjunction of setOfLiterals, and logs
+		 *@param setOfliterals
+		 */
 
-		    public boolean AddClause(IVecInt setOfLiterals){
-			Log.comment(6,"AddClause:");
-			this.prettyPrintVecInt(setOfLiterals,true);
-			try{
-			    this.solver.AddClause(setOfLiterals);
-			} catch (ContradictionException e) {
-			    Log.comment(2, "contradiction when adding clause: ");
-			    for(int j = 0; j < setOfLiterals.size(); ++j)
-				Log.comment(2, " " + setOfLiterals.get(j) + " " );
-			    return false;
-			}
-			return true;
+		public boolean AddClause(IVecInt setOfLiterals){
+		    Log.comment(6,"AddClause:");
+		    this.prettyPrintVecInt(setOfLiterals, true);
+		    try{
+			this.solver.AddClause(setOfLiterals);
+		    } catch (ContradictionException e) {
+			Log.comment(2, "contradiction when adding clause: ");
+			for(int j = 0; j < setOfLiterals.size(); ++j)
+			    Log.comment(2, " " + setOfLiterals.get(j) + " " );
+			return false;
 		    }
+		    return true;
+		}
 
-};
-	    this.range = new VecInt(this.pbSolver.nVars());
-	    for(int i = 0, n = this.pbSolver.nVars(); i < n; i++)
-		this.range.push(i + 1);
+	    };
+	this.range = new VecInt(this.pbSolver.nVars());
+	for(int i = 0, n = this.pbSolver.nVars(); i < n; i++)
+	    this.range.push(i + 1);
     }
     @Test
     public void testDigits(){
@@ -190,9 +198,9 @@ public class SelectionDelimeterTest {
 
     }
 
-@Test
+    @Test
     public void delimitationTest(){
-	int[] upperBound = new int[]{};
+	int[] upperBound = new int[]{2, 2};
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
 	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
@@ -200,9 +208,10 @@ public class SelectionDelimeterTest {
 	int modelN = 0;
 	while(iterator.hasNext()){
 	    modelN++;
+	    // this.sd.prettyFormatVecIntWithValues(this.range);
 	    model = iterator.next();
 	    assertTrue("model " + model + "failed the test", this.testUpperBound(model, upperBound));}
-	    assertTrue("0 models", modelN > 0);
+	Log.comment(modelN + " models");
 
     }
 
@@ -214,9 +223,9 @@ public class SelectionDelimeterTest {
 		return false;
 	return true;	
 
-}
+    }
 
-        /**
+    /**
      * Creates a PB oracle initialized with the MOCO's constraints.
      * @return The oracle.
      * @throws ContradictionException if the oracle detects that the
@@ -234,10 +243,10 @@ public class SelectionDelimeterTest {
     }
 
 
-/**
- * Enumerate all models of a DIMACS formula. Implement the enumeration
- *
- */
+    /**
+     * Enumerate all models of a DIMACS formula. Implement the enumeration
+     *
+     */
 
 
     static public class MyModelIterator implements Iterator<boolean[]>{
@@ -272,12 +281,12 @@ public class SelectionDelimeterTest {
 	    }
 	    if(notCurrent.size() > 0)
 		try {
-		this.pbSolver.AddClause(notCurrent);
-	    }
-	    catch (ContradictionException e) {
-		Log.comment(3, "Contradiction detected!");
-		this.contradiction = true;
-	    }
+		    this.pbSolver.AddClause(notCurrent);
+		}
+		catch (ContradictionException e) {
+		    Log.comment(3, "Contradiction detected!");
+		    this.contradiction = true;
+		}
 	    
 
 	    return currentAssignment;
