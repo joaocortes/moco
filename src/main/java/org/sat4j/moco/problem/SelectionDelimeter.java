@@ -691,8 +691,10 @@ public class ObjManager{
 			int output = getFreshVar1();
 			this.outputs[i] = output;
 			clause.clear();
-			clause.push(-input); clause.push(output); clause.push(MSB);
-			AddClause1(clause);
+			clause.push(-input); clause.push(MSB);
+			for(int j = 0, m  = clause.size(); j < m; j++)
+			    AddClause1(new VecInt(new int[]{-output, -clause.get(j)}));
+			AddClause1(clause.push(output));
 			//TODO: do I need the double implication?			
 		    }
 		    return;
