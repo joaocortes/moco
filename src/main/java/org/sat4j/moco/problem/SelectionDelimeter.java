@@ -62,10 +62,16 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.objManagers[iObj] = new ObjManager(iObj);
 	    Objective ithObjective = this.getInstance().getObj(iObj);
+	    int oldActivator;
+	    int activator = 0;
 	    if(buildCircuit){
 		objManagers[iObj].circuit.buildCircuit();
 		for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++){
-	 	    this.getIthObjManager(iObj).LexicographicOrder(kD);
+		    oldActivator = activator;
+	 	    activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
+		    if(kD > 1)
+			this.AddClause(new VecInt(new int[]{-activator, oldActivator}));
+
 		}
 	    }
 	}
