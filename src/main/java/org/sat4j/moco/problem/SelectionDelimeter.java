@@ -714,15 +714,21 @@ public class ObjManager{
 			    slice[i % modN] = this.inputs[i++];
 			ModComponent modComponent = new ModComponent(slice, this.modN);
 			modComponent.constitutiveClause();
-			for(int lit: modComponent.outputs)
-			    this.outputs[shift++] = lit;
-			for(int k = 0; i < this.modN - 1; k++){
+			// collects the k'th output into the k'th clause
+			for(int k = 0; k < modComponent.getOutputsSize(); k++){
 			    int lit = modComponent.getIthOutput(k);
-			    clauses[k].push(lit);
+			    if(lit !=0)
+				clauses[k].push(lit);
 			}		
 		    }
-		    for(IVecInt clause: clauses )
-			AddClause1(clause);
+		    for(int k = 0; k < this.modN - 1; k++){
+			int output = getFreshVar1();
+			this.outputs[k] = output;
+			for(int j = 0, m = clauses[k].size(); j < m ; j++)
+			    AddClause1(new VecInt(new int[]{ -clauses[k].get(j), output}));
+			AddClause1(clauses[k].push(-output));
+			}
+
 		}
 		return;
 
