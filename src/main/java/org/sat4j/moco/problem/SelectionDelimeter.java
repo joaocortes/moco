@@ -709,7 +709,8 @@ public class ObjManager{
 		    int i = 0; int n = this.getInputsSize();
 		    while(i < n){
 			Integer[] slice = new Integer[n - i > this.modN? this.modN: n - i];
-			while(n - i  <= this.modN && i < n)
+			int i0 = i;
+			while(i - i0  < this.modN && i < n)
 			    slice[i % modN] = this.inputs[i++];
 			ModComponent modComponent = new ModComponent(slice, this.modN);
 			modComponent.constitutiveClause();
