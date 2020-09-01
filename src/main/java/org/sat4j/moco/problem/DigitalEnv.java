@@ -254,6 +254,13 @@ public class DigitalEnv {
 	    int MSBase =  this.digits.lastKey();
 	    return this.getDigit(MSBase);
 	}
+	public String toString(){
+	    String result = "";
+	    Iterator<Integer> iterator = this.iterator2();
+	    while(iterator.hasNext())
+		result += iterator.next().toString();
+	    return result;
+}
     }
 }
 
