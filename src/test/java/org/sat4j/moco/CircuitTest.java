@@ -60,7 +60,7 @@ public class CircuitTest {
     
     @Test
     public void ModuleComponentTest(){
-	int modN = 2;
+	int modN = 4;
 	Integer[] inputs = new Integer[2 * modN];
 	for(int i = 0; i < inputs.length; i++){
 	    this.pbSolver.newVar();
@@ -70,6 +70,7 @@ public class CircuitTest {
 		public void buildCircuit(){
 		    ModComponent modComponent = new ModComponent(inputs, modN);
 		    modComponent.constitutiveClause();
+		    new ControlledComponent(0, modComponent);
 		}
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
 
@@ -82,22 +83,29 @@ public class CircuitTest {
 	    };
 	circuit.buildCircuit();
 	IVecInt assumptions = new VecInt();
-	int value = modN + 1;
+	int value = 2;
 	{
 	    int i = 0;
-	    for(;i < value; i++)
+	    for(;i < value + modN; i++)
 		assumptions.push(inputs[i]);
 	    for(;i < inputs.length; i++)
 		assumptions.push(-inputs[i]);
 	}
 	pbSolver.check(assumptions);
-	int result = 0;
-	for(int lit: inputs)
-	    if(pbSolver.modelValue(lit))
-		result++;
-	assertTrue("result:" + result + " value:" + value,result == value);
+	ControlledComponent comp = circuit.getControlledComponentBase(0);
+	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
+	boolean[] model;
+	while(iterator.hasNext()){
+	    model = iterator.next();
+	    this.testModComponentModel(comp.getOutputs(), modN, value);
+	}
     }
 
+    private void testModComponentModel(Integer[] lits, int modN, int value){
+	for(int i = 0; i < value - 1; i++)
+	    assertTrue("Failing at " + i +"'th comparison",this.pbSolver.modelValue( lits[i]));
+	
+    }
     @Test
     public void SelectionComponentTest(){
 	int inputsLength = 4;
