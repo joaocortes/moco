@@ -65,7 +65,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    if(buildCircuit){
 		objManagers[iObj].circuit.buildCircuit();
 		for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++){
-		    this.getIthObjManager(iObj).LexicographicOrder(kD);
+	 	    this.getIthObjManager(iObj).LexicographicOrder(kD);
 		}
 	    }
 	}
@@ -230,14 +230,11 @@ public class ObjManager{
 	SDIndex sDIndex = new SDIndex(iObj, upperLimit);
 	librarian.putIndex(activator, sDIndex);
 	yTable[iObj][unaryToIndex(upperLimit)] = activator;
-	int base = iterator.currentBase();
-	int digit = 0;
-	int ratio;
-	int lit = 0;
 	this.LexicographicOrderRecurse(iterator, clause);
 	AddClause(clause);
 	return activator;
     }
+
     private void LexicographicOrderRecurse(IteratorContiguous iterator, IVecInt clause){
 	int base = iterator.currentBase();
 	int ratio = digitalEnv.getRatio(iterator.getIBase());

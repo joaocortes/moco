@@ -131,7 +131,7 @@ public class UnsatSat extends algorithm {
     public void solve() {
 	IVecInt currentExplanation = new VecInt(new int[] {});
 	IVecInt currentAssumptions = new VecInt(new int[] {});
-	IVecInt currentYModel = new VecInt(new int[] {});
+	IVecInt currentModel = new VecInt(new int[] {});
 	// boolean[] currentXModelValues = new boolean[this.problem.nVars()];
 	// Vector<IVecInt> modelsX = new Vector<IVecInt>();
 	// Vector<IVecInt> modelsY = new Vector<IVecInt>();
@@ -165,7 +165,7 @@ public class UnsatSat extends algorithm {
 		//log
 		Log.comment(2, " current subResult size:" + this.subResult.nSolutions());
 
-		currentYModel = this.getYModel();
+		currentModel = this.getModel();
 		// currentXModelValues = this.getXModelValues();
 		// modelsY.add(this.getYModel());
 
@@ -372,6 +372,17 @@ public class UnsatSat extends algorithm {
 	}
 	return model;
     }
+    /**
+     *returns the model in DIMACS format
+     */
+
+    public IVecInt getModel(){
+	IVecInt model = new VecInt(new int[] {});
+	for(int id = 1; id <= this.solver.nVars();++id){
+	    model.push(id);
+	}
+	return model;
+    }
 
 
     /**
@@ -515,7 +526,7 @@ public class UnsatSat extends algorithm {
 	//..log
 	
 	logDiffAttainedValue +="]";
-	// Log.comment(2, logDiffAttainedValue );
+	Log.comment(2, logDiffAttainedValue );
 	IVecInt newHardClause = new VecInt();
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    if(diffAttainedValue[iObj] != 0)
