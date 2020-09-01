@@ -242,13 +242,16 @@ public class ObjManager{
 	int lit = 0;
 	if(digit + 1 < ratio){
 	    lit = digitalLiteral(base, digit + 1);
-	    clause.push(-lit);
-	    AddClause(clause);
-	    clause.pop();
+	    if(lit != 0){
+		clause.push(-lit);
+		AddClause(clause);
+		clause.pop();
+	    }
 	}
 	if(digit > 0){
 	    lit = digitalLiteral(base, digit);
-	    clause.push(-lit);
+	    if(lit != 0)
+		clause.push(-lit);
 	}
 	if(iterator.hasNext())
 	    this.LexicographicOrderRecurse(iterator, clause);
