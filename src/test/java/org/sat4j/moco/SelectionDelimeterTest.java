@@ -44,6 +44,7 @@ import org.sat4j.moco.problem.DigitalEnv.DigitalNumber;
 import org.sat4j.moco.problem.SelectionDelimeter.ObjManager;
 import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
+import org.sat4j.moco.util.MyModelIterator;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.ISolver;
 import org.sat4j.specs.IVecInt;
@@ -243,54 +244,5 @@ public class SelectionDelimeterTest {
     }
 
 
-    /**
-     * Enumerate all models of a DIMACS formula. Implement the enumeration
-     *
-     */
-
-
-    static public class MyModelIterator implements Iterator<boolean[]>{
-	private PBSolver pbSolver;
-	boolean contradiction = false;
-	final IVecInt assumptions;
-
-	public MyModelIterator(PBSolver solver, IVecInt assumptions){
-	    this.pbSolver =  solver;
-	    this.assumptions = assumptions;
-	}
-
-
-	public boolean hasNext(){
-	    this.pbSolver.check(assumptions);
-	    if(contradiction)
-		return false;
-	    return this.pbSolver.isSat();
-	}
-	public boolean[] next(){
-	    boolean[] currentAssignment = new boolean[this.pbSolver.nVars()];
-	    IVecInt notCurrent = new VecInt();
-	    int litId;
-	    for(int i = 0, n = currentAssignment.length; i < n ; i++){
-		litId = i + 1;
-		currentAssignment[i] = this.pbSolver.modelValue(litId);
-		if(currentAssignment[i])
-		    notCurrent.push(-litId);
-		else
-		    notCurrent.push(litId);
-
-	    }
-	    if(notCurrent.size() > 0)
-		try {
-		    this.pbSolver.AddClause(notCurrent);
-		}
-		catch (ContradictionException e) {
-		    Log.comment(3, "Contradiction detected!");
-		    this.contradiction = true;
-		}
-	    
-
-	    return currentAssignment;
-	}
-
-    }
 }
+
