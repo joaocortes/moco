@@ -706,8 +706,7 @@ public class ObjManager{
 		    clauses[i] = new VecInt();
 
 		{ 
-		    int shift = 0;
-		    int i = 0; int n = this.getOutputsSize();
+		    int i = 0; int n = this.getInputsSize();
 		    while(i < n){
 			Integer[] slice = new Integer[n - i > this.modN? this.modN: n - i];
 			while(n - i  <= this.modN && i < n)
