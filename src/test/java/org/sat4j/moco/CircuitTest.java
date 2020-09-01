@@ -24,7 +24,7 @@ package org.sat4j.moco;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-
+import org.sat4j.moco.util.MyModelIterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
