@@ -40,6 +40,7 @@ import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.SelectionDelimeter;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledComponent;
+import org.sat4j.moco.util.General;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
@@ -96,6 +97,10 @@ public class CircuitTest {
 	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
 	boolean[] model;
 	while(iterator.hasNext()){
+	    Log.comment("inputs of ModComponent:");
+	    General.FormatArrayWithValues(comp.getInputs(), pbSolver, true);
+	    Log.comment("outputs of ModComponent:");
+	    General.FormatArrayWithValues(comp.getOutputs(), pbSolver, true);
 	    model = iterator.next();
 	    this.testModComponentModel(comp.getOutputs(), modN, value);
 	}
