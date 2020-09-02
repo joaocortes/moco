@@ -145,8 +145,8 @@ public class ObjManager{
 		/**
 		 *range is the exclusive upper value the unary output may represent.
 		 */
-		public ControlledComponent buildControlledComponent(Integer[] inputs, int base, int range){
-		    DigitComponent digitComp = new DigitComponent(inputs, range);
+		public ControlledComponent buildControlledComponent(Integer[] inputs, int base, int modN){
+		    DigitComponent digitComp = new DigitComponent(inputs, modN);
 		    digitComp.constitutiveClause();
 		    ControlledComponent result  = new ControlledComponent(base, digitComp);
 		    return result;
@@ -209,7 +209,7 @@ public class ObjManager{
 	return MSBase * (MSDigit + 1);
     }
     public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
-
+    public Circuit getCircuit(){return this.circuit;}
     public int digitalLiteral(int base, int value){
 	ControlledComponent component = circuit.getControlledComponentBase(base);
 	if( value <= 0 || component.getOutputsSize() == 0)
@@ -745,17 +745,17 @@ public class ObjManager{
 	public class DigitComponent extends SortedComponent{
 	    SelectionComponent selecComp;
 	    ModComponent modComponent;
-	    int range;
+	    int modN;
 
-	    public  DigitComponent(Integer[] inputs, int range){
-		super(inputs, inputs.length);
-		this.range = range;
+	    public  DigitComponent(Integer[] inputs, int modN){
+		super(inputs, modN - 1);
+		this.modN = modN;
 	    }
 
 	    public void constitutiveClause(){
 		this.selecComp = new SelectionComponent(inputs);
 		this.selecComp.constitutiveClause();
-		this.modComponent = new ModComponent(this.selecComp.outputs, this.range);
+		this.modComponent = new ModComponent(this.selecComp.outputs, this.modN);
 		this.modComponent.constitutiveClause();
 		this.outputs = this.modComponent.getOutputs();
 	    };
