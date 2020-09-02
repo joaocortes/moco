@@ -124,11 +124,20 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
 	 return result;
      }
     public String prettyFormatVecIntWithValues(IVecInt vecInt){
-	 String result = "";
-	 for(int j = 0; j < vecInt.size(); ++j)
+	 String result = "\n";
+	 for(int j = 0; j < vecInt.size(); j++)
 	     result += this.prettyFormatVariable(vecInt.get(j)) + " " +this.solver.modelValue(vecInt.get(j)) + "|\n";
 	 return result;
      }
+     
+    public String prettyFormatArrayWithValues(Integer[] literals){
+	String result = "";
+	for(int j = 0, n = literals.length; j < n ; ++j)
+	    result += prettyFormatVariable(literals[j]) + " " +this.solver.modelValue(literals[j]) + "|\n";
+	return result;
+    }
+
+
     public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){
 	if(clausing)
 	    Log.clausing(this.prettyFormatVecInt(vecInt));
