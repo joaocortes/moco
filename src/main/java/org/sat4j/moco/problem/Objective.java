@@ -162,4 +162,11 @@ public abstract class Objective {
      */
     public abstract Real evaluate(PBSolver s);
     
+    public int evaluateDiff(PBSolver solver){
+	return this.evaluate(solver).asIntExact() - this.getMinValue();
+}
+
+    public int evaluateDiff(boolean[] model){
+	return this.evaluate(model).asIntExact() - this.getMinValue();
+}
 }
