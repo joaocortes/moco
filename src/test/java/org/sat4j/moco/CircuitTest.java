@@ -60,9 +60,9 @@ public class CircuitTest {
 }
     
     @Test
-    public void ModuleComponentTest(){
-	int modN = 4;
-	Integer[] inputs = new Integer[2 * modN];
+    public void ModComponentTest(){
+	int modN = 2;
+	Integer[] inputs = new Integer[3];
 	for(int i = 0; i < inputs.length; i++){
 	    this.pbSolver.newVar();
 	    inputs[i] =  this.pbSolver.nVars();
@@ -84,10 +84,10 @@ public class CircuitTest {
 	    };
 	circuit.buildCircuit();
 	IVecInt assumptions = new VecInt();
-	int value = 2;
+	int value = 1;
 	{
 	    int i = 0;
-	    for(;i < value + modN; i++)
+	    for(;i < value; i++)
 		assumptions.push(inputs[i]);
 	    for(;i < inputs.length; i++)
 		assumptions.push(-inputs[i]);
@@ -107,13 +107,17 @@ public class CircuitTest {
     }
 
     private void testModComponentModel(Integer[] lits, int modN, int value){
-	for(int i = 0; i < value - 1; i++)
+	value = value % modN;
+		for(int i = 0; i < value - 1; i++)
 	    assertTrue("Failing at " + i +"'th comparison",this.pbSolver.modelValue( lits[i]));
 	
     }
+
+
+
     @Test
     public void SelectionComponentTest(){
-	int inputsLength = 4;
+	int inputsLength = 6;
 	int sortedPortionN = inputsLength;
 	Random rand = new Random();
 	Integer[] inputs = new Integer[inputsLength];
