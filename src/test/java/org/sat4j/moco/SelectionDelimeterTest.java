@@ -41,7 +41,9 @@ import org.sat4j.moco.problem.LinearObj;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.problem.SelectionDelimeter;
 import org.sat4j.moco.problem.DigitalEnv.DigitalNumber;
+import org.sat4j.moco.problem.SelectionDelimeter.Circuit;
 import org.sat4j.moco.problem.SelectionDelimeter.ObjManager;
+import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledComponent;
 import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.util.MyModelIterator;
@@ -156,53 +158,76 @@ public class SelectionDelimeterTest {
 
     @Test
     public void digitalCounterTest(){
-
-	boolean[] inputValues = new boolean[this.moco.nVars()];
-	inputValues[0] = false;
-	inputValues[1] = true;
-	IVecInt assumptions = new VecInt();
-	for(int i = 1, n = this.moco.nVars(); i <= n;i++)
-	    if(inputValues[i - 1])
-		assumptions.push(i);
-	    else
-		assumptions.push(-i);
+	int[] upperBound = new int[]{2, 1};
+	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
+	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
+	// boolean[] inputValues = new boolean[this.moco.nVars()];
+	// inputValues[0] = false;
+	// inputValues[1] = true;
+	// for(int i = 1, n = this.moco.nVars(); i <= n;i++)
+	//     if(inputValues[i - 1])
+	// 	assumptions.push(i);
+	//     else
+	// 	assumptions.push(-i);
 
 	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
 	boolean[] model;
+	boolean[]  saturatedComplete = new boolean[this.moco.nObjs()];
+	boolean[] saturated = new boolean[this.moco.nObjs()];
+	for(int i = 0, n = saturatedComplete.length; i < n; i++)
+	    saturatedComplete[i] = false;
+	int modelN = 0;
 	while(iterator.hasNext()){
 	    model = iterator.next();
-	    this.testDigitalValues(model);
+	    saturated = this.testDigitalValues(model, upperBound);
+	    for(int i = 0, n = saturated.length; i < n; i++)
+		saturatedComplete[i] = saturated[i] || saturatedComplete[i];
+	    modelN++;
+	    // this.sd.prettyFormatVecIntWithValues(this.range);
+	
+	}
+	Log.comment(modelN + " models");
+	int obtained = 0;
+	for(int i = 0, n = this.moco.nObjs(); i < n; i++){
+	    assertTrue(i + "'th not saturated", saturated[i]);
 	}
     }
-    private void testDigitalValues(boolean[] model){
+    private boolean[] testDigitalValues(boolean[] model, int[] upperBound){
+	boolean[] saturated = new boolean[upperBound.length];
 	for(int i = 0, n = this.moco.nObjs(); i < n; i++){
 	    ObjManager objManager  = this.sd.getIthObjManager(i);
 	    Objective objective = this.moco.getObj(i);
-	    int obtained = objective.evaluate(model).asIntExact();
+	    int obtained = objective.evaluateDiff(model);
 	    DigitalNumber digitalNumber = objManager.getDigitalEnv().toDigital(obtained);
 	    DigitalNumber.IteratorJumps iterator = digitalNumber.iterator();
+	    Circuit circuit = objManager.getCircuit();
 	    int digit0 = 0;
 	    int base = 0;
 	    int lit = 0;
+	    ControlledComponent contComp;
 	    while(iterator.hasNext()){
 		digit0 = iterator.next();
 		base = iterator.currentBase();
-		for(int digit = 0; digit <= digit0; digit++){
-		    lit = objManager.digitalLiteral(base, digit );
-		    if(lit != 0)
-			assertTrue("failing at base " + base + ", value" + digit,
-				   this.pbSolver.modelValue(lit));
-		}
+		contComp = circuit.getControlledComponentBase(base);
+		Log.comment("digit "+ base + " inputs:");
+		System.out.print(this.sd.prettyFormatArrayWithValues(contComp.getInputs()));
+		Log.comment("digit outputs:");
+		System.out.println(this.sd.prettyFormatArrayWithValues(contComp.getOutputs()));
+		assertTrue(obtained + " is > than " + upperBound[i],obtained <= upperBound[i]);
+		if(obtained == upperBound[i])
+		    saturated[i] = true;
 	    }
 
 	}
-
+	return saturated;
     }
 
     @Test
     public void delimitationTest(){
-	int[] upperBound = new int[]{2, 2};
+
+	int[] upperBound = new int[]{3, 3};
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
+
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
 	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
 	boolean[] model;
@@ -225,6 +250,32 @@ public class SelectionDelimeterTest {
 	return true;	
 
     }
+    @Test
+    public void InputAndDelimitationTest(){
+	// try{
+	//     this.pbSolver.addConstr(PBFactory.instance().mkGE(new VecInt(new int[] { 1, 2 }), 2));
+	// }catch(ContradictionException e){
+	//     Log.comment("contradiction when adding constraint");
+	// }
+	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
+	int[] upperBound = new int[]{20, 20};
+	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
+	assumptions.push(1);
+	assumptions.push(-2);
+	assumptions.push(-3);
+	assumptions.push(-4);
+	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
+	boolean[] model;
+	int modelN = 0;
+	while(iterator.hasNext()){
+	    modelN++;
+	    // this.sd.prettyFormatVecIntWithValues(this.range);
+	    model = iterator.next();
+	    assertTrue("model " + model + "failed the test", this.testUpperBound(model, upperBound));}
+	Log.comment(modelN + " models");
+
+    }
+
 
     /**
      * Creates a PB oracle initialized with the MOCO's constraints.
@@ -242,7 +293,5 @@ public class SelectionDelimeterTest {
 	solver.setConstantID();
         return solver;
     }
-
-
 }
 
