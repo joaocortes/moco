@@ -129,18 +129,14 @@ public class CircuitTest {
 	}
 
 	IVecInt assumptions = new VecInt();
-	for( int i = 0; i < inputs.length; i++){
-	    int random = rand.nextInt(2);
-	    inputValues[i] = random;
-	}
-	    for(int k = 0,n = inputValues.length; k < n; k++){
-		if(inputValues[k] == 1){
-		    assumptions.push(inputs[k]);
-		}
-		else
-		    assumptions.push(-inputs[k]);
+	inputValues[0] = 1; inputValues[2] = 1;
+	for(int k = 0,n = inputValues.length; k < n; k++){
+	    if(inputValues[k] == 1){
+		assumptions.push(inputs[k]);
 	    }
-
+	    else
+		assumptions.push(-inputs[k]);
+	}
 	Circuit circuit = new Circuit(this.pbSolver){
 		public void buildCircuit(){
 		    SelectionComponent comp = new SelectionComponent(inputs, sortedPortionN);
@@ -160,34 +156,29 @@ public class CircuitTest {
 	Collections.sort(sorted);
 	Collections.reverse(sorted);
 	sorted.subList(sortedPortionN,sorted.size()).clear();
+
 	ControlledComponent controlledComp =  circuit.getControlledComponentBase(0);
 	Integer[] outputs = controlledComp.getOutputs();
-
 	// assumptions.push(-controlledComp.getIthOutput(2));
 
 	pbSolver.check(assumptions);
-	Integer[] obtainedSorted = new Integer[sorted.size()];
-	for(int i = 0, n = sortedPortionN ; i < n; i++)
-	    if(pbSolver.modelValue(outputs[i]))
-		obtainedSorted[i] = 1;
-	    else 
-		obtainedSorted[i] = 0;
-	
-	Log.comment("obtained sorted:");
-	for(int value: obtainedSorted)
-	    Log.comment("" + value);
-
 	Log.comment("sorted:");
 	for(int value: sorted)
 	    Log.comment("" + value);
-
-	for(int i = 0, n = sortedPortionN ; i < n; i++)
-	    if(sorted.get(i) == 1)
+	
+	MyModelIterator iterator = new MyModelIterator(pbSolver, assumptions);
+	while(iterator.hasNext()){
+	    iterator.next();
+	    General.FormatArrayWithValues(inputs, pbSolver,false);
+	    General.FormatArrayWithValues(outputs, pbSolver,false);
+	    this.SelectionComponentAssertion(sorted.toArray(new Integer[0]), outputs, sortedPortionN);
+	}
+    }
+    void SelectionComponentAssertion(Integer[] sorted, Integer[] outputs, int sortedPortionN){
+	for(int i = 0, n = sortedPortionN ; i < n; i++){
+	    if(sorted[i] == 1)
 		assertTrue(pbSolver.modelValue(outputs[i]));
-	    else 
-		assertFalse(pbSolver.modelValue(outputs[i]));
-
-	return;
+	}
     }
 
     @Test void MergeComponentTest(){
