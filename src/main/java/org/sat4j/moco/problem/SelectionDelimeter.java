@@ -339,6 +339,24 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		this.sortedPortionN = sortedPortionN;
 		this.outputs = new Integer[sortedPortionN];
 	    }
+    /**
+     *Enforces a sequential relation between the variables.
+     */
+    public void enforceOrder(){
+	Integer[] variables = this.outputs;
+	int pastVariable = 0;
+	if(variables.length <=1)
+	    return;
+	for(int variable: variables)
+	    if(pastVariable != 0){
+		IVecInt clause = new VecInt(new int[] {-variable, pastVariable});
+		AddClause1(clause);
+		pastVariable = variable;
+	    }
+
+    }
+
+
 	}
 	public class SelectionComponent extends SortedComponent{
 	    public SelectionComponent(Integer[] inputs){
