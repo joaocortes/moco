@@ -825,10 +825,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	
     }
 
-    
-
-
-
     public Integer[] concatenate(Integer[][] seq){
 	List<Integer> result = new ArrayList<Integer>();
 	for(Integer[] array: seq)
