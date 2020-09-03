@@ -110,11 +110,10 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	ObjManager(int iObj){
 	    this.iObj = iObj;
-	    
-	    this.circuit = new Circuit(getSolver()){
+	    this.digitalEnv = new DigitalEnv();
+    	    this.circuit = new Circuit(getSolver()){
 		    public void buildCircuit(){
 			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
-			ControlledComponent lastContComp = null;
 			ArrayList<Integer> inputs = new ArrayList<Integer>();
 			// last base needed to expand the weights
 			int ratioI = 0;
