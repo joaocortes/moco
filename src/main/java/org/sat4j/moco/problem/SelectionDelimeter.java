@@ -439,6 +439,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		mergecomp.constitutiveClause(preffixes);
 		// ArrayList<Integer> outputs = new ArrayList<Integer>();
 		this.outputs = mergecomp.outputs;
+		this.enforceOrder();
 		return;
 	    }
 	    public void recurseSpecialCase(int depth,int first ,IVecInt clause){
@@ -500,6 +501,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    clause.push(sign * lit);
 		}
 		AddClause1(clause);
+		this.enforceOrder();
 		return;
 	    }
 
@@ -547,6 +549,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	    	    }
 	    	}
+		this.enforceOrder();
 	    	return;
 	    }
 
@@ -663,6 +666,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		combComp.constitutiveClause(toCombine[0], toCombine[1]);
 		outputs.addAll(Arrays.asList(combComp.outputs));
 		this.outputs = outputs.toArray(new Integer[0]);
+		this.enforceOrder();
 		return;
 	    }
 
@@ -772,6 +776,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		this.modComponent = new ModComponent(this.selecComp.outputs, this.modN);
 		this.modComponent.constitutiveClause();
 		this.outputs = this.modComponent.getOutputs();
+		this.enforceOrder();
 	    };
 
 	    public ArrayList<Integer> getCarryBits(int ratio) {
@@ -785,7 +790,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	public  class ControlledComponent{
 	    BaseComponent comp = null;
 	    int base = 0;
-
+	    
 	    /**
 	     *range is the exclusive upper value the unary output may represent.
 	     */
@@ -794,6 +799,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		this.setBase(base);
 		this.addControledComponent();
 	    }
+
+
 
 	    public Iterator<Integer> iteratorOutputs(){return this.comp.iteratorOutputs();}
 	    public void setBase(int base){this.base = base;}
@@ -818,23 +825,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	
     }
 
+    
 
-    /**
-     *Enforces a sequential relation between the variables.
-     */
-    public void enforceOrder(Integer[] variables){
-	int pastVariable = 0;
-	if(variables.length <=1)
-	    return;
-	    
-	for(int variable: variables)
-	    if(pastVariable != 0){
-		IVecInt clause = new VecInt(new int[] {-variable, pastVariable});
-		AddClause(clause);
-		pastVariable = variable;
-	    }
-
-    }
 
 
     public Integer[] concatenate(Integer[][] seq){
