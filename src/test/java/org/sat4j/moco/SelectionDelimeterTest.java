@@ -158,6 +158,7 @@ public class SelectionDelimeterTest {
     @Test
     public void digitalCounterTest(){
 	int[] upperBound = new int[]{2, 1};
+	this.partialSetUp(false);
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
 	// boolean[] inputValues = new boolean[this.moco.nVars()];
@@ -178,7 +179,7 @@ public class SelectionDelimeterTest {
 	int modelN = 0;
 	while(iterator.hasNext()){
 	    model = iterator.next();
-	    saturated = this.testDigitalValues(model, upperBound);
+	    saturated = this.testDigitalValues(upperBound);
 	    for(int i = 0, n = saturated.length; i < n; i++)
 		saturatedComplete[i] = saturated[i] || saturatedComplete[i];
 	    modelN++;
@@ -226,6 +227,7 @@ public class SelectionDelimeterTest {
     public void delimitationTest(){
 
 	int[] upperBound = new int[]{3, 3};
+	this.partialSetUp(false);
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
 
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
@@ -257,6 +259,7 @@ public class SelectionDelimeterTest {
 	// }catch(ContradictionException e){
 	//     Log.comment("contradiction when adding constraint");
 	// }
+	this.partialSetUp(true);
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
 	int[] upperBound = new int[]{20, 20};
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
