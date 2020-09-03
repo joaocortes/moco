@@ -52,16 +52,15 @@ public class SelectionDelimeterTest {
     protected Instance moco;
     protected LinearObj main_obj;
     protected IVecInt range;
-    static{Log.setVerbosity(6);}
+    static{Log.setVerbosity(1);}
 
     public SelectionDelimeterTest(){};
-    @BeforeEach
-    public void partialSetUp() {
+    public void partialSetUp(boolean constraint) {
 	this.moco = new Instance();
 
-// min: +2 x1 +9 x2 +5 x3 +7 x4
-// min: -8 x1 +3 x2 -1 x3 -1 x4
-
+	// min: +2 x1 +9 x2 +5 x3 +7 x4
+	// min: -8 x1 +3 x2 -1 x3 -1 x4
+	// 4 x1 +1 x2 +3 x3 +2 x4 <= 5
 	this.main_obj = new LinearObj(new VecInt(new int[] { 1, 2, 3, 4 }),
 				      new Vec<Real>(new Real[] { new Real(2), new Real(9), new Real(5), new Real(7) }));
 	this.moco.addObj(this.main_obj);
@@ -157,18 +156,16 @@ public class SelectionDelimeterTest {
 
     @Test
     public void digitalCounterTest(){
-	int[] upperBound = new int[]{2, 1};
 	this.partialSetUp(false);
+	int[] upperBound = new int[]{2, 2};
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
-	// boolean[] inputValues = new boolean[this.moco.nVars()];
-	// inputValues[0] = false;
-	// inputValues[1] = true;
-	// for(int i = 1, n = this.moco.nVars(); i <= n;i++)
-	//     if(inputValues[i - 1])
-	// 	assumptions.push(i);
-	//     else
-	// 	assumptions.push(-i);
+	boolean[] inputValues = new boolean[this.moco.nVars()];
+	for(int i = 1, n = this.moco.nVars(); i <= n;i++)
+	    if(inputValues[i - 1])
+		assumptions.push(i);
+	    else
+		assumptions.push(-i);
 
 	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
 	boolean[] model;
@@ -225,9 +222,8 @@ public class SelectionDelimeterTest {
 
     @Test
     public void delimitationTest(){
-
-	int[] upperBound = new int[]{3, 3};
 	this.partialSetUp(false);
+	int[] upperBound = new int[]{1, 0};
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
 
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
@@ -254,14 +250,9 @@ public class SelectionDelimeterTest {
     }
     @Test
     public void InputAndDelimitationTest(){
-	// try{
-	//     this.pbSolver.addConstr(PBFactory.instance().mkGE(new VecInt(new int[] { 1, 2 }), 2));
-	// }catch(ContradictionException e){
-	//     Log.comment("contradiction when adding constraint");
-	// }
 	this.partialSetUp(true);
+	int[] upperBound = new int[]{1, 1};
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
-	int[] upperBound = new int[]{20, 20};
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
 	assumptions.push(1);
 	assumptions.push(-2);
