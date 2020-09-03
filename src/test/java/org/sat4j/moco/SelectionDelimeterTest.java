@@ -69,6 +69,11 @@ public class SelectionDelimeterTest {
 	Objective second_obj =  new LinearObj(new VecInt(new int[] { 1,2,3,4}),
 					      new Vec<Real>(new Real[] {new Real(-8), new Real(3), new Real(-1), new Real(-1) }));
 	this.moco.addObj(second_obj);
+
+	if(constraint)
+	    this.moco.addConstr(PBFactory.instance().mkLE(new VecInt(new int[] { 1, 2, 3, 4 }),
+							      new Vec<Real>(new Real[] { new Real(4), new Real(1), new Real(3), new Real(2) }),
+							      new Real(5)));
 	try {
 	    this.pbSolver = buildSolver();
 
@@ -78,13 +83,14 @@ public class SelectionDelimeterTest {
             return;
         }
 	this.sd  = new SelectionDelimeter(moco, this.pbSolver,true){
+
 		/**
 		 *Adds the disjunction of setOfLiterals, and logs
 		 *@param setOfliterals
 		 */
 
 		public boolean AddClause(IVecInt setOfLiterals){
-		    Log.comment(6,"AddClause:");
+		    Log.comment(3,"AddClause:");
 		    this.prettyPrintVecInt(setOfLiterals, true);
 		    try{
 			this.solver.AddClause(setOfLiterals);
