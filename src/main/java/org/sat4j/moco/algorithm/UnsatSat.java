@@ -379,7 +379,10 @@ public class UnsatSat extends algorithm {
     public IVecInt getModel(){
 	IVecInt model = new VecInt(new int[] {});
 	for(int id = 1; id <= this.solver.nVars();++id){
-	    model.push(id);
+	    if(this.solver.modelValue(id))
+		model.push(id);
+	    else
+		model.push(-id);
 	}
 	return model;
     }
