@@ -50,7 +50,7 @@ public class MyModelIterator implements Iterator<boolean[]>{
 
 	public boolean hasNext(){
 	    this.pbSolver.check(assumptions);
-	    if(contradiction)
+	    if(this.contradiction)
 		return false;
 	    return this.pbSolver.isSat();
 	}
