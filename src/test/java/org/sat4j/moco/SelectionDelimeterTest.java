@@ -26,32 +26,25 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
-import org.sat4j.moco.algorithm.UnsatSat;
 import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.DigitalEnv;
+import org.sat4j.moco.problem.DigitalEnv.DigitalNumber;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.LinearObj;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.problem.SelectionDelimeter;
-import org.sat4j.moco.problem.DigitalEnv.DigitalNumber;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit;
-import org.sat4j.moco.problem.SelectionDelimeter.ObjManager;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledComponent;
+import org.sat4j.moco.problem.SelectionDelimeter.ObjManager;
 import org.sat4j.moco.util.Log;
-import org.sat4j.moco.util.Real;
 import org.sat4j.moco.util.MyModelIterator;
+import org.sat4j.moco.util.Real;
 import org.sat4j.specs.ContradictionException;
-import org.sat4j.specs.ISolver;
 import org.sat4j.specs.IVecInt;
-import org.sat4j.specs.TimeoutException;
-import org.sat4j.tools.ModelIterator;
 
 public class SelectionDelimeterTest {
     protected SelectionDelimeter sd = null;
