@@ -23,7 +23,6 @@
 package org.sat4j.moco;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.sat4j.moco.util.MyModelIterator;
 import java.util.List;
 import java.util.ArrayList;
@@ -57,7 +56,7 @@ public class CircuitTest {
 	this.pbSolver.setConstantID();
 
 
-}
+    }
 
     
     /**
@@ -79,7 +78,7 @@ public class CircuitTest {
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
 
 		public boolean AddClause1(IVecInt setOfLiterals){
-		    this.AddClause(setOfLiterals, false);
+		    return AddClause(setOfLiterals, false);
 		}
 	    };
 	circuit.buildCircuit();
@@ -114,7 +113,7 @@ public class CircuitTest {
 
     private void testModComponentModel(Integer[] lits, int modN, int value){
 	value = value % modN;
-		for(int i = 0; i < value - 1; i++)
+	for(int i = 0; i < value - 1; i++)
 	    assertTrue("Failing at " + i +"'th comparison",this.pbSolver.modelValue( lits[i]));
 	
     }
@@ -125,28 +124,17 @@ public class CircuitTest {
      *Checks if the i'th output of SelectionComponent is active if the
      *i+1'th value of the sorted inputs is active.
      */
-@Test
+    @Test
     public void SelectionComponentTest(){
 	int inputsLength = 6;
 	int sortedPortionN = inputsLength;
 	Random rand = new Random();
 	Integer[] inputs = new Integer[inputsLength];
-	Integer[] inputValues = new Integer[inputsLength];
-	Arrays.fill(inputValues, 0);
 	for(int i = 0; i < inputs.length; i++){
 	    this.pbSolver.newVar();
 	    inputs[i] =  this.pbSolver.nVars();
 	}
 
-	IVecInt assumptions = new VecInt();
-	inputValues[0] = 1; inputValues[2] = 1;
-	for(int k = 0,n = inputValues.length; k < n; k++){
-	    if(inputValues[k] == 1){
-		assumptions.push(inputs[k]);
-	    }
-	    else
-		assumptions.push(-inputs[k]);
-	}
 	Circuit circuit = new Circuit(this.pbSolver){
 		public void buildCircuit(){
 		    SelectionComponent comp = new SelectionComponent(inputs, sortedPortionN);
@@ -162,26 +150,15 @@ public class CircuitTest {
 	    };
 
 	circuit.buildCircuit();
-	List<Integer> sorted = new ArrayList<Integer>(Arrays.asList(inputValues));
-	Collections.sort(sorted);
-	Collections.reverse(sorted);
-	sorted.subList(sortedPortionN,sorted.size()).clear();
 
 	ControlledComponent controlledComp =  circuit.getControlledComponentBase(0);
 	Integer[] outputs = controlledComp.getOutputs();
 	// assumptions.push(-controlledComp.getIthOutput(2));
 
-	pbSolver.check(assumptions);
-	Log.comment("sorted:");
-	for(int value: sorted)
-	    Log.comment("" + value);
-	
-	MyModelIterator iterator = new MyModelIterator(pbSolver, assumptions);
+	MyModelIterator iterator = new MyModelIterator(pbSolver);
 	while(iterator.hasNext()){
 	    iterator.next();
-	    General.FormatArrayWithValues(inputs, pbSolver,false);
-	    General.FormatArrayWithValues(outputs, pbSolver,false);
-	    this.SelectionComponentAssertion(sorted.toArray(new Integer[0]), outputs, sortedPortionN);
+	    this.SelectionComponentAssertion(inputs, outputs, sortedPortionN);
 	}
     }
 
@@ -189,11 +166,16 @@ public class CircuitTest {
      *Assertion helper of {@code  SelectionComponentTest()}.
      */
 
-    void SelectionComponentAssertion(Integer[] sorted, Integer[] outputs, int sortedPortionN){
-	for(int i = 0, n = sortedPortionN ; i < n; i++){
-	    if(sorted[i] == 1)
-		assertTrue(pbSolver.modelValue(outputs[i]));
-	}
+    public void SelectionComponentAssertion(Integer[] outputs, Integer[] inputs, int sortedPortionN){
+	int value = 0;
+
+	for(int i = 0, n = inputs.length ; i < n; i++)
+	    if(pbSolver.modelValue(inputs[i]))
+		value++;
+
+	if(value > sortedPortionN) value = sortedPortionN;
+	for(int i = 0, n = value ; i < n; i++)
+	    assertTrue("Failing at " + i + "'th output", pbSolver.modelValue(outputs[i]));
     }
 
     /**
@@ -215,7 +197,6 @@ public class CircuitTest {
 	}
 
 	IVecInt assumptions = new VecInt();
-	assumptions.push(-controlledComp.getIthOutput(2));
 	Circuit circuit = new Circuit(this.pbSolver){
 		public void buildCircuit(){
 		    SelectionComponent comp = new SelectionComponent(inputs, sortedPortionN);
@@ -232,11 +213,13 @@ public class CircuitTest {
 
 	circuit.buildCircuit();
 	ControlledComponent controlledComp =  circuit.getControlledComponentBase(0);
+	assumptions.push(-controlledComp.getIthOutput(2));
+
 	MyModelIterator iterator = new MyModelIterator(pbSolver, assumptions);
 	while(iterator.hasNext()){
 	    iterator.next();
-	    Log.comment("Selection component inputs:")
-	    Log.comment("Selection component inputs:")
+	    Log.comment("Selection component inputs:");
+	    Log.comment("Selection component inputs:");
 	    General.FormatArrayWithValues(inputs, pbSolver,true);
 	    General.FormatArrayWithValues(controlledComp.getOutputs(), pbSolver,true);
 	}
@@ -285,7 +268,7 @@ public class CircuitTest {
 		    MergeComponent comp = new MergeComponent(sortedPortionN);
 		    comp.constitutiveClause(inputsArray);
 		    new ControlledComponent(0, comp);
-		    }
+		}
 
 
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
@@ -339,7 +322,7 @@ public class CircuitTest {
 	while(iteratorControlledComp.hasNext()) {
 	    next = iteratorControlledComp.next();
 	    auxGetValues(next);
-}
+	}
 
 
 	{n = obtainedSorted.size();
@@ -573,7 +556,7 @@ public class CircuitTest {
     }
 
 
-public IVecInt buildAssumption(Integer[] inputValues, Integer[] inputs){
+    public IVecInt buildAssumption(Integer[] inputValues, Integer[] inputs){
 	IVecInt assumptions = new VecInt();
 	for(int i = 0, n = inputValues.length; i < n; i++){
 	    if(inputValues[i] == 1)
@@ -591,7 +574,7 @@ public IVecInt buildAssumption(Integer[] inputValues, Integer[] inputs){
 		Log.comment("clause:");
 		for(int i = 0, n = setOfLiterals.size(); i < n; i++){
 		    lit = setOfLiterals.get(i);
-		Log.comment("lit:"+ lit);
+		    Log.comment("lit:"+ lit);
 		}
 		
 		Log.comment("");
