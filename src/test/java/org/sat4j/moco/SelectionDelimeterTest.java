@@ -247,18 +247,22 @@ public class SelectionDelimeterTest {
     @Test
     public void delimitationTest(){
 	this.mocoSetup1();
+	
 	//last valid values
-	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
+	assertTrue(this.moco.nObjs() + " objectives and " + this.upperBound.length + "upper bounds", this.moco.nObjs() == this.upperBound.length);
 
-	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
+	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(this.upperBound);
 	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
 	boolean[] model;
 	int modelN = 0;
+	Integer[] inputs = new Integer[this.moco.nVars()];
+	for(int i = 0; i < inputs.length; i++)
+	    inputs[i] = i + 1;
 	while(iterator.hasNext()){
 	    modelN++;
 	    // this.sd.prettyFormatVecIntWithValues(this.range);
 	    model = iterator.next();
-	    assertTrue("model " + model + "failed the test", this.testUpperBound(model, upperBound));}
+	    assertTrue("model \n" + this.sd.prettyFormatArrayWithValues(inputs) + "failed the test", this.testUpperBound(model, this.upperBound));}
 	Log.comment(modelN + " models");
 
     }
