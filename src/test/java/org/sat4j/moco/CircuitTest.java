@@ -217,6 +217,7 @@ public class CircuitTest {
 	}
 
 	IVecInt assumptions = new VecInt();
+	assumptions.push(-controlledComp.getIthOutput(2));
 	Circuit circuit = new Circuit(this.pbSolver){
 		public void buildCircuit(){
 		    SelectionComponent comp = new SelectionComponent(inputs, sortedPortionN);
@@ -233,7 +234,6 @@ public class CircuitTest {
 
 	circuit.buildCircuit();
 	ControlledComponent controlledComp =  circuit.getControlledComponentBase(0);
-	assumptions.push(-controlledComp.getIthOutput(2));
 	MyModelIterator iterator = new MyModelIterator(pbSolver, assumptions);
 	while(iterator.hasNext()){
 	    iterator.next();
