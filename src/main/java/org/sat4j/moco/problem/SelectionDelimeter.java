@@ -69,8 +69,10 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++){
 		    oldActivator = activator;
 	 	    activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
-		    if(kD > 1)
+		    if(kD > 1){
+			Log.comment(6, "sequential clause");
 			this.AddClause(new VecInt(new int[]{-activator, oldActivator}));
+		    }
 
 		}
 	    }
@@ -232,6 +234,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    SDIndex sDIndex = new SDIndex(iObj, upperLimit);
 	    librarian.putIndex(activator, sDIndex);
 	    yTable[iObj][unaryToIndex(upperLimit)] = activator;
+	    Log.comment(6, "Lexicographic order");
 	    this.LexicographicOrderRecurse(iterator, clause);
 	    AddClause(clause);
 	    return activator;
@@ -349,6 +352,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	for(int variable: variables)
 	    if(pastVariable != 0){
 		IVecInt clause = new VecInt(new int[] {-variable, pastVariable});
+	    Log.comment(6, "enforce ordering");
 		AddClause1(clause);
 		pastVariable = variable;
 	    }
@@ -387,6 +391,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		}
 		if(n <= 4){
 		    IVecInt clause = new VecInt(new int[]{});
+		    Log.comment(6, "merge special case:");
 		    this.recurseSpecialCase(0, 0, clause);
 		    return;
 		}
@@ -481,6 +486,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	    @Override
 	    public void constitutiveClause() {
+	    Log.comment(6, "optimum component");
 		this.outputs[0]=getFreshVar1();
 		if(this.inputs.length == 0)
 		    return;
@@ -716,6 +722,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 			this.outputs[i] = output;
 			clause.clear();
 			clause.push(-input); clause.push(MSB);
+	    Log.comment(6, "Mod component");
 			for(int j = 0, m  = clause.size(); j < m; j++)
 			    AddClause1(new VecInt(new int[]{-output, -clause.get(j)}));
 			AddClause1(clause.push(output));
@@ -748,6 +755,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    for(int k = 0; k < this.modN - 1; k++){
 			int output = getFreshVar1();
 			this.outputs[k] = output;
+	    Log.comment(6, "Mod component");
 			for(int j = 0, m = clauses[k].size(); j < m ; j++)
 			    AddClause1(new VecInt(new int[]{ -clauses[k].get(j), output}));
 			AddClause1(clauses[k].push(-output));
