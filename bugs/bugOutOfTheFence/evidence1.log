@@ -1,0 +1,337 @@
+-*- mode: dap-server-log; default-directory: "~/Mnemosyne/Aion/moco/mocoSource/solver/" -*-
+Debug Adapter started at Sat Sep  5 23:30:46
+
+java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=35589 -jar /home/joaooneillcortes/.emacs.d/eclipse.jdt.ls/test-runner/junit-platform-console-standalone.jar -cp $JUNIT_CLASS_PATH -m org.sat4j.moco.CircuitTest#SelectionComponentTest
+Listening for transport dt_socket at address: 35589
+Debugger failed to attach: handshake failed - connection prematurally closed
+c merge special case:
+c clause:
+c lit:-2
+c lit:8
+c 
+c clause:
+c lit:-2
+c lit:-3
+c lit:9
+c 
+c clause:
+c lit:-3
+c lit:8
+c 
+c merge special case:
+c clause:
+c lit:-4
+c lit:10
+c 
+c clause:
+c lit:-4
+c lit:-5
+c lit:11
+c 
+c clause:
+c lit:-5
+c lit:10
+c 
+c merge special case:
+c clause:
+c lit:-8
+c lit:12
+c 
+c clause:
+c lit:-8
+c lit:-10
+c lit:13
+c 
+c clause:
+c lit:-8
+c lit:-10
+c lit:-6
+c lit:14
+c 
+c clause:
+c lit:-8
+c lit:-10
+c lit:-6
+c lit:-7
+c lit:15
+c 
+c clause:
+c lit:-8
+c lit:-10
+c lit:-7
+c lit:14
+c 
+c clause:
+c lit:-8
+c lit:-6
+c lit:13
+c 
+c clause:
+c lit:-8
+c lit:-6
+c lit:-7
+c lit:14
+c 
+c clause:
+c lit:-8
+c lit:-7
+c lit:13
+c 
+c clause:
+c lit:-10
+c lit:12
+c 
+c clause:
+c lit:-10
+c lit:-6
+c lit:13
+c 
+c clause:
+c lit:-10
+c lit:-6
+c lit:-7
+c lit:14
+c 
+c clause:
+c lit:-10
+c lit:-7
+c lit:13
+c 
+c clause:
+c lit:-6
+c lit:12
+c 
+c clause:
+c lit:-6
+c lit:-7
+c lit:13
+c 
+c clause:
+c lit:-7
+c lit:12
+c 
+c merge special case:
+c clause:
+c lit:-9
+c lit:16
+c 
+c clause:
+c lit:-9
+c lit:-11
+c lit:17
+c 
+c clause:
+c lit:-11
+c lit:16
+c 
+c optimum component
+c clause:
+c lit:1
+c lit:-18
+c 
+c clause:
+c lit:12
+c lit:-18
+c 
+c clause:
+c lit:18
+c lit:-1
+c lit:-12
+c 
+c optimum component
+c clause:
+c lit:-16
+c lit:19
+c 
+c clause:
+c lit:-13
+c lit:19
+c 
+c clause:
+c lit:-19
+c lit:16
+c lit:13
+c 
+c optimum component
+c clause:
+c lit:-14
+c lit:20
+c 
+c clause:
+c lit:-16
+c lit:20
+c 
+c clause:
+c lit:-20
+c lit:14
+c lit:16
+c 
+c optimum component
+c clause:
+c lit:20
+c lit:-21
+c 
+c clause:
+c lit:13
+c lit:-21
+c 
+c clause:
+c lit:21
+c lit:-20
+c lit:-13
+c 
+c optimum component
+c clause:
+c lit:14
+c lit:-22
+c 
+c clause:
+c lit:16
+c lit:-22
+c 
+c clause:
+c lit:22
+c lit:-14
+c lit:-16
+c 
+c optimum component
+c clause:
+c lit:-17
+c lit:23
+c 
+c clause:
+c lit:-22
+c lit:23
+c 
+c clause:
+c lit:-23
+c lit:17
+c lit:22
+c 
+c optimum component
+c clause:
+c lit:-15
+c lit:24
+c 
+c clause:
+c lit:-17
+c lit:24
+c 
+c clause:
+c lit:-24
+c lit:15
+c lit:17
+c 
+c optimum component
+c clause:
+c lit:14
+c lit:-25
+c 
+c clause:
+c lit:16
+c lit:-25
+c 
+c clause:
+c lit:25
+c lit:-14
+c lit:-16
+c 
+c optimum component
+c clause:
+c lit:24
+c lit:-26
+c 
+c clause:
+c lit:25
+c lit:-26
+c 
+c clause:
+c lit:26
+c lit:-24
+c lit:-25
+c 
+c optimum component
+c clause:
+c lit:15
+c lit:-27
+c 
+c clause:
+c lit:17
+c lit:-27
+c 
+c clause:
+c lit:27
+c lit:-15
+c lit:-17
+c 
+c optimum component
+c clause:
+c lit:1
+c lit:28
+c 
+c clause:
+c lit:-27
+c lit:28
+c 
+c clause:
+c lit:-28
+c lit:-1
+c lit:27
+c 
+c inputs:
+2 false|
+3 true|
+4 false|
+5 true|
+6 true|
+7 true|
+
+c outputs:
+18 true|
+19 true|
+21 true|
+23 false|
+26 false|
+28 false|
+
+
+Thanks for using JUnit! Support its development at https://junit.org/sponsoring
+
+╷
+├─ JUnit Jupiter ✔
+│  └─ CircuitTest ✔
+│     └─ SelectionComponentTest() ✘ Failing at 3'th output
+└─ JUnit Vintage ✔
+
+Failures (1):
+  JUnit Jupiter:CircuitTest:SelectionComponentTest()
+    MethodSource [className = 'org.sat4j.moco.CircuitTest', methodName = 'SelectionComponentTest', methodParameterTypes = '']
+    => java.lang.AssertionError: Failing at 3'th output
+       org.junit.Assert.fail(Assert.java:89)
+       org.junit.Assert.assertTrue(Assert.java:42)
+       org.sat4j.moco.CircuitTest.SelectionComponentAssertion(CircuitTest.java:183)
+       org.sat4j.moco.CircuitTest.SelectionComponentTest(CircuitTest.java:161)
+       sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+       sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       java.lang.reflect.Method.invoke(Method.java:498)
+       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:686)
+       org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+       [...]
+
+Test run finished after 781 ms
+[         3 containers found      ]
+[         0 containers skipped    ]
+[         3 containers started    ]
+[         0 containers aborted    ]
+[         3 containers successful ]
+[         0 containers failed     ]
+[         1 tests found           ]
+[         0 tests skipped         ]
+[         1 tests started         ]
+[         0 tests aborted         ]
+[         0 tests successful      ]
+[         1 tests failed          ]
+
+
+Debug Adapter exited abnormally with code 1 at Sat Sep  5 23:30:49
