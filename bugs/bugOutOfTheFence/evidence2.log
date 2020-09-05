@@ -1,0 +1,56 @@
+-*- mode: dap-server-log; default-directory: "~/Mnemosyne/Aion/moco/mocoSource/solver/" -*-
+Debug Adapter started at Sat Sep  5 23:52:11
+
+java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=45693 -jar /home/joaooneillcortes/.emacs.d/eclipse.jdt.ls/test-runner/junit-platform-console-standalone.jar -cp $JUNIT_CLASS_PATH -m org.sat4j.moco.CircuitTest#ModComponentTest
+Listening for transport dt_socket at address: 45693
+Debugger failed to attach: handshake failed - connection prematurally closed
+c inputs of ModComponent:
+2 true|
+3 false|
+4 true|
+
+c outputs of ModComponent:
+5 false|
+6 false|
+
+
+Thanks for using JUnit! Support its development at https://junit.org/sponsoring
+
+╷
+├─ JUnit Jupiter ✔
+│  └─ CircuitTest ✔
+│     └─ ModComponentTest() ✘ Failing at 0'th comparison
+└─ JUnit Vintage ✔
+
+Failures (1):
+  JUnit Jupiter:CircuitTest:ModComponentTest()
+    MethodSource [className = 'org.sat4j.moco.CircuitTest', methodName = 'ModComponentTest', methodParameterTypes = '']
+    => java.lang.AssertionError: Failing at 0'th comparison
+       org.junit.Assert.fail(Assert.java:89)
+       org.junit.Assert.assertTrue(Assert.java:42)
+       org.sat4j.moco.CircuitTest.testModComponentModel(CircuitTest.java:119)
+       org.sat4j.moco.CircuitTest.ModComponentTest(CircuitTest.java:93)
+       sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+       sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       java.lang.reflect.Method.invoke(Method.java:498)
+       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:686)
+       org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+       [...]
+
+Test run finished after 219 ms
+[         3 containers found      ]
+[         0 containers skipped    ]
+[         3 containers started    ]
+[         0 containers aborted    ]
+[         3 containers successful ]
+[         0 containers failed     ]
+[         1 tests found           ]
+[         0 tests skipped         ]
+[         1 tests started         ]
+[         0 tests aborted         ]
+[         0 tests successful      ]
+[         1 tests failed          ]
+
+
+Debug Adapter exited abnormally with code 1 at Sat Sep  5 23:52:13
