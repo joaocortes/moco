@@ -46,6 +46,9 @@ public class MyModelIterator implements Iterator<boolean[]>{
 	    this.pbSolver =  solver;
 	    this.assumptions = assumptions;
 	}
+	public MyModelIterator(PBSolver solver){
+	    this(solver, new VecInt(new int[0]));
+	}
 
 
 	public boolean hasNext(){
