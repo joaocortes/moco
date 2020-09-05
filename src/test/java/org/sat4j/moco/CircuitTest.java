@@ -389,8 +389,8 @@ public class CircuitTest {
      *Checks if the optimum component is correct. Does not enumerate all models
      */
     @Test void OptimumComponentTest(){
-	Integer[] inputs = new Integer[4];
-	boolean polarity = false;
+	Integer[] inputs = new Integer[10];
+	boolean polarity = true;
 	this.fillInputWithVars(inputs);
 	Circuit circuit = new Circuit(pbSolver){
 		public void buildCircuit(){
@@ -407,28 +407,31 @@ public class CircuitTest {
 		}
 	    };
 	circuit.buildCircuit();
-	Integer[] inputValues = new Integer[inputs.length];
-	inputValues[0] = 0; inputValues[1] = 1; inputValues[2] = 0; inputValues[3] = 1; 
-	IVecInt assumptions = this.buildAssumption(inputValues, inputs);
-	int compareTo; if(polarity) compareTo = 1; else compareTo = 0;
-	int expected = (compareTo + 1) % 2;
-	for(int value: inputValues)
-	    if(value == compareTo){
-		expected = compareTo;
-		break;
-	    }
 	ControlledComponent comp = circuit.getControlledComponentBase(0);
-	Integer[] output = comp.getOutputs();
-	this.pbSolver.check(assumptions);
-	Log.comment("expected is " + expected);
-	assertTrue("length is not 1", output.length == 1);
-	if(this.pbSolver.modelValue(output[0]))
-	    assertTrue("value is not correct", expected == 1);
-	else
-	    assertTrue("value is not correct", expected == 0);
+	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver);
+	boolean[] model;
+	assertTrue("length is not 1", comp.getOutputs().length == 1);
+	while(iterator.hasNext()){
+	    model = iterator.next();
+	    this.optimumComponentAssertion(comp, polarity);
+	}
+
     }
 
+    public boolean optimumComponentAssertion(ControlledComponent comp, boolean polarity){
+	boolean expected = !polarity;
+	Integer[] inputs = comp.getInputs();
+	int output = comp.getIthOutput(0);
+	for(int i = 0, n = inputs.length; i < n; i++)
+	    if((!this.pbSolver.modelValue(inputs[i]) || polarity) && (this.pbSolver.modelValue(inputs[i]) || !polarity)){
+		expected = polarity;
+		break;
+	    }
 
+	assertTrue("value is not correct", (!this.pbSolver.modelValue(output) || expected) && (this.pbSolver.modelValue(output) || !expected));
+	return true;
+	
+}
     /**
      *Checks if the output of CombineComponent is sorted
      */
