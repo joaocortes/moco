@@ -74,7 +74,6 @@ public class SelectionDelimeterTest {
 		 */
 
 		public boolean AddClause(IVecInt setOfLiterals){
-		    Log.comment(3,"AddClause:");
 		    this.prettyPrintVecInt(setOfLiterals, true);
 		    try{
 			this.solver.AddClause(setOfLiterals);
