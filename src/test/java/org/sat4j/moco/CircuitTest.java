@@ -58,7 +58,12 @@ public class CircuitTest {
 
 
 }
+
     
+    /**
+     *Given a sorted unary input, check if the ModComponent is
+     *semi-correct. Does not iterate models
+     */
     @Test
     public void ModComponentTest(){
 	int modN = 3;
@@ -107,6 +112,11 @@ public class CircuitTest {
 	}
     }
 
+
+    /**
+     *Assertion helper of {@code  ModComponentTest()}.
+     */
+
     private void testModComponentModel(Integer[] lits, int modN, int value){
 	value = value % modN;
 		for(int i = 0; i < value - 1; i++)
@@ -116,7 +126,11 @@ public class CircuitTest {
 
 
 
-    @Test
+    /**
+     *Checks if the i'th output of SelectionComponent is active if the
+     *i+1'th value of the sorted inputs is active.
+     */
+@Test
     public void SelectionComponentTest(){
 	int inputsLength = 6;
 	int sortedPortionN = inputsLength;
@@ -176,6 +190,10 @@ public class CircuitTest {
 	}
     }
 
+    /**
+     *Assertion helper of {@code  SelectionComponentTest()}.
+     */
+
     void SelectionComponentAssertion(Integer[] sorted, Integer[] outputs, int sortedPortionN){
 	for(int i = 0, n = sortedPortionN ; i < n; i++){
 	    if(sorted[i] == 1)
@@ -183,9 +201,13 @@ public class CircuitTest {
 	}
     }
 
-
+    /**
+     *Checks if negating the SelecComp.outputs[i] literal delimits the
+     *number of active inputs to i+1;
+     */
     @Test
     public void SelectionComponentDelimetedTest(){
+
 	int inputsLength = 6;
 	int sortedPortionN = inputsLength;
 	Random rand = new Random();
@@ -225,6 +247,10 @@ public class CircuitTest {
 	}
     }
 
+    /**
+     *Assertion helper of {@code SelectionComponentDelimetedTest()}.
+     */
+
     void SelectionComponentDelimetedAssertion(Integer[] inputs, int value){
 	int result = 0;
 	for(int i = 0, n = inputs.length ; i < n; i++){
@@ -233,7 +259,11 @@ public class CircuitTest {
 	}
 	assertTrue(result<value);
     }
-?
+
+    /**
+     *Checks if the output of MergComponent is sorted. Notice each of
+     *the 4 (sub)lits in inputsArray must be sorted.
+     */
     @Test void MergeComponentTest(){
 	int sortedPortionN = 16;
 	Integer[] inputs = new Integer[16];
@@ -367,6 +397,9 @@ public class CircuitTest {
 	return results;
     }
 
+    /**
+     *Checks if the optimum component is correct. Does not enumerate all models
+     */
     @Test void OptimumComponentTest(){
 	Integer[] inputs = new Integer[4];
 	boolean polarity = false;
@@ -408,8 +441,13 @@ public class CircuitTest {
     }
 
 
+    /**
+     *Checks if the output of CombineComponent is sorted
+     *
+     */
     @Test
     public void CombineComponentTest(){
+	//TODO: enumerate models, and do not force the input
 	Random rand = new Random();
 	Integer[] inputsSize = new Integer[]{8,8};
 	int sortedPortionN = inputsSize[0] + inputsSize[1];
@@ -505,10 +543,10 @@ public class CircuitTest {
 	    };
 	circuit.buildCircuit();
 	IVecInt assumptions = new VecInt();
-	assertTrue(upperValue <= modN);
+	assertTrue(upperBound <= modN);
 	
 	ControlledComponent comp = circuit.getControlledComponentBase(0);
-	comp.getIthOutput(upperValue - 1);
+	comp.getIthOutput(upperBound - 1);
 	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
 	boolean[] model;
 	while(iterator.hasNext()){
@@ -517,9 +555,13 @@ public class CircuitTest {
 	    Log.comment("outputs of DigitComponent:");
 	    General.FormatArrayWithValues(comp.getOutputs(), pbSolver, true);
 	    model = iterator.next();
-	    // this.testModComponentModel(comp.getOutputs(), modN, value);
+	    // this.testModComponentModel(comp.(), modN, value);
 	}
     }
+
+    /**
+     *Assertion helper of {@code DigitComponentTest()}.
+     */
     private void testDigitComponentModel(Integer[] lits, int modN, int value){
 	value = value % modN;
 	for(int i = 0; i < value - 1; i++)
