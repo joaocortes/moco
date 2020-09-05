@@ -48,6 +48,7 @@ abstract public class  algorithm{
     }
 
     abstract public void prettyPrintVecInt(IVecInt vecInt, boolean clausing);
+    abstract public String prettyFormatVecInt(IVecInt vecInt);
     abstract public void solve();
 
 
@@ -59,7 +60,7 @@ abstract public class  algorithm{
 
     public boolean AddClause(IVecInt setOfLiterals){
 	// Log.comment(6, "{ algorithm.AddClause");
-	// this.prettyPrintVecInt(setOfLiterals,true);
+	Log.comment(6, this.prettyFormatVecInt(setOfLiterals));
 	try{
 	    this.solver.AddClause(setOfLiterals);
 	} catch (ContradictionException e) {
