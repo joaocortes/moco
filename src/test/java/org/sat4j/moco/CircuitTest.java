@@ -39,6 +39,7 @@ import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.SelectionDelimeter;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledComponent;
+import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ModComponent;
 import org.sat4j.moco.util.General;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
@@ -48,7 +49,7 @@ public class CircuitTest {
     protected SelectionDelimeter sd = null;
     protected UnsatSat solver;
     protected PBSolver pbSolver = new PBSolver();
-    static {Log.setVerbosity(6);}
+    static {Log.setVerbosity(3);}
 
     @BeforeEach
     public void partialSetUp() {
@@ -61,12 +62,12 @@ public class CircuitTest {
     
     /**
      *Given a sorted unary input, check if the ModComponent is
-     *semi-correct. Does not iterate models
+     *semi-correct. 
      */
     @Test
     public void ModComponentTest(){
 	int modN = 3;
-	Integer[] inputs = new Integer[11];
+	Integer[] inputs = new Integer[3];
 	this.fillInputWithVars(inputs);
 
 	Circuit circuit = new Circuit(pbSolver){
@@ -82,27 +83,14 @@ public class CircuitTest {
 		}
 	    };
 	circuit.buildCircuit();
-	IVecInt assumptions = new VecInt();
-	int value = 10;
-	assertTrue(value <= inputs.length);
-	{
-	    int i = 0;
-	    for(;i < value; i++)
-		assumptions.push(inputs[i]);
-	    for(;i < inputs.length; i++)
-		assumptions.push(-inputs[i]);
-	}
-	pbSolver.check(assumptions);
+
+	
 	ControlledComponent comp = circuit.getControlledComponentBase(0);
-	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
+	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver);
 	boolean[] model;
 	while(iterator.hasNext()){
-	    Log.comment("inputs of ModComponent:");
-	    General.FormatArrayWithValues(comp.getInputs(), pbSolver, true);
-	    Log.comment("outputs of ModComponent:");
-	    General.FormatArrayWithValues(comp.getOutputs(), pbSolver, true);
 	    model = iterator.next();
-	    this.testModComponentModel(comp.getOutputs(), modN, value);
+	    this.testModComponentModel(comp, modN);
 	}
     }
 
@@ -111,12 +99,27 @@ public class CircuitTest {
      *Assertion helper of {@code  ModComponentTest()}.
      */
 
-    private void testModComponentModel(Integer[] lits, int modN, int value){
+    private void testModComponentModel(ControlledComponent comp, int modN){
+	Integer[] inputs = comp.getInputs();
+	Integer[] outputs = comp.getOutputs();
+	int value = 0;
+
+	for(int lit: inputs)
+	    if(this.pbSolver.modelValue(lit))
+		value++;
+	    else
+		break;
 	value = value % modN;
-	for(int i = 0; i < value - 1; i++)
-	    assertTrue("Failing at " + i +"'th comparison",this.pbSolver.modelValue( lits[i]));
-	
-    }
+	for(int i = 0; i < value; i++){
+	    Log.comment("inputs of ModComponent:");
+	    General.FormatArrayWithValues(inputs, pbSolver, true);
+	    Log.comment("outputs of ModComponent:");
+	    General.FormatArrayWithValues(outputs, pbSolver, true);
+	    if(!this.pbSolver.modelValue( outputs[i])){
+	    assertTrue("Failing at " + i +"'th comparison", false);
+	    }
+	}
+}
 
 
 
