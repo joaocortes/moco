@@ -47,4 +47,13 @@ import org.sat4j.specs.IVecInt;
 	return result;
     }
 
+      static public String FormatModel(boolean[] model, boolean print){
+	  String result = "";
+	  for(int i = 0, n = model.length; i < n; i++){
+	      result += i + " " + (model[i]? 1 : 0) + "\n";
+}
+	  if(print)
+	      System.out.println(result);
+	  return result;
+      }
     }
