@@ -68,10 +68,8 @@ public class CircuitTest {
     public void ModComponentTest(){
 	int modN = 3;
 	Integer[] inputs = new Integer[11];
-	for(int i = 0; i < inputs.length; i++){
-	    this.pbSolver.newVar();
-	    inputs[i] =  this.pbSolver.nVars();
-	}
+	this.fillInputWithVars(inputs);
+
 	Circuit circuit = new Circuit(pbSolver){
 		public void buildCircuit(){
 		    ModComponent modComponent = new ModComponent(inputs, modN);
