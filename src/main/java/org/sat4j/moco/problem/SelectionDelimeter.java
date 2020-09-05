@@ -123,6 +123,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 			int ratio = 1;
 			int maxBase = baseInputs.lastKey();
 			List<Integer> carryBits = null;
+			int basesN = 1;
 			do{
 			    ratio = digitalEnv.getRatio(ratioI++);
 			    inputs.clear();
@@ -132,10 +133,13 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 			    if(inputsWeights!=null)
 				inputs.addAll(inputsWeights);
 			    if(base <= maxBase || inputs.size() != 0){
+				if(base > maxBase)
+				    digitalEnv.setBasesN(basesN);
 				carryBits =
 				    buildControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
 			    } else{break;}
 			    base *=ratio;
+			    basesN++;
 			}while(true);
 		    
 
