@@ -183,6 +183,57 @@ public class CircuitTest {
 	}
     }
 
+
+    @Test
+    public void SelectionComponentDelimetedTest(){
+	int inputsLength = 6;
+	int sortedPortionN = inputsLength;
+	Random rand = new Random();
+	Integer[] inputs = new Integer[inputsLength];
+	Integer[] inputValues = new Integer[inputsLength];
+	Arrays.fill(inputValues, 0);
+	for(int i = 0; i < inputs.length; i++){
+	    this.pbSolver.newVar();
+	    inputs[i] =  this.pbSolver.nVars();
+	}
+
+	IVecInt assumptions = new VecInt();
+	Circuit circuit = new Circuit(this.pbSolver){
+		public void buildCircuit(){
+		    SelectionComponent comp = new SelectionComponent(inputs, sortedPortionN);
+		    comp.constitutiveClause();
+		    new ControlledComponent(0, comp);
+
+		}
+		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
+
+		public boolean AddClause1(IVecInt setOfLiterals){
+		    return AddClause(setOfLiterals, true);
+		}
+	    };
+
+	circuit.buildCircuit();
+	ControlledComponent controlledComp =  circuit.getControlledComponentBase(0);
+	assumptions.push(-controlledComp.getIthOutput(2));
+	MyModelIterator iterator = new MyModelIterator(pbSolver, assumptions);
+	while(iterator.hasNext()){
+	    iterator.next();
+	    Log.comment("Selection component inputs:")
+	    Log.comment("Selection component inputs:")
+	    General.FormatArrayWithValues(inputs, pbSolver,true);
+	    General.FormatArrayWithValues(controlledComp.getOutputs(), pbSolver,true);
+	}
+    }
+
+    void SelectionComponentDelimetedAssertion(Integer[] inputs, int value){
+	int result = 0;
+	for(int i = 0, n = inputs.length ; i < n; i++){
+	    if(pbSolver.modelValue(inputs[i]))
+		result++;
+	}
+	assertTrue(result<value);
+    }
+?
     @Test void MergeComponentTest(){
 	int sortedPortionN = 16;
 	Integer[] inputs = new Integer[16];
