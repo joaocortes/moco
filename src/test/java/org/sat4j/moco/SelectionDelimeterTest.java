@@ -240,7 +240,10 @@ public class SelectionDelimeterTest {
 	}
 	return saturated;
     }
-
+    /**
+     *Tests if all valid models respect the delimitation imposed by
+     *{@code upperBound}.
+     */
     @Test
     public void delimitationTest(){
 	this.mocoSetup1();
