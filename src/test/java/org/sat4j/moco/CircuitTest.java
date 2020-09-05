@@ -440,8 +440,8 @@ public class CircuitTest {
 
     /**
      *Checks if the output of CombineComponent is sorted
-     *
      */
+
     @Test
     public void CombineComponentTest(){
 	Random rand = new Random();
@@ -456,7 +456,7 @@ public class CircuitTest {
 		this.pbSolver.newVar();
 		inputs[k][i] =  this.pbSolver.nVars();
 	    }}
-	//Each input shall be a sorted sequence. The first input shall be heavier
+	//Only the unary preffix of each input is sorted!
 	inputValues[0] = new Integer[]{1, 1, 1, 1, 1, 1, 0, 1};
 	inputValues[1] = new Integer[]{1, 1, 0, 1, 0, 0, 0, 0};
 	IVecInt assumptions = new VecInt();
