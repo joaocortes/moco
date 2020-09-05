@@ -444,7 +444,6 @@ public class CircuitTest {
      */
     @Test
     public void CombineComponentTest(){
-	//TODO: enumerate models, and do not force the input
 	Random rand = new Random();
 	Integer[] inputsSize = new Integer[]{8,8};
 	int sortedPortionN = inputsSize[0] + inputsSize[1];
@@ -458,8 +457,8 @@ public class CircuitTest {
 		inputs[k][i] =  this.pbSolver.nVars();
 	    }}
 	//Each input shall be a sorted sequence. The first input shall be heavier
-	inputValues[0] = new Integer[]{1, 1, 1, 1, 1, 1, 0, 0};
-	inputValues[1] = new Integer[]{1, 1, 1, 1, 0, 0, 0, 0};
+	inputValues[0] = new Integer[]{1, 1, 1, 1, 1, 1, 0, 1};
+	inputValues[1] = new Integer[]{1, 1, 0, 1, 0, 0, 0, 0};
 	IVecInt assumptions = new VecInt();
 	for( int i = 0; i < 2; i++)
 	    for(int k = 0,n = inputValues[i].length; k < n; k++){
