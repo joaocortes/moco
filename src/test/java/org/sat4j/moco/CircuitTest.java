@@ -166,7 +166,7 @@ public class CircuitTest {
      *Assertion helper of {@code  SelectionComponentTest()}.
      */
 
-    public void SelectionComponentAssertion(Integer[] outputs, Integer[] inputs, int sortedPortionN){
+    public void SelectionComponentAssertion(Integer[] inputs, Integer[] outputs, int sortedPortionN){
 	int value = 0;
 
 	for(int i = 0, n = inputs.length ; i < n; i++)
@@ -174,8 +174,15 @@ public class CircuitTest {
 		value++;
 
 	if(value > sortedPortionN) value = sortedPortionN;
-	for(int i = 0, n = value ; i < n; i++)
-	    assertTrue("Failing at " + i + "'th output", pbSolver.modelValue(outputs[i]));
+	for(int i = 0, n = value ; i < n; i++){
+	    if(!pbSolver.modelValue(outputs[i])){
+		Log.comment(3, "inputs:");
+		General.FormatArrayWithValues(inputs, pbSolver,true);
+		Log.comment(3, "outputs:");
+		General.FormatArrayWithValues(outputs, pbSolver,true);
+		assertTrue("Failing at " + i + "'th output", false);
+	    }
+	}
     }
 
     /**
