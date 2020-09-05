@@ -488,29 +488,33 @@ public class CircuitTest {
 	circuit.buildCircuit();
 	ControlledComponent comp1 = circuit.getControlledComponentBase(0);
 	comp1.getOutputs();
-	List<Integer> sorted = new ArrayList<Integer>(Arrays.asList(inputValues[0]));
-	sorted.addAll(Arrays.asList(inputValues[1]));
-	Collections.sort(sorted);
-	Collections.reverse(sorted);
-	sorted.subList(0, sortedPortionN - 1);
-	pbSolver.check(assumptions);
-
-	List<Integer> obtainedSorted = new ArrayList<Integer>();
-	Iterator<Integer> iterator = comp1.iteratorOutputs();
-	while(iterator.hasNext())
-	    if(pbSolver.modelValue(iterator.next()))
-		obtainedSorted.add(1);
-	    else
-		obtainedSorted.add(0);
-
-	{int n = obtainedSorted.size();
-	    assertTrue("lengths are different!",n == sorted.size());
-	    for(int i = 0; i < n; i++  )
-		assertTrue("failing " + i +"'th comparison", obtainedSorted.get(i) == sorted.get(i));
-		    
-	    return;
+	Integer[] semiSorted = new Integer[inputValues[0].length + inputValues[1].length];
+	Arrays.fill(semiSorted, 0);
+	{
+	    int i = 0;
+	    for(Integer[] values: inputValues )
+		for(int value: values)
+		    if(value == 1)
+			semiSorted[i++] = 1;
+		    else
+			break;
 	}
+	pbSolver.check(assumptions);
+	Iterator<boolean[]> iteratorModels = new MyModelIterator(this.pbSolver, assumptions);
+	boolean[] model;
+	int modelN = 0;
 
+	while(iteratorModels.hasNext()){
+	    modelN++;
+	    model = iteratorModels.next();
+	    for(int i = 0, n = semiSorted.length; i < n; i++  ){
+		int lit = comp1.getIthOutput(i);
+		if(semiSorted[i] == 1)
+		    assertTrue("failing " + i +"'th comparison", this.pbSolver.modelValue(lit));
+		else
+		    break;
+	    }
+	}
     }
 
 
@@ -522,7 +526,7 @@ public class CircuitTest {
     @Test void DigitComponentTest(){
 	int modN = 2;
 	Integer[] inputs = new Integer[6];
-	int upperValue = 1;
+	int upperBound = 1;
 	
 	for(int i = 0; i < inputs.length; i++){
 	    this.pbSolver.newVar();
