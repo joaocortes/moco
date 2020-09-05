@@ -241,7 +241,7 @@ public class SelectionDelimeterTest {
 
     private boolean testUpperBound(boolean[] model, int[] upperBound){
 	for(int i = 0, n = this.moco.nObjs(); i < n; i++)
-	    if(this.moco.getObj(i).evaluate(model).asIntExact() <= upperBound[i])
+	    if(this.moco.getObj(i).evaluateDiff(model) <= upperBound[i])
 		continue;
 	    else
 		return false;
