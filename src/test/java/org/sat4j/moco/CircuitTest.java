@@ -514,6 +514,11 @@ public class CircuitTest {
     }
 
 
+    /**
+     * Checks if {@code upperValue} delimits the inputs accordingly,
+     * that is, if n is the count of active inputs, then the unary
+     * output cannot exceed mod2 upperValue.
+     */
     @Test void DigitComponentTest(){
 	int modN = 2;
 	Integer[] inputs = new Integer[6];
