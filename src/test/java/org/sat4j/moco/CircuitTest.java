@@ -477,7 +477,58 @@ public class CircuitTest {
 	}
 
     }
-    public IVecInt buildAssumption(Integer[] inputValues, Integer[] inputs){
+
+
+    @Test void DigitComponentTest(){
+	int modN = 2;
+	Integer[] inputs = new Integer[6];
+	int upperValue = 1;
+	
+	for(int i = 0; i < inputs.length; i++){
+	    this.pbSolver.newVar();
+	    inputs[i] =  this.pbSolver.nVars();
+	}
+	Circuit circuit = new Circuit(pbSolver){
+		public void buildCircuit(){
+		    DigitComponent digitComp = new DigitComponent(inputs, modN);
+		    digitComp.constitutiveClause();
+		    new ControlledComponent(0, digitComp);
+		}
+		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
+
+		public boolean AddClause1(IVecInt setOfLiterals){
+		    // this.prettyPrintVecInt(setOfLiterals,true);
+		    try{
+			pbSolver.AddClause(setOfLiterals);
+		    } catch (ContradictionException e) {return false;} return true;
+		}
+	    };
+	circuit.buildCircuit();
+	IVecInt assumptions = new VecInt();
+	assertTrue(upperValue <= modN);
+	
+	ControlledComponent comp = circuit.getControlledComponentBase(0);
+	comp.getIthOutput(upperValue - 1);
+	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
+	boolean[] model;
+	while(iterator.hasNext()){
+	    Log.comment("inputs of DigitComponent:");
+	    General.FormatArrayWithValues(comp.getInputs(), pbSolver, true);
+	    Log.comment("outputs of DigitComponent:");
+	    General.FormatArrayWithValues(comp.getOutputs(), pbSolver, true);
+	    model = iterator.next();
+	    // this.testModComponentModel(comp.getOutputs(), modN, value);
+	}
+    }
+    private void testDigitComponentModel(Integer[] lits, int modN, int value){
+	value = value % modN;
+	for(int i = 0; i < value - 1; i++)
+	    assertTrue("Failing at " + i +"'th comparison",this.pbSolver.modelValue( lits[i]));
+	
+    }
+
+
+public IVecInt buildAssumption(Integer[] inputValues, Integer[] inputs){
 	IVecInt assumptions = new VecInt();
 	for(int i = 0, n = inputValues.length; i < n; i++){
 	    if(inputValues[i] == 1)
