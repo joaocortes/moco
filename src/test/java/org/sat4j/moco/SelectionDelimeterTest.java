@@ -54,6 +54,52 @@ public class SelectionDelimeterTest {
     static{Log.setVerbosity(1);}
 
     public SelectionDelimeterTest(){};
+
+    /**
+     * another instance. No constraints
+     */
+    public void partialSetUp1() {
+	this.moco = new Instance();
+	// min: +1 x1 +1 x2 +1 x3 +1 x4 +1 x5 +1 x6 +1 x7 +1 x8 ;
+	Objective main_obj = new LinearObj(new VecInt(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 }),
+					   new Vec<Real>(new Real[] {Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE }));
+	this.moco.addObj(main_obj);
+	try {
+	    this.pbSolver = buildSolver();
+	    
+	}
+	catch (ContradictionException e) {
+	    Log.comment("Could not build the solver");
+            return;
+        }
+	this.sd  = new SelectionDelimeter(moco, this.pbSolver,true){
+
+		/**
+		 *Adds the disjunction of setOfLiterals, and logs
+		 *@param setOfliterals
+		 */
+
+		public boolean AddClause(IVecInt setOfLiterals){
+		    Log.comment(3,"AddClause:");
+		    this.prettyPrintVecInt(setOfLiterals, true);
+		    try{
+			this.solver.AddClause(setOfLiterals);
+		    } catch (ContradictionException e) {
+			Log.comment(2, "contradiction when adding clause: ");
+			for(int j = 0; j < setOfLiterals.size(); ++j)
+			    Log.comment(2, " " + setOfLiterals.get(j) + " " );
+			return false;
+		    }
+		    return true;
+		}
+
+	    };
+	this.range = new VecInt(this.pbSolver.nVars());
+	for(int i = 0, n = this.pbSolver.nVars(); i < n; i++)
+	    this.range.push(i + 1);
+    }
+
+
     public void partialSetUp(boolean constraint) {
 	this.moco = new Instance();
 
