@@ -381,7 +381,7 @@ public class UnsatSat extends algorithm {
 	    if(this.solver.modelValue(id))
 		model.push(id);
 	    else
-		model.push(-id);
+		model.push(id);
 	}
 	return model;
     }
