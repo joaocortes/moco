@@ -61,8 +61,8 @@ public class CircuitTest {
     
     @Test
     public void ModComponentTest(){
-	int modN = 2;
-	Integer[] inputs = new Integer[3];
+	int modN = 3;
+	Integer[] inputs = new Integer[11];
 	for(int i = 0; i < inputs.length; i++){
 	    this.pbSolver.newVar();
 	    inputs[i] =  this.pbSolver.nVars();
@@ -84,7 +84,8 @@ public class CircuitTest {
 	    };
 	circuit.buildCircuit();
 	IVecInt assumptions = new VecInt();
-	int value = 1;
+	int value = 10;
+	assertTrue(value <= inputs.length);
 	{
 	    int i = 0;
 	    for(;i < value; i++)
@@ -174,6 +175,7 @@ public class CircuitTest {
 	    this.SelectionComponentAssertion(sorted.toArray(new Integer[0]), outputs, sortedPortionN);
 	}
     }
+
     void SelectionComponentAssertion(Integer[] sorted, Integer[] outputs, int sortedPortionN){
 	for(int i = 0, n = sortedPortionN ; i < n; i++){
 	    if(sorted[i] == 1)
@@ -273,7 +275,6 @@ public class CircuitTest {
 	}
 
     }
-
     private Integer[][] auxGetValues(ControlledComponent controlledComp){
 	Integer[][] results = new Integer[2][];
 	Integer[] outputs = controlledComp.getOutputs();
