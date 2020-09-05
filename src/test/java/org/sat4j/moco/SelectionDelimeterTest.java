@@ -50,7 +50,6 @@ public class SelectionDelimeterTest {
     protected SelectionDelimeter sd = null;
     protected PBSolver pbSolver;
     protected Instance moco;
-    protected LinearObj main_obj;
     protected IVecInt range;
     static{Log.setVerbosity(1);}
 
@@ -61,9 +60,9 @@ public class SelectionDelimeterTest {
 	// min: +2 x1 +9 x2 +5 x3 +7 x4
 	// min: -8 x1 +3 x2 -1 x3 -1 x4
 	// 4 x1 +1 x2 +3 x3 +2 x4 <= 5
-	this.main_obj = new LinearObj(new VecInt(new int[] { 1, 2, 3, 4 }),
+	Objective main_obj = new LinearObj(new VecInt(new int[] { 1, 2, 3, 4 }),
 				      new Vec<Real>(new Real[] { new Real(2), new Real(9), new Real(5), new Real(7) }));
-	this.moco.addObj(this.main_obj);
+	this.moco.addObj(main_obj);
 
 	Objective second_obj =  new LinearObj(new VecInt(new int[] { 1,2,3,4}),
 					      new Vec<Real>(new Real[] {new Real(-8), new Real(3), new Real(-1), new Real(-1) }));
