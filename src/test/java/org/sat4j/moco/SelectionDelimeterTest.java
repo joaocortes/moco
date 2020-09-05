@@ -55,15 +55,7 @@ public class SelectionDelimeterTest {
 
     public SelectionDelimeterTest(){};
 
-    /**
-     * another instance. No constraints
-     */
-    public void partialSetUp1() {
-	this.moco = new Instance();
-	// min: +1 x1 +1 x2 +1 x3 +1 x4 +1 x5 +1 x6 +1 x7 +1 x8 ;
-	Objective main_obj = new LinearObj(new VecInt(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-					   new Vec<Real>(new Real[] {Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE }));
-	this.moco.addObj(main_obj);
+    public void partialSetup(){
 	try {
 	    this.pbSolver = buildSolver();
 	    
@@ -97,10 +89,23 @@ public class SelectionDelimeterTest {
 	this.range = new VecInt(this.pbSolver.nVars());
 	for(int i = 0, n = this.pbSolver.nVars(); i < n; i++)
 	    this.range.push(i + 1);
+
+}
+
+    /**
+     * another instance. No constraints
+     */
+    public void mocoSetup1() {
+	this.moco = new Instance();
+	// min: +1 x1 +1 x2 +1 x3 +1 x4 +1 x5 +1 x6 +1 x7 +1 x8 ;
+	Objective main_obj = new LinearObj(new VecInt(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 }),
+					   new Vec<Real>(new Real[] {Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE }));
+	this.moco.addObj(main_obj);
+	this.partialSetup();
     }
 
 
-    public void partialSetUp(boolean constraint) {
+    public void mocoSetUp(boolean constraint) {
 	this.moco = new Instance();
 
 	// min: +2 x1 +9 x2 +5 x3 +7 x4
@@ -118,40 +123,9 @@ public class SelectionDelimeterTest {
 	    this.moco.addConstr(PBFactory.instance().mkLE(new VecInt(new int[] { 1, 2, 3, 4 }),
 							      new Vec<Real>(new Real[] { new Real(4), new Real(1), new Real(3), new Real(2) }),
 							      new Real(5)));
-	try {
-	    this.pbSolver = buildSolver();
-
-	}
-	catch (ContradictionException e) {
-	    Log.comment("Could not build the solver");
-            return;
-        }
-	this.sd  = new SelectionDelimeter(moco, this.pbSolver,true){
-
-		/**
-		 *Adds the disjunction of setOfLiterals, and logs
-		 *@param setOfliterals
-		 */
-
-		public boolean AddClause(IVecInt setOfLiterals){
-		    Log.comment(3,"AddClause:");
-		    this.prettyPrintVecInt(setOfLiterals, true);
-		    try{
-			this.solver.AddClause(setOfLiterals);
-		    } catch (ContradictionException e) {
-			Log.comment(2, "contradiction when adding clause: ");
-			for(int j = 0; j < setOfLiterals.size(); ++j)
-			    Log.comment(2, " " + setOfLiterals.get(j) + " " );
-			return false;
-		    }
-		    return true;
-		}
-
-	    };
-	this.range = new VecInt(this.pbSolver.nVars());
-	for(int i = 0, n = this.pbSolver.nVars(); i < n; i++)
-	    this.range.push(i + 1);
+	this.partialSetup();
     }
+
     @Test
     public void testDigits(){
 	int[] ratios = new int[]{2};
@@ -201,7 +175,7 @@ public class SelectionDelimeterTest {
 
     @Test
     public void digitalCounterTest(){
-	this.partialSetUp(false);
+	this.mocoSetUp(false);
 	int[] upperBound = new int[]{2, 2};
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
@@ -235,7 +209,7 @@ public class SelectionDelimeterTest {
 	// }
     }
     private boolean[] testDigitalValues(int[] upperBound){
-	this.partialSetUp(false);
+	this.mocoSetUp(false);
 	boolean[] saturated = new boolean[upperBound.length];
 	for(int i = 0, n = this.moco.nObjs(); i < n; i++){
 	    ObjManager objManager  = this.sd.getIthObjManager(i);
@@ -267,8 +241,9 @@ public class SelectionDelimeterTest {
 
     @Test
     public void delimitationTest(){
-	this.partialSetUp(false);
-	int[] upperBound = new int[]{15, 10};
+	this.mocoSetup1();
+	//last valid values
+	int[] upperBound = new int[]{2, 2};
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
 
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
@@ -295,7 +270,7 @@ public class SelectionDelimeterTest {
     }
     @Test
     public void InputAndDelimitationTest(){
-	this.partialSetUp(true);
+	this.mocoSetUp(true);
 	int[] upperBound = new int[]{1, 1};
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
