@@ -223,7 +223,7 @@ public class SelectionDelimeterTest {
     @Test
     public void delimitationTest(){
 	this.partialSetUp(false);
-	int[] upperBound = new int[]{1, 0};
+	int[] upperBound = new int[]{15, 10};
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
 
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);

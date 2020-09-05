@@ -151,15 +151,14 @@ public class UnsatSat extends algorithm {
 	this.preAssumptionsExtend();
 	currentAssumptions = this.goalDelimeter.generateUpperBoundAssumptions(this.UpperKD);
 	while(goOn){
-	    ///log..
+	
 	    this.logUpperLimit();
-	    //log..
-	    // Log.comment(2, "Checking against assumptions:");
-	    // Log.comment(2, this.goalDelimeter.prettyFormatVecInt(currentAssumptions));
+	    Log.comment(6, "Checking against assumptions:");
+	    Log.comment(6, this.goalDelimeter.prettyFormatVecInt(currentAssumptions));
 	    //..log
 
 	    solver.check(currentAssumptions);
-
+	    
 	    if(goOn1 && solver.isSat()){
 		this.subResult.saveModel(this.solver);
 		//log
@@ -535,7 +534,7 @@ public class UnsatSat extends algorithm {
 	    if(diffAttainedValue[iObj] != 0)
 		newHardClause.push( - this.goalDelimeter.getY(iObj, diffAttainedValue[iObj]));
 	}
-	// Log.comment(6, "Blocking clause:");
+	Log.comment(6, "Blocking clause:");
 	return this.AddClause(newHardClause);
 
     }
@@ -555,6 +554,7 @@ public class UnsatSat extends algorithm {
 	return;
     }
 
+    public String prettyFormatVecInt(IVecInt vecInt){return this.goalDelimeter.prettyFormatVecInt(vecInt);}
     public void printFlightRecordParticular(){
 	// String logExhaustedUpperKD = "exhausted upper limit: ["+this.exhaustedUpperKD[0];
 	// for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
