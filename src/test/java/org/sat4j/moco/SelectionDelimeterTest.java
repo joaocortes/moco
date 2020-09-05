@@ -40,6 +40,7 @@ import org.sat4j.moco.problem.SelectionDelimeter;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit;
 import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledComponent;
 import org.sat4j.moco.problem.SelectionDelimeter.ObjManager;
+import org.sat4j.moco.util.General;
 import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.MyModelIterator;
 import org.sat4j.moco.util.Real;
@@ -51,7 +52,8 @@ public class SelectionDelimeterTest {
     protected PBSolver pbSolver;
     protected Instance moco;
     protected IVecInt range;
-    static{Log.setVerbosity(1);}
+    protected int[] upperBound;
+    static{Log.setVerbosity(6);}
 
     public SelectionDelimeterTest(){};
 
@@ -102,6 +104,7 @@ public class SelectionDelimeterTest {
 					   new Vec<Real>(new Real[] {Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE, Real.ONE }));
 	this.moco.addObj(main_obj);
 	this.partialSetup();
+	this.upperBound = new int[]{3};
     }
 
 
@@ -243,7 +246,6 @@ public class SelectionDelimeterTest {
     public void delimitationTest(){
 	this.mocoSetup1();
 	//last valid values
-	int[] upperBound = new int[]{2, 2};
 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
 
 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
