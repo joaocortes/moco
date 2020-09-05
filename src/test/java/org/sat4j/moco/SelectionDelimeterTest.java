@@ -94,7 +94,8 @@ public class SelectionDelimeterTest {
 }
 
     /**
-     * another instance. No constraints
+     * another incomplete instance, one goal function with 8 literals,
+     * with weights equal to 1. No constraints
      */
     public void mocoSetup1() {
 	this.moco = new Instance();
@@ -106,7 +107,10 @@ public class SelectionDelimeterTest {
 	this.upperBound = new int[]{3};
     }
 
-
+    /**
+     *Sets up the main moco instance. Only add the constraint if
+     *{@code constraint}
+     */
     public void mocoSetUp(boolean constraint) {
 	this.moco = new Instance();
 
