@@ -541,12 +541,9 @@ public class CircuitTest {
 		}
 	    };
 	circuit.buildCircuit();
-	IVecInt assumptions = new VecInt();
-	assertTrue(upperBound <= modN);
 	
 	ControlledComponent comp = circuit.getControlledComponentBase(0);
-	comp.getIthOutput(upperBound - 1);
-	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
+	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver);
 	boolean[] model;
 	while(iterator.hasNext()){
 	    Log.comment("inputs of DigitComponent:");
@@ -554,17 +551,26 @@ public class CircuitTest {
 	    Log.comment("outputs of DigitComponent:");
 	    General.FormatArrayWithValues(comp.getOutputs(), pbSolver, true);
 	    model = iterator.next();
-	    // this.testModComponentModel(comp.(), modN, value);
+	    this.testDigitComponentModel(comp, modN);
 	}
     }
 
     /**
      *Assertion helper of {@code DigitComponentTest()}.
      */
-    private void testDigitComponentModel(Integer[] lits, int modN, int value){
+    private void testDigitComponentModel(ControlledComponent comp , int modN){
+
+	Integer[] inputs = comp.getInputs();
+	Integer[] outputs = comp.getOutputs();
+	int value = 0;
+
+	for(int lit: inputs)
+	    if(this.pbSolver.modelValue(lit))
+		value++;
+
 	value = value % modN;
-	for(int i = 0; i < value - 1; i++)
-	    assertTrue("Failing at " + i +"'th comparison",this.pbSolver.modelValue( lits[i]));
+	for(int i = 0; i < value; i++)
+	    assertTrue("Failing at " + i +"'th comparison",this.pbSolver.modelValue(outputs[i]));
 	
     }
 
