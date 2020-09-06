@@ -46,6 +46,14 @@ import org.sat4j.specs.IVecInt;
 	    System.out.println(result);
 	return result;
     }
+      static public String FormatArrayWithValues(int[] literals, PBSolver solver, boolean print){
+	String result = "";
+	for(int j = 0, n = literals.length; j < n ; ++j)
+	    result += literals[j] + " " +solver.modelValue(literals[j]) + "|\n";
+	if(print)
+	    System.out.println(result);
+	return result;
+    }
 
       static public String FormatModel(boolean[] model, boolean print){
 	  String result = "";
