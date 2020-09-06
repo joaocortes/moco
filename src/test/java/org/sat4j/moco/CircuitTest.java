@@ -67,7 +67,7 @@ public class CircuitTest {
     @Test
     public void ModComponentTest(){
 	int modN = 3;
-	Integer[] inputs = new Integer[3];
+	Integer[] inputs = new Integer[8];
 	this.fillInputWithVars(inputs);
 
 	Circuit circuit = new Circuit(pbSolver){
@@ -103,7 +103,8 @@ public class CircuitTest {
 	Integer[] inputs = comp.getInputs();
 	Integer[] outputs = comp.getOutputs();
 	int value = 0;
-
+	if(!this.valuesAreSorted(inputs))
+	    return;
 	for(int lit: inputs)
 	    if(this.pbSolver.modelValue(lit))
 		value++;
@@ -344,6 +345,7 @@ public class CircuitTest {
 	}
 
     }
+
     private Integer[][] auxGetValues(ControlledComponent controlledComp){
 	Integer[][] results = new Integer[2][];
 	Integer[] outputs = controlledComp.getOutputs();
@@ -519,7 +521,6 @@ public class CircuitTest {
     @Test void DigitComponentTest(){
 	int modN = 2;
 	Integer[] inputs = new Integer[6];
-	int upperBound = 1;
 	
 	for(int i = 0; i < inputs.length; i++){
 	    this.pbSolver.newVar();
@@ -609,5 +610,16 @@ public class CircuitTest {
 	}
 
     }
+    public boolean valuesAreSorted(Integer[] inputs){
+	int i = 0, n =inputs.length;
+	for(; i < n; i++)
+	    if(!this.pbSolver.modelValue(inputs[i]))
+		break;
+	for(; i < n; i++)
+	    if(this.pbSolver.modelValue(inputs[i]))
+		return false;
+	return true;
+    }
+
 }
 
