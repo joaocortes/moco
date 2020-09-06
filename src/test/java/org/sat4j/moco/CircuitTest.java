@@ -274,6 +274,7 @@ public class CircuitTest {
 	    for(; i < n; i++)
 		inputsArray[m][i - i0] = inputs[i];
 	}
+
 	Circuit circuit = new Circuit(this.pbSolver){
 		public void buildCircuit(){
 		    MergeComponent comp = new MergeComponent(sortedPortionN);
@@ -289,63 +290,31 @@ public class CircuitTest {
 		}
 	    };
 
-	Integer[] inputValues = new Integer[inputs.length];
-	inputValues[0] = 0;
-	inputValues[1] = 0; 
-	inputValues[2] = 0; 
-	inputValues[3] = 0; 
-
-	inputValues[4] = 1; 
-	inputValues[5] = 1; 
-	inputValues[6] = 1; 
-	inputValues[7] = 0; 
-
-	inputValues[8] = 1; 
-	inputValues[9] = 1; 
-	inputValues[10] = 0; 
-	inputValues[11] = 0; 
-
-	inputValues[12] = 1; 
-	inputValues[13] = 1; 
-	inputValues[14] = 1; 
-	inputValues[15] = 1; 
-
 	circuit.buildCircuit();
 	ControlledComponent comp1 = circuit.getControlledComponentBase(0);
-	List<Integer> sorted = new ArrayList<Integer>(Arrays.asList(inputValues));
-	Collections.sort(sorted);
-	Collections.reverse(sorted);
-	sorted.subList(sortedPortionN, sorted.size()).clear();
 
-	IVecInt assumptions = this.buildAssumption(inputValues, inputs);
-
-	pbSolver.check(assumptions);
-
-	List<Integer> obtainedSorted = new ArrayList<Integer>();
-	Iterator<Integer> iterator = comp1.iteratorOutputs();
-	while(iterator.hasNext())
-	    if(pbSolver.modelValue(iterator.next()))
-		obtainedSorted.add(1);
-	    else
-		obtainedSorted.add(0);
-	Iterator<ControlledComponent> iteratorControlledComp = circuit.controlledCompIterator();
-	ControlledComponent next;
-	while(iteratorControlledComp.hasNext()) {
-	    next = iteratorControlledComp.next();
-	    auxGetValues(next);
+	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver);
+	boolean[] model;
+	while(iterator.hasNext()){
+	    model = iterator.next();
+	    this.MergeComponentAssertion(comp1, inputsArray);
 	}
-
-
-	{n = obtainedSorted.size();
-	    assertTrue("lengths are different!" + n + " and " + sorted.size() , n == sorted.size());
-	    for(int i = 0; i < n; i++  )
-		assertTrue("failing " + i +"'th comparison", obtainedSorted.get(i) == sorted.get(i));
-		    
 	    return;
-	}
 
     }
-
+    private void MergeComponentAssertion(ControlledComponent comp, Integer[][] inputsArray){
+	for(Integer[] inputs: inputsArray)
+	    if(!this.valuesAreSorted(inputs))
+		return;
+	if(!this.valuesAreSorted(comp.getOutputs())){
+	    Log.comment("inputs:");
+	    General.FormatArrayWithValues(comp.getOutputs(),this.pbSolver ,true);
+	    Log.comment("outputs:");
+	    General.FormatArrayWithValues(comp.getOutputs(),this.pbSolver ,true);
+	assertTrue("output is not sorted", false);
+	}
+}
+    
     private Integer[][] auxGetValues(ControlledComponent controlledComp){
 	Integer[][] results = new Integer[2][];
 	Integer[] outputs = controlledComp.getOutputs();
