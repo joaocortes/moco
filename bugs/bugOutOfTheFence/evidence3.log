@@ -1,0 +1,83 @@
+-*- mode: dap-server-log; default-directory: "~/Mnemosyne/Aion/moco/mocoSource/solver/" -*-
+Debug Adapter started at Sun Sep  6 23:41:48
+
+java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=38411 -jar /home/joaooneillcortes/.emacs.d/eclipse.jdt.ls/test-runner/junit-platform-console-standalone.jar -cp $JUNIT_CLASS_PATH -m org.sat4j.moco.CircuitTest#MergeComponentTest
+Listening for transport dt_socket at address: 38411
+Debugger failed to attach: handshake failed - connection prematurally closed
+c inputs:
+66 false|
+68 true|
+70 false|
+73 false|
+76 false|
+79 false|
+82 false|
+85 false|
+88 false|
+91 false|
+94 false|
+97 false|
+100 false|
+102 false|
+104 false|
+105 false|
+
+c outputs:
+66 false|
+68 true|
+70 false|
+73 false|
+76 false|
+79 false|
+82 false|
+85 false|
+88 false|
+91 false|
+94 false|
+97 false|
+100 false|
+102 false|
+104 false|
+105 false|
+
+
+Thanks for using JUnit! Support its development at https://junit.org/sponsoring
+
+╷
+├─ JUnit Jupiter ✔
+│  └─ CircuitTest ✔
+│     └─ MergeComponentTest() ✘ output is not sorted
+└─ JUnit Vintage ✔
+
+Failures (1):
+  JUnit Jupiter:CircuitTest:MergeComponentTest()
+    MethodSource [className = 'org.sat4j.moco.CircuitTest', methodName = 'MergeComponentTest', methodParameterTypes = '']
+    => java.lang.AssertionError: output is not sorted
+       org.junit.Assert.fail(Assert.java:89)
+       org.junit.Assert.assertTrue(Assert.java:42)
+       org.sat4j.moco.CircuitTest.MergeComponentAssertion(CircuitTest.java:314)
+       org.sat4j.moco.CircuitTest.MergeComponentTest(CircuitTest.java:300)
+       sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+       sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       java.lang.reflect.Method.invoke(Method.java:498)
+       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:686)
+       org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+       [...]
+
+Test run finished after 518 ms
+[         3 containers found      ]
+[         0 containers skipped    ]
+[         3 containers started    ]
+[         0 containers aborted    ]
+[         3 containers successful ]
+[         0 containers failed     ]
+[         1 tests found           ]
+[         0 tests skipped         ]
+[         1 tests started         ]
+[         0 tests aborted         ]
+[         0 tests successful      ]
+[         1 tests failed          ]
+
+
+Debug Adapter exited abnormally with code 1 at Sun Sep  6 23:41:50
