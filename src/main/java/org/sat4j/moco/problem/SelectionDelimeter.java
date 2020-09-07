@@ -614,13 +614,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		int totalInputSize = 0;
 		for(int i = 0; i < 4; i++)
 		    totalInputSize += inputsArray[i].length;
+
 		this.inputs = new Integer[totalInputSize];
+
 		{ int k = 0;
 		    for(int i = 0; i < 4; i++)
 			for(int j = 0, n = inputsArray[i].length;j < n; j++ )
 			    this.inputs[k++] = inputsArray[i][j];
 		}
-		ArrayList<Integer> outputs = new ArrayList<Integer>();
 		Integer[][] toCombine = new Integer[2][];
 		int k = this.sortedPortionN;
 
@@ -674,8 +675,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		}		
 		CombineComponent combComp = new CombineComponent(k);
 		combComp.constitutiveClause(toCombine[0], toCombine[1]);
-		outputs.addAll(Arrays.asList(combComp.outputs));
-		this.outputs = outputs.toArray(new Integer[0]);
+		this.outputs = combComp.outputs;
 		this.enforceOrder();
 		return;
 	    }
