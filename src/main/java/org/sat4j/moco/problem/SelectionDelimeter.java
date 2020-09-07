@@ -542,7 +542,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    	    int i = j / 2 ;
 	    	    Integer[] pair;
 	    	    if(j % 2 == 1){
-	    		int max1Output = OptimumOutput(input2, i + 2, input2, i, true);
+	    		int max1Output = OptimumOutput(input1, i + 2, input2, i, true);
 	    		int minOutput = OptimumOutput(input1, i + 1, input2, i - 1, false);
 			pair = new Integer[]{max1Output, minOutput};
 	    		optimumComponent max2 = new optimumComponent(pair, true);
@@ -634,10 +634,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    return;
 		}
 		if(inputsArray[0].length == 1){
-		    ArrayList<Integer> concatenatedInput = new ArrayList<Integer>();
-		    for(int i = 0; i < 4; i++)
-			concatenatedInput.addAll(Arrays.asList(inputsArray[i]));
-		    SelectionComponent selComp = new SelectionComponent(concatenatedInput.toArray(new Integer[0]), k);
+		    SelectionComponent selComp = new SelectionComponent(this.inputs, k);
 		    selComp.constitutiveClause();
 		    this.outputs = selComp.getOutputs();
 		    return;
