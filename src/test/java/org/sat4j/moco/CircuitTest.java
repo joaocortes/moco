@@ -196,8 +196,9 @@ public class CircuitTest {
     @Test
     public void SelectionComponentDelimetedTest(){
 
-	int inputsLength = 6;
+	int inputsLength = 8;
 	int sortedPortionN = inputsLength;
+	int value = 3;
 	Random rand = new Random();
 	Integer[] inputs = new Integer[inputsLength];
 	Integer[] inputValues = new Integer[inputsLength];
@@ -229,10 +230,7 @@ public class CircuitTest {
 	MyModelIterator iterator = new MyModelIterator(pbSolver, assumptions);
 	while(iterator.hasNext()){
 	    iterator.next();
-	    Log.comment("Selection component inputs:");
-	    Log.comment("Selection component inputs:");
-	    General.FormatArrayWithValues(inputs, pbSolver,true);
-	    General.FormatArrayWithValues(controlledComp.getOutputs(), pbSolver,true);
+	    this.SelectionComponentDelimetedAssertion(controlledComp, value);
 	}
     }
 
@@ -240,13 +238,18 @@ public class CircuitTest {
      *Assertion helper of {@code SelectionComponentDelimetedTest()}.
      */
 
-    void SelectionComponentDelimetedAssertion(Integer[] inputs, int value){
+    private void SelectionComponentDelimetedAssertion(ControlledComponent comp, int value){
+	Integer[] inputs = comp.getInputs();
 	int result = 0;
 	for(int i = 0, n = inputs.length ; i < n; i++){
 	    if(pbSolver.modelValue(inputs[i]))
 		result++;
 	}
-	assertTrue(result<value);
+	if(!(result<=value)){
+	    General.FormatArrayWithValues(inputs, pbSolver,true);
+	    General.FormatArrayWithValues(comp.getOutputs(), pbSolver,true);
+	    assertTrue("not delimeted", result < value);
+	}
     }
 
     /**
