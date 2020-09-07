@@ -112,12 +112,12 @@ public class CircuitTest {
 		break;
 	value = value % modN;
 	for(int i = 0; i < value; i++){
-	    Log.comment("inputs of ModComponent:");
-	    General.FormatArrayWithValues(inputs, pbSolver, true);
-	    Log.comment("outputs of ModComponent:");
-	    General.FormatArrayWithValues(outputs, pbSolver, true);
 	    if(!this.pbSolver.modelValue( outputs[i])){
-	    assertTrue("Failing at " + i +"'th comparison", false);
+		Log.comment("inputs of ModComponent:");
+		General.FormatArrayWithValues(inputs, pbSolver, true);
+		Log.comment("outputs of ModComponent:");
+		General.FormatArrayWithValues(outputs, pbSolver, true);
+		assertTrue("Failing at " + i +"'th comparison", false);
 	    }
 	}
 }
@@ -130,7 +130,7 @@ public class CircuitTest {
      */
     @Test
     public void SelectionComponentTest(){
-	int inputsLength = 6;
+	int inputsLength = 8;
 	int sortedPortionN = inputsLength;
 	Random rand = new Random();
 	Integer[] inputs = new Integer[inputsLength];
