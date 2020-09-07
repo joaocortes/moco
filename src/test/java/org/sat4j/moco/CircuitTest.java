@@ -410,7 +410,7 @@ public class CircuitTest {
     @Test
     public void CombineComponentTest(){
 	Random rand = new Random();
-	Integer[] inputsSize = new Integer[]{8,4};
+	Integer[] inputsSize = new Integer[]{4,4};
 	int sortedPortionN = inputsSize[0] + inputsSize[1];
 	Integer[][] inputsArray = new Integer[2][];
 	for(int k = 0; k < 2; k++){
@@ -441,10 +441,9 @@ public class CircuitTest {
 	int modelN = 0;
 
 	while(iteratorModels.hasNext()){
-	    modelN++;
 	    model = iteratorModels.next();
-	    this.CombineComponentAssertion(comp1, inputsArray);
-
+	    if(this.CombineComponentAssertion(comp1, inputsArray))
+		modelN++;
 	    // for(int i = 0, n = semiSorted.length; i < n; i++  ){
 	    // 	int lit = comp1.getIthOutput(i);
 	    // 	if(semiSorted[i] == 1)
@@ -453,18 +452,25 @@ public class CircuitTest {
 	    // 	    break;
 	    // }
 	}
+	    Log.comment(modelN + " assertable models");
+
     }
-    private void CombineComponentAssertion(ControlledComponent comp, Integer[][] inputsArray){
+    private boolean CombineComponentAssertion(ControlledComponent comp, Integer[][] inputsArray){
 	for(Integer[] inputs: inputsArray)
 	    if(!this.valuesAreSorted(inputs))
-		return;
+		return true;
+	if(!this.secondActivePreffixLarger(inputsArray[1], inputsArray[0]))
+	    return true;
+	
 	if(!this.valuesAreSorted(comp.getOutputs())){
 	    Log.comment("inputs:");
 	    General.FormatArrayWithValues(comp.getInputs(),this.pbSolver ,true);
 	    Log.comment("outputs:");
 	    General.FormatArrayWithValues(comp.getOutputs(),this.pbSolver ,true);
 	    assertTrue("output is not sorted", false);
+	    return false;
 	}
+	return true;
     }
 
     /**
