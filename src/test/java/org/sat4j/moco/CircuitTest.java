@@ -49,7 +49,7 @@ public class CircuitTest {
     protected SelectionDelimeter sd = null;
     protected UnsatSat solver;
     protected PBSolver pbSolver = new PBSolver();
-    static {Log.setVerbosity(3);}
+    static {Log.setVerbosity(6);}
 
     @BeforeEach
     public void partialSetUp() {
@@ -78,7 +78,7 @@ public class CircuitTest {
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
 
 		public boolean AddClause1(IVecInt setOfLiterals){
-		    return AddClause(setOfLiterals, false);
+		    return AddClause(setOfLiterals, true);
 		}
 	    };
 	circuit.buildCircuit();
@@ -256,8 +256,8 @@ public class CircuitTest {
      *the 4 (sub)lits in inputsArray must be sorted.
      */
     @Test void MergeComponentTest(){
-	int sortedPortionN = 16;
 	Integer[] inputs = new Integer[16];
+	int sortedPortionN = inputs.length;
 	this.fillInputWithVars(inputs);
 	Integer[][] inputsArray = new Integer[4][];
 	int n = inputs.length;
@@ -288,7 +288,7 @@ public class CircuitTest {
 		public int getFreshVar1(){pbSolver.newVar();return pbSolver.nVars();}
 
 		public boolean AddClause1(IVecInt setOfLiterals){
-		    return AddClause(setOfLiterals, false);
+		    return AddClause(setOfLiterals, true);
 		}
 	    };
 
@@ -305,15 +305,15 @@ public class CircuitTest {
 
     }
     private void MergeComponentAssertion(ControlledComponent comp, Integer[][] inputsArray){
+	int value = 0;
 	for(Integer[] inputs: inputsArray)
-	    if(!this.valuesAreSorted(inputs))
-		return;
-	if(!this.valuesAreSorted(comp.getOutputs())){
+	    value += this.activePrefixSize(inputs);
+	if(!(this.activePrefixSize(comp.getOutputs()) >= value)){
 	    Log.comment("inputs:");
 	    General.FormatArrayWithValues(comp.getInputs(),this.pbSolver ,true);
 	    Log.comment("outputs:");
 	    General.FormatArrayWithValues(comp.getOutputs(),this.pbSolver ,true);
-	assertTrue("output is not sorted", false);
+	assertTrue("output is not semi-sorted", false);
 	}
 }
     
@@ -372,7 +372,7 @@ public class CircuitTest {
     @Test
     public void CombineComponentTest(){
 	Random rand = new Random();
-	Integer[] inputsSize = new Integer[]{4,4};
+	Integer[] inputsSize = new Integer[]{4,8};
 	int sortedPortionN = inputsSize[0] + inputsSize[1];
 	Integer[][] inputsArray = new Integer[2][];
 	for(int k = 0; k < 2; k++){
@@ -421,10 +421,10 @@ public class CircuitTest {
 	for(Integer[] inputs: inputsArray)
 	    if(!this.valuesAreSorted(inputs))
 		return true;
-	if(!this.secondActivePreffixLarger(inputsArray[1], inputsArray[0]))
+	if(!(this.activePrefixSize(inputsArray[0]) > this.activePrefixSize(inputsArray[1])))
 	    return true;
-	
-	if(!this.valuesAreSorted(comp.getOutputs())){
+	int expected = this.activePrefixSize(inputsArray[0]) + this.activePrefixSize(inputsArray[1]);
+	if(!(this.valuesAreSorted(comp.getOutputs()) && (this.activePrefixSize(comp.getOutputs()) >= expected))){
 	    Log.comment("inputs:");
 	    General.FormatArrayWithValues(comp.getInputs(),this.pbSolver ,true);
 	    Log.comment("outputs:");
@@ -544,14 +544,14 @@ public class CircuitTest {
 	return true;
     }
 
-    public boolean secondActivePreffixLarger(Integer[] first, Integer[] second){
-	for(int i = 0, n = first.length; i < n; i++)
-	    if(this.pbSolver.modelValue(first[i]))
-		if(!this.pbSolver.modelValue(second[i]))
-		    return false;
-	return true;
+    public int activePrefixSize(Integer[] literals){
+	int result = 0;
+	for(int lit: literals)
+	    if(this.pbSolver.modelValue(lit))
+		result++;
+	return result;
+    }
 
 }
 
-}
 
