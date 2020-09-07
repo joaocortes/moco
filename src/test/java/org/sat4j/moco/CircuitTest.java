@@ -403,41 +403,25 @@ public class CircuitTest {
 	return true;
 	
 }
+
     /**
      *Checks if the output of CombineComponent is sorted
      */
-
     @Test
     public void CombineComponentTest(){
 	Random rand = new Random();
-	Integer[] inputsSize = new Integer[]{8,8};
+	Integer[] inputsSize = new Integer[]{8,4};
 	int sortedPortionN = inputsSize[0] + inputsSize[1];
-	Integer[][] inputs = new Integer[2][];
-	Integer[][] inputValues = new Integer[2][];
+	Integer[][] inputsArray = new Integer[2][];
 	for(int k = 0; k < 2; k++){
-	    inputs[k] = new Integer[inputsSize[k]];
-	    inputValues[k] = new Integer[inputsSize[k]];
-	    for(int i = 0; i < inputs[k].length; i++){
-		this.pbSolver.newVar();
-		inputs[k][i] =  this.pbSolver.nVars();
-	    }}
-	//Only the unary preffix of each input is sorted!
-	inputValues[0] = new Integer[]{1, 1, 1, 1, 1, 1, 0, 1};
-	inputValues[1] = new Integer[]{1, 1, 0, 1, 0, 0, 0, 0};
-	IVecInt assumptions = new VecInt();
-	for( int i = 0; i < 2; i++)
-	    for(int k = 0,n = inputValues[i].length; k < n; k++){
-		if(inputValues[i][k] == 1){
-		    assumptions.push(inputs[i][k]);
-		}
-		else
-		    assumptions.push(-inputs[i][k]);
-	    }
-	
+	    inputsArray[k] = new Integer[inputsSize[k]];
+	    this.fillInputWithVars(inputsArray[k]);
+}
+
 	Circuit circuit = new Circuit(pbSolver){
 		public void buildCircuit(){
 		    SelectionDelimeter.Circuit.CombineComponent comp = new SelectionDelimeter.Circuit.CombineComponent(sortedPortionN);
-		    comp.constitutiveClause(inputs[0], inputs[1]);
+		    comp.constitutiveClause(inputsArray[0], inputsArray[1]);
 		    new ControlledComponent(0, comp);
 		}
 
@@ -452,35 +436,36 @@ public class CircuitTest {
 	circuit.buildCircuit();
 	ControlledComponent comp1 = circuit.getControlledComponentBase(0);
 	comp1.getOutputs();
-	Integer[] semiSorted = new Integer[inputValues[0].length + inputValues[1].length];
-	Arrays.fill(semiSorted, 0);
-	{
-	    int i = 0;
-	    for(Integer[] values: inputValues )
-		for(int value: values)
-		    if(value == 1)
-			semiSorted[i++] = 1;
-		    else
-			break;
-	}
-	pbSolver.check(assumptions);
-	Iterator<boolean[]> iteratorModels = new MyModelIterator(this.pbSolver, assumptions);
+	Iterator<boolean[]> iteratorModels = new MyModelIterator(this.pbSolver);
 	boolean[] model;
 	int modelN = 0;
 
 	while(iteratorModels.hasNext()){
 	    modelN++;
 	    model = iteratorModels.next();
-	    for(int i = 0, n = semiSorted.length; i < n; i++  ){
-		int lit = comp1.getIthOutput(i);
-		if(semiSorted[i] == 1)
-		    assertTrue("failing " + i +"'th comparison", this.pbSolver.modelValue(lit));
-		else
-		    break;
-	    }
+	    this.CombineComponentAssertion(comp1, inputsArray);
+
+	    // for(int i = 0, n = semiSorted.length; i < n; i++  ){
+	    // 	int lit = comp1.getIthOutput(i);
+	    // 	if(semiSorted[i] == 1)
+	    // 	    assertTrue("failing " + i +"'th comparison", this.pbSolver.modelValue(lit));
+	    // 	else
+	    // 	    break;
+	    // }
 	}
     }
-
+    private void CombineComponentAssertion(ControlledComponent comp, Integer[][] inputsArray){
+	for(Integer[] inputs: inputsArray)
+	    if(!this.valuesAreSorted(inputs))
+		return;
+	if(!this.valuesAreSorted(comp.getOutputs())){
+	    Log.comment("inputs:");
+	    General.FormatArrayWithValues(comp.getInputs(),this.pbSolver ,true);
+	    Log.comment("outputs:");
+	    General.FormatArrayWithValues(comp.getOutputs(),this.pbSolver ,true);
+	    assertTrue("output is not sorted", false);
+	}
+    }
 
     /**
      * Checks if {@code upperValue} delimits the inputs accordingly,
