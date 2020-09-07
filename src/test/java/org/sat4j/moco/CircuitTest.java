@@ -590,5 +590,14 @@ public class CircuitTest {
 	return true;
     }
 
+    public boolean secondActivePreffixLarger(Integer[] first, Integer[] second){
+	for(int i = 0, n = first.length; i < n; i++)
+	    if(this.pbSolver.modelValue(first[i]))
+		if(!this.pbSolver.modelValue(second[i]))
+		    return false;
+	return true;
+
+}
+
 }
 
