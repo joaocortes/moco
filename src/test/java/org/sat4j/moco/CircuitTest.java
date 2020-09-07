@@ -510,10 +510,6 @@ public class CircuitTest {
 	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver);
 	boolean[] model;
 	while(iterator.hasNext()){
-	    Log.comment("inputs of DigitComponent:");
-	    General.FormatArrayWithValues(comp.getInputs(), pbSolver, true);
-	    Log.comment("outputs of DigitComponent:");
-	    General.FormatArrayWithValues(comp.getOutputs(), pbSolver, true);
 	    model = iterator.next();
 	    this.testDigitComponentModel(comp, modN);
 	}
@@ -534,8 +530,13 @@ public class CircuitTest {
 
 	value = value % modN;
 	for(int i = 0; i < value; i++)
-	    assertTrue("Failing at " + i +"'th comparison",this.pbSolver.modelValue(outputs[i]));
-	
+	    if(!this.pbSolver.modelValue(outputs[i])){
+		Log.comment("inputs of DigitComponent:");
+		General.FormatArrayWithValues(comp.getInputs(), pbSolver, true);
+		Log.comment("outputs of DigitComponent:");
+		General.FormatArrayWithValues(comp.getOutputs(), pbSolver, true);
+		assertTrue("Failing at " + i +"'th comparison", false);
+	    }
     }
 
 
