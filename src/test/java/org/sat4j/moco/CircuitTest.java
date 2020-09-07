@@ -308,7 +308,7 @@ public class CircuitTest {
 		return;
 	if(!this.valuesAreSorted(comp.getOutputs())){
 	    Log.comment("inputs:");
-	    General.FormatArrayWithValues(comp.getOutputs(),this.pbSolver ,true);
+	    General.FormatArrayWithValues(comp.getInputs(),this.pbSolver ,true);
 	    Log.comment("outputs:");
 	    General.FormatArrayWithValues(comp.getOutputs(),this.pbSolver ,true);
 	assertTrue("output is not sorted", false);
