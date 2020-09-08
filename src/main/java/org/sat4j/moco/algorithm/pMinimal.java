@@ -302,6 +302,7 @@ public class pMinimal extends algorithm {
 	return;
     }
     
+    public String prettyFormatVecInt(IVecInt literals){return this.goalDelimeter.prettyFormatVecInt(literals);}
     public void printFlightRecordParticular(){
 
     }
