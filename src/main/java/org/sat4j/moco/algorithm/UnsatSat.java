@@ -276,6 +276,9 @@ public class UnsatSat extends algorithm {
      */
     private void updateUpperBound(IVecInt currentExplanation){
         // Log.comment(5, "in UnsatSat.updateUpperBound");
+	int[] provUpperKD = new int[this.UpperKD.length];
+	int objN = this.problem.nObjs();
+
 	for(int i = 0; i < currentExplanation.size(); ++i){
 	    int ithLiteral = currentExplanation.get(i);
 	    int id = this.solver.idFromLiteral(ithLiteral);
@@ -286,9 +289,9 @@ public class UnsatSat extends algorithm {
 		// this.goalDelimeter.UpdateCurrentK(jObj, kd);
 
 	    }else{
-	        if(this.goalDelimeter.isX(id)){
-	    	    int objN = this.problem.nObjs();
-	    	    for(int iObj = 0; iObj < objN ; ++iObj){
+		if(this.goalDelimeter.isX(id)){
+
+		    for(int iObj = 0; iObj < objN ; ++iObj){
 			Objective ithObjective = this.problem.getObj(iObj);
 			IVecInt ithObjectiveXs = ithObjective.getSubObjLits(0);
 			int nX = ithObjective.getTotalLits(); 
@@ -300,14 +303,21 @@ public class UnsatSat extends algorithm {
 			    {
 				int weight = ithObjective.getSubObjCoeffs(0).get(iX).asInt();
 				weight = weight > 0? weight: -weight;
-				this.setUpperKD(iObj, weight);
+				if(provUpperKD[iObj] == 0)
+				    provUpperKD[iObj] = weight;
+				else
+				    if(provUpperKD[iObj] > weight)
+					provUpperKD[iObj] = weight;
 			    }
-	    	    }
-	    	}
+		    }
+		}
 	    }
 	}
-
-        // Log.comment(5, "{ done");
+		    
+	for(int iObj = 0; iObj < objN ; ++iObj)
+	    if(provUpperKD[iObj] > this.getUpperKD(iObj))
+		this.setUpperKD(iObj, provUpperKD[iObj]);
+	// Log.comment(5, "{ done");
     }
 
 
