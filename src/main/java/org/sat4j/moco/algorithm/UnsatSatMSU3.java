@@ -641,6 +641,7 @@ public class UnsatSatMSU3 extends algorithm {
 	    Log.comment(6, this.goalDelimeter.prettyFormatVecInt(vecInt));
 	return;
     }
+    public String prettyFormatVecInt(IVecInt literals){return this.goalDelimeter.prettyFormatVecInt(literals);}
 
 
     public void printFlightRecordParticular(){
