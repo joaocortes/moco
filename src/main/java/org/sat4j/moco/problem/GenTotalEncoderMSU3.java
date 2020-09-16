@@ -48,7 +48,7 @@ import org.sat4j.specs.IVecInt;
  */
 
 
-public class GenTotalEncoderMSU3 extends GoalDelimeter {
+public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 
     /**
      *The inverse index map for the partial sum variables. For each ID, a
