@@ -133,39 +133,18 @@ public class UnsatSatMSU3 extends algorithm {
     public void solve() {
 	IVecInt currentExplanation = new VecInt(new int[] {});
 	IVecInt currentAssumptions = new VecInt(new int[] {});
-	IVecInt currentYModel = new VecInt(new int[] {});
-	// boolean[] currentXModelValues = new boolean[this.problem.nVars()];
-	// Vector<IVecInt> modelsX = new Vector<IVecInt>();
-	// Vector<IVecInt> modelsY = new Vector<IVecInt>();
 	this.subResult = new SubResult(this.problem);
 
 
-        // if (this.result.isParetoFront()) {
-        //     Log.comment(1, "UnsatSat.solve called on already solved instance");
-        //     return;
-        // }
-	// Log.comment(3, "in UnsatSat.solve");
 	boolean goOn = true;
 	boolean goOn1 = true;
 	currentAssumptions = this.goalDelimeter.generateUpperBoundAssumptions(this.UpperKD);
 	this.logUpperLimit();
-	this.logUpperBound();
 	Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
 	while(goOn){
-
-	    // Log.comment(3, "Checking against assumptions:");
-	    // Log.comment(3, this.goalDelimeter.prettyFormatVecInt(currentAssumptions));
 	    solver.check(currentAssumptions);
-
 	    if(goOn1 && solver.isSat()){
 		this.result.saveModel(this.solver);
-		Log.comment(3, " current subResult size:" + this.subResult.nSolutions());
-		currentYModel = this.getYModel();
-		// Log.comment(3, "ModelX :");
-		// this.printModel(this.getXModel());
-		// Log.comment(3, "ModelY :");
-		// this.printModelY(currentYModel);
-		// Log.comment(3, "Blocking dominated region");
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
 		    goOn1 = false;
@@ -178,21 +157,12 @@ public class UnsatSatMSU3 extends algorithm {
 		    this.exhaustedUpperKD = this.UpperKD;
 		    this.logExhaustedUpperKD();
 		    currentExplanation = solver.unsatExplanation();
-		    //log..
-		    // Log.comment(3, "Explanation:");
-		    // Log.comment(3, this.goalDelimeter.prettyFormatVecInt(currentExplanation));
-		    // Log.comment(3, "//");
 		
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
-			this.goalDelimeter.reportUnbalances();
 			boolean change = this.preAssumptionsExtend(currentExplanation);
-			Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
 			this.logUpperLimit();
-			this.logUpperBound();
-			this.logMaxValues();
-
 			if(change)
 			    currentAssumptions = this.generateUpperBoundAssumptions();
 
