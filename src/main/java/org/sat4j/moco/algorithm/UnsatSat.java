@@ -131,59 +131,18 @@ public class UnsatSat extends algorithm {
     public void solve() {
 	IVecInt currentExplanation = new VecInt(new int[] {});
 	IVecInt currentAssumptions = new VecInt(new int[] {});
-	IVecInt currentModel = new VecInt(new int[] {});
-	// boolean[] currentXModelValues = new boolean[this.problem.nVars()];
-	// Vector<IVecInt> modelsX = new Vector<IVecInt>();
-	// Vector<IVecInt> modelsY = new Vector<IVecInt>();
 	this.subResult = new SubResult(this.problem);
 
 
-        // if (this.result.isParetoFront()) {
-        //     Log.comment(1, "UnsatSat.solve called on already solved instance");
-        //     return;
-        // }
-	// Log.comment(3, "{ UnsatSat.solve");
 	boolean goOn = true;
 	boolean goOn1 = true;
-	//for testing purposes
-	//	this.goalDelimeter.UpdateCurrentK(0, 2);
 	this.logUpperLimit();
 	this.preAssumptionsExtend();
 	currentAssumptions = this.goalDelimeter.generateUpperBoundAssumptions(this.UpperKD);
 	while(goOn){
-	
-	    this.logUpperLimit();
-	    Log.comment(6, "Checking against assumptions:");
-	    Log.comment(6, this.goalDelimeter.prettyFormatVecInt(currentAssumptions));
-	    //..log
-
 	    solver.check(currentAssumptions);
-	    
 	    if(goOn1 && solver.isSat()){
 		this.subResult.saveModel(this.solver);
-		//log
-		Log.comment(2, " current subResult size:" + this.subResult.nSolutions());
-
-		currentModel = this.getModel();
-		// currentXModelValues = this.getXModelValues();
-		// modelsY.add(this.getYModel());
-
-		//log..
-		// Log.comment(5, "ModelX :");
-		// this.printModel(modelsX.lastElement());
-		// Log.comment(5, "j o ");
-		// for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-		//     Objective ithObj = this.problem.getObj(iObj);
-		//     Log.comment(5, this.attainedValue(ithObj)+ " " );
-		// }
-		// Log.comment(2, "ModelX :");
-		// this.printModel(this.getXModel());
-		// Log.comment(2, "ModelY :");
-		// this.printModelY(currentYModel);
-		//..log
-
-		//log
-		// Log.comment(5, "Blocking dominated region");
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
 		    goOn1 = false;
@@ -198,11 +157,6 @@ public class UnsatSat extends algorithm {
 		goOn = goOn1;
 		if(goOn){
 		    currentExplanation = solver.unsatExplanation();
-		    //log..
-		    // Log.comment(2, "Explanation:");
-		    // Log.comment(2, this.goalDelimeter.prettyFormatVecInt(currentExplanation));
-		    // Log.comment(2, "//");
-		
 		if(currentExplanation.size() == 0){
 		    goOn = false;
 		}else{
