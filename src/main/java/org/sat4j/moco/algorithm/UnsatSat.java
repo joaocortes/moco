@@ -227,7 +227,6 @@ public class UnsatSat extends algorithm {
      * current explanation of unsatisfiability
      */
     private void updateUpperBound(IVecInt currentExplanation){
-        // Log.comment(5, "in UnsatSat.updateUpperBound");
 	int[] provUpperKD = new int[this.UpperKD.length];
 	int objN = this.problem.nObjs();
 
@@ -256,16 +255,19 @@ public class UnsatSat extends algorithm {
 				int weight = ithObjective.getSubObjCoeffs(0).get(iX).asInt();
 				weight = weight > 0? weight: -weight;
 				if(provUpperKD[iObj] == 0)
-				    provUpperKD[iObj] = weight;
-				else
-				    if(provUpperKD[iObj] > weight)
+				    if(weight >= this.getUpperKD(iObj))
 					provUpperKD[iObj] = weight;
+				    else
+					if(weight >= this.getUpperKD(iObj))
+					    if(provUpperKD[iObj] > weight)
+						provUpperKD[iObj] = weight;
 			    }
 		    }
 		}
 	    }
 	}
 		    
+	// provUpperKD is the array of the minimal weights above the upperKD value
 	for(int iObj = 0; iObj < objN ; ++iObj)
 	    if(provUpperKD[iObj] > this.getUpperKD(iObj))
 		this.setUpperKD(iObj, provUpperKD[iObj]);
