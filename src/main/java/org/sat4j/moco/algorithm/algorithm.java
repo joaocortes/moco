@@ -41,10 +41,12 @@ abstract public class  algorithm{
      *Stores any solutions that are in subResult.
      */
 
-    public void moveSubResult() {
-	if(this.subResult != null)
+    public void transferSubResult() {
+	if(this.subResult == null)
+	    return;
 	for(int i = 0; i < this.subResult.nSolutions(); ++i)
 	    this.result.addSolutionUnsafe(this.subResult.getSolution(i));
+	this.subResult.clearPopulation();
     }
 
     abstract public void prettyPrintVecInt(IVecInt vecInt, boolean clausing);
