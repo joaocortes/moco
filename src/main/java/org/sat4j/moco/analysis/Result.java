@@ -251,4 +251,13 @@ public class Result {
         }
         return c;
     }
+
+    /**
+     *Deletes every element in population
+     */
+
+   public void clearPopulation(){
+	this.solutions.clear();
+    }
+
 }

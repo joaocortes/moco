@@ -151,9 +151,7 @@ public class UnsatSat extends algorithm {
 		// if(! this.blockModelX(modelsX.lastElement()))
 		//     goOn = false;
 	    }else{
-		for(int i = 0; i < this.subResult.nSolutions(); ++i)
-		    this.result.addSolutionUnsafe(this.subResult.getSolution(i));
-		this.subResult = new SubResult(this.problem);
+		this.transferSubResult();
 		goOn = goOn1;
 		if(goOn){
 		    currentExplanation = solver.unsatExplanation();
