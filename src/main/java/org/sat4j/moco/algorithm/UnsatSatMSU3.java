@@ -193,24 +193,6 @@ public class UnsatSatMSU3 extends algorithm {
     }
 
 
-    /**
-     *Uncover leafs
-     */
-    private boolean uncoverXs(IVecInt explanationX) {
-	// Log.comment(5, "{ UnsatSatMSU3.uncoverXs");
-
-	boolean change = false;
-	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-	    change = this.goalDelimeter.addLeafs(iObj, explanationX) || change;
-	    change = this.goalDelimeter.bindFreshSubTree(iObj, this.getUpperBound(iObj)) || change;
-	}
-	int[] explanationXarray = explanationX.toArray();
-	for(int x : explanationXarray)
-	    this.coveredLiterals.remove(x);
-	// Log.comment(5, "}");
-	return change;
-    }
-
 
     /**
      *Log the value of the upperLimit
@@ -301,47 +283,7 @@ public class UnsatSatMSU3 extends algorithm {
     }
 
 
-    /**
-     *If necessary for the construction of the current assumptions,
-     *initialize more of the domain of the goal delimeter
-     */
 
-    private boolean preAssumptionsExtend(IVecInt currentExplanation){
-
-	boolean change = false;
-	// Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
-	IVecInt currentExplanationX = new VecInt(new int[] {});
-	HashMap<Integer,Boolean> objectivesToChange = new HashMap<Integer, Boolean>(this.problem.nObjs());
-	for(int lit: currentExplanation.toArray()){
-	    int id = this.solver.idFromLiteral(lit);
-	    if(this.goalDelimeter.isX(id)){
-		currentExplanationX.push(lit);
-		for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-		    if(this.problem.getObj(iObj).getSubObj(0).weightFromId(id) != null)
-			objectivesToChange.put(iObj, null);
-		}
-	    }
-	    else
-		objectivesToChange.put(this.goalDelimeter.getIObjFromY(id), null);
-
-	}
-	change = this.uncoverXs(currentExplanationX);
-	this.updateCurrentMaxValues();
-	for(int iObj :objectivesToChange.keySet()){
-	    // Log.comment(3, "changing upperlimit " + iObj);
-	    int upperKDBefore = this.getUpperKD(iObj);
-	    if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
-		this.goalDelimeter.generateNext(iObj, this.getUpperKD(iObj), maxValues[iObj]);
-	    this.setUpperKD(iObj, this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj)));
-	    if(this.getUpperKD(iObj) >= this.getUpperBound(iObj))
-		this.goalDelimeter.generateNext(iObj, this.getUpperKD(iObj), maxValues[iObj]);
-	    this.setUpperBound(iObj, this.goalDelimeter.nextKDValue(iObj, this.getUpperKD(iObj)));
-	    if(this.getUpperKD(iObj)!= upperKDBefore)
-		change = true;
-	}
-	return change;
-
-    }
 
 
 
