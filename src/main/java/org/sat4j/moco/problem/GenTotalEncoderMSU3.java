@@ -262,7 +262,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		    Integer key =  this.containerAll.ceilingKey(iKD);
 		    if(key == null)
 			return -1;
-		    return this.containerAll.get(key).kD;
+		    return this.containerAll.get(key).getKD();
 		}
 
 		public Collection<NodeVars.NodeVar> currentUpper(){
@@ -457,11 +457,11 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	this.solver = solver;
 	this.firstVariable = this.solver.nVars() + 1;
 	this.sumTrees = new SumTree[this.instance.nObjs()];
-	this.coveredLiterals = new HashMap<Integer, Boolean>(this.realVariablesN);
+	this.coveredLiterals = new HashMap<Integer, Boolean>(this.solver.nVars());
 	this.MSU3 = MSU3;
-	if(MSU3)
-	    for(int iObj = 0, nObj = this.problem.nObjs();iObj < nObj; iObj++){
-		Objective ithObjective = this.problem.getObj(iObj);
+	if(this.MSU3)
+	    for(int iObj = 0, nObj = this.instance.nObjs();iObj < nObj; iObj++){
+		Objective ithObjective = this.instance.getObj(iObj);
 		ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
 		ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
 		int sign = 1;
@@ -474,8 +474,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		    this.coveredLiterals.putIfAbsent(-sign * ithX, true);
 		}
 	    }
-	this.upperKD =  new int[(this.problem.nObjs())];
-	this.UpperBound =  new int[(this.problem.nObjs())];
+	this.upperKD =  new int[(this.instance.nObjs())];
+	this.UpperBound =  new int[(this.instance.nObjs())];
 	    
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.sumTrees[iObj] = new SumTree(iObj);
@@ -931,7 +931,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
     /**
      * Generate the upper limit assumptions
      */
-    public IVecInt generateUpperBoundAssumptions( int[] UpperKD){
+    public IVecInt generateUpperBoundAssumptions(int[] upperKD){
 
 	IVecInt assumptions = new VecInt(new int[]{});
 	
@@ -973,7 +973,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
      *initialize more of the domain of the goal delimeter
      */
 
-    private boolean preAssumptionsExtend(IVecInt currentExplanation){
+    public boolean preAssumptionsExtend(IVecInt currentExplanation){
 
 	boolean change = false;
 	// Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
@@ -1055,5 +1055,31 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
     private void setUpperKD(int iObj, int newKD){
 	if(this.getUpperKD(iObj)< newKD)
 	    this.upperKD[iObj] = newKD;
+    }
+    /**
+     *Log the current upperBound
+     */
+
+    public void logUpperBound()    {
+	String logUpperLimit = "diff upper bound: ["+this.getUpperBound(0);
+	for(int iObj = 1; iObj < this.instance.nObjs(); ++iObj)
+	    logUpperLimit +=", "+this.getUpperBound(iObj) ;//+ this.instance.getObj(iObj).getMinValue())
+	//..log
+	
+	logUpperLimit +="]";
+	Log.comment(2, logUpperLimit );
+    }
+
+    /**
+     *Log the current maxValues
+     */
+
+    public void logMaxValues() {
+	String logMaxValues = " uncovered max values: ["+this.getMaxUpperLimit(0);
+	for(int iObj = 1; iObj < this.instance.nObjs(); ++iObj)
+	    logMaxValues +=", "+this.getMaxUpperLimit(iObj);
+	
+	logMaxValues +="]";
+	Log.comment(2, logMaxValues );
     }
 }
