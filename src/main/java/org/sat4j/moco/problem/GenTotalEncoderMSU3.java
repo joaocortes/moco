@@ -31,6 +31,7 @@ import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.sat4j.core.ReadOnlyVec;
 
@@ -99,6 +100,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	/**
 	 *Node of a SumTree.
 	 */
+    private HashMap<Integer, Boolean> coveredLiterals = null;
+
 	class Node {
 
 	    /**
