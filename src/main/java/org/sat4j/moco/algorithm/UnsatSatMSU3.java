@@ -127,7 +127,6 @@ public class UnsatSatMSU3 extends algorithm {
 	boolean goOn1 = true;
 	currentAssumptions = this.goalDelimeter.generateUpperBoundAssumptions(this.UpperKD);
 	this.logUpperLimit();
-	Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
 	while(goOn){
 	    solver.check(currentAssumptions);
 	    if(goOn1 && solver.isSat()){
@@ -185,33 +184,7 @@ public class UnsatSatMSU3 extends algorithm {
 	Log.comment(2, logUpperLimit );
     }
 
-    /**
-     *Log the current upperBound
-     */
-
-    private void logUpperBound()    {
-	String logUpperLimit = "diff upper bound: ["+this.getUpperBound(0);
-	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
-	    logUpperLimit +=", "+this.getUpperBound(iObj) ;//+ this.problem.getObj(iObj).getMinValue())
-	//..log
-	
-	logUpperLimit +="]";
-	Log.comment(2, logUpperLimit );
-    }
     
-    /**
-     *Log the current maxValues
-     */
-
-    private void logMaxValues()    {
-	String logMaxValues = " uncovered max values: ["+this.maxValues[0];
-	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
-	    logMaxValues +=", "+this.maxValues[iObj] ;//+ this.problem.getObj(iObj).getMinValue())
-	//..log
-	
-	logMaxValues +="]";
-	Log.comment(2, logMaxValues );
-    }
     
     /**
      *Log the value of the exhaustedUpperKD
@@ -500,7 +473,7 @@ public class UnsatSatMSU3 extends algorithm {
 
     public void printFlightRecordParticular(){
 	this.logExhaustedUpperKD();
-	Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
+	// Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
 	this.logUpperLimit();
 	this.logUpperBound();
 	this.logMaxValues();
