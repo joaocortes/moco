@@ -82,8 +82,6 @@ public class UnsatSatMSU3 extends algorithm {
      */
     private int realVariablesN = 0;
 
-    private HashMap<Integer, Boolean> coveredLiterals = null;
-
     /**
      *signals that the MSU3 flavour is active
      */
