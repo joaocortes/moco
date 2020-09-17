@@ -50,7 +50,7 @@ import org.sat4j.specs.IVecInt;
 
 
 public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
-
+    
     /**
      *The inverse index map for the partial sum variables. For each ID, a
      *value that is an array vector with the value of the goal and the
@@ -299,6 +299,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 
 	}
 
+	public int getMaxUpperLimit(){return this.maxUpperLimit;}
 	public void setOlderUpperLimit(){
 	    this.olderUpperLimit = this.upperLimit;
 	}
@@ -342,13 +343,11 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    // Log.comment(5, "}");
 	    return newParent;
 	}
-
 	public SumTree(int iObj){
 	    this.iObj = iObj;
 	    this.maxUpperLimit = instance.getObj(iObj).getWeightDiff();
 
 	}
-
 	public boolean isLeafAlreadyHere(int lit){
 	    boolean alreadyHere = false;
 	    for(Node node: this.nodes){
@@ -361,7 +360,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    }	    
 	    return alreadyHere;
 	}
-
 	/**
 	 * push new stuff to unlinkedNodes
 	 */
@@ -395,7 +393,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	/**
 	 *report unbalance
 	 */
-
 	public double reportUnbalance(){
 	    int leafsN = 0;
 	    double expectedDepth = 0;
@@ -411,6 +408,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    }
 	    return expectedDepth/this.depth;
 	}
+
     }
     /**
      *Trees used to encode the goal limits
@@ -917,6 +915,13 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	}
 	return assumptions;
     }
+
+    /**
+     *Return the max possible kD value
+     */
+	public int getMaxUpperLimit(int iObj){return this.sumTrees[iObj].getMaxUpperLimit();}
+
+
 
     /**
      *If necessary for the construction of the current assumptions,
