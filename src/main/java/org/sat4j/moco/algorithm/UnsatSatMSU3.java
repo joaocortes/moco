@@ -33,7 +33,6 @@ import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.analysis.SubResult;
 import org.sat4j.moco.util.Real;
-import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.problem.GenTotalEncoderMSU3;
@@ -42,7 +41,7 @@ import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
 
 /**
- * Class that implements UnsatSat
+ * Class that implements UnsatSat, MSU3 flavoured
  * @author João Cortes
  */
 
@@ -84,14 +83,21 @@ public class UnsatSatMSU3 extends algorithm {
     private int realVariablesN = 0;
 
     private HashMap<Integer, Boolean> coveredLiterals = null;
+
+    /**
+     *signals that the MSU3 flavour is active
+     */
+    private boolean MSU3 = false;
+
     /**
      * Creates an instance of a MOCO solver, for a given instance,
      * that applies the Pareto-MCS algorithm.
      * @param m The MOCO instance.
      */
 
-    public UnsatSatMSU3(Instance m, String encodingGD) {
+    public UnsatSatMSU3(Instance m, String encodingGD, boolean MSU3) {
         // Log.comment(3, "in UnsatSat constructor");
+	this.MSU3 = MSU3;
 	this.problem = m;
 	this.result = new Result(m, true);
 	try {
@@ -104,6 +110,7 @@ public class UnsatSatMSU3 extends algorithm {
 	
 	this.realVariablesN = this.solver.nVars();
 	this.coveredLiterals = new HashMap<Integer, Boolean>(this.realVariablesN);
+	if(MSU3)
 	for(int iObj = 0, nObj = this.problem.nObjs();iObj < nObj; iObj++){
 	    Objective ithObjective = this.problem.getObj(iObj);
 	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
@@ -123,18 +130,22 @@ public class UnsatSatMSU3 extends algorithm {
 	this.UpperBound =  new int[(this.problem.nObjs())];
 	this.maxValues =  new int[(this.problem.nObjs())];
     }
-
-
+    public UnsatSatMSU3(Instance m, String encodingGD) {
+	this(m, encodingGD, true);
+    }
 
     /**
      * Applies the UnsatSat algorithm to the MOCO instance provided
      */
 
-    public void solve() {
+    public void solve(){
 	IVecInt currentExplanation = new VecInt(new int[] {});
 	IVecInt currentAssumptions = new VecInt(new int[] {});
-	this.subResult = new SubResult(this.problem);
 
+	if(!this.MSU3)
+	    this.subResult = new SubResult(this.problem);
+	else
+	    this.subResult = this.result;
 
 	boolean goOn = true;
 	boolean goOn1 = true;
@@ -144,7 +155,7 @@ public class UnsatSatMSU3 extends algorithm {
 	while(goOn){
 	    solver.check(currentAssumptions);
 	    if(goOn1 && solver.isSat()){
-		this.result.saveModel(this.solver);
+		this.subResult.saveModel(this.solver);
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
 		    goOn1 = false;
@@ -157,15 +168,18 @@ public class UnsatSatMSU3 extends algorithm {
 		    this.exhaustedUpperKD = this.UpperKD;
 		    this.logExhaustedUpperKD();
 		    currentExplanation = solver.unsatExplanation();
-		
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
+			if(!MSU3)
+			    transferSubResult();
+			if(MSU3)
+			    this.goalDelimeter.reportUnbalances();
 			boolean change = this.preAssumptionsExtend(currentExplanation);
+			// Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
 			this.logUpperLimit();
 			if(change)
 			    currentAssumptions = this.generateUpperBoundAssumptions();
-
 			else {
 			    Log.comment(2, "There was no expansion");
 			    goOn = false;
@@ -260,8 +274,9 @@ public class UnsatSatMSU3 extends algorithm {
     public IVecInt generateUpperBoundAssumptions( ){
 	IVecInt assumptions = new VecInt(new int[]{});
 	assumptions = this.goalDelimeter.generateUpperBoundAssumptions(UpperKD);
-	for(Integer x: this.coveredLiterals.keySet())
-	    assumptions.push(x);
+	if(this.MSU3)
+	    for(Integer x: this.coveredLiterals.keySet())
+		assumptions.push(x);
 
 	return assumptions;
     }
