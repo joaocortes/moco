@@ -451,12 +451,31 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
      * the solver to be updated
      */
 
-    public GenTotalEncoderMSU3(Instance instance, PBSolver solver) {
+    public GenTotalEncoderMSU3(Instance instance, PBSolver solver, boolean MSU3) {
 	// Log.comment(5, "{ GenTotalEncoder");
 	this.instance = instance;	
 	this.solver = solver;
 	this.firstVariable = this.solver.nVars() + 1;
 	this.sumTrees = new SumTree[this.instance.nObjs()];
+	this.coveredLiterals = new HashMap<Integer, Boolean>(this.realVariablesN);
+	this.MSU3 = MSU3;
+	if(MSU3)
+	    for(int iObj = 0, nObj = this.problem.nObjs();iObj < nObj; iObj++){
+		Objective ithObjective = this.problem.getObj(iObj);
+		ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
+		ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
+		int sign = 1;
+		int ithAbsoluteWeight;
+		for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
+		    int ithX = objectiveLits.get(iX);
+		    ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
+		    sign = (ithAbsoluteWeight > 0? 1 : -1);
+		    ithAbsoluteWeight *= sign;
+		    this.coveredLiterals.putIfAbsent(-sign * ithX, true);
+		}
+	    }
+	this.UpperKD =  new int[(this.problem.nObjs())];
+	this.UpperBound =  new int[(this.problem.nObjs())];
 	    
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.sumTrees[iObj] = new SumTree(iObj);
