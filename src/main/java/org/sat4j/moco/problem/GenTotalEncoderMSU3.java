@@ -73,7 +73,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
     /**
      * Last explored differential k, for each objective function.
      */
-    private int[] UpperKD = null;
+    private int[] upperKD = null;
 
 
     /**
@@ -474,7 +474,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		    this.coveredLiterals.putIfAbsent(-sign * ithX, true);
 		}
 	    }
-	this.UpperKD =  new int[(this.problem.nObjs())];
+	this.upperKD =  new int[(this.problem.nObjs())];
 	this.UpperBound =  new int[(this.problem.nObjs())];
 	    
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
@@ -936,9 +936,9 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	IVecInt assumptions = new VecInt(new int[]{});
 	
 	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
-	    int IthUpperBound = this.nextKDValue(iObj, UpperKD[iObj]);
+	    int IthUpperBound = this.nextKDValue(iObj, upperKD[iObj]);
 	    Objective ithObjective = this.instance.getObj(iObj);
-	    if(UpperKD[iObj]  != IthUpperBound){
+	    if(upperKD[iObj]  != IthUpperBound){
 		int newY = -this.getY(iObj, IthUpperBound);
 		if(newY!=0)
 		    assumptions.push(newY);
@@ -953,7 +953,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
 		sign = (ithAbsoluteWeight > 0? 1 : -1);
 		ithAbsoluteWeight *= sign;
-		if(ithAbsoluteWeight > UpperKD[iObj])
+		if(ithAbsoluteWeight > upperKD[iObj])
 		    assumptions.push(-sign * ithX);
 	    }
 
@@ -1043,7 +1043,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
      */
 
     private int getUpperKD(int iObj){
-	return this.UpperKD[iObj];
+	return this.upperKD[iObj];
     }
 
     /**
@@ -1054,6 +1054,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
      */
     private void setUpperKD(int iObj, int newKD){
 	if(this.getUpperKD(iObj)< newKD)
-	    this.UpperKD[iObj] = newKD;
+	    this.upperKD[iObj] = newKD;
     }
 }
