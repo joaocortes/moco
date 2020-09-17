@@ -61,10 +61,6 @@ public class UnsatSatMSU3 extends algorithm {
      */
     private int[] UpperKD = null;
 
-    /**
-     * Upper bound, exclusive
-     */
-    private int[] UpperBound = null;
 
     /**
      * maxValues, given the current coveredLiterals
@@ -308,23 +304,6 @@ public class UnsatSatMSU3 extends algorithm {
 	    this.UpperKD[iObj] = newKD;
     }
 
-    /**
-     *gets the current upper bound
-     *@param iObj
-     */
-
-    private int getUpperBound(int iObj){
-	return this.UpperBound[iObj];
-    }
-
-    /**
-     *Sets the current upper bound of iObj to nowKD
-     *@param newKD
-     *@param iObj
-     */
-    private void setUpperBound(int iObj, int newKD){
-	    this.UpperBound[iObj] = newKD;
-    }
 
 
     /**
