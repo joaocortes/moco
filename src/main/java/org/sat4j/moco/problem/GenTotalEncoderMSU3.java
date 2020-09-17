@@ -93,6 +93,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	 *purposefully
 	 */
 	private int upperLimit = 0;
+
 	/**
 	 *Must old the last but effective upperLimit.
 	 */
@@ -931,14 +932,14 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
     /**
      * Generate the upper limit assumptions
      */
-    public IVecInt generateUpperBoundAssumptions(int[] upperKD){
+    public IVecInt generateUpperBoundAssumptions(){
 
 	IVecInt assumptions = new VecInt(new int[]{});
 	
 	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
-	    int IthUpperBound = this.nextKDValue(iObj, upperKD[iObj]);
+	    int IthUpperBound = this.nextKDValue(iObj, getUpperKD(iObj));
 	    Objective ithObjective = this.instance.getObj(iObj);
-	    if(upperKD[iObj]  != IthUpperBound){
+	    if(getUpperKD(iObj)  != IthUpperBound){
 		int newY = -this.getY(iObj, IthUpperBound);
 		if(newY!=0)
 		    assumptions.push(newY);
@@ -953,7 +954,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
 		sign = (ithAbsoluteWeight > 0? 1 : -1);
 		ithAbsoluteWeight *= sign;
-		if(ithAbsoluteWeight > upperKD[iObj])
+		if(ithAbsoluteWeight > getUpperKD(iObj))
 		    assumptions.push(-sign * ithX);
 	    }
 
@@ -1042,7 +1043,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
      *@param iObj
      */
 
-    private int getUpperKD(int iObj){
+    public int getUpperKD(int iObj){
 	return this.upperKD[iObj];
     }
 

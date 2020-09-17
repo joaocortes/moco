@@ -61,18 +61,6 @@ public class UnsatSatMSU3 extends algorithm {
      */
     private int[] UpperKD = null;
 
-
-    /**
-     * maxValues, given the current coveredLiterals
-     */
-    private int[] maxValues = null;
-
-    /**
-     * Exhausted upperKD. At any time, all that solutions that
-     * dominate this point were found already.
-     */
-    private int[] exhaustedUpperKD = null;
-
     /**
      *  Last id of the real, non auxiliary,  variables
      */
@@ -104,7 +92,6 @@ public class UnsatSatMSU3 extends algorithm {
 	
 	this.realVariablesN = this.solver.nVars();
 	this.goalDelimeter = new GenTotalEncoderMSU3(this.problem,this.solver, this.MSU3);
-	this.maxValues =  new int[(this.problem.nObjs())];
     }
     public UnsatSatMSU3(Instance m, String encodingGD) {
 	this(m, encodingGD, true);
@@ -125,7 +112,7 @@ public class UnsatSatMSU3 extends algorithm {
 
 	boolean goOn = true;
 	boolean goOn1 = true;
-	currentAssumptions = this.goalDelimeter.generateUpperBoundAssumptions(this.UpperKD);
+	currentAssumptions = this.goalDelimeter.generateUpperBoundAssumptions();
 	this.logUpperLimit();
 	while(goOn){
 	    solver.check(currentAssumptions);
@@ -140,8 +127,6 @@ public class UnsatSatMSU3 extends algorithm {
 		this.solver.printStats();
 		goOn = goOn1;
 		if(goOn){
-		    this.exhaustedUpperKD = this.UpperKD;
-		    this.logExhaustedUpperKD();
 		    currentExplanation = solver.unsatExplanation();
 		    if(currentExplanation.size() == 0){
 			goOn = false;
@@ -186,34 +171,19 @@ public class UnsatSatMSU3 extends algorithm {
 
     
     
-    /**
-     *Log the value of the exhaustedUpperKD
-     */
-
-    private void logExhaustedUpperKD()    {
-	String logExhaustedUpperKD = "exhausted upper limit: ["+this.exhaustedUpperKD[0];
-	for(int iObj = 1; iObj < this.problem.nObjs(); ++iObj)
-	    logExhaustedUpperKD +=", "+ (this.exhaustedUpperKD[iObj]);
-	logExhaustedUpperKD +="]";
-	Log.comment(0, logExhaustedUpperKD );
-    }
     
     /**
      * Generate the upper limit assumptions
      */
     public IVecInt generateUpperBoundAssumptions( ){
 	IVecInt assumptions = new VecInt(new int[]{});
-	assumptions = this.goalDelimeter.generateUpperBoundAssumptions(UpperKD);
-	if(this.MSU3)
-	    for(Integer x: this.coveredLiterals.keySet())
-		assumptions.push(x);
-
+	assumptions = this.goalDelimeter.generateUpperBoundAssumptions();
 	return assumptions;
     }
 
 
     private void analyzeDisjointCores(){
-	IVecInt currentAssumptions = this.generateUpperBoundAssumptions();
+	IVecInt currentAssumptions = this.goalDelimeter.generateUpperBoundAssumptions();
 	IVecInt disjointCoresLiterals = new VecInt(new int[]{});
 	IVecInt currentExplanation = new VecInt(new int[]{});
 	int disjointCoresN = 0;
@@ -237,6 +207,9 @@ public class UnsatSatMSU3 extends algorithm {
 
 
 
+
+
+
     /**
      *gets the current upper limit of the explored value of the
      *differential k of the ithOjective
@@ -244,20 +217,8 @@ public class UnsatSatMSU3 extends algorithm {
      */
 
     private int getUpperKD(int iObj){
-	return this.UpperKD[iObj];
+	return this.goalDelimeter.getUpperKD(iObj);
     }
-
-    /**
-     *Sets the current upper limit of the explored value of the
-     *differential k of the ithOjective to newKD
-     *@param newKD
-     *@param iObj
-     */
-    private void setUpperKD(int iObj, int newKD){
-	if(this.getUpperKD(iObj)< newKD)
-	    this.UpperKD[iObj] = newKD;
-    }
-
 
 
     /**
@@ -472,11 +433,9 @@ public class UnsatSatMSU3 extends algorithm {
 
 
     public void printFlightRecordParticular(){
-	this.logExhaustedUpperKD();
 	// Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
-	this.logUpperLimit();
-	this.logUpperBound();
-	this.logMaxValues();
+	this.goalDelimeter.logUpperBound();
+	this.goalDelimeter.logMaxValues();
 
     }
 }
