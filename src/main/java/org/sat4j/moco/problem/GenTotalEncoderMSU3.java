@@ -59,6 +59,27 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
     protected Hashtable<Integer,int[]> auxVariablesInverseIndex  = new Hashtable<Integer, int[]>();
     private HashMap<Integer, Boolean> coveredLiterals = null;
 
+    /**
+     * Upper bound, exclusive
+     */
+    private int[] UpperBound = null;
+
+
+    /**
+     *gets the current upper bound
+     *@param iObj
+     */
+
+    /**
+     * Last explored differential k, for each objective function.
+     */
+    private int[] UpperKD = null;
+
+
+    private int getUpperBound(int iObj){
+	return this.UpperBound[iObj];
+    }
+
     class SumTree {
 
 	private int iObj = -1;
@@ -928,18 +949,18 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
      *initialize more of the domain of the goal delimeter
      */
 
-    private boolean preAssumptionsExtend(IVecInt currentExplanation, Integer[] upperKD){
+    private boolean preAssumptionsExtend(IVecInt currentExplanation){
 
 	boolean change = false;
 	// Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
 	IVecInt currentExplanationX = new VecInt(new int[] {});
-	HashMap<Integer,Boolean> objectivesToChange = new HashMap<Integer, Boolean>(this.problem.nObjs());
+	HashMap<Integer,Boolean> objectivesToChange = new HashMap<Integer, Boolean>(this.instance.nObjs());
 	for(int lit: currentExplanation.toArray()){
 	    int id = this.solver.idFromLiteral(lit);
 	    if(this.isX(id)){
 		currentExplanationX.push(lit);
-		for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
-		    if(this.problem.getObj(iObj).getSubObj(0).weightFromId(id) != null)
+		for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
+		    if(this.instance.getObj(iObj).getSubObj(0).weightFromId(id) != null)
 			objectivesToChange.put(iObj, null);
 		}
 	    }
@@ -950,14 +971,14 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	change = this.uncoverXs(currentExplanationX);
 	for(int iObj :objectivesToChange.keySet()){
 	    // Log.comment(3, "changing upperlimit " + iObj);
-	    int upperKDBefore = upperKD[iObj];
- 	    if(upperKD[iObj] == this.getUpperBound(iObj))
-		this.generateNext(iObj,upperKD[iObj], getMaxUpperLimit(iObj));
-	    this.setUpperKD(iObj, this.nextKDValue(iObj, upperKD[iObj]));
-	    if(upperKD[iObj] >= this.getUpperBound(iObj))
-		this.generateNext(iObj, upperKD[iObj], getMaxUpperLimit(iObj));
-	    this.setUpperBound(iObj, this.nextKDValue(iObj, upperKD[iObj]));
-	    if(upperKD[iObj]!= upperKDBefore)
+	    int upperKDBefore = this.getUpperKD(iObj);
+ 	    if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
+		this.generateNext(iObj,this.getUpperKD(iObj), getMaxUpperLimit(iObj));
+	    this.setUpperKD(iObj, this.nextKDValue(iObj, this.getUpperKD(iObj)));
+	    if(this.getUpperKD(iObj) >= this.getUpperBound(iObj))
+		this.generateNext(iObj, this.getUpperKD(iObj), getMaxUpperLimit(iObj));
+	    this.setUpperBound(iObj, this.nextKDValue(iObj, this.getUpperKD(iObj)));
+	    if(this.getUpperKD(iObj)!= upperKDBefore)
 		change = true;
 	}
 	return change;
@@ -971,7 +992,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	// Log.comment(5, "{ UnsatSatMSU3.uncoverXs");
 
 	boolean change = false;
-	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
 	    change = this.addLeafs(iObj, explanationX) || change;
 	    change = this.bindFreshSubTree(iObj, this.getUpperBound(iObj)) || change;
 	}
@@ -982,4 +1003,33 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	return change;
     }
 
+    /**
+     *Sets the current upper bound of iObj to nowKD
+     *@param newKD
+     *@param iObj
+     */
+    private void setUpperBound(int iObj, int newKD){
+	    this.UpperBound[iObj] = newKD;
+    }
+
+    /**
+     *gets the current upper limit of the explored value of the
+     *differential k of the ithOjective
+     *@param iObj
+     */
+
+    private int getUpperKD(int iObj){
+	return this.UpperKD[iObj];
+    }
+
+    /**
+     *Sets the current upper limit of the explored value of the
+     *differential k of the ithOjective to newKD
+     *@param newKD
+     *@param iObj
+     */
+    private void setUpperKD(int iObj, int newKD){
+	if(this.getUpperKD(iObj)< newKD)
+	    this.UpperKD[iObj] = newKD;
+    }
 }
