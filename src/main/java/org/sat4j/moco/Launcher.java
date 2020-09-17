@@ -85,7 +85,7 @@ public class Launcher {
 	    // 	}
 	    // 	Log.comment("" + i);
 	    // }
-            this.solver.moveSubResult();
+            this.solver.transferSubResult();
 	    this.solver.printFlightRecord();
             logResult(this.solver.getResult());
         }
@@ -167,7 +167,7 @@ public class Launcher {
 		paretoMCSSolver.solve();
 		break;
 	    case 1:
-  		UnsatSat unsatSatSolver = new UnsatSat(moco, params.getEncodingGD());
+  		UnsatSatMSU3 unsatSatSolver = new UnsatSatMSU3(moco, params.getEncodingGD(), false);
 		setShutdownHandler(unsatSatSolver);
 		unsatSatSolver.solve();
 		break;

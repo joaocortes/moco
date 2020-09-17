@@ -93,7 +93,7 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
     /**
      * Generate the upper limit assumptions
      */
-    abstract public IVecInt generateUpperBoundAssumptions(int[] UpperKD);
+    abstract public IVecInt generateUpperBoundAssumptions();
 
 
 ;
