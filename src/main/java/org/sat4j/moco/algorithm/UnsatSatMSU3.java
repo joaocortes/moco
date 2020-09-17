@@ -103,7 +103,7 @@ public class UnsatSatMSU3 extends algorithm {
         }
 	
 	this.realVariablesN = this.solver.nVars();
-	this.goalDelimeter = new GenTotalEncoderMSU3(this.problem,this.solver);
+	this.goalDelimeter = new GenTotalEncoderMSU3(this.problem,this.solver, this.MSU3);
 	this.maxValues =  new int[(this.problem.nObjs())];
     }
     public UnsatSatMSU3(Instance m, String encodingGD) {
