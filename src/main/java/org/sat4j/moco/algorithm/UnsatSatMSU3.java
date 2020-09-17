@@ -151,8 +151,7 @@ public class UnsatSatMSU3 extends algorithm {
 			    transferSubResult();
 			if(MSU3)
 			    this.goalDelimeter.reportUnbalances();
-			boolean change = this.preAssumptionsExtend(currentExplanation);
-			// Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
+			boolean change = this.goalDelimeter.preAssumptionsExtend(currentExplanation);
 			this.logUpperLimit();
 			if(change)
 			    currentAssumptions = this.generateUpperBoundAssumptions();
