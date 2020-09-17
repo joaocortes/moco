@@ -917,4 +917,64 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	}
 	return assumptions;
     }
+
+    /**
+     *If necessary for the construction of the current assumptions,
+     *initialize more of the domain of the goal delimeter
+     */
+
+    private boolean preAssumptionsExtend(IVecInt currentExplanation, Integer[] upperKD){
+
+	boolean change = false;
+	// Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
+	IVecInt currentExplanationX = new VecInt(new int[] {});
+	HashMap<Integer,Boolean> objectivesToChange = new HashMap<Integer, Boolean>(this.problem.nObjs());
+	for(int lit: currentExplanation.toArray()){
+	    int id = this.solver.idFromLiteral(lit);
+	    if(this.isX(id)){
+		currentExplanationX.push(lit);
+		for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+		    if(this.problem.getObj(iObj).getSubObj(0).weightFromId(id) != null)
+			objectivesToChange.put(iObj, null);
+		}
+	    }
+	    else
+		objectivesToChange.put(this.getIObjFromY(id), null);
+
+	}
+	change = this.uncoverXs(currentExplanationX);
+	for(int iObj :objectivesToChange.keySet()){
+	    // Log.comment(3, "changing upperlimit " + iObj);
+	    int upperKDBefore = upperKD[iObj];
+ 	    if(upperKD[iObj] == this.getUpperBound(iObj))
+		this.generateNext(iObj,upperKD[iObj], getMaxUpperLimit(iObj));
+	    this.setUpperKD(iObj, this.nextKDValue(iObj, upperKD[iObj]));
+	    if(upperKD[iObj] >= this.getUpperBound(iObj))
+		this.generateNext(iObj, upperKD[iObj], getMaxUpperLimit(iObj));
+	    this.setUpperBound(iObj, this.nextKDValue(iObj, upperKD[iObj]));
+	    if(upperKD[iObj]!= upperKDBefore)
+		change = true;
+	}
+	return change;
+
+    }
+
+    /**
+     *Uncover leafs
+     */
+    private boolean uncoverXs(IVecInt explanationX) {
+	// Log.comment(5, "{ UnsatSatMSU3.uncoverXs");
+
+	boolean change = false;
+	for(int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+	    change = this.addLeafs(iObj, explanationX) || change;
+	    change = this.bindFreshSubTree(iObj, this.getUpperBound(iObj)) || change;
+	}
+	int[] explanationXarray = explanationX.toArray();
+	for(int x : explanationXarray)
+	    this.coveredLiterals.remove(x);
+	// Log.comment(5, "}");
+	return change;
+    }
+
 }
