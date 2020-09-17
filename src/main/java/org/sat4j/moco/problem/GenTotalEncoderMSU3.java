@@ -57,6 +57,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
      *value of the sum, namely {kD, iObj, nodeName}
      */
     protected Hashtable<Integer,int[]> auxVariablesInverseIndex  = new Hashtable<Integer, int[]>();
+    private HashMap<Integer, Boolean> coveredLiterals = null;
 
     class SumTree {
 
@@ -100,7 +101,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	/**
 	 *Node of a SumTree.
 	 */
-    private HashMap<Integer, Boolean> coveredLiterals = null;
 
 	class Node {
 
