@@ -648,7 +648,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
      *smaller value kD.
      */
     private boolean addClauseSequential(Node root){
-        // Log.comment(5, "{ GenTotalEncoder.addClauseSequential");
+	// Log.comment(5, "{ GenTotalEncoder.addClauseSequential");
 	boolean change = false;
 
 	Node.NodeVars.NodeVar past;
@@ -672,7 +672,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		// current.iAmFresh = false;
 	    }
 	}
-        // Log.comment(5, "}");
+	// Log.comment(5, "}");
 	return change;
     }
 
@@ -850,7 +850,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
 	Node newParent = ithObjSumTree.freshParent;
-    	if(newParent!=null){
+	if(newParent!=null){
 	    int oldOldUpperLimit = ithObjSumTree.olderUpperLimit;
 	    int oldUpperLimit = ithObjSumTree.upperLimit;
 
@@ -859,7 +859,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 
 	    change = this.addClausesSubSumTree(ithObjSumTree, newParent);
 	    if(newParent!=ithObjSumTree.parent){
-	 	change = this.addClausesCurrentNode(ithObjSumTree, ithObjSumTree.parent, true) || change;
+		change = this.addClausesCurrentNode(ithObjSumTree, ithObjSumTree.parent, true) || change;
 	    }
 	    this.addClauseSequential(ithObjSumTree.parent);
 	    ithObjSumTree.olderUpperLimit = oldOldUpperLimit;
@@ -909,34 +909,34 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
      */
 
     public int generateNext(int iObj, int kD, int inclusiveMax){
-    	// Log.comment(5, "{ GenTotalEncoder.generateNext");
+	// Log.comment(5, "{ GenTotalEncoder.generateNext");
 
-    	boolean change = false;
-    	SumTree ithObjSumTree = this.sumTrees[iObj];
-    	// store  values of upperLimit and olderUpperLimit
-    	int upperLimit = ithObjSumTree.upperLimit;
-    	int olderUpperLimit = ithObjSumTree.olderUpperLimit;
-    	ithObjSumTree.olderUpperLimit = kD;
+	boolean change = false;
+	SumTree ithObjSumTree = this.sumTrees[iObj];
+	// store  values of upperLimit and olderUpperLimit
+	int upperLimit = ithObjSumTree.upperLimit;
+	int olderUpperLimit = ithObjSumTree.olderUpperLimit;
+	ithObjSumTree.olderUpperLimit = kD;
 
 	this.sumTrees[iObj].setUpperLimit(kD);
-    	int upperKD = kD;
-    	while(!change && upperKD < inclusiveMax){
-    	    upperKD++;
-    	    this.sumTrees[iObj].setUpperLimit(upperKD);
-    	    // Log.comment(5, "{ GenTotalEncoder.generateNext of "+ iObj + "from " + kD + " to " + upperKD);
-    	    change = addClausesSumTree(iObj);
-    	    // Log.comment(5, "}");
-    	}
-    	if(change)
-    	    addClauseSequential(ithObjSumTree.parent);
+	int upperKD = kD;
+	while(!change && upperKD < inclusiveMax){
+	    upperKD++;
+	    this.sumTrees[iObj].setUpperLimit(upperKD);
+	    // Log.comment(5, "{ GenTotalEncoder.generateNext of "+ iObj + "from " + kD + " to " + upperKD);
+	    change = addClausesSumTree(iObj);
+	    // Log.comment(5, "}");
+	}
+	if(change)
+	    addClauseSequential(ithObjSumTree.parent);
 
-    	// Log.comment(5, "}");
-    	ithObjSumTree.upperLimit = upperLimit;
-    	ithObjSumTree.olderUpperLimit = olderUpperLimit;
-    	if(change)
-    	    return ithObjSumTree.upperLimit;
-    	else
-    	    return kD;
+	// Log.comment(5, "}");
+	ithObjSumTree.upperLimit = upperLimit;
+	ithObjSumTree.olderUpperLimit = olderUpperLimit;
+	if(change)
+	    return ithObjSumTree.upperLimit;
+	else
+	    return kD;
     }
 
     /**
@@ -996,9 +996,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	return assumptions;
     }
 
-    /**
-     *Return the max possible kD value
-     */
 	public int getMaxUpperLimit(int iObj){return this.sumTrees[iObj].getMaxUpperLimit();}
 
 	public int getMaxUncoveredKD(int iObj){return this.sumTrees[iObj].getMaxUncoveredKD();}
