@@ -105,6 +105,11 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	private int maxUpperLimit = 0;
 
 	/**
+	 *Max uncovered KD value
+	 */
+	private int maxUncoveredKD = 0;
+
+	/**
 	 *The root of the SumTree.
 	 */
 	private Node parent = null;
@@ -327,6 +332,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	}
 
 	public int getMaxUpperLimit(){return this.maxUpperLimit;}
+	public int getMaxUncoveredKD(){return this.maxUncoveredKD;}
+	public void setMaxUncoveredKD(int a){this.maxUncoveredKD = a;}
 	public void setOlderUpperLimit(){
 	    this.olderUpperLimit = this.upperLimit;
 	}
@@ -436,7 +443,30 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    return expectedDepth/this.depth;
 	}
 
+
+	/**
+	 *Updates the current maxValues for each objective
+	 */
+
+	public void updateUncoveredMaxKD(){
+	    int a = 0;
+	    Objective ithObjective = instance.getObj(this.iObj); // 
+	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
+	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
+	    int sign = 1;
+	    int ithAbsoluteWeight;
+	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX < nX; iX ++){
+		int ithX = objectiveLits.get(iX);
+		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
+		sign = (ithAbsoluteWeight > 0? 1 : -1);
+		ithAbsoluteWeight *= sign;
+		if(coveredLiterals.get(-sign * ithX) == null)
+		    a += ithAbsoluteWeight;
+	    }
+	    this.setMaxUncoveredKD(a);
+	}
     }
+
     /**
      *Trees used to encode the goal limits
      */
@@ -971,6 +1001,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
      */
 	public int getMaxUpperLimit(int iObj){return this.sumTrees[iObj].getMaxUpperLimit();}
 
+	public int getMaxUncoveredKD(int iObj){return this.sumTrees[iObj].getMaxUncoveredKD();}
+
 
 
     /**
@@ -998,14 +1030,15 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 
 	}
 	change = this.uncoverXs(currentExplanationX);
+	this.updateAllUncoveredMaxKD();
 	for(int iObj :objectivesToChange.keySet()){
 	    // Log.comment(3, "changing upperlimit " + iObj);
 	    int upperKDBefore = this.getUpperKD(iObj);
  	    if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
-		this.generateNext(iObj,this.getUpperKD(iObj), getMaxUpperLimit(iObj));
+		this.generateNext(iObj,this.getUpperKD(iObj), this.getMaxUncoveredKD(iObj));
 	    this.setUpperKD(iObj, this.nextKDValue(iObj, this.getUpperKD(iObj)));
 	    if(this.getUpperKD(iObj) >= this.getUpperBound(iObj))
-		this.generateNext(iObj, this.getUpperKD(iObj), getMaxUpperLimit(iObj));
+		this.generateNext(iObj, this.getUpperKD(iObj), this.getMaxUncoveredKD(iObj));
 	    this.setUpperBound(iObj, this.nextKDValue(iObj, this.getUpperKD(iObj)));
 	    if(this.getUpperKD(iObj)!= upperKDBefore)
 		change = true;
@@ -1031,6 +1064,11 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	// Log.comment(5, "}");
 	return change;
     }
+private void updateAllUncoveredMaxKD(){
+    for(int i = 0, n = this.instance.nObjs(); i < n; i++)
+	this.sumTrees[i].updateUncoveredMaxKD();
+}
+
 
     /**
      *Sets the current upper bound of iObj to nowKD
@@ -1080,9 +1118,9 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
      */
 
     public void logMaxValues() {
-	String logMaxValues = " uncovered max values: ["+this.getMaxUpperLimit(0);
+	String logMaxValues = " uncovered max values: ["+this.getMaxUncoveredKD(0);
 	for(int iObj = 1; iObj < this.instance.nObjs(); ++iObj)
-	    logMaxValues +=", "+this.getMaxUpperLimit(iObj);
+	    logMaxValues +=", "+this.getMaxUncoveredKD(iObj);
 	
 	logMaxValues +="]";
 	Log.comment(2, logMaxValues );
