@@ -959,6 +959,10 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    }
 
 	}
+	if(this.MSU3)
+	    for(Integer x: this.coveredLiterals.keySet())
+		assumptions.push(x);
+
 	return assumptions;
     }
 
