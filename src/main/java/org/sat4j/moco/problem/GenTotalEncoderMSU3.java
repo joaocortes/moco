@@ -490,6 +490,16 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	this.sumTrees = new SumTree[this.instance.nObjs()];
 	this.coveredLiterals = new HashMap<Integer, Boolean>(this.solver.nVars());
 	this.MSU3 = MSU3;
+	this.upperKD =  new int[(this.instance.nObjs())];
+	this.UpperBound =  new int[(this.instance.nObjs())];
+	    
+	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
+	    this.sumTrees[iObj] = new SumTree(iObj);
+	}
+
+	if(!this.MSU3)
+	    for(SumTree st: this.sumTrees)
+		st.pushNewLeafs(this.instance.getObj(st.iObj).getSubObjLits(0));
 	if(this.MSU3)
 	    for(int iObj = 0, nObj = this.instance.nObjs();iObj < nObj; iObj++){
 		Objective ithObjective = this.instance.getObj(iObj);
@@ -505,13 +515,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		    this.coveredLiterals.putIfAbsent(-sign * ithX, true);
 		}
 	    }
-	this.upperKD =  new int[(this.instance.nObjs())];
-	this.UpperBound =  new int[(this.instance.nObjs())];
-	    
-	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    this.sumTrees[iObj] = new SumTree(iObj);
-	}
-
 	// Log.comment(5, "}");
     }
 
