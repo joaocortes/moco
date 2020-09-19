@@ -87,7 +87,7 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
 }
     };
 
-    abstract public boolean UpdateCurrentK(int iObj, int upperKD);
+    public boolean UpdateCurrentK(int iObj, int upperKD){return true;};
     abstract public boolean isY(int id);
 
     /**
