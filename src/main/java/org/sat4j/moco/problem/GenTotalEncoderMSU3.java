@@ -873,37 +873,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
     }
 
 
-
-
-
-    /**
-     *Updates the semantics, in such a way that everything is valid
-     *for any value kD less or equal to upperKD. Notice that it may
-     *well be extend more, depending on the possible sums
-     */
-
-    public boolean UpdateCurrentK(int iObj, int upperKD){
-	// Log.comment(5, "{ GenTotalEncoder.UpdateCurrentK");
-	boolean change = false;
-	SumTree ithObjSumTree = this.sumTrees[iObj];
-
-	if(upperKD > this.getCurrentKD(iObj)){
-	    // Log.comment(5, "{ GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
-	    ithObjSumTree.setOlderUpperLimit();
-	    while(!change && upperKD <= this.instance.getObj(iObj).getWeightDiff()){
-		// Log.comment(5, "{ GenTotalEncoder.UpdateCurrentK of "+ iObj + " to " + upperKD);
-		this.sumTrees[iObj].setUpperLimit(upperKD);
-		change = addClausesSumTree(iObj);
-		upperKD++;
-	    }
-	    if(change)
-		addClauseSequential(ithObjSumTree.parent);
-	}
-	// Log.comment(5, "}");
-	return change;
-    }
-
-
     /**
      *Finds the next valid kD value, starting in kD and extending
      *until newKD, inclusive. This will not repeat clauses only if the
