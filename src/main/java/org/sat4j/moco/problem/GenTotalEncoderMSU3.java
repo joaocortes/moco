@@ -39,6 +39,7 @@ import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
+import org.sat4j.moco.problem.GenTotalEncoder.SumTree;
 import org.sat4j.moco.problem.GenTotalEncoderMSU3.SumTree.Node;
 import org.sat4j.specs.IVecInt;
 
@@ -394,6 +395,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    }	    
 	    return alreadyHere;
 	}
+	
 	/**
 	 * push new stuff to unlinkedNodes
 	 */
