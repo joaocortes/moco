@@ -178,13 +178,21 @@ import org.sat4j.moco.util.Real;
         validateResult(result, objs, front_sols, front_costs);
     }
     
+     /**
+      * 2  x1 +1 x2   maxkD: 4
+      * 2 -x2 +2 x3   maxKD: 4
+      * -1 x2 -1 x3   maxKD: 2
+      * 2 -x1 +2 x3   maxKD: 4
+      * -1 x1 -1 x2   maxKD: 2
+      */
+
     @Test
-    public void testManyObjective() {
-        LinearObj other_obj1 = new LinearObj(new VecInt(new int[] { -2, 3 }),
+   public void testManyObjective() {
+        LinearObj other_obj1 = new LinearObj(new VecInt(new int[] { 2, 3 }),
                                              new Vec<Real>(new Real[] { new Real(2), new Real(2) }));
         LinearObj other_obj2 = new LinearObj(new VecInt(new int[] { 2, 3 }),
                                              new Vec<Real>(new Real[] { Real.ONE.negate(), Real.ONE.negate() }));
-        LinearObj other_obj3 = new LinearObj(new VecInt(new int[] { -1, 3 }),
+        LinearObj other_obj3 = new LinearObj(new VecInt(new int[] { 1, 3 }),
                                              new Vec<Real>(new Real[] { new Real(2), new Real(2) }));
         LinearObj other_obj4 = new LinearObj(new VecInt(new int[] { 1, 2 }),
                                              new Vec<Real>(new Real[] { Real.ONE.negate(), Real.ONE.negate() }));
