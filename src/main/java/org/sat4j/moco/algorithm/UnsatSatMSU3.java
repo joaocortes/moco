@@ -125,6 +125,8 @@ public class UnsatSatMSU3 extends algorithm {
 		}
 
 	    }else{
+		if(!MSU3)
+		    transferSubResult();
 		this.solver.printStats();
 		goOn = goOn1;
 		if(goOn){
@@ -132,8 +134,6 @@ public class UnsatSatMSU3 extends algorithm {
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
-			if(!MSU3)
-			    transferSubResult();
 			if(MSU3)
 			    this.goalDelimeter.reportUnbalances();
 			boolean change = this.goalDelimeter.preAssumptionsExtend(currentExplanation);
