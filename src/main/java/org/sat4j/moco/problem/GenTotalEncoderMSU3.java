@@ -402,17 +402,16 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	/**
 	 * push a set of literals into the sum tree.
 	 */
-	public boolean pushNewLeafs(IVecInt explanationX){
+	public boolean pushNewLeafs(IVecInt litsToAdd){
 	    boolean alreadyHere = false;
-	    int[] newExplanationX = explanationX.toArray();
-	    for(int explanation : newExplanationX){
-		int lit = - explanation;
+	    for(int i = 0, n = litsToAdd.size(); i < n; i++){
+		int lit = litsToAdd.get(i);
 		int id = solver.idFromLiteral(lit);
 		Real weight = instance.getObj(iObj).getSubObj(0).weightFromId(id);
 		if(weight!=null){
 		    alreadyHere= this.isLeafAlreadyHere(lit);
 		    if(!alreadyHere){
-			Node node =  new Node(weight.asIntExact(), id);
+			Node node =  new Node(weight.asIntExact(), lit);
 			// Log.comment(5, "new leaf: "+ node.leafID);
 			this.unlinkedNodes.add(node);
 		    }
@@ -842,7 +841,10 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
     public boolean addLeafs(int iObj, IVecInt explanationX ){
 	// Log.comment(5, "{ GenTotalEncoder.addLeafs: " + iObj);
 	SumTree ithObjSumTree = this.sumTrees[iObj];
-	boolean result = ithObjSumTree.pushNewLeafs(explanationX);
+	IVecInt litsToAdd = new VecInt(explanationX.size());
+	for(int i = 0, n = explanationX.size(); i < n; i++)
+	    litsToAdd.push(-explanationX.get(i));
+	boolean result = ithObjSumTree.pushNewLeafs(litsToAdd);
 	ithObjSumTree.freshParent = ithObjSumTree.linkNewNodes();
 	ithObjSumTree.updateUncoveredMaxKD();
 	// Log.comment(5, "}");
