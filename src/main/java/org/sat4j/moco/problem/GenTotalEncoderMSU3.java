@@ -836,6 +836,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	SumTree ithObjSumTree = this.sumTrees[iObj];
 	boolean result = ithObjSumTree.pushNewLeafs(explanationX);
 	ithObjSumTree.freshParent = ithObjSumTree.linkNewNodes();
+	ithObjSumTree.updateUncoveredMaxKD();
 	// Log.comment(5, "}");
 
 	return result;
@@ -987,7 +988,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 
 	}
 	change = this.uncoverXs(currentExplanationX);
-	this.updateAllUncoveredMaxKD();
 	for(int iObj :objectivesToChange.keySet()){
 	    // Log.comment(3, "changing upperlimit " + iObj);
 	    int upperKDBefore = this.getUpperKD(iObj);
@@ -1015,6 +1015,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    change = this.addLeafs(iObj, explanationX) || change;
 	    change = this.bindFreshSubTree(iObj, this.getUpperBound(iObj)) || change;
 	}
+
+	this.updateAllUncoveredMaxKD();
 	int[] explanationXarray = explanationX.toArray();
 	for(int x : explanationXarray)
 	    this.coveredLiterals.remove(x);
