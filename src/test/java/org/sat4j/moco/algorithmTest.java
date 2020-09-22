@@ -85,7 +85,7 @@ import org.sat4j.moco.util.Real;
     }
     
     @Test
-    public void testObjectiveWorstCase() {
+    public void testWorstCase() {
         this.moco.addConstr(PBFactory.instance().mkClause(new VecInt(new int[] { -3 })));
 	this.solver = this.instateAlgorithm();
         this.solver.solve();
