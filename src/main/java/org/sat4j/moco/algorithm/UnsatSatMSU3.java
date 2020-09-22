@@ -138,14 +138,14 @@ public class UnsatSatMSU3 extends algorithm {
 			    this.goalDelimeter.reportUnbalances();
 			boolean change = this.goalDelimeter.preAssumptionsExtend(currentExplanation);
 			this.logUpperLimit();
-			if(change)
+			if(change){
 			    currentAssumptions = this.generateUpperBoundAssumptions();
-			else {
+			    this.goalDelimeter.prettyPrintVecInt(currentAssumptions);
+			}else{
 			    Log.comment(2, "There was no expansion");
 			    goOn = false;
 			}
 		    }
-
 		}
 	    }
 	}

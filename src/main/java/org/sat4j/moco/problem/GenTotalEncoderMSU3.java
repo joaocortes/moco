@@ -169,6 +169,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 			    this.setKD(upperLimit);
 			
 		    }
+
 		    /**
 		     *Return the ID of a freshly created auxiliar variable
 		     */
@@ -341,6 +342,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	public void setUpperLimit(int newUpperLimit){
 	    this.upperLimit = newUpperLimit;
 	}
+
 	/**
 	 *Links the SumTree, in such a fashion that at any time all
 	 *unlinked nodes are lighter than any linked node.
@@ -395,9 +397,10 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    }	    
 	    return alreadyHere;
 	}
+
 	
 	/**
-	 * push new stuff to unlinkedNodes
+	 * push a set of literals into the sum tree.
 	 */
 	public boolean pushNewLeafs(IVecInt explanationX){
 	    boolean alreadyHere = false;
@@ -411,7 +414,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		    if(!alreadyHere){
 			Node node =  new Node(weight.asIntExact(), id);
 			// Log.comment(5, "new leaf: "+ node.leafID);
-
 			this.unlinkedNodes.add(node);
 		    }
 		}
@@ -505,6 +507,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		st.updateUncoveredMaxKD();
 		this.generateNext(iObj, this.getUpperKD(iObj), this.getMaxUncoveredKD(iObj));
 		this.setUpperBound(iObj, this.nextKDValue(iObj, this.getUpperKD(iObj)));
+		
 	    }
 
 	if(this.MSU3)
@@ -898,7 +901,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	int olderUpperLimit = ithObjSumTree.olderUpperLimit;
 	ithObjSumTree.olderUpperLimit = kD;
 
-	this.sumTrees[iObj].setUpperLimit(kD);
+	ithObjSumTree.setUpperLimit(kD);
 	int upperKD = kD;
 	while(!change && upperKD < inclusiveMax){
 	    upperKD++;
