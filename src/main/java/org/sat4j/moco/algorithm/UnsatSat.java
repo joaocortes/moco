@@ -508,7 +508,9 @@ public class UnsatSat extends algorithm {
 	for(int iX = 0; iX < modelX.size(); ++iX)
 	    notPreviousModel.push(-modelX.get(iX));
 	return this.AddClause(notPreviousModel);
+
     }
+
 
     public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){
 	if(clausing)
