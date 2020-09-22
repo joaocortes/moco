@@ -36,6 +36,7 @@ import org.sat4j.moco.pb.PBFactory;
 import org.sat4j.moco.problem.LinearObj;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
+import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
 
  public abstract class algorithmTest<chosenAlgorithm extends algorithm> {
@@ -44,8 +45,7 @@ import org.sat4j.moco.util.Real;
     protected LinearObj main_obj;
     protected chosenAlgorithm solver;
     protected abstract chosenAlgorithm instateAlgorithm();
-    
-    
+     static {Log.setVerbosity(6);}    
     @Before
     public void setUp() {
         this.moco = new Instance();
