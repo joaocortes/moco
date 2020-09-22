@@ -1120,4 +1120,11 @@ private void updateAllUncoveredMaxKD(){
 	logMaxValues +="]";
 	Log.comment(2, logMaxValues );
     }
+
+
+	public void setUpperBound() {
+	    for(int i = 0, n = this.UpperBound.length; i < n; i++)
+		this.UpperBound[i] = this.nextKDValue(i, this.getUpperKD(i));
+	}
+
 }
