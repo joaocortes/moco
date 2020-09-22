@@ -498,10 +498,15 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.sumTrees[iObj] = new SumTree(iObj);
 	}
-
 	if(!this.MSU3)
-	    for(SumTree st: this.sumTrees)
-		st.pushNewLeafs(this.instance.getObj(st.iObj).getSubObjLits(0));
+	    for(int iObj = 0, nObj = this.instance.nObjs();iObj < nObj; iObj++){
+		SumTree st = this.sumTrees[iObj];
+		addLeafs(iObj, this.instance.getObj(st.iObj).getSubObjLits(0));
+		st.updateUncoveredMaxKD();
+		this.generateNext(iObj, this.getUpperKD(iObj), this.getMaxUncoveredKD(iObj));
+		this.setUpperBound(iObj, this.nextKDValue(iObj, this.getUpperKD(iObj)));
+	    }
+
 	if(this.MSU3)
 	    for(int iObj = 0, nObj = this.instance.nObjs();iObj < nObj; iObj++){
 		Objective ithObjective = this.instance.getObj(iObj);
