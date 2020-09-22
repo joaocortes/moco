@@ -221,10 +221,10 @@ import org.sat4j.moco.util.Real;
                                                    new boolean[] { true, false, true },
                                                    new boolean[] { true, true, false },
                                                    new boolean[] { true, true, true } };
-        double[][] front_costs = new double[][] { new double[] { 1, 2, -2, 4, -1 },
-                                                  new double[] { 2, 4, -1, 2, -1 },
-                                                  new double[] { 3, 0, -1, 0, -2 },
-                                                  new double[] { 3, 2, -2, 2, -2 } };
+        double[][] front_costs = new double[][] { new double[] { 1, 4, -2, 2, -1 },
+                                                  new double[] { 2, 2, -1, 4, -1 },
+                                                  new double[] { 3, 2, -1, 2, -2 },
+                                                  new double[] { 3, 4, -2, 4, -2 } };
         Objective[] objs = new Objective[] { this.main_obj, other_obj1, other_obj2, other_obj3, other_obj4 };
         validateResult(result, objs, front_sols, front_costs);
     }
