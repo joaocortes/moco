@@ -958,6 +958,32 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		    assumptions.push(newY);
 	    }
 	}
+	if(!MSU3)
+	    for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
+		int IthUpperBound = this.nextKDValue(iObj, getUpperKD(iObj));
+		Objective ithObjective = this.instance.getObj(iObj);
+		if(getUpperKD(iObj)  != IthUpperBound){
+		    int newY = -this.getY(iObj, IthUpperBound);
+		    if(newY!=0)
+			assumptions.push(newY);
+		}
+		ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
+		ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
+		int sign;
+		int ithAbsoluteWeight;
+
+		for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
+		    int ithX = objectiveLits.get(iX);
+		    ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
+		    sign = (ithAbsoluteWeight > 0? 1 : -1);
+		    ithAbsoluteWeight *= sign;
+		    if(ithAbsoluteWeight > getUpperKD(iObj))
+			assumptions.push(-sign * ithX);
+		}
+
+	    }
+
+
 	if(this.MSU3)
 	    for(Integer x: this.coveredLiterals.keySet())
 		assumptions.push(x);
