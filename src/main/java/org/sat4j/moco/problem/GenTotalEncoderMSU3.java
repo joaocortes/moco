@@ -982,6 +982,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    for(Integer x: this.coveredLiterals.keySet())
 		assumptions.push(x);
 	
+	Log.comment(2, "assumptions:");
+	this.prettyPrintVecInt(assumptions);
 	return assumptions;
     }
 
