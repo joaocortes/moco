@@ -231,8 +231,7 @@ public class UnsatSatMSU3 extends algorithm {
      */
 
     public boolean isX(int literal){
-	int id = (literal>0)? literal: -literal;
-	return id <= this.realVariablesN && id >= 1;
+	return this.goalDelimeter.isX(literal);
 
     }
 
