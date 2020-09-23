@@ -179,7 +179,7 @@ import org.sat4j.moco.util.Real;
     }
     
      /**
-      * 2  x1 +1 x2   maxkD: 4
+      * 2  x1 +1 x2   maxkD: 3
       * 2 -x2 +2 x3   maxKD: 4
       * -1 x2 -1 x3   maxKD: 2
       * 2 -x1 +2 x3   maxKD: 4

@@ -429,7 +429,7 @@ public class UnsatSatMSU3 extends algorithm {
 	//..log
 	
 	logDiffAttainedValue +="]";
-	// Log.comment(2, logDiffAttainedValue );
+	Log.comment(2, logDiffAttainedValue );
 	IVecInt newHardClause = new VecInt();
 	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
 	    if(diffAttainedValue[iObj] != 0){
