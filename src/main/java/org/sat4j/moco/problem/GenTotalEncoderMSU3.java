@@ -997,7 +997,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
      */
 
     public boolean preAssumptionsExtend(IVecInt currentExplanation){
-
+	Log.comment(2, "explanation: ");
+	this.prettyPrintVecInt(currentExplanation);
 	boolean change = false;
 	// Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
 	IVecInt currentExplanationX = new VecInt(new int[] {});
@@ -1045,6 +1046,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	}
 
 	this.updateAllUncoveredMaxKD();
+	this.logUncoveredMaxKD();
 	int[] explanationXarray = explanationX.toArray();
 	for(int x : explanationXarray)
 	    this.coveredLiterals.remove(x);
@@ -1101,22 +1103,25 @@ private void updateAllUncoveredMaxKD(){
     }
 
     /**
-     *Log the current maxValues
+     *Log the current uncovered max values
      */
 
-    public void logMaxValues() {
-	String logMaxValues = " uncovered max values: ["+this.getMaxUncoveredKD(0);
+    public void logUncoveredMaxKD(){
+	String logUpperLimit = "uncovered max: ["+this.getUncoveredMaxKD(0);
 	for(int iObj = 1; iObj < this.instance.nObjs(); ++iObj)
-	    logMaxValues +=", "+this.getMaxUncoveredKD(iObj);
+	    logUpperLimit +=", "+this.getUncoveredMaxKD(iObj) ;//+ this.instance.getObj(iObj).getMinValue())
+	//..log
 	
-	logMaxValues +="]";
-	Log.comment(2, logMaxValues );
+	logUpperLimit +="]";
+	Log.comment(2, logUpperLimit );
     }
 
+    public void setUpperBound() {
+	for(int i = 0, n = this.UpperBound.length; i < n; i++)
+	    this.UpperBound[i] = this.nextKDValue(i, this.getUpperKD(i));
+    }
 
-	public void setUpperBound() {
-	    for(int i = 0, n = this.UpperBound.length; i < n; i++)
-		this.UpperBound[i] = this.nextKDValue(i, this.getUpperKD(i));
-	}
+    public int getUncoveredMaxKD(int iObj){return this.sumTrees[iObj].getMaxUncoveredKD();}
+
 
 }

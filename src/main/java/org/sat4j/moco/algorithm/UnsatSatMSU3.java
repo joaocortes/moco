@@ -429,7 +429,7 @@ public class UnsatSatMSU3 extends algorithm {
     public void printFlightRecordParticular(){
 	// Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
 	this.goalDelimeter.logUpperBound();
-	this.goalDelimeter.logMaxValues();
+	this.goalDelimeter.logUncoveredMaxKD();
 
     }
 }
