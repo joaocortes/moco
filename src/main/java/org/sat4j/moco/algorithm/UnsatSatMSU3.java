@@ -119,6 +119,8 @@ public class UnsatSatMSU3 extends algorithm {
 	    solver.check(currentAssumptions);
 	    if(goOn1 && solver.isSat()){
 		this.subResult.saveModel(this.solver);
+		Log.comment("model:");
+		this.goalDelimeter.prettyPrintVecInt(this.getXModel());
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
 		    goOn1 = false;
@@ -140,7 +142,6 @@ public class UnsatSatMSU3 extends algorithm {
 			this.logUpperLimit();
 			if(change){
 			    currentAssumptions = this.generateUpperBoundAssumptions();
-			    this.goalDelimeter.prettyPrintVecInt(currentAssumptions);
 			}else{
 			    Log.comment(2, "There was no expansion");
 			    goOn = false;
