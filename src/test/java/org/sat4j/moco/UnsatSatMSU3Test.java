@@ -24,7 +24,6 @@ public class UnsatSatMSU3Test extends algorithmTest<UnsatSatMSU3> {
     @Override
     public UnsatSatMSU3 instateAlgorithm(){
 	return new UnsatSatMSU3(this.moco, "");
-
     }
 
 }
