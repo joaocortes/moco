@@ -18,7 +18,7 @@
  *
  * Contributors:
  *   CRIL - initial API and implementation
- *   Miguel Terra-Neves, Ines Lynce and Vasco Manquinho - MOCO solver
+ *   João Cortes, Ines Lynce and Vasco Manquinho - MOCO solver
  *******************************************************************************/
 package org.sat4j.moco;
 
