@@ -103,7 +103,8 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
      */
     public boolean isX(int literal){
 	int id = this.solver.idFromLiteral(literal);
-	if(id < this.firstVariable)
+	//TODO: the 1 is the constant literal, that the solver creates.
+	if(id < this.firstVariable - 1)
 	    return true;
 	return false;
     }
