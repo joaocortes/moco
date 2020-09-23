@@ -950,17 +950,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
     public IVecInt generateUpperBoundAssumptions(){
 
 	IVecInt assumptions = new VecInt(new int[]{});
-	
-	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
-	    int IthUpperBound = this.nextKDValue(iObj, getUpperKD(iObj));
-	    Objective ithObjective = this.instance.getObj(iObj);
-	    if(getUpperKD(iObj)  != IthUpperBound){
-		int newY = -this.getY(iObj, IthUpperBound);
-		if(newY!=0)
-		    assumptions.push(newY);
-	    }
-	}
-	if(!MSU3)
+
 	    for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
 		int IthUpperBound = this.nextKDValue(iObj, getUpperKD(iObj));
 		Objective ithObjective = this.instance.getObj(iObj);
@@ -969,6 +959,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		    if(newY!=0)
 			assumptions.push(newY);
 		}
+
 		ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
 		ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
 		int sign;
@@ -980,7 +971,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		    sign = (ithAbsoluteWeight > 0? 1 : -1);
 		    ithAbsoluteWeight *= sign;
 		    if(ithAbsoluteWeight > getUpperKD(iObj))
-			assumptions.push(-sign * ithX);
+			if(this.coveredLiterals.get(-sign * ithX) == null)
+			    assumptions.push(-sign * ithX);
 		}
 
 	    }
