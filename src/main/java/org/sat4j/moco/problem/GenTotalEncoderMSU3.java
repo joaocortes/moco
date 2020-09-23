@@ -1045,11 +1045,11 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    change = this.bindFreshSubTree(iObj, this.getUpperBound(iObj)) || change;
 	}
 
-	this.updateAllUncoveredMaxKD();
-	this.logUncoveredMaxKD();
 	int[] explanationXarray = explanationX.toArray();
 	for(int x : explanationXarray)
 	    this.coveredLiterals.remove(x);
+	this.updateAllUncoveredMaxKD();
+	this.logUncoveredMaxKD();
 	// Log.comment(5, "}");
 	return change;
     }
