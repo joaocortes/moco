@@ -158,7 +158,14 @@ import org.sat4j.moco.util.Real;
         validateResult(result, objs, front_sols, front_costs);
     }
     
-    @Test
+    
+     /**
+      * 2  x1 +1 x2   maxkD: 3
+      * 2 -x2 +3 x3   maxKD: 5
+      * -1 x2 -1 x3   maxKD: 2
+      */
+
+     @Test
     public void testTriObjective() {
         LinearObj other_obj1 = new LinearObj(new VecInt(new int[] { -2, 3 }),
                                              new Vec<Real>(new Real[] { new Real(2), new Real(2) }));
