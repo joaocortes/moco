@@ -9,7 +9,7 @@
     (with-current-buffer  joc-moco-test-buffer (insert (concat minimal "\n")))
     (compile
      (concat
-      "cd ../;java -jar  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "
+      "java -jar  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar "
       minimal
       " -alg 1"))))
 (defun joc-moco-test-run-bugs-starter ()
