@@ -56,23 +56,17 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
 
     //TODO: this is to be put in the goalManager
 
-	/**
-	 *Max uncovered KD value
-	 */
-    protected int maxUncoveredKD = 0;
-
     /**
      * Upper bound, exclusive
      */
     private int[] UpperBound = null;
 
-    private int getUpperBound(int iObj){
+    protected int getUpperBound(int iObj){
 	return this.UpperBound[iObj];
     }
 
-    protected boolean uncoverXs(IVecInt explanationX) {
+     boolean uncoverXs(IVecInt explanationX) {
 	// Log.comment(5, "{ UnsatSatMSU3.uncoverXs");
-	int[] explanationXarray = explanationX.toArray();
 	for(int i = 0, n = explanationX.size(); i< n; i++)
 	    this.coveredLiterals.remove(explanationX.get(i));
 	this.updateAllUncoveredMaxKD();
@@ -96,9 +90,8 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
 		if(coveredLiterals.get(-sign * ithX) == null)
 		    a += ithAbsoluteWeight;
 	    }
-	    this.setMaxUncoveredKD(a);
+	    this.setMaxUncoveredKD(iObj, a);
 	}
-    public void setMaxUncoveredKD(int a){this.maxUncoveredKD = a;}
     abstract void updateAllUncoveredMaxKD();
 
     public void logUncoveredMaxKD(){
@@ -112,6 +105,7 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
     }
 
     abstract public int getUncoveredMaxKD(int iObj);
+    abstract public void setMaxUncoveredKD(int iObj, int a);
 
 
 
