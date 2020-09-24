@@ -404,12 +404,24 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	public boolean pushNewLeafs(IVecInt litsToAdd, boolean invertLits){
 	    boolean alreadyHere = false;
 	    for(int i = 0, n = litsToAdd.size(); i < n; i++){
-		int lit = litsToAdd.get(i);
+		int lit = litsToAdd.get(i), lit1 = 0;
 		Real weight = instance.getObj(iObj).getSubObj(0).weightFromLit(lit);
+		if(invertLits){
+		    lit1 = lit;
+		    if(weight==null){
+			weight = instance.getObj(iObj).getSubObj(0).weightFromLit(-lit);
+			lit1 = -lit;
+		    }		    
+		}
 		if(weight!=null){
-		    int sign = weight.asInt() > 0 ? 1 : -1;
-		    if(invertLits)
-			lit = - sign * lit;
+		    if(invertLits){
+			int sign = 1;
+			if(weight.asInt() < 0) sign = -1;
+			if(lit != - sign * lit1 )
+			    continue;
+			else
+			    lit = lit1;
+	    }
 		    alreadyHere= this.isLeafAlreadyHere(lit);
 		    if(!alreadyHere){
 			Node node =  new Node(weight.asIntExact(), lit);
@@ -418,6 +430,9 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		    }
 		}
 	    }
+	    
+
+
 	    return this.unlinkedNodes.size()!=0;
 	}
 	/**
