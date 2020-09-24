@@ -405,7 +405,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    boolean alreadyHere = false;
 	    for(int i = 0, n = litsToAdd.size(); i < n; i++){
 		int lit = litsToAdd.get(i);
-		int id = solver.idFromLiteral(lit);
 		Real weight = instance.getObj(iObj).getSubObj(0).weightFromLit(lit);
 		if(weight!=null){
 		    int sign = weight.asInt() > 0 ? 1 : -1;
