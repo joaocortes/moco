@@ -51,12 +51,15 @@ import org.sat4j.specs.IVecInt;
 
 public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex> {
 
+
     private ObjManager[] objManagers;
     private int[][] yTable = null;
+    private int[] uncoveredMaxKD = null;
 
     public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit) {
 	super(instance, solver);
 	this.instance = instance;
+	this.uncoveredMaxKD = new int[this.instance.nObjs()];
 	this.objManagers = new ObjManager[this.instance.nObjs()];
 	this.initializeYTable();
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
