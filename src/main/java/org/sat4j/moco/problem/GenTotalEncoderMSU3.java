@@ -406,7 +406,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    for(int i = 0, n = litsToAdd.size(); i < n; i++){
 		int lit = litsToAdd.get(i);
 		int id = solver.idFromLiteral(lit);
-		Real weight = instance.getObj(iObj).getSubObj(0).weightFromId(id);
+		Real weight = instance.getObj(iObj).getSubObj(0).weightFromLit(lit);
 		if(weight!=null){
 		    int sign = weight.asInt() > 0 ? 1 : -1;
 		    if(invertLits)
@@ -1010,7 +1010,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    if(this.isX(id)){
 		currentExplanationX.push(lit);
 		for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
-		    if(this.instance.getObj(iObj).getSubObj(0).weightFromId(id) != null)
+		    if(this.instance.getObj(iObj).getSubObj(0).weightFromLit(id) != null)
 			objectivesToChange.put(iObj, null);
 		}
 	    }
