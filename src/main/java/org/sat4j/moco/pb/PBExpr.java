@@ -45,7 +45,7 @@ public class PBExpr {
     /**
      * Map ids to weights.
      */
-    private Map<Integer, Real> IdsToWeight = null;
+    private Map<Integer, Real> litsToWeight = null;
     
 
     /**
@@ -61,10 +61,11 @@ public class PBExpr {
     public PBExpr(IVecInt lits, IVec<Real> coeffs) {
         this.lits = new ReadOnlyVecInt(lits);
         this.coeffs = new ReadOnlyVec<Real>(coeffs);
-	this.IdsToWeight = new HashMap<Integer, Real>();
+	this.litsToWeight = new HashMap<Integer, Real>();
         assert(this.lits.size() == this.coeffs.size());
-	for(int iLit = 0;  iLit < lits.size();iLit++)
-	    this.IdsToWeight.put(this.lits.get(iLit), this.coeffs.get(iLit));
+	for(int iLit = 0, n = lits.size();  iLit < n ;iLit++){
+	    this.litsToWeight.put(this.lits.get(iLit), this.coeffs.get(iLit));
+	}
     }
     
     /**
@@ -133,8 +134,8 @@ public class PBExpr {
     /**
      * Get the weight given the literal id
      */
-    public Real weightFromId(int id){
-	Real weight = this.IdsToWeight.get(id);
+    public Real weightFromLit(int id){
+	Real weight = this.litsToWeight.get(id);
 	return weight;
 }
 
