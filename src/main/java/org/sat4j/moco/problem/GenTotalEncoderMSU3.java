@@ -295,7 +295,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    private int nodeSum = 0;
 	    private Node left = null;
 	    private Node right = null;
-	    private int leafID = 0;
+	    private int leafLit = 0;
 	    private int nodeName = 0;
 	    
 	    public Node(){
@@ -314,8 +314,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		this.nodeSum = sign * weight;
 		this.left = null; 
 		this.right = null;
-		this.leafID = sign * X;
-		// this.nodeVars.add(this.nodeSum, leafID, false, false);
+		this.leafLit = sign * X;
+		// this.nodeVars.add(this.nodeSum, leafLit, false, false);
 		
 
 
@@ -328,7 +328,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		this.nodeSum = left.nodeSum + right.nodeSum;
 	    }
 	    public boolean isLeaf(){
-		return this.leafID!=0;
+		return this.leafLit!=0;
 	    }
 
 	}
@@ -388,9 +388,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	public boolean isLeafAlreadyHere(int lit){
 	    boolean alreadyHere = false;
 	    for(Node node: this.nodes){
-		int leafIdTrue = solver.idFromLiteral(node.leafID);
-		int xId = solver.idFromLiteral(lit);
-		if(leafIdTrue == xId){
+		int leaflitTrue = node.leafLit;
+		if(leaflitTrue == lit){
 		    alreadyHere = true;
 		    break;
 		}
@@ -415,7 +414,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 		    alreadyHere= this.isLeafAlreadyHere(lit);
 		    if(!alreadyHere){
 			Node node =  new Node(weight.asIntExact(), lit);
-			// Log.comment(5, "new leaf: "+ node.leafID);
+			// Log.comment(5, "new leaf: "+ node.leafLit);
 			this.unlinkedNodes.add(node);
 		    }
 		}
@@ -437,8 +436,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    int leafsN = 0;
 	    double expectedDepth = 0;
 	    for(Node node: this.nodes){
-		int leafIdTrue = solver.idFromLiteral(node.leafID);
-		if(leafIdTrue != 0){
+		int leaflitTrue = solver.idFromLiteral(node.leafLit);
+		if(leaflitTrue != 0){
 		    leafsN++;
 		}
 		expectedDepth = Math.log(leafsN)/Math.log(2);
@@ -802,7 +801,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
 	    if(sumTree.olderUpperLimit < currentNode.nodeSum &&  currentNode.nodeSum <= sumTree.upperLimit){
 		nodeVar = currentNode.nodeVars.addOrRetrieve(currentNode.nodeSum);
 		if((nodeVar != null) && nodeVar.iAmFresh){
-		    AddClause(new VecInt(new int[]{-currentNode.leafID, nodeVar.getId()}));
+		    AddClause(new VecInt(new int[]{-currentNode.leafLit, nodeVar.getId()}));
 		    // Log.comment(5, "}");
 		    return true;
 		}
