@@ -49,7 +49,7 @@ import org.sat4j.specs.IVecInt;
  * @author Joao O'Neill Cortes
  */
 
-public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex> {
+public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDIndex> {
 
 
     private ObjManager[] objManagers;
@@ -202,17 +202,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    return baseInputs;
 
 	}
-	public int getNextValidRoof(int upperLimit){
-	    DigitalNumber digits = this.getDigitalEnv().toDigital(upperLimit);
-	    int basesN = this.getDigitalEnv().getBasesN();
-	    for(int digit: digits)
-		System.out.println(digit);
-	    int MSDigit = this.getDigitalEnv().getMSB(digits);
-	    int MSRange = this.digitalEnv.getRatio(this.getDigitalEnv().getBasesN());
-	    assert(MSDigit <= MSRange - 1);
-	    int MSBase = this.getDigitalEnv().getBase(basesN - 1);
-	    return MSBase * (MSDigit + 1);
-	}
+
+
 	public DigitalEnv getDigitalEnv(){return this.digitalEnv;}
 	public Circuit getCircuit(){return this.circuit;}
 	public int digitalLiteral(int base, int value){
