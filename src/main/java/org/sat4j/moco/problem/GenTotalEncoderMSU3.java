@@ -77,10 +77,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
     private int[] upperKD = null;
 
 
-    /**
-     *signals that the MSU3 flavour is active
-     */
-    private boolean MSU3 = false;
 
     private int getUpperBound(int iObj){
 	return this.UpperBound[iObj];
