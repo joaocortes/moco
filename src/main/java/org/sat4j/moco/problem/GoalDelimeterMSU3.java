@@ -49,7 +49,6 @@ import org.sat4j.specs.IVecInt;
  * @author Joao O'Neill Cortes
  */
 
-
 public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> extends GoalDelimeter<PIndex>{
     private HashMap<Integer, Boolean> coveredLiterals = null;
     boolean change = false;
@@ -58,6 +57,7 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
      *signals that the MSU3 flavour is active
      */
     protected boolean MSU3 = false;
+
     //TODO: this is to be put in the goalManager
 
     /**
@@ -82,6 +82,7 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
 	// Log.comment(5, "}");
 	return change;
     }
+
     //TODO: this must be put inside a goalManager. 
 	public void updateUncoveredMaxKD(int iObj){
 	    int a = 0;
@@ -100,7 +101,11 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
 	    }
 	    this.setMaxUncoveredKD(iObj, a);
 	}
-    abstract void updateAllUncoveredMaxKD();
+    public void updateAllUncoveredMaxKD(){
+	for(int i = 0, n = this.getInstance().nObjs(); i < n; i++)
+	    this.updateUncoveredMaxKD(i);
+
+};
 
     public void logUncoveredMaxKD(){
 	String logUpperLimit = "uncovered max: ["+this.getUncoveredMaxKD(0);
@@ -115,6 +120,45 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
     abstract public int getUncoveredMaxKD(int iObj);
     abstract public void setMaxUncoveredKD(int iObj, int a);
 
+    public IVecInt generateUpperBoundAssumptions(){
+
+	IVecInt assumptions = new VecInt(new int[]{});
+
+	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
+	    int IthUpperBound = this.nextKDValue(iObj, getUpperKD(iObj));
+	    Objective ithObjective = this.instance.getObj(iObj);
+	    if(this.getUpperKD(iObj)  != IthUpperBound){
+		int newY = -this.getY(iObj, IthUpperBound);
+		if(newY!=0)
+		    assumptions.push(newY);
+	    }
+
+	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
+	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
+	    int sign;
+	    int ithAbsoluteWeight;
+
+	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
+		int ithX = objectiveLits.get(iX);
+		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
+		sign = (ithAbsoluteWeight > 0? 1 : -1);
+		ithAbsoluteWeight *= sign;
+		if(ithAbsoluteWeight > getUpperKD(iObj))
+		    if(this.coveredLiterals.get(-sign * ithX) == null)
+			assumptions.push(-sign * ithX);
+	    }
+
+	}
 
 
+	if(this.MSU3)
+	    for(Integer x: this.coveredLiterals.keySet())
+		assumptions.push(x);
+	
+	Log.comment(2, "assumptions:");
+	this.prettyPrintVecInt(assumptions);
+	return assumptions;
+    }
+    abstract public int nextKDValue(int iObj, int kD);
+    abstract public int getUpperKD(int iObj);
 }
