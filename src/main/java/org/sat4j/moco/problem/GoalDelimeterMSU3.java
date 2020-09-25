@@ -54,6 +54,10 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
     private HashMap<Integer, Boolean> coveredLiterals = null;
     boolean change = false;
 
+    /**
+     *signals that the MSU3 flavour is active
+     */
+    protected boolean MSU3 = false;
     //TODO: this is to be put in the goalManager
 
     /**
