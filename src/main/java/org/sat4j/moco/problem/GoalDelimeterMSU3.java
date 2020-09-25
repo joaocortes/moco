@@ -65,6 +65,10 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
      */
     private int[] UpperBound = null;
 
+    public GoalDelimeterMSU3(Instance instance, PBSolver solver){
+	super(instance, solver);
+}
+
     protected int getUpperBound(int iObj){
 	return this.UpperBound[iObj];
     }
