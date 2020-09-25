@@ -901,28 +901,7 @@ public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDI
 	return literal + " ";
     }
 
-    /**
-     * Generate the upper limit assumptions
-     */
-    public IVecInt generateUpperBoundAssumptions(int[] UpperKD){
 
-	IVecInt assumptions = new VecInt(new int[]{});
-	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
-	    Objective ithObjective = this.instance.getObj(iObj);
-	    if(UpperKD[iObj]  < ithObjective.getWeightDiff())
-		assumptions.push(-this.getY(iObj, UpperKD[iObj] + 1));
-	    
-	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
-	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
-	    int sign = 1;
-	    int ithAbsoluteWeight;
-	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
-		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
-		sign = (ithAbsoluteWeight > 0? 1 : -1);
-		ithAbsoluteWeight *= sign;
-		if( ithAbsoluteWeight > UpperKD[iObj])
-		    assumptions.push(- sign * objectiveLits.get(iX));
-	    }
 
 	}
 
