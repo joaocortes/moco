@@ -51,6 +51,10 @@ import org.sat4j.specs.IVecInt;
 
 public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDIndex> {
 
+    /**
+     * Last explored differential k, for each objective function.
+     */
+    private int[] upperKD = null;
 
     private ObjManager[] objManagers;
     private int[][] yTable = null;
@@ -901,16 +905,33 @@ public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDI
 	return literal + " ";
     }
 
-
-
-	}
-
-	return assumptions;
-    }
-
     public int unaryToIndex(int kD){
 	return kD  - 1;
 
+    }
+
+	@Override
+	public int getUncoveredMaxKD(int iObj) {
+	    return this.uncoveredMaxKD[iObj];
+	}
+
+	@Override
+	public void setMaxUncoveredKD(int iObj, int a) {
+	    this.uncoveredMaxKD[iObj] = a;
+	}
+
+	@Override
+	public int nextKDValue(int iObj, int kD) {
+	    if(kD < this.getUncoveredMaxKD(iObj))
+		return  kD + 1;
+	    if(kD == this.getUncoveredMaxKD(iObj))
+		return kD;
+	    else return -1;
+	}
+
+
+    public int getUpperKD(int iObj){
+	return this.upperKD[iObj];
     }
 
 }
