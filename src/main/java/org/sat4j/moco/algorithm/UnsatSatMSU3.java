@@ -97,7 +97,7 @@ public class UnsatSatMSU3 extends algorithm {
 
 	switch(encodingGD){
 	case "SD":
-	    this.goalDelimeter = new SelectionDelimeter(m, solver);
+	    this.goalDelimeter = new SelectionDelimeter(m, solver, true, MSU3);
 	    break;
 	// case "GTE":	    
 	//     this.goalDelimeter = new GenTotalEncoderMSU3(m, solver, MSU3);
