@@ -44,10 +44,11 @@ abstract public class  algorithm{
     public void transferSubResult() {
 	if(this.subResult == null)
 	    return;
-	if(this.subResult != this.result)
+	if(this.subResult != this.result){
 	    for(int i = 0; i < this.subResult.nSolutions(); ++i)
 		this.result.addSolutionUnsafe(this.subResult.getSolution(i));
-	this.subResult.clearPopulation();
+	    this.subResult.clearPopulation();
+	}
     }
 
     abstract public void prettyPrintVecInt(IVecInt vecInt, boolean clausing);
