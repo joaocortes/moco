@@ -56,8 +56,8 @@ public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDI
     private int[][] yTable = null;
     private int[] uncoveredMaxKD = null;
 
-    public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit) {
-	super(instance, solver);
+    public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit, boolean MSU3) {
+	super(instance, solver, MSU3);
 	this.instance = instance;
 	this.uncoveredMaxKD = new int[this.instance.nObjs()];
 	this.objManagers = new ObjManager[this.instance.nObjs()];
