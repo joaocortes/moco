@@ -194,9 +194,9 @@ public class UnsatSatMSU3 extends algorithm {
     /**
      * Generate the upper limit assumptions
      */
-    public IVecInt generateUpperBoundAssumptions(IVecInt explanation ){
+    public IVecInt generateUpperBoundAssumptions(IVecInt explanation, boolean checkChange ){
 	IVecInt assumptions = new VecInt(new int[]{});
-	assumptions = this.goalDelimeter.generateUpperBoundAssumptions(explanation);
+	assumptions = this.goalDelimeter.generateUpperBoundAssumptions(explanation, checkChange);
 	return assumptions;
     }
 
