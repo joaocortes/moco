@@ -926,9 +926,21 @@ public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDI
 	}
 
 
-    public int getUpperKD(int iObj){
-	return this.upperKD[iObj];
-    }
+	@Override
+	public int getMaxUncoveredKD(int iObj) {
+	    return this.uncoveredMaxKD[iObj];
+	}
+
+	@Override
+	public int generateNext(int iObj, int kD, int inclusiveMax) {
+	    if(kD < inclusiveMax)
+		return kD +1;
+	    if(kD == inclusiveMax)
+		return kD;
+		return 0;
+	}
+
+
 
 }
 
