@@ -51,10 +51,6 @@ import org.sat4j.specs.IVecInt;
 
 public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDIndex> {
 
-    /**
-     * Last explored differential k, for each objective function.
-     */
-    private int[] upperKD = null;
 
     private ObjManager[] objManagers;
     private int[][] yTable = null;
