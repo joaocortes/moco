@@ -125,10 +125,12 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
     abstract public int getUncoveredMaxKD(int iObj);
     abstract public void setMaxUncoveredKD(int iObj, int a);
 
-    public IVecInt generateUpperBoundAssumptions(){
-
+    public IVecInt generateUpperBoundAssumptions(IVecInt explanation, boolean checkChange){
+	if(!this.preAssumptionsExtend(explanation) & checkChange)
+	    return null;
+	
 	IVecInt assumptions = new VecInt(new int[]{});
-
+	
 	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
 	    int IthUpperBound = this.nextKDValue(iObj, getUpperKD(iObj));
 	    Objective ithObjective = this.instance.getObj(iObj);
