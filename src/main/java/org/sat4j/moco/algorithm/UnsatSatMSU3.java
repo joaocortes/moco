@@ -35,7 +35,12 @@ import org.sat4j.moco.analysis.SubResult;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
+import org.sat4j.moco.problem.SelectionDelimeter;
+import org.sat4j.moco.problem.SeqEncoder;
+import org.sat4j.moco.problem.GenTotalEncoder;
 import org.sat4j.moco.problem.GenTotalEncoderMSU3;
+import org.sat4j.moco.problem.GoalDelimeter;
+import org.sat4j.moco.problem.GoalDelimeterMSU3;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
@@ -54,7 +59,7 @@ public class UnsatSatMSU3 extends algorithm {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private GenTotalEncoderMSU3 goalDelimeter = null;
+    private GoalDelimeter<?> goalDelimeter = null;
 
     /**
      * Last explored differential k, for each objective function.
@@ -89,9 +94,22 @@ public class UnsatSatMSU3 extends algorithm {
             // Log.comment(3, "Contradiction in ParetoMCS.buildSolver");
             return;
         }
+
+	switch(encodingGD){
+	case "SD":
+	    this.goalDelimeter = new SelectionDelimeter(m, solver);
+	    break;
+	case "GTE":	    
+	    this.goalDelimeter = new GenTotalEncoderMSU3(m, solver, MSU3);
+	    break;
+	// case "SWC":
+	//     this.goalDelimeter = new SeqEncoder(m, solver);
+	// default:
+	//     this.goalDelimeter = new SeqEncoder(m, solver);
+	//     break;
+	}
 	
 	this.realVariablesN = this.solver.nVars();
-	this.goalDelimeter = new GenTotalEncoderMSU3(this.problem,this.solver, this.MSU3);
     }
 
     public UnsatSatMSU3(Instance m, String encodingGD) {
