@@ -156,7 +156,9 @@ public class UnsatSatMSU3 extends algorithm {
 		    }else{
 			currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation, true);
 			this.logUpperLimit();
-			// if currentAssumptions are null, then the attainable domain did was not expanded and there is no need to keep going 
+			// if currentAssumptions are null, then the
+			// attainable domain did was not expanded and
+			// there is no need to keep goind
 			if(currentAssumptions == null){
 			}else{
 			    Log.comment(2, "There was no expansion");
