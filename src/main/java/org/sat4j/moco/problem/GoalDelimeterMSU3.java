@@ -50,7 +50,6 @@ import org.sat4j.specs.IVecInt;
  */
 
 public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> extends GoalDelimeter<PIndex>{
-    private HashMap<Integer, Boolean> coveredLiterals = null;
     boolean change = false;
 
     /**
@@ -70,8 +69,17 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
      */
     private int[] UpperBound = null;
 
-    public GoalDelimeterMSU3(Instance instance, PBSolver solver){
+    private HashMap<Integer, Boolean> coveredLiterals = null;
+
+    public GoalDelimeterMSU3(Instance instance, PBSolver solver, boolean MSU3){
 	super(instance, solver);
+	this.MSU3 = MSU3;
+	this.UpperBound = new int[this.instance.nObjs()];
+	this.upperKD = new int[this.instance.nObjs()];
+	if(MSU3)
+	    this.coveredLiterals = new HashMap<Integer, Boolean>(this.solver.nVars());
+	else
+	    this.coveredLiterals = new HashMap<Integer, Boolean>(0);
 }
 
     protected int getUpperBound(int iObj){
@@ -166,6 +174,82 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
 	this.prettyPrintVecInt(assumptions);
 	return assumptions;
     }
+    /**
+     *If necessary for the construction of the current assumptions,
+     *initialize more of the domain of the goal delimeter
+     */
+
+    public boolean preAssumptionsExtend(IVecInt currentExplanation){
+	Log.comment(2, "explanation: ");
+	this.prettyPrintVecInt(currentExplanation);
+	boolean change = false;
+	// Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
+	IVecInt currentExplanationX = new VecInt(new int[] {});
+	HashMap<Integer,Boolean> objectivesToChange = new HashMap<Integer, Boolean>(this.instance.nObjs());
+	for(int lit: currentExplanation.toArray()){
+	    int id = this.solver.idFromLiteral(lit);
+	    if(this.isX(id)){
+		currentExplanationX.push(lit);
+		for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
+		    if(this.instance.getObj(iObj).getSubObj(0).weightFromLit(id) != null)
+			objectivesToChange.put(iObj, null);
+		}
+	    }
+	    else
+		objectivesToChange.put(this.getIObjFromY(id), null);
+
+	}
+	change = this.uncoverXs(currentExplanationX);
+	for(int iObj :objectivesToChange.keySet()){
+	    // Log.comment(3, "changing upperlimit " + iObj);
+	    int upperKDBefore = this.getUpperKD(iObj);
+ 	    if(this.getUpperKD(iObj) == this.getUpperBound(iObj))
+		this.generateNext(iObj,this.getUpperKD(iObj), this.getMaxUncoveredKD(iObj));
+	    this.setUpperKD(iObj, this.nextKDValue(iObj, this.getUpperKD(iObj)));
+	    if(this.getUpperKD(iObj) >= this.getUpperBound(iObj))
+		this.generateNext(iObj, this.getUpperKD(iObj), this.getMaxUncoveredKD(iObj));
+	    this.setUpperBound(iObj, this.nextKDValue(iObj, this.getUpperKD(iObj)));
+	    if(this.getUpperKD(iObj)!= upperKDBefore)
+		change = true;
+	}
+	return change;
+
+    }
     abstract public int nextKDValue(int iObj, int kD);
-    abstract public int getUpperKD(int iObj);
+
+    private void setUpperKD(int iObj, int newKD){
+	if(this.getUpperKD(iObj)< newKD)
+	    this.upperKD[iObj] = newKD;
+    }
+    abstract public int getMaxUncoveredKD(int iObj);
+    abstract public int generateNext(int iObj, int kD, int inclusiveMax);
+
+
+
+    /**
+     *Sets the current upper bound of iObj to nowKD
+     *@param newKD
+     *@param iObj
+     */
+    private void setUpperBound(int iObj, int newKD){
+	    this.UpperBound[iObj] = newKD;
+    }
+
+    public int getUpperKD(int iObj){
+	return this.upperKD[iObj];
+    }
+    /**
+     *Log the current upperBound
+     */
+
+    public void logUpperBound()    {
+	String logUpperLimit = "diff upper bound: ["+this.getUpperBound(0);
+	for(int iObj = 1; iObj < this.instance.nObjs(); ++iObj)
+	    logUpperLimit +=", "+this.getUpperBound(iObj) ;//+ this.instance.getObj(iObj).getMinValue())
+	//..log
+	
+	logUpperLimit +="]";
+	Log.comment(2, logUpperLimit );
+    }
+
 }
