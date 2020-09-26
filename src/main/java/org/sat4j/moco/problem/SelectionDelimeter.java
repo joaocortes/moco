@@ -100,7 +100,7 @@ public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDI
 	}
     }
     public SelectionDelimeter(Instance instance, PBSolver solver) {
-	this(instance, solver, true);
+	this(instance, solver, true, false);
 
     }
 
