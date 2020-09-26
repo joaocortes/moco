@@ -74,16 +74,6 @@ public class Launcher {
          * Logs the current result obtained by the solver.
          */
         public void run() {
-	    // int i = 0;
-	    // while(i<10){
-	    // 	i++;
-	    // 	try{
-	    // 	    TimeUnit.SECONDS.sleep(1);
-	    // 	}catch (InterruptedException e) {
-	    // 	    Log.comment("cucu");
-	    // 	}
-	    // 	Log.comment("" + i);
-	    // }
             this.solver.transferSubResult();
 	    this.solver.printFlightRecord();
             logResult(this.solver.getResult());
