@@ -54,6 +54,11 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
     boolean change = false;
 
     /**
+     * Last explored differential k, for each objective function.
+     */
+    protected int[] upperKD = null;
+
+    /**
      *signals that the MSU3 flavour is active
      */
     protected boolean MSU3 = false;
