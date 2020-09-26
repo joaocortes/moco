@@ -76,11 +76,28 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
 	this.MSU3 = MSU3;
 	this.UpperBound = new int[this.instance.nObjs()];
 	this.upperKD = new int[this.instance.nObjs()];
-	if(MSU3)
+	if(MSU3){
 	    this.coveredLiterals = new HashMap<Integer, Boolean>(this.solver.nVars());
-	else
+	    for(int iObj = 0, nObj = this.instance.nObjs();iObj < nObj; iObj++){
+		Objective ithObjective = this.instance.getObj(iObj);
+		ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
+		ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
+		int sign = 1;
+		int ithAbsoluteWeight;
+		for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
+		    int ithX = objectiveLits.get(iX);
+		    ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
+		    sign = (ithAbsoluteWeight > 0? 1 : -1);
+		    ithAbsoluteWeight *= sign;
+		    this.coveredLiterals.putIfAbsent(-sign * ithX, true);
+		}
+	    }
+	}else
 	    this.coveredLiterals = new HashMap<Integer, Boolean>(0);
-}
+
+	 
+
+    }
 
     protected int getUpperBound(int iObj){
 	return this.UpperBound[iObj];
