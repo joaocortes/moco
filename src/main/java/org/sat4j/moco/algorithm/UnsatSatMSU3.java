@@ -131,10 +131,11 @@ public class UnsatSatMSU3 extends algorithm {
 
 	boolean goOn = true;
 	boolean goOn1 = true;
-	currentAssumptions = this.goalDelimeter.generateUpperBoundAssumptions();
+	this.generateUpperBoundAssumptions(currentExplanation);
 	this.logUpperLimit();
 	while(goOn){
-	    solver.check(currentAssumptions);
+	    if(currentAssumptions != null)
+		solver.check(currentAssumptions);
 	    if(goOn1 && solver.isSat()){
 		this.subResult.saveModel(this.solver);
 		Log.comment("model:");
@@ -154,12 +155,10 @@ public class UnsatSatMSU3 extends algorithm {
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
-			if(MSU3)
-			    this.goalDelimeter.reportUnbalances();
-			boolean change = this.goalDelimeter.preAssumptionsExtend(currentExplanation);
+			currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation);
 			this.logUpperLimit();
-			if(change){
-			    currentAssumptions = this.generateUpperBoundAssumptions();
+			// if currentAssumptions are null, then the attainable domain did was not expanded and there is no need to keep going 
+			if(currentAssumptions == null){
 			}else{
 			    Log.comment(2, "There was no expansion");
 			    goOn = false;
@@ -195,9 +194,9 @@ public class UnsatSatMSU3 extends algorithm {
     /**
      * Generate the upper limit assumptions
      */
-    public IVecInt generateUpperBoundAssumptions( ){
+    public IVecInt generateUpperBoundAssumptions(IVecInt explanation ){
 	IVecInt assumptions = new VecInt(new int[]{});
-	assumptions = this.goalDelimeter.generateUpperBoundAssumptions();
+	assumptions = this.goalDelimeter.generateUpperBoundAssumptions(explanation);
 	return assumptions;
     }
 
