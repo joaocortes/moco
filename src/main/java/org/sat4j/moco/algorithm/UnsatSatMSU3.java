@@ -59,7 +59,7 @@ public class UnsatSatMSU3 extends algorithm {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private GoalDelimeter<?> goalDelimeter = null;
+    private GoalDelimeterMSU3<?> goalDelimeter = null;
 
     /**
      * Last explored differential k, for each objective function.
@@ -99,9 +99,9 @@ public class UnsatSatMSU3 extends algorithm {
 	case "SD":
 	    this.goalDelimeter = new SelectionDelimeter(m, solver);
 	    break;
-	case "GTE":	    
-	    this.goalDelimeter = new GenTotalEncoderMSU3(m, solver, MSU3);
-	    break;
+	// case "GTE":	    
+	//     this.goalDelimeter = new GenTotalEncoderMSU3(m, solver, MSU3);
+	//     break;
 	// case "SWC":
 	//     this.goalDelimeter = new SeqEncoder(m, solver);
 	// default:
