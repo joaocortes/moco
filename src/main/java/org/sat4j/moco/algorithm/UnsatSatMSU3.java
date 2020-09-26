@@ -131,11 +131,10 @@ public class UnsatSatMSU3 extends algorithm {
 
 	boolean goOn = true;
 	boolean goOn1 = true;
-	this.generateUpperBoundAssumptions(currentExplanation);
+	currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation, false);
 	this.logUpperLimit();
 	while(goOn){
-	    if(currentAssumptions != null)
-		solver.check(currentAssumptions);
+	    solver.check(currentAssumptions);
 	    if(goOn1 && solver.isSat()){
 		this.subResult.saveModel(this.solver);
 		Log.comment("model:");
@@ -155,7 +154,7 @@ public class UnsatSatMSU3 extends algorithm {
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
-			currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation);
+			currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation, true);
 			this.logUpperLimit();
 			// if currentAssumptions are null, then the attainable domain did was not expanded and there is no need to keep going 
 			if(currentAssumptions == null){
