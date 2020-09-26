@@ -77,6 +77,10 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
     private int[] upperKD = null;
 
 
+    /**
+     *signals that the MSU3 flavour is active
+     */
+    private boolean MSU3 = false;
 
     private int getUpperBound(int iObj){
 	return this.UpperBound[iObj];
@@ -1100,19 +1104,6 @@ private void updateAllUncoveredMaxKD(){
 	if(this.getUpperKD(iObj)< newKD)
 	    this.upperKD[iObj] = newKD;
     }
-    /**
-     *Log the current upperBound
-     */
-
-    public void logUpperBound()    {
-	String logUpperLimit = "diff upper bound: ["+this.getUpperBound(0);
-	for(int iObj = 1; iObj < this.instance.nObjs(); ++iObj)
-	    logUpperLimit +=", "+this.getUpperBound(iObj) ;//+ this.instance.getObj(iObj).getMinValue())
-	//..log
-	
-	logUpperLimit +="]";
-	Log.comment(2, logUpperLimit );
-    }
 
     /**
      *Log the current uncovered max values
@@ -1136,4 +1127,5 @@ private void updateAllUncoveredMaxKD(){
     public int getUncoveredMaxKD(int iObj){return this.sumTrees[iObj].getMaxUncoveredKD();}
     public void setMaxUncoveredKDs(int iObj, int a){this.sumTrees[iObj].setMaxUncoveredKD(a);}
     public void updateUncoveredMaxKD(int iObj){this.sumTrees[iObj].updateUncoveredMaxKD();}
+
 }
