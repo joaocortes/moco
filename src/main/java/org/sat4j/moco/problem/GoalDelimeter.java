@@ -94,6 +94,7 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
      * Generate the upper limit assumptions
      */
     public IVecInt generateUpperBoundAssumptions(){return null;};
+    public IVecInt generateUpperBoundAssumptions(IVecInt explanation){return null;};
     public IVecInt generateUpperBoundAssumptions(int[] upperKD){return null;};
 
 ;
@@ -189,4 +190,5 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
 	return true;
     }
 
+    public boolean preAssumptionsExtend(IVecInt currentExplanation){return true;};
 }
