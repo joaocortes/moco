@@ -413,10 +413,13 @@ public class PBSolver {
      */
     public void printStats(){
 	PrintWriter writer = new PrintWriter(System.out);
-	writer.println("c constraints: " + this.solver.nConstraints());
-	writer.println("c constraints(mine): " + this.solver.nConstraints());
-	writer.println("c Variables: " + this.solver.nVars());
-	this.solver.printStat(writer);
+	writer.print("c constraints: " + this.solver.nConstraints());
+	
+	writer.print(", variables: " + this.solver.nVars());
+	int decisions = this.solver.getStat().get("decisions").intValue();
+	writer.print(", decisions: " + decisions);
+	int propagations = this.solver.getStat().get("propagations").intValue();
+	writer.print(", propagations: " + propagations + "\n");
 	writer.flush();
 
     }
