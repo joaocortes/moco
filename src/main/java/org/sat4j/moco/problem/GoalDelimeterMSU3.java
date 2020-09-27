@@ -143,7 +143,7 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
 	    logUpperLimit +=", "+this.getUncoveredMaxKD(iObj) ;//+ this.instance.getObj(iObj).getMinValue())
 	//..log
 	
-	logUpperLimit +="]";
+	logUpperLimit +="]" + ", covered literals: " + this.coveredLiterals.size();
 	Log.comment(2, logUpperLimit );
     }
 
@@ -187,8 +187,6 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
 	    for(Integer x: this.coveredLiterals.keySet())
 		assumptions.push(x);
 	
-	Log.comment(2, "assumptions:");
-	this.prettyPrintVecInt(assumptions);
 	return assumptions;
     }
     /**
@@ -197,8 +195,8 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
      */
 
     public boolean preAssumptionsExtend(IVecInt currentExplanation){
-	Log.comment(2, "explanation: ");
-	this.prettyPrintVecInt(currentExplanation);
+	// Log.comment(2, "explanation: ");
+	// this.prettyPrintVecInt(currentExplanation);
 	boolean change = false;
 	// Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
 	IVecInt currentExplanationX = new VecInt(new int[] {});
