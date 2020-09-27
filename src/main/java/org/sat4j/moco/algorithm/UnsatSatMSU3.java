@@ -131,14 +131,16 @@ public class UnsatSatMSU3 extends algorithm {
 
 	boolean goOn = true;
 	boolean goOn1 = true;
+	Log.comment(2, "encoding setup completed.");
 	currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation, false);
 	this.logUpperLimit();
 	while(goOn){
+	    Log.comment("");
+	    Log.comment("new harvest cycle\n");
 	    solver.check(currentAssumptions);
+	    this.solver.printStats();
 	    if(goOn1 && solver.isSat()){
 		this.subResult.saveModel(this.solver);
-		Log.comment("model:");
-		this.goalDelimeter.prettyPrintVecInt(this.getXModel());
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
 		    goOn1 = false;
@@ -147,10 +149,10 @@ public class UnsatSatMSU3 extends algorithm {
 	    }else{
 		if(!MSU3)
 		    transferSubResult();
-		this.solver.printStats();
 		goOn = goOn1;
 		if(goOn){
 		    currentExplanation = solver.unsatExplanation();
+		    Log.comment(2, "explanation length: " + currentAssumptions.size());
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
@@ -162,7 +164,10 @@ public class UnsatSatMSU3 extends algorithm {
 			if(currentAssumptions == null){
 			    Log.comment(2, "There was no expansion");
 			    goOn = false;
-			}
+			}else{
+			    Log.comment(2, "explanation length: " + currentExplanation.size());
+
+}
 		    }
 		}
 	    }
