@@ -178,7 +178,7 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
      */
 
     public boolean AddClause(IVecInt setOfLiterals){
-	this.prettyPrintVecInt(setOfLiterals);
+	// this.prettyPrintVecInt(setOfLiterals);
 	try{
 	    this.solver.AddClause(setOfLiterals);
 	} catch (ContradictionException e) {
