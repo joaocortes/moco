@@ -124,10 +124,6 @@ public class UnsatSatMSU3 extends algorithm {
 	IVecInt currentExplanation = new VecInt(new int[] {});
 	IVecInt currentAssumptions = new VecInt(new int[] {});
 
-	if(!this.MSU3)
-	    this.subResult = new SubResult(this.problem);
-	else
-	    this.subResult = this.result;
 
 	boolean goOn = true;
 	boolean goOn1 = true;
