@@ -22,3 +22,4 @@ time*
 /finalResults/finalResultsSC/run1/analysis/
 /.settings/*
 .project
+.settings
