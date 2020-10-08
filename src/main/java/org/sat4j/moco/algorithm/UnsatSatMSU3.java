@@ -32,15 +32,10 @@ import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.analysis.SubResult;
+import org.sat4j.moco.goal_delimeter.GoalDelimeterMSU3;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
-import org.sat4j.moco.problem.SelectionDelimeter;
-import org.sat4j.moco.problem.SeqEncoder;
-import org.sat4j.moco.problem.GenTotalEncoder;
-import org.sat4j.moco.problem.GenTotalEncoderMSU3;
-import org.sat4j.moco.problem.GoalDelimeter;
-import org.sat4j.moco.problem.GoalDelimeterMSU3;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
@@ -50,7 +45,7 @@ import org.sat4j.specs.IVecInt;
  * @author João Cortes
  */
 
-public class UnsatSatMSU3 extends algorithm {
+public class UnsatSatMSU3 extends UnsatSat {
 
     /**
      * IDs of the variables used int the sequential encoder. The first
@@ -136,15 +131,14 @@ public class UnsatSatMSU3 extends algorithm {
 	    solver.check(currentAssumptions);
 	    this.solver.printStats();
 	    if(goOn1 && solver.isSat()){
-		this.subResult.saveModel(this.solver);
+		this.saveModel();
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
 		    goOn1 = false;
 		}
 
 	    }else{
-		if(!MSU3)
-		    transferSubResult();
+		this.finalizeHarvest();
 		goOn = goOn1;
 		if(goOn){
 		    currentExplanation = solver.unsatExplanation();
@@ -450,4 +444,10 @@ public class UnsatSatMSU3 extends algorithm {
 	this.goalDelimeter.logUncoveredMaxKD();
 
     }
+
+    public void saveModel(){
+	this.result.saveModel(this.solver);
+}
+    public void finalizeHarvest(){}
+
 }
