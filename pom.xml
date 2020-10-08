@@ -5,8 +5,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <junit.jupiter.version>5.6.0</junit.jupiter.version>
     <junit.platform.version>1.6.0</junit.platform.version>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <!-- <maven.compiler.target>11.0.2</maven.compiler.target> -->
   </properties>
 
 <profiles>
@@ -41,8 +40,6 @@
             <layout>default</layout>
         </repository>
     </repositories>
-
-    
 
     <dependencies>
         <dependency>
@@ -95,6 +92,14 @@
     <build>
       <!-- <testSourceDirectory>${myTestSourceDirectory}</testSourceDirectory> -->
       <plugins>
+	<plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-compiler-plugin</artifactId>
+	  <version>3.8.0</version>
+	  <configuration>
+            <release>11</release>
+	  </configuration>
+	</plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
@@ -142,11 +147,6 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.5.1</version>
         </plugin>
       </plugins>
     </build>
