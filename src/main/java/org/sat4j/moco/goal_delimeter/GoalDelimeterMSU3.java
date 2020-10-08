@@ -20,7 +20,7 @@
  *   CRIL - initial API and implementation
  *   João O'Neill Cortes, INESC
  *******************************************************************************/
-package org.sat4j.moco.problem;
+package org.sat4j.moco.goal_delimeter;
 
 import java.lang.Math;
 import org.sat4j.moco.util.Log;
@@ -250,6 +250,7 @@ public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> exte
 	    this.UpperBound[iObj] = newKD;
     }
 
+    @Override
     public int getUpperKD(int iObj){
 	return this.upperKD[iObj];
     }
