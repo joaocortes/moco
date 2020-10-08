@@ -1,11 +1,10 @@
-package org.sat4j.moco.problem;
+package org.sat4j.moco.goal_delimeter;
 
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.IVecInt;
 import org.sat4j.moco.pb.PBSolver;
+import org.sat4j.moco.problem.Instance;
 
-import java.util.HashMap;
-import java.util.Map;
 
 import org.sat4j.specs.ContradictionException;
 
@@ -191,4 +190,5 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
     }
 
     public boolean preAssumptionsExtend(IVecInt currentExplanation){return true;};
+    public int getUpperKD(int iObj){return -1;};
 }

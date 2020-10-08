@@ -20,7 +20,7 @@
  *   CRIL - initial API and implementation
  *   João O'Neill Cortes, INESC
  *******************************************************************************/
-package org.sat4j.moco.problem;
+package org.sat4j.moco.goal_delimeter;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -50,7 +50,6 @@ import org.sat4j.specs.IVecInt;
  */
 
 public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDIndex> {
-
 
     private ObjManager[] objManagers;
     private int[][] yTable = null;
