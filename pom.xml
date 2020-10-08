@@ -100,6 +100,49 @@
             <release>11</release>
 	  </configuration>
 	</plugin>
+
+	<plugin>
+	  <groupId>org.codehaus.mojo</groupId>
+	  <artifactId>versions-maven-plugin</artifactId>
+	  <version>2.5</version>
+	  <configuration>
+            <generateBackupPoms>false</generateBackupPoms>
+	  </configuration>
+	</plugin>
+	<plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.0.1</version>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+              <configuration>
+                <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+                <docletArtifact>
+                  <groupId>nl.talsmasoftware</groupId>
+                  <artifactId>umldoclet</artifactId>
+                  <version>2.0.12</version>
+                </docletArtifact>
+                <additionalOptions>
+                  <!--<additionalOption>...</additionalOption>-->
+                </additionalOptions>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+	<plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-site-plugin</artifactId>
+	  <version>3.9.1</version>
+	</plugin>
+	<plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-project-info-reports-plugin</artifactId>
+	  <version>3.1.1</version>
+	</plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
