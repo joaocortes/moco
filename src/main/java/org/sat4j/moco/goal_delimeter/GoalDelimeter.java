@@ -2,6 +2,10 @@ package org.sat4j.moco.goal_delimeter;
 
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.IVecInt;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 
