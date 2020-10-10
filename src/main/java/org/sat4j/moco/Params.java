@@ -251,6 +251,7 @@ public class Params {
 
     /**
      *returns the goal delimeter (GD) encoding to be used
+     @return the name of the encoding of{@code GoalDelimeter} 
      */
     public String getEncodingGD(){return this.encodingGD;}
 }
