@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledComponent;
 
 
 
