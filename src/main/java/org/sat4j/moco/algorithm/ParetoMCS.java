@@ -45,11 +45,11 @@ import org.sat4j.specs.IVecInt;
 
 /**
  * Class that implements the Pareto-MCS based algorithm for MOCO, proposed in:<br>
- *      Terra-Neves, M., Lynce, I., & Manquinho, V. (2017, August).
+ *      Terra-Neves, M., Lynce, I., &amp; Manquinho, V. (2017, August).
  *      Introducing Pareto minimal correction subsets. In International Conference on Theory and Applications
  *      of Satisfiability Testing (pp. 195-211). Springer, Cham.<br>
  * Includes MOCO stratification, proposed in:<br>
- *      Terra-Neves, M., Lynce, I., & Manquinho, V. M. (2018).
+ *      Terra-Neves, M., Lynce, I., &amp; Manquinho, V. M. (2018).
  *      Stratification for Constraint-Based Multi-Objective Combinatorial Optimization. In IJCAI
  *      (pp. 1376-1382).
  * @author Miguel Terra-Neves
