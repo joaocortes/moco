@@ -39,9 +39,10 @@ import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
+import org.sat4j.moco.problem.Instance;
+import org.sat4j.moco.problem.DigitalEnv;
 import org.sat4j.moco.problem.DigitalEnv.DigitalNumber;
 import org.sat4j.moco.problem.DigitalEnv.DigitalNumber.IteratorContiguous;
-import org.sat4j.moco.problem.SelectionDelimeter.Circuit.ControlledComponent;
 import org.sat4j.specs.IVecInt;
 
 /**
