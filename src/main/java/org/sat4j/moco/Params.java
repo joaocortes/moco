@@ -24,6 +24,7 @@ package org.sat4j.moco;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
+import org.sat4j.moco.goal_delimeter.GoalDelimeter;
 import org.sat4j.moco.util.Real;
 
 /**
