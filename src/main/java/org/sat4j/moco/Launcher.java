@@ -33,6 +33,7 @@ import org.apache.commons.cli.ParseException;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.algorithm.algorithm;
 import org.sat4j.moco.algorithm.ParetoMCS;
+import org.sat4j.moco.algorithm.UnsatSat;
 import org.sat4j.moco.algorithm.UnsatSatMSU3;
 import org.sat4j.moco.algorithm.pMinimal;
 import org.sat4j.moco.parsing.OPBReader;
@@ -156,7 +157,7 @@ public class Launcher {
 		paretoMCSSolver.solve();
 		break;
 	    case 1:
-  		UnsatSatMSU3 unsatSatSolver = new UnsatSatMSU3(moco, params.getEncodingGD(), false);
+  		UnsatSat unsatSatSolver = new UnsatSat(moco, params.getEncodingGD());
 		setShutdownHandler(unsatSatSolver);
 		unsatSatSolver.solve();
 		break;
