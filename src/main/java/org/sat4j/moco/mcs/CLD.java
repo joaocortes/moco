@@ -34,7 +34,7 @@ import org.sat4j.specs.IVecInt;
 
 /**
  * Class that implements the CLD algorithm for MCS extraction, proposed in:<br>
- *      Marques-Silva, J., Heras, F., Janota, M., Previti, A., & Belov, A. (2013, August).
+ *      Marques-Silva, J., Heras, F., Janota, M., Previti, A., &amp; Belov, A. (2013, August).
  *      On Computing Minimal Correction Subsets. In IJCAI (pp. 615-622).
  * @author Miguel Terra-Neves
  */
