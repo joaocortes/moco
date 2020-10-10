@@ -36,7 +36,6 @@ import org.sat4j.moco.problem.DigitalEnv.DigitalNumber;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.LinearObj;
 import org.sat4j.moco.problem.Objective;
-import org.sat4j.moco.util.General;
 import org.sat4j.moco.goal_delimeter.SelectionDelimeter;
 import org.sat4j.moco.goal_delimeter.SelectionDelimeter.Circuit;
 import org.sat4j.moco.goal_delimeter.SelectionDelimeter.Circuit.ControlledComponent;
