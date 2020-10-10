@@ -22,23 +22,22 @@
  *******************************************************************************/
 package org.sat4j.moco.goal_delimeter;
 
-
 import org.sat4j.moco.util.Log;
-import java.util.Hashtable;
-import java.util.Iterator;
 
+import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Collection;
-
+import java.util.Hashtable;
 
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
-import org.sat4j.moco.problem.GenTotalEncoder.SumTree.Node;
+import org.sat4j.moco.problem.Instance;
+import org.sat4j.moco.problem.Objective;
 import org.sat4j.specs.IVecInt;
 
 /**
