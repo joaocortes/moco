@@ -352,7 +352,7 @@ public class GenTotalEncoder extends GoalDelimeter<GoalDelimeter.Index> {
 	}
 
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    for(Node node: this.sumTrees[iObj].nodes)
+	    for(SumTree.Node node: this.sumTrees[iObj].nodes)
 		node.nodeVars.add(0, 0, false, false);
 	}
 	// Log.comment(5, "}");
@@ -479,15 +479,15 @@ public class GenTotalEncoder extends GoalDelimeter<GoalDelimeter.Index> {
      *=> v2,where v2 belongs to the same node and is associated to a
      *smaller value kD.
      */
-    private boolean addClauseSequential(Node root){
+    private boolean addClauseSequential(SumTree.Node root){
         // Log.comment(5, "{ GenTotalEncoder.addClauseSequential");
 	boolean change = false;
 
-	Node.NodeVars.NodeVar past;
-	Node.NodeVars.NodeVar current;
-	Collection<Node.NodeVars.NodeVar> tail =
+	SumTree.Node.NodeVars.NodeVar past;
+	SumTree.Node.NodeVars.NodeVar current;
+	Collection<SumTree.Node.NodeVars.NodeVar> tail =
 	    root.nodeVars.currentTail();
-	Iterator<Node.NodeVars.NodeVar> it = tail.iterator();
+	Iterator<SumTree.Node.NodeVars.NodeVar> it = tail.iterator();
 	if(it.hasNext()){
 	    past = it.next();
 	    if(it.hasNext()){
@@ -507,24 +507,23 @@ public class GenTotalEncoder extends GoalDelimeter<GoalDelimeter.Index> {
         // Log.comment(5, "}");
 	return change;
     }
-
     /**
      * This adds the clause that makes this an GTE. That is, v1 v2 =>
      * v3, where kD of v3 is the (corrected) sum kD of v1 and v2
      */
     
-    private boolean addSumClauses(Node parent, Node first, Node second){
+    private boolean addSumClauses(SumTree.Node parent, SumTree.Node first, SumTree.Node second){
 	// Log.comment(5, "{ GenTotalEncoder.addSumClauses");
 	boolean change = false;
-	Collection<Node.NodeVars.NodeVar> firstAll =
+	Collection<SumTree.Node.NodeVars.NodeVar> firstAll =
 	    first.nodeVars.currentHead();
 	
-	Collection<Node.NodeVars.NodeVar> secondPartial =
+	Collection<SumTree.Node.NodeVars.NodeVar> secondPartial =
 	    second.nodeVars.currentNovel();
 	
-	for(Node.NodeVars.NodeVar firstVar : firstAll){
-	    for(Node.NodeVars.NodeVar secondVar : secondPartial ){
-		Node.NodeVars.NodeVar parentVar =
+	for(SumTree.Node.NodeVars.NodeVar firstVar : firstAll){
+	    for(SumTree.Node.NodeVars.NodeVar secondVar : secondPartial ){
+		SumTree.Node.NodeVars.NodeVar parentVar =
 		    parent.nodeVars.addOrRetrieve(firstVar.kD + secondVar.kD);
 		if(parentVar != null && parentVar.newValidVariable()) 
 		    if(parentVar.getKD()!=0 ){
@@ -544,9 +543,9 @@ public class GenTotalEncoder extends GoalDelimeter<GoalDelimeter.Index> {
 	secondPartial =
 	    second.nodeVars.olderHead();
 	
-	for(Node.NodeVars.NodeVar firstVar : firstAll){
-	    for(Node.NodeVars.NodeVar secondVar : secondPartial ){
-		Node.NodeVars.NodeVar parentVar =
+	for(SumTree.Node.NodeVars.NodeVar firstVar : firstAll){
+	    for(SumTree.Node.NodeVars.NodeVar secondVar : secondPartial ){
+		SumTree.Node.NodeVars.NodeVar parentVar =
 		    parent.nodeVars.addOrRetrieve(firstVar.kD + secondVar.kD);
 		if(parentVar != null && parentVar.newValidVariable()) 
 		    if(parentVar.getKD()!=0 ){
@@ -569,20 +568,20 @@ public class GenTotalEncoder extends GoalDelimeter<GoalDelimeter.Index> {
      * 
      */
     
-    private boolean simplePropagation(Node parent){
-	ArrayList<Node> children = new ArrayList<Node>(2);
+    private boolean simplePropagation(SumTree.Node parent){
+	ArrayList<SumTree.Node> children = new ArrayList<SumTree.Node>(2);
 	children.add(parent.left);
 	children.add(parent.right);
 	// Log.comment(5, "{ GenTotalEncoder.simplePropagation");
 	boolean change = false;
 	
-	for(Node child: children){
-	    Collection<Node.NodeVars.NodeVar> childTail =
+	for(SumTree.Node child: children){
+	    Collection<SumTree.Node.NodeVars.NodeVar> childTail =
 		child.nodeVars.currentUpper();
-	    for(Node.NodeVars.NodeVar childVar : childTail){
+	    for(SumTree.Node.NodeVars.NodeVar childVar : childTail){
 		if(childVar.iAmFresh){
 		    childVar.iAmFresh = false;
-		    Node.NodeVars.NodeVar parentVar = parent.nodeVars.addOrRetrieve(childVar.getKD());
+		    SumTree.Node.NodeVars.NodeVar parentVar = parent.nodeVars.addOrRetrieve(childVar.getKD());
 		    IVecInt clause = new VecInt(new int[]{-childVar.getId(), parentVar.getId()});
 		    
 		    AddClause(clause);
@@ -599,10 +598,10 @@ public class GenTotalEncoder extends GoalDelimeter<GoalDelimeter.Index> {
      *Recursive helper of addClausesSumTree
      */
 
-    public boolean addClausesSubSumTree(SumTree sumTree, Node currentNode, boolean secondPhase){
+    public boolean addClausesSubSumTree(SumTree sumTree, SumTree.Node currentNode, boolean secondPhase){
 	boolean change = false;
-	Node left = currentNode.left;
-	Node right = currentNode.right;
+	SumTree.Node left = currentNode.left;
+	SumTree.Node right = currentNode.right;
 	if(currentNode.leafID != 0){
 	    return false;
 	}
