@@ -40,6 +40,7 @@ import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
+import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.goal_delimeter.GenTotalEncoder.SumTree;
 import org.sat4j.moco.goal_delimeter.GenTotalEncoderMSU3.SumTree.Node;
 import org.sat4j.specs.IVecInt;
@@ -51,7 +52,7 @@ import org.sat4j.specs.IVecInt;
  */
 
 
-public class GenTotalEncoderMSU3 extends GoalDelimeter<GoalDelimeter.Index> {
+public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
     
     /**
      *The inverse index map for the partial sum variables. For each ID, a
