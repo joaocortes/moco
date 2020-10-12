@@ -33,6 +33,7 @@ import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.analysis.SubResult;
 import org.sat4j.moco.goal_delimeter.GoalDelimeterMSU3;
+import org.sat4j.moco.goal_delimeter.SelectionDelimeter;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
@@ -77,7 +78,7 @@ public class UnsatSatMSU3 extends UnsatSat {
      * @param m The MOCO instance.
      */
 
-    public UnsatSatMSU3(Instance m, String encodingGD, boolean MSU3) {
+    public UnsatSatMSU3(Instance m, String encodingGD, boolean MSU3){
         // Log.comment(3, "in UnsatSat constructor");
 	this.MSU3 = MSU3;
 	this.problem = m;
