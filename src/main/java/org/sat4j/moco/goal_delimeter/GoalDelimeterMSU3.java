@@ -49,7 +49,7 @@ import org.sat4j.specs.IVecInt;
  * @author Joao O'Neill Cortes
  */
 
-public abstract class GoalDelimeterMSU3<PIndex extends GoalDelimeter.Index> extends GoalDelimeter<PIndex>{
+public abstract class GoalDelimeterMSU3<PIndex extends Index> extends GoalDelimeter<PIndex>{
     boolean change = false;
 
     /**
