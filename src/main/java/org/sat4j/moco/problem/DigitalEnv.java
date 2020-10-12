@@ -129,9 +129,6 @@ public class DigitalEnv {
 	    return -1;
     }
 
-
-
-
     public class DigitalNumber implements Iterable<Integer>{
 
 	private SortedMap<Integer, Integer> digits;

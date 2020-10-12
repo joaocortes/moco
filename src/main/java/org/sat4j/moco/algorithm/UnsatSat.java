@@ -76,6 +76,7 @@ public class UnsatSat extends algorithm {
      */
     private boolean MSU3 = false;
 
+    public UnsatSat(){}
     /**
      * Creates an instance of a MOCO solver, for a given instance,
      * that applies the Pareto-MCS algorithm.
