@@ -34,6 +34,7 @@ import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
+import org.sat4j.moco.problem.Objective;
 import org.sat4j.specs.IVecInt;
 import org.sat4j.specs.ContradictionException;
 
