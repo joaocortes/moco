@@ -101,7 +101,7 @@ public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDI
     }
 
     public ObjManager getIthObjManager(int i){return this.objManagers[i];}
-    static class SDIndex extends GoalDelimeter.Index{
+    static class SDIndex extends Index{
 
 	SDIndex(int iObj, int kD){
 	    super(iObj, kD);
