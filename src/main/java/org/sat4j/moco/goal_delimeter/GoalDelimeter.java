@@ -13,7 +13,7 @@ import org.sat4j.moco.problem.Instance;
 import org.sat4j.specs.ContradictionException;
 
 
-public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
+public abstract class GoalDelimeter<PIndex extends Index>{
 
     /**
      * the instance to be solved
@@ -24,7 +24,7 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
      */
     protected PBSolver solver = null;
 
-    protected Librarian librarian = null;
+    protected Librarian<PIndex> librarian = null;
 
     /**
      *First solver variable that pertains to the goal delimeter
@@ -34,7 +34,7 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
     protected int firstVariable = 0;
 
     public GoalDelimeter(){
-	this.librarian = new Librarian();
+	this.librarian = new Librarian<PIndex>();
     };
 
 
@@ -55,40 +55,6 @@ public abstract class GoalDelimeter<PIndex extends GoalDelimeter.Index>{
     public void setFirstVariable(int firstVariable){ this.firstVariable = firstVariable;}
     
 
-
-    protected class Librarian{
-	
-	private Map<Integer, PIndex> library = null;
-
-	 public Librarian(){
-	    this.library = new HashMap<Integer, PIndex>();
-	};
-
-	public  void putIndex(int varId, PIndex index) {
-	    this.library.put(varId, index);
-	};
-
-	public PIndex getIndex(int varId){
-	    return this.library.get(varId);
-	};
-	
-    }
-
-    static protected abstract class Index{
-	int iObj = 0;
-	int kD = 0;
-	public Index(){};
-	public Index(int iObj, int kD){
-	    this.iObj = iObj;
-	    this.kD = kD;
-	};
-	public int getIObj(){
-	    return this.iObj;
-}
-	public int getKD(){
-	    return this.kD;
-}
-    };
 
     public boolean UpdateCurrentK(int iObj, int upperKD){return true;};
     abstract public boolean isY(int id);
