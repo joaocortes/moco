@@ -32,11 +32,17 @@ import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.analysis.SubResult;
-import org.sat4j.moco.goal_delimeter.GoalDelimeterMSU3;
-import org.sat4j.moco.goal_delimeter.SelectionDelimeter;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
+import org.sat4j.moco.goal_delimeter.SelectionDelimeter;
+import org.sat4j.moco.goal_delimeter.SelectionDelimeterMSU3;
+import org.sat4j.moco.goal_delimeter.SeqEncoder;
+import org.sat4j.moco.goal_delimeter.GenTotalEncoder;
+import org.sat4j.moco.goal_delimeter.GenTotalEncoderMSU3;
+import org.sat4j.moco.goal_delimeter.GoalDelimeter;
+import org.sat4j.moco.goal_delimeter.GoalDelimeterMSU3;
+import org.sat4j.moco.goal_delimeter.Index;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
@@ -46,7 +52,7 @@ import org.sat4j.specs.IVecInt;
  * @author João Cortes
  */
 
-public class UnsatSatMSU3 extends UnsatSat {
+public class UnsatSatMSU3 extends algorithm {
 
     /**
      * IDs of the variables used int the sequential encoder. The first
@@ -72,13 +78,14 @@ public class UnsatSatMSU3 extends UnsatSat {
      */
     private boolean MSU3 = false;
 
+    public UnsatSatMSU3(){}
     /**
      * Creates an instance of a MOCO solver, for a given instance,
      * that applies the Pareto-MCS algorithm.
      * @param m The MOCO instance.
      */
 
-    public UnsatSatMSU3(Instance m, String encodingGD, boolean MSU3){
+    public UnsatSatMSU3(Instance m, String encodingGD, boolean MSU3) {
         // Log.comment(3, "in UnsatSat constructor");
 	this.MSU3 = MSU3;
 	this.problem = m;
@@ -93,7 +100,7 @@ public class UnsatSatMSU3 extends UnsatSat {
 
 	switch(encodingGD){
 	case "SD":
-	    this.goalDelimeter = new SelectionDelimeter(m, solver, true, MSU3);
+	    this.goalDelimeter = new SelectionDelimeterMSU3(m, solver, true);
 	    break;
 	// case "GTE":	    
 	//     this.goalDelimeter = new GenTotalEncoderMSU3(m, solver, MSU3);
@@ -106,6 +113,8 @@ public class UnsatSatMSU3 extends UnsatSat {
 	}
 	
 	this.realVariablesN = this.solver.nVars();
+	this.subResult = new SubResult(this.problem);
+
     }
 
     public UnsatSatMSU3(Instance m, String encodingGD) {
@@ -120,11 +129,11 @@ public class UnsatSatMSU3 extends UnsatSat {
 	IVecInt currentExplanation = new VecInt(new int[] {});
 	IVecInt currentAssumptions = new VecInt(new int[] {});
 
-
 	boolean goOn = true;
 	boolean goOn1 = true;
 	Log.comment(2, "encoding setup completed.");
-	currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation, false);
+	this.goalDelimeter.preAssumptionsExtend(currentExplanation);
+	currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation);
 	this.logUpperLimit();
 	while(goOn){
 	    Log.comment("");
@@ -132,14 +141,14 @@ public class UnsatSatMSU3 extends UnsatSat {
 	    solver.check(currentAssumptions);
 	    this.solver.printStats();
 	    if(goOn1 && solver.isSat()){
-		this.saveModel();
+		this.subResult.saveModel(this.solver);
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
 		    goOn1 = false;
 		}
 
 	    }else{
-		this.finalizeHarvest();
+		transferSubResult();
 		goOn = goOn1;
 		if(goOn){
 		    currentExplanation = solver.unsatExplanation();
@@ -147,7 +156,7 @@ public class UnsatSatMSU3 extends UnsatSat {
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
-			currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation, true);
+			currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation);
 			this.logUpperLimit();
 			// if currentAssumptions are null, then the
 			// attainable domain did was not expanded and
@@ -190,9 +199,9 @@ public class UnsatSatMSU3 extends UnsatSat {
     /**
      * Generate the upper limit assumptions
      */
-    public IVecInt generateUpperBoundAssumptions(IVecInt explanation, boolean checkChange ){
+    public IVecInt generateUpperBoundAssumptions(IVecInt explanation){
 	IVecInt assumptions = new VecInt(new int[]{});
-	assumptions = this.goalDelimeter.generateUpperBoundAssumptions(explanation, checkChange);
+	assumptions = this.goalDelimeter.generateUpperBoundAssumptions(explanation, true);
 	return assumptions;
     }
 
@@ -441,14 +450,12 @@ public class UnsatSatMSU3 extends UnsatSat {
 
     public void printFlightRecordParticular(){
 	// Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
-	this.goalDelimeter.logUpperBound();
-	this.goalDelimeter.logUncoveredMaxKD();
-
     }
-
     public void saveModel(){
-	this.result.saveModel(this.solver);
+	this.subResult.saveModel(this.solver);
 }
-    public void finalizeHarvest(){}
+    public void finalizeHarvest(){
+	this.transferSubResult();
 
+}
 }
