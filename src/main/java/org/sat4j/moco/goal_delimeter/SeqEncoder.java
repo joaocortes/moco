@@ -44,7 +44,7 @@ import org.sat4j.specs.ContradictionException;
  * @author Joao O'Neill Cortes
  */
 
- public class SeqEncoder extends GoalDelimeter {
+ public class SeqEncoder extends GoalDelimeter<Index> {
 
     /** 
      * IDs of the S(equential) variables used to enforce the semantics of the sequential encoder.
