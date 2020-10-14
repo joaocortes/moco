@@ -22,7 +22,7 @@
  *******************************************************************************/
 package org.sat4j.moco.goal_delimeter;
 
-    public abstract class Index{
+    public class Index{
 	int iObj = 0;
 	int kD = 0;
 	public Index(){};
@@ -32,8 +32,8 @@ package org.sat4j.moco.goal_delimeter;
 	};
 	public int getIObj(){
 	    return this.iObj;
-}
+	}
 	public int getKD(){
 	    return this.kD;
-}
+	}
     }

@@ -41,8 +41,6 @@ import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
-import org.sat4j.moco.goal_delimeter.GenTotalEncoder.SumTree;
-import org.sat4j.moco.goal_delimeter.GenTotalEncoderMSU3.SumTree.Node;
 import org.sat4j.specs.IVecInt;
 
 /**
@@ -517,6 +515,31 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.sumTrees[iObj] = new SumTree(iObj);
 	}
+	this.createInitialTree();
+
+	// Log.comment(5, "}");
+    }
+
+
+
+    private void initializeCoveredLiterals(){
+	for(int iObj = 0, nObj = this.instance.nObjs();iObj < nObj; iObj++){
+	    Objective ithObjective = this.instance.getObj(iObj);
+	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
+	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
+	    int sign = 1;
+	    int ithAbsoluteWeight;
+	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
+		int ithX = objectiveLits.get(iX);
+		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
+		sign = (ithAbsoluteWeight > 0? 1 : -1);
+		ithAbsoluteWeight *= sign;
+		this.coveredLiterals.putIfAbsent(-sign * ithX, true);
+	    }
+	}
+
+    }
+    private void  createInitialTree(){
 	if(!this.MSU3)
 	    for(int iObj = 0, nObj = this.instance.nObjs();iObj < nObj; iObj++){
 		SumTree st = this.sumTrees[iObj];
@@ -527,22 +550,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
 		
 	    }
 
-	if(this.MSU3)
-	    for(int iObj = 0, nObj = this.instance.nObjs();iObj < nObj; iObj++){
-		Objective ithObjective = this.instance.getObj(iObj);
-		ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
-		ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
-		int sign = 1;
-		int ithAbsoluteWeight;
-		for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
-		    int ithX = objectiveLits.get(iX);
-		    ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
-		    sign = (ithAbsoluteWeight > 0? 1 : -1);
-		    ithAbsoluteWeight *= sign;
-		    this.coveredLiterals.putIfAbsent(-sign * ithX, true);
-		}
-	    }
-	// Log.comment(5, "}");
+
     }
 
     public int getCurrentKD(int iObj){
@@ -677,15 +685,15 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
      *=> v2,where v2 belongs to the same node and is associated to a
      *smaller value kD.
      */
-    private boolean addClauseSequential(Node root){
+    private boolean addClauseSequential(SumTree.Node root){
 	// Log.comment(5, "{ GenTotalEncoder.addClauseSequential");
 	boolean change = false;
 
-	Node.NodeVars.NodeVar past;
-	Node.NodeVars.NodeVar current;
-	Collection<Node.NodeVars.NodeVar> tail =
+	SumTree.Node.NodeVars.NodeVar past;
+	SumTree.Node.NodeVars.NodeVar current;
+	Collection<SumTree.Node.NodeVars.NodeVar> tail =
 	    root.nodeVars.currentTail();
-	Iterator<Node.NodeVars.NodeVar> it = tail.iterator();
+	Iterator<SumTree.Node.NodeVars.NodeVar> it = tail.iterator();
 	if(it.hasNext()){
 	    past = it.next();
 	    if(it.hasNext()){
@@ -711,18 +719,18 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
      * v3, where kD of v3 is the (corrected) sum kD of v1 and v2
      */
     
-    private boolean addSumClauses(Node parent, Node first, Node second){
+    private boolean addSumClauses(SumTree.Node parent, SumTree.Node first, SumTree.Node second){
 	// Log.comment(5, "{ GenTotalEncoder.addSumClauses");
 	boolean change = false;
-	Collection<Node.NodeVars.NodeVar> firstAll =
+	Collection<SumTree.Node.NodeVars.NodeVar> firstAll =
 	    first.nodeVars.currentHead();
 	
-	Collection<Node.NodeVars.NodeVar> secondPartial =
+	Collection<SumTree.Node.NodeVars.NodeVar> secondPartial =
 	    second.nodeVars.currentNovel();
 	
-	for(Node.NodeVars.NodeVar firstVar : firstAll){
-	    for(Node.NodeVars.NodeVar secondVar : secondPartial ){
-		Node.NodeVars.NodeVar parentVar =
+	for(SumTree.Node.NodeVars.NodeVar firstVar : firstAll){
+	    for(SumTree.Node.NodeVars.NodeVar secondVar : secondPartial ){
+		SumTree.Node.NodeVars.NodeVar parentVar =
 		    parent.nodeVars.addOrRetrieve(firstVar.kD + secondVar.kD);
 		if(parentVar != null) 
 		    if(parentVar.getKD()!=0 ){
@@ -742,9 +750,9 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
 	secondPartial =
 	    second.nodeVars.olderHead();
 	
-	for(Node.NodeVars.NodeVar firstVar : firstAll){
-	    for(Node.NodeVars.NodeVar secondVar : secondPartial ){
-		Node.NodeVars.NodeVar parentVar =
+	for(SumTree.Node.NodeVars.NodeVar firstVar : firstAll){
+	    for(SumTree.Node.NodeVars.NodeVar secondVar : secondPartial ){
+		SumTree.Node.NodeVars.NodeVar parentVar =
 		    parent.nodeVars.addOrRetrieve(firstVar.kD + secondVar.kD);
 		if(parentVar != null) 
 		    if(parentVar.getKD()!=0 ){
@@ -767,20 +775,20 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
      * 
      */
     
-    private boolean simplePropagation(Node parent, boolean ignoreFreshness){
+    private boolean simplePropagation(SumTree.Node parent, boolean ignoreFreshness){
 	// Log.comment(5, "{ GenTotalEncoder.simplePropagation");
-	ArrayList<Node> children = new ArrayList<Node>(2);
+	ArrayList<SumTree.Node> children = new ArrayList<SumTree.Node>(2);
 	children.add(parent.left);
 	children.add(parent.right);
 	boolean change = false;
 	
-	for(Node child: children){
-	    Collection<Node.NodeVars.NodeVar> childTail =
+	for(SumTree.Node child: children){
+	    Collection<SumTree.Node.NodeVars.NodeVar> childTail =
 		child.nodeVars.currentUpper();
-	    for(Node.NodeVars.NodeVar childVar : childTail){
+	    for(SumTree.Node.NodeVars.NodeVar childVar : childTail){
 		if(ignoreFreshness || childVar.iAmFresh){
 		    childVar.iAmFresh = false;
-		    Node.NodeVars.NodeVar parentVar = parent.nodeVars.addOrRetrieve(childVar.getKD());
+		    SumTree.Node.NodeVars.NodeVar parentVar = parent.nodeVars.addOrRetrieve(childVar.getKD());
 		    IVecInt clause = new VecInt(new int[]{-childVar.getId(), parentVar.getId()});
 		    
 		    AddClause(clause);
@@ -791,11 +799,11 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
 	// Log.comment(5, "}");
 	return change;
     }
-    public boolean addClausesCurrentNode(SumTree sumTree, Node currentNode, boolean iAmtheNewRoot){
+    public boolean addClausesCurrentNode(SumTree sumTree, SumTree.Node currentNode, boolean iAmtheNewRoot){
 	// Log.comment(5, "{ GenTotalEncoder.addClausesCurrentNode");
 	boolean change = false;
-	Node left = currentNode.left;
-	Node right = currentNode.right;
+	SumTree.Node left = currentNode.left;
+	SumTree.Node right = currentNode.right;
 	change = addSumClauses(currentNode, left, right) || change;    
 	change = simplePropagation(currentNode, iAmtheNewRoot) || change;
 	// Log.comment(5, "}");
@@ -806,13 +814,13 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
      *Recursive helper of addClausesSumTree
      */
 
-    public boolean addClausesSubSumTree(SumTree sumTree, Node currentNode){
+    public boolean addClausesSubSumTree(SumTree sumTree, SumTree.Node currentNode){
 	// Log.comment(5, "{ GenTotalEncoder.addClausesSubSumTree");
 	
 	boolean change = false;
-	Node left = currentNode.left;
-	Node right = currentNode.right;
-	Node.NodeVars.NodeVar nodeVar = null;
+	SumTree.Node left = currentNode.left;
+	SumTree.Node right = currentNode.right;
+	SumTree.Node.NodeVars.NodeVar nodeVar = null;
 	if(currentNode.isLeaf()){
 	    if(sumTree.olderUpperLimit < currentNode.nodeSum &&  currentNode.nodeSum <= sumTree.upperLimit){
 		nodeVar = currentNode.nodeVars.addOrRetrieve(currentNode.nodeSum);
@@ -881,7 +889,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
 	// Log.comment(5, "{ GenTotalEncoder.bindFreshSubTree: " + iObj + ", " + upperLimit );
 	boolean change = false;
 	SumTree ithObjSumTree = this.sumTrees[iObj];
-	Node newParent = ithObjSumTree.freshParent;
+	SumTree.Node newParent = ithObjSumTree.freshParent;
 	if(newParent!=null){
 	    int oldOldUpperLimit = ithObjSumTree.olderUpperLimit;
 	    int oldUpperLimit = ithObjSumTree.upperLimit;
@@ -992,7 +1000,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
 		}
 
 	    }
-
 
 	if(this.MSU3)
 	    for(Integer x: this.coveredLiterals.keySet())
@@ -1124,8 +1131,9 @@ private void updateAllUncoveredMaxKD(){
     public void setUpperBound() {
 	for(int i = 0, n = this.UpperBound.length; i < n; i++)
 	    this.UpperBound[i] = this.nextKDValue(i, this.getUpperKD(i));
+	this.setFirstVariable();
     }
-
+    
     public int getUncoveredMaxKD(int iObj){return this.sumTrees[iObj].getMaxUncoveredKD();}
     public void setMaxUncoveredKDs(int iObj, int a){this.sumTrees[iObj].setMaxUncoveredKD(a);}
     public void updateUncoveredMaxKD(int iObj){this.sumTrees[iObj].updateUncoveredMaxKD();}
