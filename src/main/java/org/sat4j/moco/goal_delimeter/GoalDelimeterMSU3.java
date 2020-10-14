@@ -50,6 +50,7 @@ import org.sat4j.specs.IVecInt;
  */
 
 public abstract class GoalDelimeterMSU3<PIndex extends Index> extends GoalDelimeter<PIndex>{
+
     boolean change = false;
 
     /**
@@ -267,5 +268,14 @@ public abstract class GoalDelimeterMSU3<PIndex extends Index> extends GoalDelime
 	logUpperLimit +="]";
 	Log.comment(2, logUpperLimit );
     }
+
+
+	public HashMap<Integer, Boolean> getCoveredLiterals() {
+		return coveredLiterals;
+	}
+
+	public void setCoveredLiterals(HashMap<Integer, Boolean> coveredLiterals) {
+		this.coveredLiterals = coveredLiterals;
+	}
 
 }

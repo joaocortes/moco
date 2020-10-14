@@ -11,7 +11,7 @@ import org.sat4j.moco.problem.Instance;
 import org.sat4j.specs.ContradictionException;
 
 
-public abstract class GoalDelimeter<PIndex extends Index>{
+public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimeterI<PIndex>{
 
     /**
      * the instance to be solved
@@ -40,7 +40,7 @@ public abstract class GoalDelimeter<PIndex extends Index>{
 	this();
 	this.instance = instance;	
 	this.solver = solver;
-	this.firstVariable = solver.nVars() + 1;
+	this.setFirstVariable();
 }
 
     public void setSolver(PBSolver solver){this.solver = solver;}
@@ -50,13 +50,8 @@ public abstract class GoalDelimeter<PIndex extends Index>{
     public Instance getInstance(){return this.instance;}
 
     public int getFirstVariable(){return this.firstVariable;}
-    public void setFirstVariable(int firstVariable){ this.firstVariable = firstVariable;}
+    public void setFirstVariable(){this.firstVariable = this.getSolver().nVars() + 1;}
     
-
-
-    public boolean UpdateCurrentK(int iObj, int upperKD){return true;};
-    abstract public boolean isY(int id);
-
     /**
      * Generate the upper limit assumptions
      */
@@ -77,67 +72,6 @@ public abstract class GoalDelimeter<PIndex extends Index>{
 	return false;
     }
 
-    abstract public int getCurrentKD(int iObj);
-
-    abstract public int getIObjFromY(int id);
-    abstract public int getKDFromY(int id);
-
-    abstract public int getY(int iObj, int iKD);
-
-    abstract public String prettyFormatVariable(int literal);    
-
-    public String prettyFormatVecInt(IVecInt vecInt){
-	 String result = "";
-	 for(int j = 0; j < vecInt.size(); ++j)
-	     result += this.prettyFormatVariable(vecInt.get(j));
-	 return result;
-     }
-    public String prettyFormatVecIntWithValues(IVecInt vecInt){
-	 String result = "\n";
-	 for(int j = 0; j < vecInt.size(); j++)
-	     result += this.prettyFormatVariable(vecInt.get(j)) + " " +this.solver.modelValue(vecInt.get(j)) + "|\n";
-	 return result;
-     }
-     
-    public String prettyFormatArrayWithValues(Integer[] literals){
-	String result = "";
-	for(int j = 0, n = literals.length; j < n ; ++j)
-	    result += prettyFormatVariable(literals[j]) + " " +this.solver.modelValue(literals[j]) + "|\n";
-	return result;
-    }
-
-
-    public void prettyPrintVecInt(IVecInt vecInt, boolean clausing){
-	if(clausing)
-	    Log.clausing(this.prettyFormatVecInt(vecInt));
-	else
-	    Log.comment(6, this.prettyFormatVecInt(vecInt));
-	return;
-    }
-    public void prettyPrintVecInt(IVecInt vecInt){
-	Log.comment(2, prettyFormatVecInt(vecInt));
-	return;
-     }
-    public void prettyPrintVecInt(IVecInt vecInt, int level){
-	Log.comment(level, prettyFormatVecInt(vecInt));
-	return;
-     }
-    public void prettyPrintVariable(int literal){
-	Log.comment(6,prettyFormatVariable(literal));
-    }
-    public void prettyPrintVariable(int literal, int level){
-	Log.comment(level,prettyFormatVariable(literal));
-    }
-
-
-    /**
-     *Return the ID of a freshly created auxiliar variable
-     */
-
-    protected int getFreshVar(){
-	solver.newVar();
-	return solver.nVars();
-    }
 
     /**
      *Adds the disjunction of setOfLiterals
@@ -156,7 +90,4 @@ public abstract class GoalDelimeter<PIndex extends Index>{
 	}
 	return true;
     }
-
-    public boolean preAssumptionsExtend(IVecInt currentExplanation){return true;};
-    public int getUpperKD(int iObj){return -1;};
 }

@@ -59,7 +59,7 @@ public class UnsatSat extends algorithm {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private GoalDelimeterMSU3<?> goalDelimeter = null;
+    private GoalDelimeter<?> goalDelimeter = null;
 
     /**
      * Last explored differential k, for each objective function.
@@ -98,7 +98,7 @@ public class UnsatSat extends algorithm {
 
 	switch(encodingGD){
 	case "SD":
-	    this.goalDelimeter = new SelectionDelimeter(m, solver, true, false);
+	    this.goalDelimeter = new SelectionDelimeter(m, solver, true);
 	    break;
 	// case "GTE":	    
 	//     this.goalDelimeter = new GenTotalEncoderMSU3(m, solver, MSU3);
@@ -199,7 +199,7 @@ public class UnsatSat extends algorithm {
      */
     public IVecInt generateUpperBoundAssumptions(IVecInt explanation){
 	IVecInt assumptions = new VecInt(new int[]{});
-	assumptions = this.goalDelimeter.generateUpperBoundAssumptions(explanation, true);
+	assumptions = this.goalDelimeter.generateUpperBoundAssumptions(explanation);
 	return assumptions;
     }
 
