@@ -52,40 +52,39 @@ import org.sat4j.specs.IVecInt;
  * @author Joao O'Neill Cortes
  */
 
-public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDIndex> {
+public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex> {
 
     private ObjManager[] objManagers;
     private int[][] yTable = null;
-    private int[] uncoveredMaxKD = null;
-
-    public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit, boolean MSU3) {
-	super(instance, solver, MSU3);
+    
+    public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit) {
+	super(instance, solver);
 	this.instance = instance;
-	this.uncoveredMaxKD = new int[this.instance.nObjs()];
 	this.objManagers = new ObjManager[this.instance.nObjs()];
 	this.initializeYTable();
+	if(buildCircuit)
+	    this.buildCircuits();
+	// Log.comment(5, "}");
+    }
+
+    public void buildCircuits(){
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.objManagers[iObj] = new ObjManager(iObj);
 	    Objective ithObjective = this.getInstance().getObj(iObj);
 	    int oldActivator;
 	    int activator = 0;
-	    if(buildCircuit){
-		objManagers[iObj].circuit.buildCircuit();
-		for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++){
-		    oldActivator = activator;
-	 	    activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
-		    if(kD > 1){
-			Log.comment(6, "sequential clause");
-			this.AddClause(new VecInt(new int[]{-activator, oldActivator}));
-		    }
-
+	    objManagers[iObj].circuit.buildCircuit();
+	    for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++){
+		oldActivator = activator;
+		activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
+		if(kD > 1){
+		    Log.comment(6, "sequential clause");
+		    this.AddClause(new VecInt(new int[]{-activator, oldActivator}));
 		}
 	    }
 	}
 
-	// Log.comment(5, "}");
     }
-
     /**
      * Initialize the container of the Y variables
      */
@@ -96,10 +95,6 @@ public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDI
 	    this.yTable[iObj] = new int[ithObj.getWeightDiff()];
 
 	}
-    }
-    public SelectionDelimeter(Instance instance, PBSolver solver) {
-	this(instance, solver, true, false);
-
     }
 
     public ObjManager getIthObjManager(int i){return this.objManagers[i];}
@@ -159,7 +154,7 @@ public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDI
 			new ControlledComponent(base, digitComp);
 			return digitComp.getCarryBits(modN);
 		    }
-		    public int getFreshVar1(){return getFreshVar();}
+		    public int getFreshVar1(){return getSolver().getFreshVar();}
 		    public boolean AddClause1(IVecInt setOfLiterals){return AddClause(setOfLiterals);}
 		};
 	    
@@ -229,7 +224,7 @@ public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDI
 	public int LexicographicOrder(int upperLimit){
 	    DigitalNumber digits = digitalEnv.toDigital(upperLimit);
 	    IteratorContiguous iterator = digits.iterator3();
-	    int activator = getFreshVar();
+	    int activator = getSolver().getFreshVar();
 	    IVecInt clause = new VecInt(new int[]{activator});
 	    SDIndex sDIndex = new SDIndex(iObj, upperLimit);
 	    librarian.putIndex(activator, sDIndex);
@@ -907,43 +902,6 @@ public class SelectionDelimeter extends GoalDelimeterMSU3<SelectionDelimeter.SDI
 	return kD  - 1;
 
     }
-
-	@Override
-	public int getUncoveredMaxKD(int iObj) {
-	    return this.uncoveredMaxKD[iObj];
-	}
-
-	@Override
-	public void setMaxUncoveredKD(int iObj, int a) {
-	    this.uncoveredMaxKD[iObj] = a;
-	}
-
-	@Override
-	public int nextKDValue(int iObj, int kD) {
-	    if(kD < this.getUncoveredMaxKD(iObj))
-		return  kD + 1;
-	    if(kD == this.getUncoveredMaxKD(iObj))
-		return kD;
-	    else return -1;
-	}
-
-
-	@Override
-	public int getMaxUncoveredKD(int iObj) {
-	    return this.uncoveredMaxKD[iObj];
-	}
-
-	@Override
-	public int generateNext(int iObj, int kD, int inclusiveMax) {
-	    if(kD < inclusiveMax)
-		return kD +1;
-	    if(kD == inclusiveMax)
-		return kD;
-		return 0;
-	}
-
-
-
 }
 
 

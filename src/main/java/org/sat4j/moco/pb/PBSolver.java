@@ -102,6 +102,17 @@ public class PBSolver {
     }
     
     /**
+     *Return the ID of a freshly created variable
+     */
+
+    public int getFreshVar(){
+	this.newVar();
+	return this.nVars();
+    }
+
+
+
+    /**
      * Creates a new Boolean variable in the PB solver.
      */
     public void newVar() { newVars(1); }
