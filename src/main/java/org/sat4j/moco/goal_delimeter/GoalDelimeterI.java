@@ -7,11 +7,7 @@ import org.sat4j.specs.IVecInt;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 
-
-import org.sat4j.specs.ContradictionException;
-
-
-interface GoalDelimeterI<PIndex extends Index>{
+public interface GoalDelimeterI{
 
     public void setSolver(PBSolver solver);
     public PBSolver getSolver();
@@ -30,6 +26,7 @@ interface GoalDelimeterI<PIndex extends Index>{
      */
     default public IVecInt generateUpperBoundAssumptions(){return null;};
     default public IVecInt generateUpperBoundAssumptions(IVecInt explanation){return null;};
+    default public IVecInt generateUpperBoundAssumptions(IVecInt explanation, boolean whoKnows){return null;};
     default public IVecInt generateUpperBoundAssumptions(int[] upperKD){return null;};
 
 ;

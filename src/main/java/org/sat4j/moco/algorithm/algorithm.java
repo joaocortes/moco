@@ -102,5 +102,21 @@ abstract public class  algorithm{
         return solver;
     }
 
+	public PBSolver getSolver() {
+		return solver;
+	}
+
+	public void setSolver(PBSolver solver) {
+		this.solver = solver;
+	}
+
+	public Instance getProblem() {
+		return problem;
+	}
+
+	public void setProblem(Instance problem) {
+		this.problem = problem;
+	}
+
 }
 
