@@ -150,33 +150,6 @@ public class Launcher {
             Clock.instance().updtParams(params);
             Instance moco = readMOCO(cl);
 
-	    switch(params.getAlgorithmI()) {
-	    case 0:
-		ParetoMCS paretoMCSSolver = new ParetoMCS(moco);
-		setShutdownHandler(paretoMCSSolver);
-		paretoMCSSolver.solve();
-		break;
-	    case 1:
-  		UnsatSat unsatSatSolver = new UnsatSat(moco, params.getEncodingGD());
-		setShutdownHandler(unsatSatSolver);
-		unsatSatSolver.solve();
-		break;
-	    case 2:
-		pMinimal pMinimalSolver = new pMinimal(moco);
-		setShutdownHandler(pMinimalSolver);
-		pMinimalSolver.solve();
-		break;
-	    case 3:
-  		UnsatSatMSU3 unsatSatMSU3Solver = new UnsatSatMSU3(moco, params.getEncodingGD());
-		setShutdownHandler(unsatSatMSU3Solver);
-		unsatSatMSU3Solver.solve();
-		break;
-
-	    default:
-		Log.comment("Don't know what solver to use");
-		break;
-	    }
-
 
         }
         catch (ParseException e) {
