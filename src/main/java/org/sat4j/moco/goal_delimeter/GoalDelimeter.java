@@ -11,7 +11,7 @@ import org.sat4j.moco.problem.Instance;
 import org.sat4j.specs.ContradictionException;
 
 
-public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimeterI<PIndex>{
+public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimeterI{
 
     /**
      * the instance to be solved

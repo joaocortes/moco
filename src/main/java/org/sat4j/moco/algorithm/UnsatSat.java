@@ -40,7 +40,9 @@ import org.sat4j.moco.goal_delimeter.SeqEncoder;
 import org.sat4j.moco.goal_delimeter.GenTotalEncoder;
 import org.sat4j.moco.goal_delimeter.GenTotalEncoderMSU3;
 import org.sat4j.moco.goal_delimeter.GoalDelimeter;
+import org.sat4j.moco.goal_delimeter.GoalDelimeterI;
 import org.sat4j.moco.goal_delimeter.GoalDelimeterMSU3;
+import org.sat4j.moco.goal_delimeter.Index;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
@@ -50,7 +52,7 @@ import org.sat4j.specs.IVecInt;
  * @author João Cortes
  */
 
-public class UnsatSat extends algorithm {
+public class UnsatSat extends algorithm implements IWithGoalDelimeter {
 
     /**
      * IDs of the variables used int the sequential encoder. The first
@@ -59,7 +61,7 @@ public class UnsatSat extends algorithm {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private GoalDelimeter<?> goalDelimeter = null;
+    private GoalDelimeterI goalDelimeter = null;
 
     /**
      * Last explored differential k, for each objective function.
@@ -83,7 +85,7 @@ public class UnsatSat extends algorithm {
      * @param m The MOCO instance.
      */
 
-    public UnsatSat(Instance m, String encodingGD, boolean MSU3) {
+    public UnsatSat(Instance m, boolean MSU3) {
         // Log.comment(3, "in UnsatSat constructor");
 	this.MSU3 = MSU3;
 	this.problem = m;
@@ -95,28 +97,14 @@ public class UnsatSat extends algorithm {
             // Log.comment(3, "Contradiction in ParetoMCS.buildSolver");
             return;
         }
-
-	switch(encodingGD){
-	case "SD":
-	    this.goalDelimeter = new SelectionDelimeter(m, solver, true);
-	    break;
-	// case "GTE":	    
-	//     this.goalDelimeter = new GenTotalEncoderMSU3(m, solver, MSU3);
-	//     break;
-	// case "SWC":
-	//     this.goalDelimeter = new SeqEncoder(m, solver);
-	// default:
-	//     this.goalDelimeter = new SeqEncoder(m, solver);
-	//     break;
-	}
 	
 	this.realVariablesN = this.solver.nVars();
 	this.subResult = new SubResult(this.problem);
 
     }
 
-    public UnsatSat(Instance m, String encodingGD) {
-	this(m, encodingGD, true);
+    public UnsatSat(Instance m) {
+	this(m, true);
     }
 
     /**
@@ -456,4 +444,14 @@ public class UnsatSat extends algorithm {
 	this.transferSubResult();
 
 }
+	@Override
+	public void setGoalDelimeter(GoalDelimeterI gd) {
+	    this.goalDelimeter = gd;
+		
+	}
+	@Override
+	public GoalDelimeterI GetGoalDelimeter() {
+	    return this.goalDelimeter;
+	}
+
 }
