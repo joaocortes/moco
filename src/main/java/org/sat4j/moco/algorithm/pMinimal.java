@@ -23,18 +23,16 @@
 package org.sat4j.moco.algorithm;
 
 import java.util.Vector;
-import java.util.logging.LogRecord;
 
 import org.sat4j.core.VecInt;
-import org.sat4j.core.ReadOnlyVec;
-import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
-import org.sat4j.moco.util.Real;
+import org.sat4j.moco.goal_delimeter.GoalDelimeter;
+import org.sat4j.moco.goal_delimeter.GoalDelimeterI;
+import org.sat4j.moco.goal_delimeter.Index;
+import org.sat4j.moco.goal_delimeter.SeqEncoder;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
-import org.sat4j.moco.goal_delimeter.SeqEncoder;
-import org.sat4j.moco.goal_delimeter.GoalDelimeter;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
@@ -44,7 +42,7 @@ import org.sat4j.specs.IVecInt;
  * @author João Cortes
  */
 
-public class pMinimal extends algorithm {
+public class pMinimal extends algorithm implements IWithGoalDelimeter  {
 
     /**
      * IDs of the variables used int the sequential encoder. The first
@@ -53,7 +51,7 @@ public class pMinimal extends algorithm {
      * indicator of the propositions of the form x_i>=j.
      */
 
-    private GoalDelimeter goalDelimeter = null;
+    private GoalDelimeterI goalDelimeter = null;
 
     /**
      * Last explored differential k, for each objective function.
@@ -88,7 +86,7 @@ public class pMinimal extends algorithm {
 	this.UpperKD =  new int[(this.problem.nObjs())];
 	for(int iObj = 0, nObj = this.problem.nObjs(); iObj < nObj; ++iObj)
 	    this.setUpperKD(iObj);
-	    Log.comment(5, "}");
+	Log.comment(5, "}");
     }
 
     
@@ -306,5 +304,20 @@ public class pMinimal extends algorithm {
     public void printFlightRecordParticular(){
 
     }
+
+
+
+	@Override
+	public void setGoalDelimeter(GoalDelimeterI gd) {
+	    this.goalDelimeter = gd;
+		
+	}
+
+
+
+	@Override
+	public GoalDelimeterI GetGoalDelimeter() {
+		return goalDelimeter;
+	}
 }
 
