@@ -98,7 +98,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	}
     }
 
-    public ObjManager getIthObjManager(int i){return this.objManagers[i];}
+    public IObjManager getIthObjManager(int i){return this.objManagers[i];}
 
     static class SDIndex extends Index{
 
@@ -107,7 +107,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	}
     };
 
-    public class ObjManager{
+    public class ObjManager implements IObjManager{
 	int iObj;
 	Circuit circuit;
 	DigitalEnv digitalEnv;
@@ -115,51 +115,6 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	ObjManager(int iObj){
 	    this.iObj = iObj;
 	    this.digitalEnv = new DigitalEnv();
-    	    this.circuit = new Circuit(getSolver()){
-		    public void buildCircuit(){
-			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
-			ArrayList<Integer> inputs = new ArrayList<Integer>();
-			// last base needed to expand the weights
-			int ratioI = 0;
-			int base = 1;
-			int ratio = 1;
-			int maxBase = baseInputs.lastKey();
-			List<Integer> carryBits = null;
-			int basesN = 1;
-			do{
-			    ratio = digitalEnv.getRatio(ratioI++);
-			    inputs.clear();
-			    ArrayList<Integer> inputsWeights = baseInputs.get(base);
-			    if(carryBits != null)
-				inputs.addAll(carryBits);		    
-			    if(inputsWeights!=null)
-				inputs.addAll(inputsWeights);
-			    if(base <= maxBase || inputs.size() != 0){
-				if(base > maxBase)
-				    digitalEnv.setBasesN(basesN);
-				carryBits =
-				    buildControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
-			    } else{break;}
-			    base *=ratio;
-			    basesN++;
-			}while(true);
-		    
-
-		    }
-
-		    /**
-		     *range is the exclusive upper value the unary output may represent.
-		     */
-		    public List<Integer> buildControlledComponent(Integer[] inputs, int base, int modN){
-			DigitComponent digitComp = new DigitComponent(inputs, modN);
-			digitComp.constitutiveClause();
-			new ControlledComponent(base, digitComp);
-			return digitComp.getCarryBits(modN);
-		    }
-		    public int getFreshVar1(){return getSolver().getFreshVar();}
-		    public boolean AddClause1(IVecInt setOfLiterals){return AddClause(setOfLiterals);}
-		};
-	    
 	}
 
 
@@ -261,12 +216,14 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 
 
+	@Override
 	public int getIObj() {
 	    return this.iObj;
 	}
 
 
 
+	@Override
 	public void buildMyself() {
     	    this.circuit = new Circuit(getSolver()){
 		    public void buildCircuit(){
