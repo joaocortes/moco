@@ -32,8 +32,8 @@ import org.sat4j.moco.util.Log;
 
 public class GoalDelimeterCreator {
     
-    static public <PIndex extends Index> GoalDelimeter<PIndex> create(String encoding, Instance instance, PBSolver solver, boolean MSU3){
-	GoalDelimeterI gd = null;
+    static public GoalDelimeter<?> create(String encoding, Instance instance, PBSolver solver, boolean MSU3){
+	GoalDelimeter<?> gd = null;
 	switch(encoding) {
 	case "SD":
 	    gd = new SelectionDelimeter(instance, solver, false);
@@ -43,7 +43,7 @@ public class GoalDelimeterCreator {
 	    Log.comment("Don't know what encoding to use");
 	    break;
 	}
-	return null;
+	return gd;
     }
 
 
