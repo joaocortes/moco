@@ -33,10 +33,10 @@ import org.sat4j.moco.util.Log;
 public class GoalDelimeterCreator {
     
     static public <PIndex extends Index> GoalDelimeter<PIndex> create(String encoding, Instance instance, PBSolver solver, boolean MSU3){
-	
+	GoalDelimeterI gd = null;
 	switch(encoding) {
 	case "SD":
-	    GoalDelimeter<SDIndex> gd = new SelectionDelimeter(instance, solver, false);
+	    gd = new SelectionDelimeter(instance, solver, false);
 	    break;
 	    
 	default:
