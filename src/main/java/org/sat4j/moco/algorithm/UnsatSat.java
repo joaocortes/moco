@@ -104,7 +104,7 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
     }
 
     public UnsatSat(Instance m) {
-	this(m, true);
+	this(m, false);
     }
 
     /**
