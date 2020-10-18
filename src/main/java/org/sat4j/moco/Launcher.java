@@ -32,6 +32,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.algorithm.algorithm;
+import org.sat4j.moco.algorithm.AlgorithmCreator;
 import org.sat4j.moco.algorithm.ParetoMCS;
 import org.sat4j.moco.algorithm.UnsatSat;
 import org.sat4j.moco.algorithm.UnsatSatMSU3;
@@ -149,8 +150,9 @@ public class Launcher {
             Real.updtParams(params);
             Clock.instance().updtParams(params);
             Instance moco = readMOCO(cl);
-
-
+	    AlgorithmCreator algCreator = new AlgorithmCreator();
+	    algorithm algorithm1 = algCreator.create(params, moco);
+	    algorithm1.solve();
         }
         catch (ParseException e) {
             printHelpMessage(options);
