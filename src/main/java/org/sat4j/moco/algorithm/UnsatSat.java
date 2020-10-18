@@ -118,7 +118,6 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
 	boolean goOn = true;
 	boolean goOn1 = true;
 	Log.comment(2, "encoding setup completed.");
-	this.goalDelimeter.preAssumptionsExtend(currentExplanation);
 	currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation);
 	this.logUpperLimit();
 	while(goOn){
