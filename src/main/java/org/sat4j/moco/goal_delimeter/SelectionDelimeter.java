@@ -38,6 +38,7 @@ import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
+import org.sat4j.moco.algorithm.algorithm;
 import org.sat4j.moco.goal_delimeter.Circuit.ControlledComponent;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
@@ -73,7 +74,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    Objective ithObjective = this.getInstance().getObj(iObj);
 	    int oldActivator;
 	    int activator = 0;
-	    objManagers[iObj].circuit.buildCircuit();
+	    objManagers[iObj].buildMyself();
 	    for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++){
 		oldActivator = activator;
 		activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
@@ -98,6 +99,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     }
 
     public ObjManager getIthObjManager(int i){return this.objManagers[i];}
+
     static class SDIndex extends Index{
 
 	SDIndex(int iObj, int kD){
@@ -255,6 +257,61 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    }
 	    if(iterator.hasNext())
 		this.LexicographicOrderRecurse(iterator, clause);
+	}
+
+
+
+	public int getIObj() {
+	    return this.iObj;
+	}
+
+
+
+	public void buildMyself() {
+    	    this.circuit = new Circuit(getSolver()){
+		    public void buildCircuit(){
+			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
+			ArrayList<Integer> inputs = new ArrayList<Integer>();
+			// last base needed to expand the weights
+			int ratioI = 0;
+			int base = 1;
+			int ratio = 1;
+			int maxBase = baseInputs.lastKey();
+			List<Integer> carryBits = null;
+			int basesN = 1;
+			do{
+			    ratio = digitalEnv.getRatio(ratioI++);
+			    inputs.clear();
+			    ArrayList<Integer> inputsWeights = baseInputs.get(base);
+			    if(carryBits != null)
+				inputs.addAll(carryBits);		    
+			    if(inputsWeights!=null)
+				inputs.addAll(inputsWeights);
+			    if(base <= maxBase || inputs.size() != 0){
+				if(base > maxBase)
+				    digitalEnv.setBasesN(basesN);
+				carryBits =
+				    buildControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
+			    } else{break;}
+			    base *=ratio;
+			    basesN++;
+			}while(true);
+		    
+
+		    }
+
+		    /**
+		     *range is the exclusive upper value the unary output may represent.
+		     */
+		    public List<Integer> buildControlledComponent(Integer[] inputs, int base, int modN){
+			DigitComponent digitComp = new DigitComponent(inputs, modN);
+			digitComp.constitutiveClause();
+			new ControlledComponent(base, digitComp);
+			return digitComp.getCarryBits(modN);
+		    }
+		    public int getFreshVar1(){return getSolver().getFreshVar();}
+		    public boolean AddClause1(IVecInt setOfLiterals){return AddClause(setOfLiterals);}
+		};
 	}
 	
 
