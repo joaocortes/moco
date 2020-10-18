@@ -51,7 +51,7 @@ import org.sat4j.specs.IVecInt;
  * @author Joao O'Neill Cortes
  */
 
-public class SelectionDelimeterMSU3 extends GoalDelimeterMSU3<SelectionDelimeterMSU3.SDIndex> {
+public class SelectionDelimeterMSU3 extends SelectionDelimeter{
 
     private ObjManager[] objManagers;
     private int[][] yTable = null;
@@ -103,12 +103,13 @@ public class SelectionDelimeterMSU3 extends GoalDelimeterMSU3<SelectionDelimeter
     }
 
     public ObjManager getIthObjManager(int i){return this.objManagers[i];}
-    static class SDIndex extends Index{
+    // static class SDIndex extends Index{
 
-	SDIndex(int iObj, int kD){
-	    super(iObj, kD);
-	}
-    };
+    // 	SDIndex(int iObj, int kD){
+    // 	    super(iObj, kD);
+    // 	}
+    // }
+    ;
 
     public class ObjManager{
 	int iObj;
