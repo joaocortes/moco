@@ -70,6 +70,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
 	this.initializeYTable();
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.objManagers[iObj] = new ObjManager(iObj);
+	    this.objManagers[iObj].buildMyself();
 	    Objective ithObjective = this.getInstance().getObj(iObj);
 	    int oldActivator;
 	    int activator = 0;
@@ -102,7 +103,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
 	}
     }
 
-    public ObjManager getIthObjManager(int i){return this.objManagers[i];}
+    public IObjManager getIthObjManager(int i){return this.objManagers[i];}
     // static class SDIndex extends Index{
 
     // 	SDIndex(int iObj, int kD){
@@ -111,7 +112,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
     // }
     ;
 
-    public class ObjManager{
+    public class ObjManager implements IObjManager{
 	int iObj;
 	Circuit circuit;
 	DigitalEnv digitalEnv;
@@ -119,50 +120,6 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
 	ObjManager(int iObj){
 	    this.iObj = iObj;
 	    this.digitalEnv = new DigitalEnv();
-    	    this.circuit = new Circuit(getSolver()){
-		    public void buildCircuit(){
-			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
-			ArrayList<Integer> inputs = new ArrayList<Integer>();
-			// last base needed to expand the weights
-			int ratioI = 0;
-			int base = 1;
-			int ratio = 1;
-			int maxBase = baseInputs.lastKey();
-			List<Integer> carryBits = null;
-			int basesN = 1;
-			do{
-			    ratio = digitalEnv.getRatio(ratioI++);
-			    inputs.clear();
-			    ArrayList<Integer> inputsWeights = baseInputs.get(base);
-			    if(carryBits != null)
-				inputs.addAll(carryBits);		    
-			    if(inputsWeights!=null)
-				inputs.addAll(inputsWeights);
-			    if(base <= maxBase || inputs.size() != 0){
-				if(base > maxBase)
-				    digitalEnv.setBasesN(basesN);
-				carryBits =
-				    buildControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
-			    } else{break;}
-			    base *=ratio;
-			    basesN++;
-			}while(true);
-		    
-
-		    }
-
-		    /**
-		     *range is the exclusive upper value the unary output may represent.
-		     */
-		    public List<Integer> buildControlledComponent(Integer[] inputs, int base, int modN){
-			DigitComponent digitComp = new DigitComponent(inputs, modN);
-			digitComp.constitutiveClause();
-			new ControlledComponent(base, digitComp);
-			return digitComp.getCarryBits(modN);
-		    }
-		    public int getFreshVar1(){return getSolver().getFreshVar();}
-		    public boolean AddClause1(IVecInt setOfLiterals){return AddClause(setOfLiterals);}
-		};
 	    
 	}
 
@@ -261,6 +218,62 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
 	    }
 	    if(iterator.hasNext())
 		this.LexicographicOrderRecurse(iterator, clause);
+	}
+
+
+	@Override
+	public void buildMyself() {
+	    this.circuit = new Circuit(getSolver()){
+		    public void buildCircuit(){
+			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
+			ArrayList<Integer> inputs = new ArrayList<Integer>();
+			// last base needed to expand the weights
+			int ratioI = 0;
+			int base = 1;
+			int ratio = 1;
+			int maxBase = baseInputs.lastKey();
+			List<Integer> carryBits = null;
+			int basesN = 1;
+			do{
+			    ratio = digitalEnv.getRatio(ratioI++);
+			    inputs.clear();
+			    ArrayList<Integer> inputsWeights = baseInputs.get(base);
+			    if(carryBits != null)
+				inputs.addAll(carryBits);		    
+			    if(inputsWeights!=null)
+				inputs.addAll(inputsWeights);
+			    if(base <= maxBase || inputs.size() != 0){
+				if(base > maxBase)
+				    digitalEnv.setBasesN(basesN);
+				carryBits =
+				    buildControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
+			    } else{break;}
+			    base *=ratio;
+			    basesN++;
+			}while(true);
+		    
+
+		    }
+
+		    /**
+		     *range is the exclusive upper value the unary output may represent.
+		     */
+		    public List<Integer> buildControlledComponent(Integer[] inputs, int base, int modN){
+			DigitComponent digitComp = new DigitComponent(inputs, modN);
+			digitComp.constitutiveClause();
+			new ControlledComponent(base, digitComp);
+			return digitComp.getCarryBits(modN);
+		    }
+		    public int getFreshVar1(){return getSolver().getFreshVar();}
+		    public boolean AddClause1(IVecInt setOfLiterals){return AddClause(setOfLiterals);}
+		};
+
+	}
+
+
+	@Override
+	public int getIObj() {
+	    return this.iObj;
 	}
 	
 
