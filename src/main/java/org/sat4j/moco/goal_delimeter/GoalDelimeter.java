@@ -91,3 +91,4 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
 	return true;
     }
 }
+
