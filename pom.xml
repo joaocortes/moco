@@ -125,7 +125,7 @@
                   <artifactId>umldoclet</artifactId>
                   <version>2.0.12</version>
                 </docletArtifact>
-              <verbose>true</verbose>
+              <!-- <verbose>true</verbose> -->
                 <additionalOptions>
                   <!--<additionalOption>...</additionalOption>-->
                 </additionalOptions>
