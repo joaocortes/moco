@@ -127,14 +127,14 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
 	    solver.check(currentAssumptions);
 	    this.solver.printStats();
 	    if(goOn1 && solver.isSat()){
-		this.subResult.saveModel(this.solver);
+		this.saveModel();
 		int[] diffAttainedValue = this.diffAttainedValue();
  		if(! this.blockDominatedRegion(diffAttainedValue)){
 		    goOn1 = false;
 		}
 
 	    }else{
-		transferSubResult();
+		finalizeHarvest();
 		goOn = goOn1;
 		if(goOn){
 		    currentExplanation = solver.unsatExplanation();
@@ -442,7 +442,6 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
 }
     public void finalizeHarvest(){
 	this.transferSubResult();
-
 }
 	@Override
 	public void setGoalDelimeter(GoalDelimeterI gd) {
