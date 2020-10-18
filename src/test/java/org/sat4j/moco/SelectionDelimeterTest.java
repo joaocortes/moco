@@ -37,8 +37,8 @@ import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.LinearObj;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.goal_delimeter.SelectionDelimeter;
-import org.sat4j.moco.goal_delimeter.SelectionDelimeter.Circuit;
-import org.sat4j.moco.goal_delimeter.SelectionDelimeter.Circuit.ControlledComponent;
+import org.sat4j.moco.goal_delimeter.Circuit;
+import org.sat4j.moco.goal_delimeter.Circuit.ControlledComponent;
 import org.sat4j.moco.goal_delimeter.SelectionDelimeter.ObjManager;
 import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.MyModelIterator;
@@ -65,7 +65,7 @@ public class SelectionDelimeterTest {
 	    Log.comment("Could not build the solver");
             return;
         }
-	this.sd  = new SelectionDelimeter(moco, this.pbSolver,true, false){
+	this.sd  = new SelectionDelimeter(moco, this.pbSolver,true){
 
 		/**
 		 *Adds the disjunction of setOfLiterals, and logs

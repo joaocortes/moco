@@ -26,7 +26,7 @@ import java.util.Iterator;
 
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.pb.PBSolver;
-import org.sat4j.moco.problem.GoalDelimeter;
+import org.sat4j.moco.goal_delimeter.GoalDelimeter;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
 
