@@ -1,6 +1,7 @@
 package org.sat4j.moco.algorithm;
 
 import org.sat4j.moco.Params;
+import org.sat4j.moco.goal_delimeter.GoalDelimeter;
 import org.sat4j.moco.goal_delimeter.GoalDelimeterCreator;
 import org.sat4j.moco.goal_delimeter.GoalDelimeterI;
 import org.sat4j.moco.pb.PBSolver;
@@ -24,15 +25,15 @@ public class AlgorithmCreator {
 	    return algorithm1;
 	case 1:
 	    UnsatSat unsatSat = new UnsatSat(moco);
-	    unsatSat.setGoalDelimeter(createGoalDelimeter(encoding, unsatSat, unsatSat.GetGoalDelimeter(), false));
+	    unsatSat.setGoalDelimeter(createGoalDelimeter(encoding, unsatSat, false));
 	    return unsatSat;
 	case 2:
 	    pMinimal pmin = new pMinimal(moco);
-	    pmin.setGoalDelimeter(createGoalDelimeter(encoding, pmin, pmin.GetGoalDelimeter(), false));
+	    pmin.setGoalDelimeter(createGoalDelimeter(encoding, pmin, false));
 	    return pmin;
 	case 3:
 	    UnsatSatMSU3 unsatSatMSU3 = new UnsatSatMSU3(moco);
-	    unsatSatMSU3.setGoalDelimeter(createGoalDelimeter(encoding, unsatSatMSU3, unsatSatMSU3.GetGoalDelimeter(), true));	    
+	    unsatSatMSU3.setGoalDelimeter(createGoalDelimeter(encoding, unsatSatMSU3, true));	    
 	    return unsatSatMSU3;
 	default:
 	    Log.comment("Don't know what solver to use");
@@ -43,11 +44,11 @@ public class AlgorithmCreator {
 
 
 
-    private  GoalDelimeterI createGoalDelimeter(String encoding, algorithm algorithm1, GoalDelimeterI gd, boolean MSU3){
+    private  GoalDelimeter<?> createGoalDelimeter(String encoding, algorithm algorithm1, boolean MSU3){
 	PBSolver solver = algorithm1.getSolver();
 	Instance instance = algorithm1.getProblem();
-	gd = GoalDelimeterCreator.create(encoding, instance , solver, MSU3);
-	return gd;
+	return GoalDelimeterCreator.create(encoding, instance , solver, MSU3);
+	
     }
 
 }
