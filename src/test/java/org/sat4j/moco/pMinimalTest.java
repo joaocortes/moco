@@ -23,7 +23,7 @@ import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.util.Real;
 
 
-public class pMinimalTest extends algorithmTest<pMinimal> {
+public class pMinimalTest extends algorithmTest {
     public pMinimalTest(){};
 
     @Override
