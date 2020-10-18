@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.algorithm.algorithm;
+import org.sat4j.moco.algorithm.AlgorithmCreator;
 
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.pb.PBFactory;
@@ -39,12 +40,13 @@ import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
 
- public abstract class algorithmTest<chosenAlgorithm extends algorithm> {
+ public abstract class algorithmTest {
 
     protected Instance moco;
     protected LinearObj main_obj;
-    protected chosenAlgorithm solver;
-    protected abstract chosenAlgorithm instateAlgorithm();
+    protected AlgorithmCreator algCreator = new AlgorithmCreator();
+    protected algorithm solver;
+    protected abstract algorithm instateAlgorithm();
      static {Log.setVerbosity(6);}    
     @Before
     public void setUp() {
@@ -235,6 +237,14 @@ import org.sat4j.moco.util.Real;
         Objective[] objs = new Objective[] { this.main_obj, other_obj1, other_obj2, other_obj3, other_obj4 };
         validateResult(result, objs, front_sols, front_costs);
     }
+
+	public algorithm getSolver() {
+		return solver;
+	}
+
+	public void setSolver(algorithm solver) {
+		this.solver = solver;
+	}
     
 }
 
