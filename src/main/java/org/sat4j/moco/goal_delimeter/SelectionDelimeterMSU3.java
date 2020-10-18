@@ -357,17 +357,15 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
 
     }
 
-	@Override
 	public int getUncoveredMaxKD(int iObj) {
 	    return this.uncoveredMaxKD[iObj];
 	}
 
-	@Override
+
 	public void setMaxUncoveredKD(int iObj, int a) {
 	    this.uncoveredMaxKD[iObj] = a;
 	}
 
-	@Override
 	public int nextKDValue(int iObj, int kD) {
 	    if(kD < this.getUncoveredMaxKD(iObj))
 		return  kD + 1;
@@ -377,12 +375,10 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
 	}
 
 
-	@Override
 	public int getMaxUncoveredKD(int iObj) {
 	    return this.uncoveredMaxKD[iObj];
 	}
 
-	@Override
 	public int generateNext(int iObj, int kD, int inclusiveMax) {
 	    if(kD < inclusiveMax)
 		return kD +1;
