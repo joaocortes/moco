@@ -115,6 +115,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	ObjManager(int iObj){
 	    this.iObj = iObj;
 	    this.digitalEnv = new DigitalEnv();
+	    
 	}
 
 
