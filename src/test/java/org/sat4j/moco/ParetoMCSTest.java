@@ -16,7 +16,7 @@ import org.sat4j.moco.problem.DivObj;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.util.Real;
 
-public class ParetoMCSTest extends algorithmTest<ParetoMCS> {
+public class ParetoMCSTest extends algorithmTest {
 
     public ParetoMCSTest(){};
 

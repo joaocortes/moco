@@ -37,8 +37,8 @@ import org.sat4j.core.VecInt;
 import org.sat4j.moco.algorithm.UnsatSat;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.goal_delimeter.SelectionDelimeter;
-import org.sat4j.moco.goal_delimeter.SelectionDelimeter.Circuit;
-import org.sat4j.moco.goal_delimeter.SelectionDelimeter.Circuit.ControlledComponent;
+import org.sat4j.moco.goal_delimeter.Circuit;
+import org.sat4j.moco.goal_delimeter.Circuit.ControlledComponent;
 import org.sat4j.moco.util.General;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
@@ -381,7 +381,7 @@ public class CircuitTest {
 
 	Circuit circuit = new Circuit(pbSolver){
 		public void buildCircuit(){
-		    SelectionDelimeter.Circuit.CombineComponent comp = new SelectionDelimeter.Circuit.CombineComponent(sortedPortionN);
+		    Circuit.CombineComponent comp = new Circuit.CombineComponent(sortedPortionN);
 		    comp.constitutiveClause(inputsArray[0], inputsArray[1]);
 		    new ControlledComponent(0, comp);
 		}
