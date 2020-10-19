@@ -270,6 +270,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 		    public int getFreshVar1(){return getSolver().getFreshVar();}
 		    public boolean AddClause1(IVecInt setOfLiterals){return AddClause(setOfLiterals);}
 		};
+
+	    this.circuit.buildCircuit();
 	}
 	
 

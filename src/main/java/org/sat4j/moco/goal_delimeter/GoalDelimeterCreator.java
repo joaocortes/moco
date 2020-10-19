@@ -36,7 +36,7 @@ public class GoalDelimeterCreator {
 	GoalDelimeter<?> gd = null;
 	switch(encoding) {
 	case "SD":
-	    gd = new SelectionDelimeter(instance, solver, false);
+	    gd = new SelectionDelimeter(instance, solver, true);
 	    break;
 	    
 	default:
