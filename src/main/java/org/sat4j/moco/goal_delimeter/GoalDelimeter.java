@@ -1,14 +1,15 @@
 package org.sat4j.moco.goal_delimeter;
 
-import org.sat4j.moco.util.Log;
-import org.sat4j.specs.IVecInt;
-
-
+import org.sat4j.core.ReadOnlyVec;
+import org.sat4j.core.ReadOnlyVecInt;
+import org.sat4j.core.VecInt;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
-
-
+import org.sat4j.moco.problem.Objective;
+import org.sat4j.moco.util.Log;
+import org.sat4j.moco.util.Real;
 import org.sat4j.specs.ContradictionException;
+import org.sat4j.specs.IVecInt;
 
 
 public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimeterI{
@@ -56,10 +57,40 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
      * Generate the upper limit assumptions
      */
     public IVecInt generateUpperBoundAssumptions(){return null;};
-    public IVecInt generateUpperBoundAssumptions(IVecInt explanation){return null;};
     public IVecInt generateUpperBoundAssumptions(int[] upperKD){return null;};
 
-;
+    public IVecInt generateUpperBoundAssumptions(IVecInt explanation){
+	this.preAssumptionsExtend(explanation);
+	
+	IVecInt assumptions = new VecInt(new int[]{});
+	
+	for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
+	    int IthUpperBound = this.nextKDValue(iObj, getUpperKD(iObj));
+	    Objective ithObjective = this.instance.getObj(iObj);
+	    if(this.getUpperKD(iObj)  != IthUpperBound){
+		int newY = -this.getY(iObj, IthUpperBound);
+		if(newY!=0)
+		    assumptions.push(newY);
+	    }
+
+	    ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
+	    ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
+	    int sign;
+	    int ithAbsoluteWeight;
+
+	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
+		int ithX = objectiveLits.get(iX);
+		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
+		sign = (ithAbsoluteWeight > 0? 1 : -1);
+		ithAbsoluteWeight *= sign;
+		if(ithAbsoluteWeight > getUpperKD(iObj))
+		    assumptions.push(-sign * ithX);
+	    }
+
+	}
+
+	return assumptions;
+    }
 
     /**
      *Checks if a variable is an X(original) variable.
@@ -90,5 +121,7 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
 	}
 	return true;
     }
+    public int nextKDValue(int iObj, int kD){return kD + 1;};
+
 }
 
