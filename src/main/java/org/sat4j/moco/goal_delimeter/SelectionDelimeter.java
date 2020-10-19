@@ -330,6 +330,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
     public int getY(int iObj, int kD){
 	int index  = this.unaryToIndex(kD);
+	if(index < 0 )
+	    return 0;
 	return this.yTable[iObj][index];
     };
 
