@@ -121,7 +121,21 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
 	}
 	return true;
     }
-    public int nextKDValue(int iObj, int kD){return kD + 1;};
+	public int generateNext(int iObj, int kD, int inclusiveMax) {
+	    if(kD < inclusiveMax)
+		return kD +1;
+	    if(kD == inclusiveMax)
+		return kD;
+		return 0;
+	}
 
+	public int nextKDValue(int iObj, int kD) {
+	    int max = this.instance.getObj(iObj).getWeightDiff();
+	    if(kD < max)
+		return  kD + 1;
+	    if(kD == max)
+		return kD;
+	    else return -1;
+	}
 }
 
