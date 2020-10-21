@@ -89,7 +89,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
     /**
      * Initialize the container of the Y variables
      */
-    private void initializeYTable(){
+    protected void initializeYTable(){
 	this.yTable = new int[this.instance.nObjs()][];
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
 	    Objective ithObj = instance.getObj(iObj);
@@ -289,7 +289,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 
 
-    private HashMap<Integer, Integer> getWeights(int iObj){
+    protected HashMap<Integer, Integer> getWeights(int iObj){
 	HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
 	Objective ithObjective = this.instance.getObj(iObj);
 	ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
@@ -330,10 +330,8 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
     public int getY(int iObj, int kD){
 	int index  = this.unaryToIndex(kD);
-	if(index < 0 )
-	    return 0;
 	return this.yTable[iObj][index];
-    };
+    }
 
     /**
      *Pretty print the variable in literal. 
