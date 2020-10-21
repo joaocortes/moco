@@ -24,10 +24,10 @@ public interface GoalDelimeterI{
     /**
      * Generate the upper limit assumptions
      */
-    default public IVecInt generateUpperBoundAssumptions(){return null;};
-    default public IVecInt generateUpperBoundAssumptions(IVecInt explanation){return null;};
-    default public IVecInt generateUpperBoundAssumptions(IVecInt explanation, boolean whoKnows){return null;};
-    default public IVecInt generateUpperBoundAssumptions(int[] upperKD){return null;};
+    public IVecInt generateUpperBoundAssumptions();
+    public IVecInt generateUpperBoundAssumptions(IVecInt explanation);
+    public IVecInt generateUpperBoundAssumptions(IVecInt explanation, boolean whoKnows);
+    public IVecInt generateUpperBoundAssumptions(int[] upperKD);
 
 ;
 
