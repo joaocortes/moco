@@ -30,18 +30,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.HashMap;
-import java.util.Iterator;
 
 
-import org.sat4j.core.ReadOnlyVec;
 
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Log;
-import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
-import org.sat4j.moco.goal_delimeter.Circuit;
 import org.sat4j.moco.problem.DigitalEnv;
 import org.sat4j.moco.problem.DigitalEnv.DigitalNumber;
 import org.sat4j.specs.IVecInt;
@@ -90,20 +86,6 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
 
 	// Log.comment(5, "}");
     }
-
-    /**
-     * Initialize the container of the Y variables
-     */
-    private void initializeYTable(){
-	this.yTable = new int[this.instance.nObjs()][];
-	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
-	    Objective ithObj = instance.getObj(iObj);
-	    this.yTable[iObj] = new int[ithObj.getWeightDiff()];
-
-	}
-    }
-
-    public IObjManager getIthObjManager(int i){return this.objManagers[i];}
     // static class SDIndex extends Index{
 
     // 	SDIndex(int iObj, int kD){
@@ -175,6 +157,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
 		index = circuit.getControlledComponentBase(base).getOutputsSize() - 1;
 	    return circuit.getControlledComponentBase(base).getIthOutput(index);
 	}
+
 	/**
 	 *Adds the upper bound clauses  that enforce the inclusive
 	 *upper limit upperLimit. Returns the blocking variables.
@@ -279,83 +262,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
 
     }
 
-    public Integer[] concatenate(Integer[][] seq){
-	List<Integer> result = new ArrayList<Integer>();
-	for(Integer[] array: seq)
-	    for(Integer value: array)
-		result.add(value);
-	return result.toArray(new Integer[0]);
-    }    
 
-
-
-    private HashMap<Integer, Integer> getWeights(int iObj){
-	HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
-	Objective ithObjective = this.instance.getObj(iObj);
-	ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
-	IVecInt literals = ithObjective.getSubObjLits(0);
-	for(int i = 0, n = objectiveCoeffs.size(); i < n; i++)
-	    {
-		int weight = objectiveCoeffs.get(i).asIntExact();
-		int lit = literals.get(i);
-		result.put(lit, weight);
-	    }
-	return result;
-
-    }
-
-    /**
-     * This delimeter is not incremental. Therefore, this is a trivial
-     * operation.
-     */
-    public boolean UpdateCurrentK(int iObj, int upperKD){return true;}
-
-    public boolean isY(int id){
-	SDIndex index = librarian.getIndex(id);
-	if(index == null) return false;
-	return true;
-    }
-    public int getCurrentKD(int iObj){return 0;};
-    public int getIObjFromY(int id){
-	SDIndex index = this.librarian.getIndex(id);
-	if(index!=null)
-	    return index.getIObj();
-	return 0;};
-
-    public int getKDFromY(int id){
-	SDIndex index = this.librarian.getIndex(id);
-	if(index!=null)
-	    return index.getKD();
-	return 0;};
-
-    public int getY(int iObj, int kD){
-	int index  = this.unaryToIndex(kD);
-	return this.yTable[iObj][index];
-    };
-
-    /**
-     *Pretty print the variable in literal. 
-     */
-    public String prettyFormatVariable(int literal){
-	int sign =(literal>0)? 1: -1;
-	int id =  literal * sign;
-
-	if(isX(id)){
-	    return (sign>0? "+":"-")+"X["+id+"] ";
-	}
-	if(this.isY(id)){
-	    int iObj = this.getIObjFromY(id);
-	    int kD = this.getKDFromY(id);
-	    int k = kD; // + this.instance.getObj(iObj).getMinValue();
-	    return "Y[" + iObj + ", " + k +"]"+ "::" + literal + " ";
-	}
-	return literal + " ";
-    }
-
-    public int unaryToIndex(int kD){
-	return kD  - 1;
-
-    }
 
 	public int getUncoveredMaxKD(int iObj) {
 	    return this.uncoveredMaxKD[iObj];
