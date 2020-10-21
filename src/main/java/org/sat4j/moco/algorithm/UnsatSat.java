@@ -191,27 +191,6 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
     }
 
 
-    private void analyzeDisjointCores(){
-	IVecInt currentAssumptions = this.goalDelimeter.generateUpperBoundAssumptions();
-	IVecInt disjointCoresLiterals = new VecInt(new int[]{});
-	IVecInt currentExplanation = new VecInt(new int[]{});
-	int disjointCoresN = 0;
-	solver.check(currentAssumptions);
-	if(!solver.isSat()){
-	    currentExplanation = solver.unsatExplanation();
-	    disjointCoresN++;
-		    for(int x: currentExplanation.toArray())
-			if(this.goalDelimeter.isX(x)){
-			    currentAssumptions.delete( currentAssumptions.indexOf(x));
-			    disjointCoresLiterals.push(x);
-		}
-	    solver.check(currentAssumptions);
-	}
-	Log.comment(2, "number of disjoint cores: "  + disjointCoresN);
-	Log.comment(2, "disjoint core union size: "  + disjointCoresLiterals.size());
-    }
-
-
     /**
      *gets the current upper limit of the explored value of the
      *differential k of the ithOjective
