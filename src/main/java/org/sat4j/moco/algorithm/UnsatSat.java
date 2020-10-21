@@ -26,23 +26,15 @@ import java.util.Vector;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import org.sat4j.core.VecInt;
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.analysis.SubResult;
+import org.sat4j.moco.goal_delimeter.GoalDelimeterI;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
-import org.sat4j.moco.goal_delimeter.SelectionDelimeter;
-import org.sat4j.moco.goal_delimeter.SeqEncoder;
-import org.sat4j.moco.goal_delimeter.GenTotalEncoder;
-import org.sat4j.moco.goal_delimeter.GenTotalEncoderMSU3;
-import org.sat4j.moco.goal_delimeter.GoalDelimeter;
-import org.sat4j.moco.goal_delimeter.GoalDelimeterI;
-import org.sat4j.moco.goal_delimeter.GoalDelimeterMSU3;
-import org.sat4j.moco.goal_delimeter.Index;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVecInt;
@@ -63,21 +55,6 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
 
     private GoalDelimeterI goalDelimeter = null;
 
-    /**
-     * Last explored differential k, for each objective function.
-     */
-    private int[] UpperKD = null;
-
-    /**
-     *  Last id of the real, non auxiliary,  variables
-     */
-    private int realVariablesN = 0;
-
-    /**
-     *signals that the MSU3 flavour is active
-     */
-    private boolean MSU3 = false;
-
     public UnsatSat(){}
     /**
      * Creates an instance of a MOCO solver, for a given instance,
@@ -87,7 +64,6 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
 
     public UnsatSat(Instance m, boolean MSU3) {
         // Log.comment(3, "in UnsatSat constructor");
-	this.MSU3 = MSU3;
 	this.problem = m;
 	this.result = new Result(m, true);
 	try {
@@ -98,7 +74,6 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
             return;
         }
 	
-	this.realVariablesN = this.solver.nVars();
 	this.subResult = new SubResult(this.problem);
 
     }
