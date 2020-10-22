@@ -26,6 +26,11 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
     protected Librarian<PIndex> librarian = null;
 
     /**
+     * Last explored differential k, for each objective function.
+     */
+    protected int[] upperKD = null;
+
+    /**
      *First solver variable that pertains to the goal delimeter
      *encoding
      */
@@ -42,6 +47,7 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
 	this.instance = instance;	
 	this.solver = solver;
 	this.setFirstVariable();
+	this.upperKD = new int[this.instance.nObjs()];
 }
 
     public void setSolver(PBSolver solver){this.solver = solver;}
@@ -59,8 +65,15 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
     public IVecInt generateUpperBoundAssumptions(){return null;};
     public IVecInt generateUpperBoundAssumptions(int[] upperKD){return null;};
 
+    public IVecInt generateUpperBoundAssumptions(IVecInt explanation, boolean checkChange){
+	if(!this.preAssumptionsExtend(explanation) & checkChange)
+	    return null;
+	return this.generateUpperBoundAssumptions(explanation);
+    }
+
+
     public IVecInt generateUpperBoundAssumptions(IVecInt explanation){
-	this.preAssumptionsExtend(explanation);
+	
 	
 	IVecInt assumptions = new VecInt(new int[]{});
 	
@@ -137,5 +150,38 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
 		return kD;
 	    else return -1;
 	}
+
+    public int getUpperKD(int iObj){
+	return this.upperKD[iObj];
+    }
+
+    public void setUpperKD(int iObj, int newKD){
+	if(this.getUpperKD(iObj)< newKD)
+	    this.upperKD[iObj] = newKD;
+    }
+
+    /**
+     *Increase the upperKD, taking care of the semantics
+     *
+     */
+
+    public boolean preAssumptionsExtend(IVecInt currentExplanation){
+	// Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
+	boolean change = false;
+
+	for(int lit: currentExplanation.toArray()){
+	    int id = this.solver.idFromLiteral(lit);
+	    if(this.isY(id)){
+		int iObj = this.getIObjFromY(id);
+		int oldKD = this.getUpperKD(iObj);
+		this.setUpperKD(iObj, this.nextKDValue(iObj, this.getUpperKD(iObj)));
+		if(oldKD != this.getUpperKD(iObj))
+		    change = true;
+	    }
+	}
+	
+	return change;
+    }
+
 }
 
