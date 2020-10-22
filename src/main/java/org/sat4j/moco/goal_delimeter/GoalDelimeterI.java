@@ -96,6 +96,9 @@ public interface GoalDelimeterI{
     }
 
 
-    default public boolean preAssumptionsExtend(IVecInt currentExplanation){return true;};
-    default public int getUpperKD(int iObj){return -1;};
+    /**
+     * Increase the upperKD, taking care of the semantics
+     */
+    public boolean preAssumptionsExtend(IVecInt currentExplanation);
+    public int getUpperKD(int iObj);
 }
