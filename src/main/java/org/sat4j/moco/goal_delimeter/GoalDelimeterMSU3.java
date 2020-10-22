@@ -20,7 +20,7 @@
  *   CRIL - initial API and implementation
  *   João O'Neill Cortes, INESC
  *******************************************************************************/
-package org.sat4j.moco.goal_delimeter;
+package org.sat4j.moco.problem;
 
 import java.lang.Math;
 import org.sat4j.moco.util.Log;
@@ -41,6 +41,8 @@ import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
+import org.sat4j.moco.problem.GenTotalEncoder.SumTree;
+import org.sat4j.moco.problem.GenTotalEncoderMSU3.SumTree.Node;
 import org.sat4j.specs.IVecInt;
 
 
@@ -50,20 +52,13 @@ import org.sat4j.specs.IVecInt;
  */
 
 public abstract class GoalDelimeterMSU3<PIndex extends Index> extends GoalDelimeter<PIndex>{
-
     boolean change = false;
 
-    /**
-     * Last explored differential k, for each objective function.
-     */
-    protected int[] upperKD = null;
 
     /**
      *signals that the MSU3 flavour is active
      */
     protected boolean MSU3 = false;
-
-    //TODO: this is to be put in the goalManager
 
     /**
      * Upper bound, exclusive
@@ -76,7 +71,6 @@ public abstract class GoalDelimeterMSU3<PIndex extends Index> extends GoalDelime
 	super(instance, solver);
 	this.MSU3 = MSU3;
 	this.UpperBound = new int[this.instance.nObjs()];
-	this.upperKD = new int[this.instance.nObjs()];
 	if(MSU3){
 	    this.coveredLiterals = new HashMap<Integer, Boolean>(this.solver.nVars());
 	    for(int iObj = 0, nObj = this.instance.nObjs();iObj < nObj; iObj++){
@@ -233,10 +227,6 @@ public abstract class GoalDelimeterMSU3<PIndex extends Index> extends GoalDelime
     }
     abstract public int nextKDValue(int iObj, int kD);
 
-    private void setUpperKD(int iObj, int newKD){
-	if(this.getUpperKD(iObj)< newKD)
-	    this.upperKD[iObj] = newKD;
-    }
     abstract public int getMaxUncoveredKD(int iObj);
     abstract public int generateNext(int iObj, int kD, int inclusiveMax);
 
@@ -251,10 +241,6 @@ public abstract class GoalDelimeterMSU3<PIndex extends Index> extends GoalDelime
 	    this.UpperBound[iObj] = newKD;
     }
 
-    @Override
-    public int getUpperKD(int iObj){
-	return this.upperKD[iObj];
-    }
     /**
      *Log the current upperBound
      */
@@ -268,14 +254,5 @@ public abstract class GoalDelimeterMSU3<PIndex extends Index> extends GoalDelime
 	logUpperLimit +="]";
 	Log.comment(2, logUpperLimit );
     }
-
-
-	public HashMap<Integer, Boolean> getCoveredLiterals() {
-		return coveredLiterals;
-	}
-
-	public void setCoveredLiterals(HashMap<Integer, Boolean> coveredLiterals) {
-		this.coveredLiterals = coveredLiterals;
-	}
 
 }

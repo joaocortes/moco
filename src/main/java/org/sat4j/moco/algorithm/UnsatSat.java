@@ -93,7 +93,7 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
 	boolean goOn = true;
 	boolean goOn1 = true;
 	Log.comment(2, "encoding setup completed.");
-	currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation);
+	currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation, false);
 	this.logUpperLimit();
 	while(goOn){
 	    Log.comment("");
@@ -116,7 +116,7 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
 		    if(currentExplanation.size() == 0){
 			goOn = false;
 		    }else{
-			currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation);
+			currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation, true);
 			this.logUpperLimit();
 			// if currentAssumptions are null, then the
 			// attainable domain did was not expanded and
@@ -159,9 +159,9 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
     /**
      * Generate the upper limit assumptions
      */
-    public IVecInt generateUpperBoundAssumptions(IVecInt explanation){
+    public IVecInt generateUpperBoundAssumptions(IVecInt explanation, boolean checkRange){
 	IVecInt assumptions = new VecInt(new int[]{});
-	assumptions = this.goalDelimeter.generateUpperBoundAssumptions(explanation);
+	assumptions = this.goalDelimeter.generateUpperBoundAssumptions(explanation, checkRange);
 	return assumptions;
     }
 
