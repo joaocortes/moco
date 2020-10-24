@@ -47,7 +47,7 @@ import org.sat4j.specs.IVecInt;
  * @author Joao O'Neill Cortes
  */
 
-public class SelectionDelimeterMSU3 extends SelectionDelimeter{
+public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimeterMSU3.ObjManager>{
 
     private ObjManager[] objManagers;
     private int[][] yTable = null;
@@ -55,37 +55,36 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
     
 
     public SelectionDelimeterMSU3(Instance instance, PBSolver solver, boolean buildCircuit) {
-	this(instance, solver, true, false);
+	super(instance, solver, buildCircuit);
+	this.uncoveredMaxKD = new int[this.instance.nObjs()];
+	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
+	    this.objManagers[iObj] = new ObjManager(iObj);
+	    this.objManagers[iObj].buildMyself();
+	    objManagers[iObj].circuit.buildCircuit();
+	    this.generateY();
+	    }
 	}
 
-    public SelectionDelimeterMSU3(Instance instance, PBSolver solver, boolean buildCircuit, boolean MSU3) {
-	super(instance, solver, MSU3);
-	this.instance = instance;
-	this.uncoveredMaxKD = new int[this.instance.nObjs()];
-	this.objManagers = new ObjManager[this.instance.nObjs()];
-	this.initializeYTable();
+    public void generateY(){
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.objManagers[iObj] = new ObjManager(iObj);
 	    this.objManagers[iObj].buildMyself();
 	    Objective ithObjective = this.getInstance().getObj(iObj);
 	    int oldActivator;
 	    int activator = 0;
-	    if(buildCircuit){
-		objManagers[iObj].circuit.buildCircuit();
-		for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++){
-		    oldActivator = activator;
-	 	    activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
-		    if(kD > 1){
-			Log.comment(6, "sequential clause");
-			this.AddClause(new VecInt(new int[]{-activator, oldActivator}));
-		    }
+	    for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++){
+		oldActivator = activator;
+		activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
+		if(kD > 1){
+		    Log.comment(6, "sequential clause");
+		    this.AddClause(new VecInt(new int[]{-activator, oldActivator}));
 
 		}
 	    }
 	}
-
-	// Log.comment(5, "}");
     }
+
+
     // static class SDIndex extends Index{
 
     // 	SDIndex(int iObj, int kD){
@@ -262,8 +261,6 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
 
     }
 
-
-
 	public int getUncoveredMaxKD(int iObj) {
 	    return this.uncoveredMaxKD[iObj];
 	}
@@ -294,6 +291,16 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeter{
 		return 0;
 	}
 
+
+	@Override
+	protected ObjManager[] objManagersCreator() {
+	    return new ObjManager[this.getInstance().nObjs()];
+	}
+
+	@Override
+	protected ObjManager objManagerCreator(int iObj) {
+	    return new ObjManager(iObj);
+	}
 }
 
 
