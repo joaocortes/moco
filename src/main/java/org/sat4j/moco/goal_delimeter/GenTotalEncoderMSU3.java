@@ -1109,7 +1109,7 @@ private void updateAllUncoveredMaxKD(){
      *@param newKD
      *@param iObj
      */
-    private void setUpperKD(int iObj, int newKD){
+    public void setUpperKD(int iObj, int newKD){
 	if(this.getUpperKD(iObj)< newKD)
 	    this.upperKD[iObj] = newKD;
     }

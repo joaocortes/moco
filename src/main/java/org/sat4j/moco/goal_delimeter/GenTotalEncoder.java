@@ -688,5 +688,4 @@ public class GenTotalEncoder extends GoalDelimeter<Index> {
     }
 
 
-
 }
