@@ -1,5 +1,7 @@
 package org.sat4j.moco.goal_delimeter;
 
+import java.util.HashMap;
+
 import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.VecInt;
@@ -168,14 +170,22 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
     public boolean preAssumptionsExtend(IVecInt currentExplanation){
 	// Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
 	boolean change = false;
-
+	HashMap<Integer,Boolean> objectivesToChange = new HashMap<Integer, Boolean>(this.instance.nObjs());
 	for(int lit: currentExplanation.toArray()){
 	    int id = this.solver.idFromLiteral(lit);
-	    if(this.isY(id)){
-		int iObj = this.getIObjFromY(id);
-		int oldKD = this.getUpperKD(iObj);
+	    if(this.isX(id)){
+		for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
+		    if(this.instance.getObj(iObj).getSubObj(0).weightFromLit(id) != null)
+			objectivesToChange.put(iObj, null);
+		}
+	    }
+	    else
+		objectivesToChange.put(this.getIObjFromY(id), null);
+	    for(int iObj :objectivesToChange.keySet()){
+		// Log.comment(3, "changing upperlimit " + iObj);
+		int upperKDBefore = this.getUpperKD(iObj);
 		this.setUpperKD(iObj, this.nextKDValue(iObj, this.getUpperKD(iObj)));
-		if(oldKD != this.getUpperKD(iObj))
+		if(this.getUpperKD(iObj)!= upperKDBefore)
 		    change = true;
 	    }
 	}
