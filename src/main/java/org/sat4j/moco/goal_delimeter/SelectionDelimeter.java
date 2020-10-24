@@ -32,14 +32,11 @@ import java.util.Map.Entry;
 import java.util.HashMap;
 
 
-import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Log;
-import org.sat4j.moco.util.Real;
 import org.sat4j.moco.goal_delimeter.Circuit.ControlledComponent;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
-import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.problem.DigitalEnv;
 import org.sat4j.moco.problem.DigitalEnv.DigitalNumber;
 import org.sat4j.moco.problem.DigitalEnv.DigitalNumber.IteratorContiguous;
@@ -50,65 +47,17 @@ import org.sat4j.specs.IVecInt;
  * @author Joao O'Neill Cortes
  */
 
-public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex> {
+public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.ObjManager> {
 
-    private ObjManager[] objManagers;
-    private int[][] yTable = null;
     
     public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit) {
-	super(instance, solver);
-	this.instance = instance;
-	this.objManagers = new ObjManager[this.instance.nObjs()];
-	this.initializeYTable();
-	if(buildCircuit)
-	    this.buildCircuits();
-	// Log.comment(5, "}");
-    }
-
-    public void buildCircuits(){
-	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    this.objManagers[iObj] = new ObjManager(iObj);
-	    Objective ithObjective = this.getInstance().getObj(iObj);
-	    int oldActivator;
-	    int activator = 0;
-	    objManagers[iObj].buildMyself();
-	    for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++){
-		oldActivator = activator;
-		activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
-		if(kD > 1){
-		    Log.comment(6, "sequential clause");
-		    this.AddClause(new VecInt(new int[]{-activator, oldActivator}));
-		}
-	    }
+		super(instance, solver, buildCircuit);
 	}
 
-    }
-    /**
-     * Initialize the container of the Y variables
-     */
-    protected void initializeYTable(){
-	this.yTable = new int[this.instance.nObjs()][];
-	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
-	    Objective ithObj = instance.getObj(iObj);
-	    this.yTable[iObj] = new int[ithObj.getWeightDiff()];
-
-	}
-    }
-
-    public IObjManager getIthObjManager(int i){return this.objManagers[i];}
-
-    static class SDIndex extends Index{
-
-	SDIndex(int iObj, int kD){
-	    super(iObj, kD);
-	}
-    };
-
-    public class ObjManager implements IObjManager{
+	public class ObjManager implements IObjManager{
 	int iObj;
 	Circuit circuit;
 	DigitalEnv digitalEnv;
-
 	ObjManager(int iObj){
 	    this.iObj = iObj;
 	    this.digitalEnv = new DigitalEnv();
@@ -183,7 +132,7 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 	    IVecInt clause = new VecInt(new int[]{activator});
 	    SDIndex sDIndex = new SDIndex(iObj, upperLimit);
 	    librarian.putIndex(activator, sDIndex);
-	    yTable[iObj][unaryToIndex(upperLimit)] = activator;
+	    setY(iObj, upperLimit, activator);
 	    Log.comment(6, "Lexicographic order");
 	    this.LexicographicOrderRecurse(iterator, clause);
 	    AddClause(clause);
@@ -270,89 +219,20 @@ public class SelectionDelimeter extends GoalDelimeter<SelectionDelimeter.SDIndex
 
 	    this.circuit.buildCircuit();
 	}
-	
-
     }
 
-
-
-    public Integer[] concatenate(Integer[][] seq){
-	List<Integer> result = new ArrayList<Integer>();
-	for(Integer[] array: seq)
-	    for(Integer value: array)
-		result.add(value);
-	return result.toArray(new Integer[0]);
-    }    
-
-
-
-    protected HashMap<Integer, Integer> getWeights(int iObj){
-	HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
-	Objective ithObjective = this.instance.getObj(iObj);
-	ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
-	IVecInt literals = ithObjective.getSubObjLits(0);
-	for(int i = 0, n = objectiveCoeffs.size(); i < n; i++)
-	    {
-		int weight = objectiveCoeffs.get(i).asIntExact();
-		int lit = literals.get(i);
-		result.put(lit, weight);
-	    }
-	return result;
-
-    }
-
-    /**
-     * This delimeter is not incremental. Therefore, this is a trivial
-     * operation.
-     */
-    public boolean UpdateCurrentK(int iObj, int upperKD){return true;}
-
-    public boolean isY(int id){
-	SDIndex index = librarian.getIndex(id);
-	if(index == null) return false;
-	return true;
-    }
-    public int getCurrentKD(int iObj){return 0;};
-    public int getIObjFromY(int id){
-	SDIndex index = this.librarian.getIndex(id);
-	if(index!=null)
-	    return index.getIObj();
-	return 0;};
-
-    public int getKDFromY(int id){
-	SDIndex index = this.librarian.getIndex(id);
-	if(index!=null)
-	    return index.getKD();
-	return 0;};
-
-    public int getY(int iObj, int kD){
-	int index  = this.unaryToIndex(kD);
-	return this.yTable[iObj][index];
-    }
-
-    /**
-     *Pretty print the variable in literal. 
-     */
-    public String prettyFormatVariable(int literal){
-	int sign =(literal>0)? 1: -1;
-	int id =  literal * sign;
-
-	if(isX(id)){
-	    return (sign>0? "+":"-")+"X["+id+"] ";
+	@Override
+	protected ObjManager[] objManagersCreator() {
+	    return new ObjManager[this.getInstance().nObjs()];
 	}
-	if(this.isY(id)){
-	    int iObj = this.getIObjFromY(id);
-	    int kD = this.getKDFromY(id);
-	    int k = kD; // + this.instance.getObj(iObj).getMinValue();
-	    return "Y[" + iObj + ", " + k +"]"+ "::" + literal + " ";
+
+	@Override
+	protected ObjManager objManagerCreator(int iObj) {
+	    return new ObjManager(iObj);
 	}
-	return literal + " ";
-    }
 
-    public int unaryToIndex(int kD){
-	return kD  - 1;
-
-    }
 }
+
+
 
 
