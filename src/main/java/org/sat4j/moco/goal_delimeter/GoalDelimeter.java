@@ -179,8 +179,26 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
 		    change = true;
 	    }
 	}
-	
 	return change;
+    }
+
+    /**
+     *Pretty print the variable in literal. 
+     */
+    public String prettyFormatVariable(int literal){
+	int sign =(literal>0)? 1: -1;
+	int id =  literal * sign;
+
+	if(isX(id)){
+	    return (sign>0? "+":"-")+"X["+id+"] ";
+	}
+	if(this.isY(id)){
+	    int iObj = this.getIObjFromY(id);
+	    int kD = this.getKDFromY(id);
+	    int k = kD; // + this.instance.getObj(iObj).getMinValue();
+	    return "Y[" + iObj + ", " + k +"]"+ "::" + literal + " ";
+	}
+	return literal + " ";
     }
 
 }
