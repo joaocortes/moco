@@ -178,41 +178,41 @@ public class SelectionDelimeterTest {
 
 
 
-    @Test
-    public void digitalCounterTest(){
-	this.mocoSetUp(false);
-	int[] upperBound = new int[]{2, 2};
-	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
-	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
-	boolean[] inputValues = new boolean[this.moco.nVars()];
-	for(int i = 1, n = this.moco.nVars(); i <= n;i++)
-	    if(inputValues[i - 1])
-		assumptions.push(i);
-	    else
-		assumptions.push(-i);
+    // @Test
+    // public void digitalCounterTest(){
+    // 	this.mocoSetUp(false);
+    // 	int[] upperBound = new int[]{2, 2};
+    // 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
+    // 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
+    // 	boolean[] inputValues = new boolean[this.moco.nVars()];
+    // 	for(int i = 1, n = this.moco.nVars(); i <= n;i++)
+    // 	    if(inputValues[i - 1])
+    // 		assumptions.push(i);
+    // 	    else
+    // 		assumptions.push(-i);
 
-	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
-	boolean[] model;
-	boolean[]  saturatedComplete = new boolean[this.moco.nObjs()];
-	boolean[] saturated = new boolean[this.moco.nObjs()];
-	for(int i = 0, n = saturatedComplete.length; i < n; i++)
-	    saturatedComplete[i] = false;
-	int modelN = 0;
-	while(iterator.hasNext()){
-	    model = iterator.next();
-	    saturated = this.testDigitalValues(upperBound);
-	    for(int i = 0, n = saturated.length; i < n; i++)
-		saturatedComplete[i] = saturated[i] || saturatedComplete[i];
-	    modelN++;
-	    // this.sd.prettyFormatVecIntWithValues(this.range);
+    // 	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
+    // 	boolean[] model;
+    // 	boolean[]  saturatedComplete = new boolean[this.moco.nObjs()];
+    // 	boolean[] saturated = new boolean[this.moco.nObjs()];
+    // 	for(int i = 0, n = saturatedComplete.length; i < n; i++)
+    // 	    saturatedComplete[i] = false;
+    // 	int modelN = 0;
+    // 	while(iterator.hasNext()){
+    // 	    model = iterator.next();
+    // 	    saturated = this.testDigitalValues(upperBound);
+    // 	    for(int i = 0, n = saturated.length; i < n; i++)
+    // 		saturatedComplete[i] = saturated[i] || saturatedComplete[i];
+    // 	    modelN++;
+    // 	    // this.sd.prettyFormatVecIntWithValues(this.range);
 	
-	}
-	Log.comment(modelN + " models");
-	int obtained = 0;
-	// for(int i = 0, n = this.moco.nObjs(); i < n; i++){
-	//     assertTrue(i + "'th not saturated", saturated[i]);
-	// }
-    }
+    // 	}
+    // 	Log.comment(modelN + " models");
+    // 	int obtained = 0;
+    // 	// for(int i = 0, n = this.moco.nObjs(); i < n; i++){
+    // 	//     assertTrue(i + "'th not saturated", saturated[i]);
+    // 	// }
+    // }
     private boolean[] testDigitalValues(int[] upperBound){
 	this.mocoSetUp(false);
 	boolean[] saturated = new boolean[upperBound.length];
@@ -243,63 +243,63 @@ public class SelectionDelimeterTest {
 	}
 	return saturated;
     }
-    /**
-     *Tests if all valid models respect the delimitation imposed by
-     *{@code upperBound}.
-     */
-    @Test
-    public void delimitationTest(){
-	this.mocoSetup1();
+    // /**
+    //  *Tests if all valid models respect the delimitation imposed by
+    //  *{@code upperBound}.
+    //  */
+    // @Test
+    // public void delimitationTest(){
+    // 	this.mocoSetup1();
 	
-	//last valid values
-	assertTrue(this.moco.nObjs() + " objectives and " + this.upperBound.length + "upper bounds", this.moco.nObjs() == this.upperBound.length);
+    // 	//last valid values
+    // 	assertTrue(this.moco.nObjs() + " objectives and " + this.upperBound.length + "upper bounds", this.moco.nObjs() == this.upperBound.length);
 
-	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(this.upperBound);
-	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
-	boolean[] model;
-	int modelN = 0;
-	Integer[] inputs = new Integer[this.moco.nVars()];
-	for(int i = 0; i < inputs.length; i++)
-	    inputs[i] = i + 1;
-	while(iterator.hasNext()){
-	    modelN++;
-	    // this.sd.prettyFormatVecIntWithValues(this.range);
-	    model = iterator.next();
-	    assertTrue("model \n" + this.sd.prettyFormatArrayWithValues(inputs) + "failed the test", this.testUpperBound(model, this.upperBound));}
-	Log.comment(modelN + " models");
+    // 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(this.upperBound);
+    // 	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
+    // 	boolean[] model;
+    // 	int modelN = 0;
+    // 	Integer[] inputs = new Integer[this.moco.nVars()];
+    // 	for(int i = 0; i < inputs.length; i++)
+    // 	    inputs[i] = i + 1;
+    // 	while(iterator.hasNext()){
+    // 	    modelN++;
+    // 	    // this.sd.prettyFormatVecIntWithValues(this.range);
+    // 	    model = iterator.next();
+    // 	    assertTrue("model \n" + this.sd.prettyFormatArrayWithValues(inputs) + "failed the test", this.testUpperBound(model, this.upperBound));}
+    // 	Log.comment(modelN + " models");
 
-    }
+    // }
 
-    private boolean testUpperBound(boolean[] model, int[] upperBound){
-	for(int i = 0, n = this.moco.nObjs(); i < n; i++)
-	    if(this.moco.getObj(i).evaluateDiff(model) <= upperBound[i])
-		continue;
-	    else
-		return false;
-	return true;	
+    // private boolean testUpperBound(boolean[] model, int[] upperBound){
+    // 	for(int i = 0, n = this.moco.nObjs(); i < n; i++)
+    // 	    if(this.moco.getObj(i).evaluateDiff(model) <= upperBound[i])
+    // 		continue;
+    // 	    else
+    // 		return false;
+    // 	return true;	
 
-    }
-    @Test
-    public void InputAndDelimitationTest(){
-	this.mocoSetUp(true);
-	int[] upperBound = new int[]{1, 1};
-	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
-	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
-	assumptions.push(1);
-	assumptions.push(-2);
-	assumptions.push(-3);
-	assumptions.push(-4);
-	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
-	boolean[] model;
-	int modelN = 0;
-	while(iterator.hasNext()){
-	    modelN++;
-	    // this.sd.prettyFormatVecIntWithValues(this.range);
-	    model = iterator.next();
-	    assertTrue("model " + model + "failed the test", this.testUpperBound(model, upperBound));}
-	Log.comment(modelN + " models");
+    // }
+    // @Test
+    // public void InputAndDelimitationTest(){
+    // 	this.mocoSetUp(true);
+    // 	int[] upperBound = new int[]{1, 1};
+    // 	IVecInt assumptions = this.sd.generateUpperBoundAssumptions(upperBound);
+    // 	assertTrue(this.moco.nObjs() + " objectives and " + upperBound.length + "upper bounds", this.moco.nObjs() == upperBound.length);
+    // 	assumptions.push(1);
+    // 	assumptions.push(-2);
+    // 	assumptions.push(-3);
+    // 	assumptions.push(-4);
+    // 	Iterator<boolean[]> iterator = new MyModelIterator(this.pbSolver, assumptions);
+    // 	boolean[] model;
+    // 	int modelN = 0;
+    // 	while(iterator.hasNext()){
+    // 	    modelN++;
+    // 	    // this.sd.prettyFormatVecIntWithValues(this.range);
+    // 	    model = iterator.next();
+    // 	    assertTrue("model " + model + "failed the test", this.testUpperBound(model, upperBound));}
+    // 	Log.comment(modelN + " models");
 
-    }
+    // }
 
 
     /**
