@@ -60,8 +60,10 @@ abstract public class SelectionDelimeterT<PObjManager extends IObjManager> exten
 	this.instance = instance;
 	this.objManagers =  objManagersCreator();
 	this.initializeYTable();
-	if(buildCircuit)
+	if(buildCircuit){
 	    this.buildCircuits();
+	    this.generateY();
+	}
 	// Log.comment(5, "}");
     }
 
@@ -82,13 +84,29 @@ abstract public class SelectionDelimeterT<PObjManager extends IObjManager> exten
 public void buildCircuits(){
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.objManagers[iObj] = this.objManagerCreator(iObj);
-	    Objective ithObjective = this.getInstance().getObj(iObj);
-	    int oldActivator;
-	    int activator = 0;
 	    objManagers[iObj].buildMyself();
 
 	}
     }
+    public void generateY(){
+	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
+	    Objective ithObjective = this.getInstance().getObj(iObj);
+	    int oldActivator;
+	    int activator = 0;
+	    for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++){
+		oldActivator = activator;
+		activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
+		if(kD > 1){
+		    Log.comment(6, "sequential clause");
+		    this.AddClause(new VecInt(new int[]{-activator, oldActivator}));
+
+		}
+	    }
+	}
+    }
+
+
+
     /**
      * Initialize the container of the Y variables
      */
