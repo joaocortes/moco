@@ -37,6 +37,12 @@ public class GoalDelimeterCreator {
 	case "SD":
 	    gd = new SelectionDelimeter(instance, solver, true);
 	    break;
+	case "GTE":
+	    if (MSU3) 
+		gd = new GenTotalEncoderMSU3(instance, solver, MSU3);
+	    else 
+		gd = new GenTotalEncoder(instance, solver);
+	    break;
 	    
 	default:
 	    Log.comment("Don't know what encoding to use");
