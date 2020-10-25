@@ -49,8 +49,6 @@ import org.sat4j.specs.IVecInt;
 
 public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimeterMSU3.ObjManager>{
 
-    private ObjManager[] objManagers;
-    private int[][] yTable = null;
     private int[] uncoveredMaxKD = null;
     
 
@@ -149,7 +147,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	    IVecInt clause = new VecInt(new int[]{activator});
 	    SDIndex sDIndex = new SDIndex(iObj, upperLimit);
 	    librarian.putIndex(activator, sDIndex);
-	    yTable[iObj][unaryToIndex(upperLimit)] = activator;
+	    setY(iObj, upperLimit, activator);
 	    Log.comment(6, "Lexicographic order");
 	    this.LexicographicOrderRecurse(iterator, clause);
 	    AddClause(clause);
