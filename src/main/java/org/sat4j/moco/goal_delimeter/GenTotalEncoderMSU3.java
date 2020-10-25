@@ -43,6 +43,7 @@ import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.specs.IVecInt;
 
+
 /**
  * Class with the implementation of the generalized totalizor encoder.
  * Notice that the differential is both a value and an index starting at 0
@@ -75,7 +76,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
      * Last explored differential k, for each objective function.
      */
     private int[] upperKD = null;
-
 
     /**
      *signals that the MSU3 flavour is active
