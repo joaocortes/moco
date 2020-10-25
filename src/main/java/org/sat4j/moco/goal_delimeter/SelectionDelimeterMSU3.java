@@ -57,32 +57,8 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
     public SelectionDelimeterMSU3(Instance instance, PBSolver solver, boolean buildCircuit) {
 	super(instance, solver, buildCircuit);
 	this.uncoveredMaxKD = new int[this.instance.nObjs()];
-	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    this.objManagers[iObj] = new ObjManager(iObj);
-	    this.objManagers[iObj].buildMyself();
-	    objManagers[iObj].circuit.buildCircuit();
-	    this.generateY();
-	    }
-	}
-
-    public void generateY(){
-	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    this.objManagers[iObj] = new ObjManager(iObj);
-	    this.objManagers[iObj].buildMyself();
-	    Objective ithObjective = this.getInstance().getObj(iObj);
-	    int oldActivator;
-	    int activator = 0;
-	    for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++){
-		oldActivator = activator;
-		activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
-		if(kD > 1){
-		    Log.comment(6, "sequential clause");
-		    this.AddClause(new VecInt(new int[]{-activator, oldActivator}));
-
-		}
-	    }
-	}
     }
+
 
 
     // static class SDIndex extends Index{
