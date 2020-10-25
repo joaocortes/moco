@@ -346,11 +346,8 @@ public class GenTotalEncoder extends GoalDelimeter<GenTotalEncoder.GTEIndex> {
 
     public GenTotalEncoder(Instance instance, PBSolver solver) {
 	// Log.comment(5, "{ GenTotalEncoder");
-	this.instance = instance;	
-	this.solver = solver;
-	this.firstVariable = this.solver.nVars() + 1;
+	super(instance, solver);
 	this.sumTrees = new SumTree[this.instance.nObjs()];
-	    
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    Objective ithObj = this.instance.getObj(iObj);
 	    ReadOnlyVec<Real> ithObjCoeffsReal = ithObj.getSubObjCoeffs(0);
