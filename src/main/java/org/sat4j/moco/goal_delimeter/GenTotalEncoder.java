@@ -47,14 +47,13 @@ import org.sat4j.specs.IVecInt;
  */
 
 
-public class GenTotalEncoder extends GoalDelimeter<Index> {
+public class GenTotalEncoder extends GoalDelimeter<GenTotalEncoder.GTEIndex> {
 
     /**
      *The inverse index map for the partial sum variables. For each ID, a
      *value that is an array vector with the value of the goal and the
      *value of the sum
      */
-    protected Hashtable<Integer,int[]> auxVariablesInverseIndex  = new Hashtable<Integer, int[]>();
 
     class SumTree {
 
@@ -158,7 +157,7 @@ public class GenTotalEncoder extends GoalDelimeter<Index> {
 		    if(id == 0) 
 			newNodeVar.setFreshId();
 		    else    newNodeVar.id = id;
-		    auxVariablesInverseIndex.put(newNodeVar.getId(), new int[]{kD, iObj, nodeName});
+		    librarian.putIndex(id, new GTEIndex(iObj, kD, nodeName));
 		    // Log.comment(6, "var " + prettyFormatVariable(newNodeVar.getId()));
 		    if(kD == 0)
 			AddClause( new VecInt(new int[] {newNodeVar.getId()}));
@@ -318,6 +317,18 @@ public class GenTotalEncoder extends GoalDelimeter<Index> {
 	 
     }
 
+    static class GTEIndex extends Index{
+	int nodeName = 0;
+
+	GTEIndex(int iObj, int kD, int nodeName){
+	    super(iObj, kD);
+	    this.nodeName = nodeName;
+	}
+	int getNodeName(){
+	    return this.nodeName;
+	}
+    }
+
     /**
      *Trees used to encode the goal limits
      */
@@ -387,7 +398,7 @@ public class GenTotalEncoder extends GoalDelimeter<Index> {
 
     public int getIObjFromS(int id){
 	assert this.isS(id);
-	return this.auxVariablesInverseIndex.get(id)[1];
+	return this.librarian.getIndex(id).getIObj();
     }
 
 
@@ -397,8 +408,7 @@ public class GenTotalEncoder extends GoalDelimeter<Index> {
 
     public int getKDFromS(int id){
 	assert this.isS(id);
-	return this.auxVariablesInverseIndex.get(id)[0];
-
+	return this.librarian.getIndex(id).getKD();
     }
 
     /**
@@ -407,7 +417,7 @@ public class GenTotalEncoder extends GoalDelimeter<Index> {
 
     public int getNameFromS(int id){
 	assert this.isS(id);
-	return this.auxVariablesInverseIndex.get(id)[2];
+	return this.librarian.getIndex(id).getNodeName();
     }
 
 
