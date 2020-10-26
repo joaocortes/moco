@@ -184,6 +184,7 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
 	    for(int iObj :objectivesToChange.keySet()){
 		// Log.comment(3, "changing upperlimit " + iObj);
 		int upperKDBefore = this.getUpperKD(iObj);
+		this.generateNext(iObj, upperKDBefore, this.instance.getObj(iObj).getWeightDiff());
 		this.setUpperKD(iObj, this.nextKDValue(iObj, this.getUpperKD(iObj)));
 		if(this.getUpperKD(iObj)!= upperKDBefore)
 		    change = true;
