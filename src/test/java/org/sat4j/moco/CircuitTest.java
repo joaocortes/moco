@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.algorithm.UnsatSat;
@@ -62,6 +63,7 @@ public class CircuitTest {
      *Given a sorted unary input, check if the ModComponent is
      *semi-correct. 
      */
+    @Disabled
     @Test
     public void ModComponentTest(){
 	int modN = 3;
@@ -126,6 +128,7 @@ public class CircuitTest {
      *Checks if the i'th output of SelectionComponent is active if the
      *i+1'th value of the sorted inputs is active.
      */
+    @Disabled
     @Test
     public void SelectionComponentTest(){
 	int inputsLength = 8;
@@ -191,6 +194,7 @@ public class CircuitTest {
      *Checks if negating the SelecComp.outputs[i] literal delimits the
      *number of active inputs to i+1;
      */
+    @Disabled
     @Test
     public void SelectionComponentDelimetedTest(){
 
@@ -254,6 +258,7 @@ public class CircuitTest {
      *Checks if the output of MergComponent is sorted. Notice each of
      *the 4 (sub)lits in inputsArray must be sorted.
      */
+    @Disabled
     @Test void MergeComponentTest(){
 	Integer[] inputs = new Integer[16];
 	int sortedPortionN = inputs.length;
@@ -320,7 +325,8 @@ public class CircuitTest {
     /**
      *Checks if the optimum component is correct. Does not enumerate all models
      */
-    @Test void OptimumComponentTest(){
+    @Test
+    void OptimumComponentTest(){
 	Integer[] inputs = new Integer[10];
 	boolean polarity = true;
 	this.fillInputWithVars(inputs);
@@ -439,6 +445,7 @@ public class CircuitTest {
      * that is, if n is the count of active inputs, then the unary
      * output cannot exceed mod2 upperValue.
      */
+    @Disabled
     @Test void DigitComponentTest(){
 	int modN = 2;
 	Integer[] inputs = new Integer[6];
