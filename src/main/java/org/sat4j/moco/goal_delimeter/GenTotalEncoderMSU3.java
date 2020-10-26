@@ -950,48 +950,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GTEIndex> {
 	return aproxNextKD;
     }
 
-    
-    /**
-     * Generate the upper limit assumptions
-     */
-    public IVecInt generateUpperBoundAssumptions(){
-
-	IVecInt assumptions = new VecInt(new int[]{});
-
-	    for(int iObj = 0; iObj < this.instance.nObjs(); ++iObj){
-		int IthUpperBound = this.nextKDValue(iObj, getUpperKD(iObj));
-		Objective ithObjective = this.instance.getObj(iObj);
-		if(getUpperKD(iObj)  != IthUpperBound){
-		    int newY = -this.getY(iObj, IthUpperBound);
-		    if(newY!=0)
-			assumptions.push(newY);
-		}
-
-		ReadOnlyVecInt objectiveLits = ithObjective.getSubObjLits(0);
-		ReadOnlyVec<Real> objectiveCoeffs = ithObjective.getSubObjCoeffs(0);
-		int sign;
-		int ithAbsoluteWeight;
-
-		for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
-		    int ithX = objectiveLits.get(iX);
-		    ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
-		    sign = (ithAbsoluteWeight > 0? 1 : -1);
-		    ithAbsoluteWeight *= sign;
-		    if(ithAbsoluteWeight > getUpperKD(iObj))
-			if(this.coveredLiterals.get(-sign * ithX) == null)
-			    assumptions.push(-sign * ithX);
-		}
-
-	    }
-
-	if(this.MSU3)
-	    for(Integer x: this.coveredLiterals.keySet())
-		assumptions.push(x);
-	
-	Log.comment(2, "assumptions:");
-	this.prettyPrintVecInt(assumptions);
-	return assumptions;
-    }
 
 	public int getMaxUpperLimit(int iObj){return this.sumTrees[iObj].getMaxUpperLimit();}
 
@@ -1003,7 +961,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GTEIndex> {
      *If necessary for the construction of the current assumptions,
      *initialize more of the domain of the goal delimeter
      */
-
+    @Override
     public boolean preAssumptionsExtend(IVecInt currentExplanation){
 	Log.comment(2, "explanation: ");
 	this.prettyPrintVecInt(currentExplanation);
@@ -1121,4 +1079,20 @@ private void updateAllUncoveredMaxKD(){
     public void setMaxUncoveredKDs(int iObj, int a){this.sumTrees[iObj].setMaxUncoveredKD(a);}
     public void updateUncoveredMaxKD(int iObj){this.sumTrees[iObj].updateUncoveredMaxKD();}
 
+
+
+	@Override
+	public IVecInt generateUpperBoundAssumptions(IVecInt explanation, boolean checkChange) {
+	    IVecInt assumptions =  super.generateUpperBoundAssumptions(explanation, checkChange);
+	    for(Integer x: this.coveredLiterals.keySet())
+		assumptions.push(x);
+	    
+	    Log.comment(2, "assumptions:");
+	    this.prettyPrintVecInt(assumptions);
+	    return assumptions;
+	}
+
+    private int getUpperBound(int iObj){
+	return this.UpperBound[iObj];
+    }
 }
