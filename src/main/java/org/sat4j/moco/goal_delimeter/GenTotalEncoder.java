@@ -157,7 +157,7 @@ public class GenTotalEncoder extends GoalDelimeter<GenTotalEncoder.GTEIndex> {
 		    if(id == 0) 
 			newNodeVar.setFreshId();
 		    else    newNodeVar.id = id;
-		    librarian.putIndex(id, new GTEIndex(iObj, kD, nodeName));
+		    librarian.putIndex(newNodeVar.getId(), new GTEIndex(iObj, kD, nodeName));
 		    // Log.comment(6, "var " + prettyFormatVariable(newNodeVar.getId()));
 		    if(kD == 0)
 			AddClause( new VecInt(new int[] {newNodeVar.getId()}));
@@ -192,8 +192,10 @@ public class GenTotalEncoder extends GoalDelimeter<GenTotalEncoder.GTEIndex> {
 		 * that is, the id of the entry with a key that is
 		 * larger or equal to iKD.
 		 */
-		public int getCeilingId(int iKD){
-		    return this.containerAll.ceilingEntry(iKD).getValue().id;
+		private int getCeilingId(int iKD){
+		    Integer key = this.containerAll.ceilingKey(iKD);
+		    if(key == null)return 0;
+		    return this.containerAll.get(key).id;
 		}
 
 		/**
@@ -215,7 +217,10 @@ public class GenTotalEncoder extends GoalDelimeter<GenTotalEncoder.GTEIndex> {
 		 */
 
 		public int getCeilingKD (int iKD){
-		    return this.containerAll.ceilingEntry(iKD).getValue().getKD();
+		    if(this.containerAll == null)return -1;
+		    Integer key =this.containerAll.ceilingKey(iKD);
+		    if(key == null)return -1;
+		    return this.containerAll.get(key).getKD();
 		}
 
 		public Collection<NodeVars.NodeVar> currentUpper(){
@@ -254,6 +259,7 @@ public class GenTotalEncoder extends GoalDelimeter<GenTotalEncoder.GTEIndex> {
 		this.right = null;
 		this.nodeVars = new NodeVars();
 		this.leafID = sign * X;
+		//TODO this is the only significant difference with GenTotalEncoder.
 		this.nodeVars.add(this.nodeSum, leafID, false, false);
 		
 
@@ -690,9 +696,64 @@ public class GenTotalEncoder extends GoalDelimeter<GenTotalEncoder.GTEIndex> {
 	    }
 
 	}
-
 	return assumptions;
     }
 
 
+    /**
+     *Finds the next valid kD value, starting in kD and extending
+     *until newKD, inclusive. This will not repeat clauses only if the
+     *intervale (kD, newKD] is empty of already computed kD values
+     *
+     */
+    @Override
+    public int generateNext(int iObj, int kD, int inclusiveMax){
+	// Log.comment(5, "{ GenTotalEncoder.generateNext");
+
+	boolean change = false;
+	SumTree ithObjSumTree = this.sumTrees[iObj];
+	// store  values of upperLimit and olderUpperLimit
+	int upperLimit = ithObjSumTree.upperLimit;
+	int olderUpperLimit = ithObjSumTree.olderUpperLimit;
+	ithObjSumTree.olderUpperLimit = kD;
+
+	ithObjSumTree.setUpperLimit(kD);
+	int upperKD = kD;
+	while(!change && upperKD < inclusiveMax){
+	    upperKD++;
+	    this.sumTrees[iObj].setUpperLimit(upperKD);
+	    // Log.comment(5, "{ GenTotalEncoder.generateNext of "+ iObj + "from " + kD + " to " + upperKD);
+	    change = addClausesSumTree(iObj);
+	    // Log.comment(5, "}");
+	}
+	if(change)
+	    addClauseSequential(ithObjSumTree.parent);
+
+	// Log.comment(5, "}");
+	ithObjSumTree.upperLimit = upperLimit;
+	ithObjSumTree.olderUpperLimit = olderUpperLimit;
+	if(change)
+	    return ithObjSumTree.upperLimit;
+	else
+	    return kD;
+    }
+
+    /**
+     *Finds the next valid kD value, starting from lastK and extending
+     *until newKD, inclusive. This will not repeat clauses only if the
+     *intervale (kD, newKD] is empty of already computed kD values
+     *
+     */
+
+    public int nextKDValue(int iObj, int kD){
+	SumTree ithObjSumTree= this.sumTrees[iObj];
+	if(kD == ithObjSumTree.maxUpperLimit)
+	    return kD;
+	if(ithObjSumTree.parent == null)
+	    return -1;
+	int aproxNextKD = ithObjSumTree.parent.nodeVars.getCeilingKD(kD + 1);
+	if(aproxNextKD == -1)
+	    return kD;
+	return aproxNextKD;
+    }
 }
