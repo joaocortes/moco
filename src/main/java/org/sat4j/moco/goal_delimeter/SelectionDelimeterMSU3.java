@@ -285,14 +285,6 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	    return this.uncoveredMaxKD[iObj];
 	}
 
-	public int generateNext(int iObj, int kD, int inclusiveMax) {
-	    if(kD < inclusiveMax)
-		return kD +1;
-	    if(kD == inclusiveMax)
-		return kD;
-		return 0;
-	}
-
 
 	@Override
 	protected ObjManager[] objManagersCreator() {
