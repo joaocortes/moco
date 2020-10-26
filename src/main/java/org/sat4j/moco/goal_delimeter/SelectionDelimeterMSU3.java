@@ -427,6 +427,11 @@ private void updateAllUncoveredMaxKD(){
     private void setUpperBound(int iObj, int newKD){
 	    this.UpperBound[iObj] = newKD;
     }
+
+    public void generateOneY(int kD, int iObj){
+	Objective ithObjective = this.getInstance().getObj(iObj);
+	//TODO correct the sequential clauses, whenever a new Y is created
+    }
 }
 
 
