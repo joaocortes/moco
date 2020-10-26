@@ -51,11 +51,17 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
     private int[] uncoveredMaxKD = null;
     private HashMap<Integer, Boolean> coveredLiterals = null;
 
+    /**
+     * Upper bound, exclusive
+     */
+    private int[] UpperBound = null;
+
 
     public SelectionDelimeterMSU3(Instance instance, PBSolver solver, boolean buildCircuit) {
 	super(instance, solver, buildCircuit);
 	this.uncoveredMaxKD = new int[this.instance.nObjs()];
 
+	this.UpperBound =  new int[(this.instance.nObjs())];
     }
 
 
@@ -286,6 +292,18 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	public void setCoveredLiterals(HashMap<Integer, Boolean> coveredLiterals) {
 		this.coveredLiterals = coveredLiterals;
 	}
+    private int getUpperBound(int iObj){
+	return this.UpperBound[iObj];
+    }
+
+    /**
+     *Sets the current upper bound of iObj to nowKD
+     *@param newKD
+     *@param iObj
+     */
+    private void setUpperBound(int iObj, int newKD){
+	    this.UpperBound[iObj] = newKD;
+    }
 }
 
 
