@@ -101,4 +101,5 @@ public interface GoalDelimeterI{
      */
     public boolean preAssumptionsExtend(IVecInt currentExplanation);
     public int getUpperKD(int iObj);
+    public void setUpperKD(int iObj, int upperKD);
 }
