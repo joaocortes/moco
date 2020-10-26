@@ -492,7 +492,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GTEIndex> {
      * the solver to be updated
      */
 
-    public GenTotalEncoderMSU3(Instance instance, PBSolver solver, boolean MSU3) {
+    public GenTotalEncoderMSU3(Instance instance, PBSolver solver) {
 	// Log.comment(5, "{ GenTotalEncoder");
 	this.instance = instance;	
 	this.solver = solver;
@@ -1059,6 +1059,9 @@ private void updateAllUncoveredMaxKD(){
 	logUpperLimit +="]";
 	Log.comment(2, logUpperLimit );
     }
+    private int getUpperBound(int iObj){
+	return this.UpperBound[iObj];
+    }
 
     public void setUpperBound() {
 	for(int i = 0, n = this.UpperBound.length; i < n; i++)
@@ -1082,8 +1085,4 @@ private void updateAllUncoveredMaxKD(){
 	    this.prettyPrintVecInt(assumptions);
 	    return assumptions;
 	}
-
-    private int getUpperBound(int iObj){
-	return this.UpperBound[iObj];
-    }
 }
