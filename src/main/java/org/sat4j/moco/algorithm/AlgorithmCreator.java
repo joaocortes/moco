@@ -3,7 +3,6 @@ package org.sat4j.moco.algorithm;
 import org.sat4j.moco.Params;
 import org.sat4j.moco.goal_delimeter.GoalDelimeter;
 import org.sat4j.moco.goal_delimeter.GoalDelimeterCreator;
-import org.sat4j.moco.goal_delimeter.GoalDelimeterI;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.Log;
