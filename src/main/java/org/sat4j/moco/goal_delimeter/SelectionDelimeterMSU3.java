@@ -49,11 +49,13 @@ import org.sat4j.specs.IVecInt;
 public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimeterMSU3.ObjManager>{
 
     private int[] uncoveredMaxKD = null;
-    
+    private HashMap<Integer, Boolean> coveredLiterals = null;
+
 
     public SelectionDelimeterMSU3(Instance instance, PBSolver solver, boolean buildCircuit) {
 	super(instance, solver, buildCircuit);
 	this.uncoveredMaxKD = new int[this.instance.nObjs()];
+
     }
 
 
@@ -273,6 +275,16 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	@Override
 	protected ObjManager objManagerCreator(int iObj) {
 	    return new ObjManager(iObj);
+	}
+
+
+	public HashMap<Integer, Boolean> getCoveredLiterals() {
+		return coveredLiterals;
+	}
+
+
+	public void setCoveredLiterals(HashMap<Integer, Boolean> coveredLiterals) {
+		this.coveredLiterals = coveredLiterals;
 	}
 }
 
