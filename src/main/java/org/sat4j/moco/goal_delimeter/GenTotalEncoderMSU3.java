@@ -514,9 +514,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GTEIndex> {
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.sumTrees[iObj] = new SumTree(iObj);
 	}
-	this.createInitialTree();
-
-	// Log.comment(5, "}");
+	this.initializeCoveredLiterals();
     }
 
 
@@ -536,19 +534,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GTEIndex> {
 		this.coveredLiterals.putIfAbsent(-sign * ithX, true);
 	    }
 	}
-
-    }
-    private void  createInitialTree(){
-	if(!this.MSU3)
-	    for(int iObj = 0, nObj = this.instance.nObjs();iObj < nObj; iObj++){
-		SumTree st = this.sumTrees[iObj];
-		st.pushNewLeafs(this.instance.getObj(st.iObj).getSubObjLits(0), false);
-		this.updateUncoveredMaxKD(iObj);
-		this.generateNext(iObj, this.getUpperKD(iObj), this.getMaxUncoveredKD(iObj));
-		this.setUpperBound(iObj, this.nextKDValue(iObj, this.getUpperKD(iObj)));
-		
-	    }
-
 
     }
 
