@@ -8,7 +8,7 @@
   (projectile-project-compilation-cmd . "mvn -DskipTests=true package"))
  (java-mode
   (dap-debug-template-configurations .  (
-("Run unsatSat on exampleXX" :type "java" :request "launch" :args "examples/exampleXX.opb -alg 3 -v 6 -enc \"GTE\"" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
+("Run unsatSat on exampleXX" :type "java" :request "launch" :args "examples/exampleXX.opb -alg 3 -v 6 -enc \"SD\"" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
  :name "Run Configuration" ;; :projectName  "org.sat4j.moco"
  :mainClass  "org.sat4j.moco.Launcher")
 ("Run unsatSat on bugNonMonotonous" :type "java" :request "launch" :args "bugs/bugNonMonotonous/minimal.pbmo -alg 1 -v 6 -enc \"SD\"" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
