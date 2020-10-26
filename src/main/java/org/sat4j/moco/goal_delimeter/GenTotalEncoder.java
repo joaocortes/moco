@@ -341,7 +341,6 @@ public class GenTotalEncoder extends GoalDelimeter<GenTotalEncoder.GTEIndex> {
 
     private SumTree[] sumTrees = null;
 
-
     /**
      * Creates an instance of the generalized totalizor encoder
      * @param instance
