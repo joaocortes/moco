@@ -64,8 +64,6 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
     /**
      * Generate the upper limit assumptions
      */
-    public IVecInt generateUpperBoundAssumptions(){return null;};
-    public IVecInt generateUpperBoundAssumptions(int[] upperKD){return null;};
 
     public IVecInt generateUpperBoundAssumptions(IVecInt explanation, boolean checkChange){
 	if(!this.preAssumptionsExtend(explanation) & checkChange)
@@ -75,7 +73,6 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
 
 
     public IVecInt generateUpperBoundAssumptions(IVecInt explanation){
-	
 	
 	IVecInt assumptions = new VecInt(new int[]{});
 	
