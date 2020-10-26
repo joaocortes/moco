@@ -76,14 +76,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GTEIndex> {
      */
     private int[] upperKD = null;
 
-    /**
-     *signals that the MSU3 flavour is active
-     */
-    private boolean MSU3 = false;
-
-    private int getUpperBound(int iObj){
-	return this.UpperBound[iObj];
-    }
 
     class SumTree {
 
@@ -507,7 +499,6 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GTEIndex> {
 	this.firstVariable = this.solver.nVars() + 1;
 	this.sumTrees = new SumTree[this.instance.nObjs()];
 	this.coveredLiterals = new HashMap<Integer, Boolean>(this.solver.nVars());
-	this.MSU3 = MSU3;
 	this.upperKD =  new int[(this.instance.nObjs())];
 	this.UpperBound =  new int[(this.instance.nObjs())];
 	    
