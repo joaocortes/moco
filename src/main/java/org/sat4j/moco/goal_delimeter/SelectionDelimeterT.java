@@ -57,12 +57,10 @@ abstract public class SelectionDelimeterT<PObjManager extends IObjManager> exten
     
     public SelectionDelimeterT(Instance instance, PBSolver solver, boolean buildCircuit) {
 	super(instance, solver);
-	this.instance = instance;
 	this.objManagers =  objManagersCreator();
 	this.initializeYTable();
 	if(buildCircuit){
 	    this.buildCircuits();
-	    this.generateY();
 	}
 	// Log.comment(5, "}");
     }
