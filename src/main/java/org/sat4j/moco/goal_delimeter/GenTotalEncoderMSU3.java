@@ -24,7 +24,6 @@ package org.sat4j.moco.goal_delimeter;
 
 import java.lang.Math;
 import org.sat4j.moco.util.Log;
-import java.util.Hashtable;
 import java.util.Iterator;
 
 import java.util.PriorityQueue;
@@ -38,6 +37,7 @@ import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.ReadOnlyVecInt;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Real;
+import org.sat4j.moco.goal_delimeter.GenTotalEncoder.GTEIndex;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
@@ -51,14 +51,13 @@ import org.sat4j.specs.IVecInt;
  */
 
 
-public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
+public class GenTotalEncoderMSU3 extends GoalDelimeter<GTEIndex> {
     
     /**
      *The inverse index map for the partial sum variables. For each ID, a
      *value that is an array vector with the value of the goal and the
      *value of the sum, namely {kD, iObj, nodeName}
      */
-    protected Hashtable<Integer,int[]> auxVariablesInverseIndex  = new Hashtable<Integer, int[]>();
     private HashMap<Integer, Boolean> coveredLiterals = null;
 
     /**
@@ -135,7 +134,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
 	 *Node of a SumTree.
 	 */
 
-	class Node {
+	 class Node {
 
 	    /**
 	     *Container of the variables associated with the SumTree
@@ -203,7 +202,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
 			if(id == 0) 
 			    newNodeVar.setFreshId();
 			else    newNodeVar.id = id;
-			auxVariablesInverseIndex.put(newNodeVar.getId(), new int[]{kD, iObj, nodeName});
+			librarian.putIndex(newNodeVar.getId(), new GTEIndex(iObj,kD,  nodeName));
 			// Log.comment(6, "var " + prettyFormatVariable(newNodeVar.getId()));
 			if(kD == 0)
 			    AddClause( new VecInt(new int[] {newNodeVar.getId()}));
@@ -589,7 +588,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
 
     public int getIObjFromS(int id){
 	assert this.isS(id);
-	return this.auxVariablesInverseIndex.get(id)[1];
+	return this.librarian.getIndex(id).getIObj();
     }
 
 
@@ -599,8 +598,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
 
     public int getKDFromS(int id){
 	assert this.isS(id);
-	return this.auxVariablesInverseIndex.get(id)[0];
-
+	return this.librarian.getIndex(id).getKD();
     }
 
     /**
@@ -609,7 +607,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<Index> {
 
     public int getNameFromS(int id){
 	assert this.isS(id);
-	return this.auxVariablesInverseIndex.get(id)[2];
+	return this.librarian.getIndex(id).getNodeName();
     }
 
 
