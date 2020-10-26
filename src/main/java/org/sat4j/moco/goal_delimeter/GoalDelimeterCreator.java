@@ -35,11 +35,14 @@ public class GoalDelimeterCreator {
 	GoalDelimeter<?> gd = null;
 	switch(encoding) {
 	case "SD":
-	    gd = new SelectionDelimeter(instance, solver, true);
+	    if (MSU3) 
+		gd = new SelectionDelimeterMSU3(instance, solver, true);
+	    else 
+		gd = new SelectionDelimeter(instance, solver, true);
 	    break;
 	case "GTE":
 	    if (MSU3) 
-		gd = new GenTotalEncoderMSU3(instance, solver, MSU3);
+		gd = new GenTotalEncoderMSU3(instance, solver);
 	    else 
 		gd = new GenTotalEncoder(instance, solver);
 	    break;
