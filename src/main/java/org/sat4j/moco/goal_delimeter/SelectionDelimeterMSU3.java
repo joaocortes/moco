@@ -274,7 +274,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 
 	public int nextKDValue(int iObj, int kD) {
 	    if(kD < this.getUncoveredMaxKD(iObj))
-		return  kD + 1;
+		return super.nextKDValue(iObj, kD);
 	    if(kD == this.getUncoveredMaxKD(iObj))
 		return kD;
 	    else return -1;
