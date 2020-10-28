@@ -126,7 +126,7 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GTEIndex> {
 	 *Node of a SumTree.
 	 */
 
-	 class Node {
+	  class Node {
 
 	    /**
 	     *Container of the variables associated with the SumTree
