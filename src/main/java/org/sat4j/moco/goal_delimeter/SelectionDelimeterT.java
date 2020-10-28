@@ -23,8 +23,11 @@
 package org.sat4j.moco.goal_delimeter;
 
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.ArrayList;
 
 import java.util.HashMap;
@@ -47,7 +50,7 @@ import org.sat4j.specs.IVecInt;
 abstract public class SelectionDelimeterT<PObjManager extends IObjManager> extends GoalDelimeter<SelectionDelimeterT.SDIndex> {
 
     private PObjManager[] objManagers;
-    private int[][] yTable = null;
+    private ArrayList<TreeMap<Integer, Integer>> yTable = null;
     
     public SelectionDelimeterT(Instance instance, PBSolver solver, boolean buildCircuit) {
 	super(instance, solver);
@@ -85,14 +88,20 @@ public void buildCircuits(){
 	    Objective ithObjective = this.getInstance().getObj(iObj);
 	    int oldActivator;
 	    int activator = 0;
-	    for(int kD = 1, n = ithObjective.getWeightDiff(); kD <= n; kD++){
-		oldActivator = activator;
+	    int max = ithObjective.getWeightDiff();
+
+	    int oldKD = this.generateNext(iObj, -1, max);
+	    int kD = this.generateNext(iObj, oldKD,max);
+	    oldActivator = this.getIthObjManager(iObj).LexicographicOrder(oldKD);
+	    while(kD > oldKD){
 		activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
 		if(kD > 1){
 		    Log.comment(6, "sequential clause");
 		    this.AddClause(new VecInt(new int[]{-activator, oldActivator}));
-
 		}
+		oldKD = kD;
+		kD = this.generateNext(iObj, oldKD, max);		
+		oldActivator = activator;
 	    }
 	}
     }
@@ -103,11 +112,23 @@ public void buildCircuits(){
      * Initialize the container of the Y variables
      */
     protected void initializeYTable(){
-	this.yTable = new int[this.instance.nObjs()][];
+	this.yTable = new ArrayList<TreeMap<Integer, Integer>>();
+
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
 	    Objective ithObj = instance.getObj(iObj);
-	    this.yTable[iObj] = new int[ithObj.getWeightDiff()];
-
+	    ReadOnlyVec<Real> objectiveCoeffs = ithObj.getSubObjCoeffs(0);	    
+	    TreeMap<Integer, Integer> ithSortedMap = new TreeMap<Integer, Integer>();
+	    SortedMap<Integer, Integer> ithSortedMapClone = new TreeMap<Integer, Integer>();
+	    for(int j = 0, n = objectiveCoeffs.size(); j < n ; j++){
+		int jthCoeff = objectiveCoeffs.get(j).asIntExact();
+		if(jthCoeff < 0) jthCoeff = -jthCoeff;
+		for(int entry: ithSortedMapClone.keySet())
+		    ithSortedMap.put(jthCoeff + entry, null);
+		ithSortedMap.put(jthCoeff, null);
+		ithSortedMapClone.putAll(ithSortedMap);
+}
+		
+	    this.yTable.add(ithSortedMap);
 	}
     }
 
@@ -162,12 +183,10 @@ public void buildCircuits(){
 	return 0;};
 
     public void  setY (int iObj, int kD, int id){
-	int index = this.unaryToIndex(kD);
-	this.yTable[iObj][index] = id;
+	this.yTable.get(iObj).put(kD, id);
 }
     public int getY(int iObj, int kD){
-	int index  = this.unaryToIndex(kD);
-	return this.yTable[iObj][index];
+	return this.yTable.get(iObj).get(kD);
     }
 
 
@@ -179,6 +198,28 @@ public void buildCircuits(){
 	@Override
 	public int getCurrentKD(int iObj) {
 	    return this.upperKD[iObj];
+	}
+
+
+	@Override
+	public int generateNext(int iObj, int kD, int inclusiveMax) {
+		// TODO Auto-generated method stub
+	    TreeMap<Integer, Integer> ithSortedMap = this.yTable.get(iObj);
+	    Entry<Integer, Integer> entry = ithSortedMap.ceilingEntry(kD + 1);
+	    if(entry == null)
+		return kD;
+	    if(entry.getKey() > inclusiveMax)
+		return kD;
+	    
+	    return  entry.getKey();
+	}
+
+	@Override
+	public int nextKDValue(int iObj, int kD) {
+	    Integer value = this.yTable.get(iObj).ceilingKey(kD + 1);
+	    if(value == null)
+		return kD;
+	    return value;
 	}
 }
 
