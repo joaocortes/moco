@@ -245,32 +245,36 @@ public class GenTotalEncoder extends GoalDelimeter<GenTotalEncoder.GTEIndex> {
 	    private int nodeSum = 0;
 	    private Node left = null;
 	    private Node right = null;
-	    private int leafID = 0;
+	    private int leafLit = 0;
 	    private int nodeName = 0;
+	    
+	    public Node(){
+		this.nodeName = nodes.size();
+		nodes.add(this);
+		this.nodeVars = new NodeVars();
+		this.nodeVars.add(0, 0, false, false);
+	    }
 	    
 
 	    public Node(int weight, int X){
-		nodes.add(this);
+		this();
 		int sign = 1;
 		if(weight < 0)
-		     sign = -1;
+		    sign = -1;
 		this.nodeSum = sign * weight;
 		this.left = null; 
 		this.right = null;
-		this.nodeVars = new NodeVars();
-		this.leafID = sign * X;
-		//TODO this is the only significant difference with GenTotalEncoder.
-		this.nodeVars.add(this.nodeSum, leafID, false, false);
+		this.leafLit = sign * X;
+		// this.nodeVars.add(this.nodeSum, leafLit, false, false);
 		
 
 
 	    }
 	     
 	    public Node(Node left, Node right){
-		nodes.add(this);
+		this();
 		this.left = left;
 		this.right = right;
-		this.nodeVars =  new NodeVars();
 		this.nodeSum = left.nodeSum + right.nodeSum;
 	    }
 
