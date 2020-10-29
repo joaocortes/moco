@@ -186,7 +186,11 @@ public void buildCircuits(){
 	this.yTable.get(iObj).put(kD, id);
 }
     public int getY(int iObj, int kD){
-	return this.yTable.get(iObj).get(kD);
+	
+	Integer y = this.yTable.get(iObj).get(kD);
+	if(y == null)
+	    return 0;
+	return y;
     }
 
 
