@@ -62,7 +62,6 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 
     public SelectionDelimeterMSU3(Instance instance, PBSolver solver, boolean buildCircuit) {
 	super(instance, solver, buildCircuit);
-	this.generateY();
 	this.uncoveredMaxKD = new int[this.instance.nObjs()];
 	this.UpperBound =  new int[(this.instance.nObjs())];
 	this.coveredLiterals = new HashMap<Integer, Boolean>(this.solver.nVars());
@@ -272,13 +271,6 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	    this.uncoveredMaxKD[iObj] = a;
 	}
 
-	public int nextKDValue(int iObj, int kD) {
-	    if(kD < this.getUncoveredMaxKD(iObj))
-		return super.nextKDValue(iObj, kD);
-	    if(kD == this.getUncoveredMaxKD(iObj))
-		return kD;
-	    else return -1;
-	}
 
 
 	public int getMaxUncoveredKD(int iObj) {
@@ -420,9 +412,51 @@ private void updateAllUncoveredMaxKD(){
 	    this.UpperBound[iObj] = newKD;
     }
 
+    
+    @Override
+    public int generateNext(int iObj, int kD, int inclusiveMax) {
+	Integer next = super.nextKDValue(iObj, kD);
+	if( next > inclusiveMax)
+	    return kD;
+	this.generateOneY(kD, iObj);
+	next = super.nextKDValue(iObj, kD);
+	if( next > inclusiveMax)
+	    return kD;
+	return next;
+    }
+
+    public int nextKDValue(int iObj, int kD) {
+	if(kD < this.getUncoveredMaxKD(iObj))
+	    return super.nextKDValue(iObj, kD);
+	if(kD == this.getUncoveredMaxKD(iObj))
+	    return kD;
+	else return 0;
+    }
+
     public void generateOneY(int kD, int iObj){
-	Objective ithObjective = this.getInstance().getObj(iObj);
-	//TODO correct the sequential clauses, whenever a new Y is created
+	int oldY;
+	int oldKD = kD;
+	int newKD = this.nextKDValue(iObj, oldKD);
+	int newY = this.getY(iObj, newKD);
+	if(newY != 0)
+	    return;
+	newY = this.getIthObjManager(iObj).LexicographicOrder(newKD);
+	oldY = this.getY(iObj, oldKD);
+
+	if(newKD >  this.nextKDValue(iObj, 0) && newKD > oldKD){
+	    this.AddClause(new VecInt(new int[]{-newY, oldY}));
+	    
+	    //TODO: repair the ordering of the y variables
+	    int oldNextKD = this.nextKDValue(iObj, newKD);
+	    if(oldNextKD > newKD){
+		int oldNextY = this.getY(iObj, oldNextKD);
+		if(oldNextY == 0)
+		    return;
+		else
+		    this.AddClause(new VecInt(new int[]{-oldNextY, newY}));
+	    }	
+	}
+
     }
 }
 
