@@ -182,19 +182,6 @@ public void buildCircuits(){
 
 
 	@Override
-	public int generateNext(int iObj, int kD, int inclusiveMax) {
-		// TODO Auto-generated method stub
-	    TreeMap<Integer, Integer> ithSortedMap = this.yTable.get(iObj);
-	    Entry<Integer, Integer> entry = ithSortedMap.ceilingEntry(kD + 1);
-	    if(entry == null)
-		return kD;
-	    if(entry.getKey() > inclusiveMax)
-		return kD;
-	    
-	    return  entry.getKey();
-	}
-
-	@Override
 	public int nextKDValue(int iObj, int kD) {
 	    Integer value = this.yTable.get(iObj).ceilingKey(kD + 1);
 	    if(value == null)
