@@ -144,7 +144,7 @@ import org.sat4j.moco.util.Real;
     }
     
     @Test
-    public void testBiOjective() {
+    public void testBiObjective() {
         LinearObj other_obj = new LinearObj(new VecInt(new int[] { -2, 3 }),
                                             new Vec<Real>(new Real[] { new Real(2), new Real(2) }));
         this.moco.addObj(other_obj);
