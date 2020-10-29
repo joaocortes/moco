@@ -232,6 +232,32 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 	    return new ObjManager(iObj);
 	}
 
+
+    public void generateY(){
+	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
+	    Objective ithObjective = this.getInstance().getObj(iObj);
+	    int oldActivator;
+	    int activator = 0;
+	    int max = ithObjective.getWeightDiff();
+
+	    int oldKD = this.nextKDValue(iObj, 0);
+	    int kD = this.nextKDValue(iObj, oldKD);
+	    oldActivator = this.getIthObjManager(iObj).LexicographicOrder(oldKD);
+	    while(kD > oldKD){
+		activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
+		if(kD > 1){
+		    Log.comment(6, "sequential clause");
+		    this.AddClause(new VecInt(new int[]{-activator, oldActivator}));
+		}
+		oldKD = kD;
+		kD = this.nextKDValue(iObj, oldKD);		
+		oldActivator = activator;
+	    }
+	}
+    }
+
+
+
 }
 
 
