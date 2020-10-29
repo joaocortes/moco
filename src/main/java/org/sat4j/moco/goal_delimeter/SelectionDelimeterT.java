@@ -83,30 +83,6 @@ public void buildCircuits(){
 
 	}
     }
-    public void generateY(){
-	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    Objective ithObjective = this.getInstance().getObj(iObj);
-	    int oldActivator;
-	    int activator = 0;
-	    int max = ithObjective.getWeightDiff();
-
-	    int oldKD = this.generateNext(iObj, -1, max);
-	    int kD = this.generateNext(iObj, oldKD,max);
-	    oldActivator = this.getIthObjManager(iObj).LexicographicOrder(oldKD);
-	    while(kD > oldKD){
-		activator = this.getIthObjManager(iObj).LexicographicOrder(kD);
-		if(kD > 1){
-		    Log.comment(6, "sequential clause");
-		    this.AddClause(new VecInt(new int[]{-activator, oldActivator}));
-		}
-		oldKD = kD;
-		kD = this.generateNext(iObj, oldKD, max);		
-		oldActivator = activator;
-	    }
-	}
-    }
-
-
 
     /**
      * Initialize the container of the Y variables
