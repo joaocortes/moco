@@ -349,12 +349,33 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	    this.prettyPrintVecInt(assumptions);
 	    return assumptions;
 	}
+
     /**
      *Uncover leafs
      */
     private boolean uncoverXs(IVecInt explanationX) {
 	// Log.comment(5, "{ UnsatSatMSU3.uncoverXs");
+	
+	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
+	    Objective ithObj = instance.getObj(iObj);
+	    TreeMap<Integer, Integer> ithSortedMap = this.getIthYTable(iObj);
+	    SortedMap<Integer, Integer> ithSortedMapClone = new TreeMap<Integer, Integer>();
+	    for(int j = 0, n = explanationX.size(); j < n ; j++){
+		int id = explanationX.get(j);
+		if(id < 0) id = - id;
+		Real jthCoeffReal = ithObj.getSubObj(0).weightFromLit(id);
+		if(jthCoeffReal == null)
+		    continue;
+		int jthCoeff = jthCoeffReal.asIntExact();
+		if(jthCoeff < 0) jthCoeff = -jthCoeff;
+		for(int entry: ithSortedMapClone.keySet())
+		    ithSortedMap.putIfAbsent(jthCoeff + entry, null);
+		ithSortedMap.putIfAbsent(jthCoeff, null);
+		ithSortedMapClone.putAll(ithSortedMap);
+		}
+	    }
 
+	
 	int lit = 0;
 	for(int iLit = 0, n = explanationX.size(); iLit < n; iLit++){
 	    lit = explanationX.get(iLit);
