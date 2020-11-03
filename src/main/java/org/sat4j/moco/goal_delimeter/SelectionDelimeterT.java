@@ -91,19 +91,7 @@ public void buildCircuits(){
 	this.yTable = new ArrayList<TreeMap<Integer, Integer>>();
 
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
-	    Objective ithObj = instance.getObj(iObj);
-	    ReadOnlyVec<Real> objectiveCoeffs = ithObj.getSubObjCoeffs(0);	    
 	    TreeMap<Integer, Integer> ithSortedMap = new TreeMap<Integer, Integer>();
-	    SortedMap<Integer, Integer> ithSortedMapClone = new TreeMap<Integer, Integer>();
-	    for(int j = 0, n = objectiveCoeffs.size(); j < n ; j++){
-		int jthCoeff = objectiveCoeffs.get(j).asIntExact();
-		if(jthCoeff < 0) jthCoeff = -jthCoeff;
-		for(int entry: ithSortedMapClone.keySet())
-		    ithSortedMap.put(jthCoeff + entry, null);
-		ithSortedMap.put(jthCoeff, null);
-		ithSortedMapClone.putAll(ithSortedMap);
-}
-		
 	    this.yTable.add(ithSortedMap);
 	}
     }
@@ -188,6 +176,10 @@ public void buildCircuits(){
 		return kD;
 	    return value;
 	}
+
+    public TreeMap<Integer, Integer> getIthYTable(int iObj) {
+	return yTable.get(iObj);
+    }
 }
 
 

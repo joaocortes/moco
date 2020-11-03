@@ -32,8 +32,10 @@ import java.util.Map.Entry;
 import java.util.HashMap;
 
 
+import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Log;
+import org.sat4j.moco.util.Real;
 import org.sat4j.moco.goal_delimeter.Circuit.ControlledComponent;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
@@ -53,6 +55,7 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
     
     public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit) {
 		super(instance, solver, buildCircuit);
+		this.initializeYTable();
 		this.generateY();
 	}
 
@@ -257,7 +260,25 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 	}
     }
 
+	@Override
+	protected void initializeYTable() {
+	    super.initializeYTable();
+	    for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
+		Objective ithObj = instance.getObj(iObj);
+		ReadOnlyVec<Real> objectiveCoeffs = ithObj.getSubObjCoeffs(0);	    
+		TreeMap<Integer, Integer> ithSortedMap = this.getIthYTable(iObj);
+		SortedMap<Integer, Integer> ithSortedMapClone = new TreeMap<Integer, Integer>();
+		for(int j = 0, n = objectiveCoeffs.size(); j < n ; j++){
+		    int jthCoeff = objectiveCoeffs.get(j).asIntExact();
+		    if(jthCoeff < 0) jthCoeff = -jthCoeff;
+		    for(int entry: ithSortedMapClone.keySet())
+			ithSortedMap.put(jthCoeff + entry, null);
+		    ithSortedMap.put(jthCoeff, null);
+		    ithSortedMapClone.putAll(ithSortedMap);
+		}
+	    }
 
+	}
 
 }
 
