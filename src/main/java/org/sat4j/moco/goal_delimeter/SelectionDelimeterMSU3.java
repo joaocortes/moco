@@ -463,11 +463,12 @@ private void updateAllUncoveredMaxKD(){
 	    return;
 	newY = this.getIthObjManager(iObj).LexicographicOrder(newKD);
 	oldY = this.getY(iObj, oldKD);
-
+	
 	if(newKD >  this.nextKDValue(iObj, 0) && newKD > oldKD){
+	    if(oldY == 0)
+		oldY = this.getIthObjManager(iObj).LexicographicOrder(oldKD);
 	    this.AddClause(new VecInt(new int[]{-newY, oldY}));
 	    
-	    //TODO: repair the ordering of the y variables
 	    int oldNextKD = this.nextKDValue(iObj, newKD);
 	    if(oldNextKD > newKD){
 		int oldNextY = this.getY(iObj, oldNextKD);
