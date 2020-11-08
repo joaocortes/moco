@@ -304,8 +304,8 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
      */
     @Override
     public boolean preAssumptionsExtend(IVecInt currentExplanation){
-	// Log.comment(2, "explanation: ");
-	// this.prettyPrintVecInt(currentExplanation);
+	Log.comment(6, "explanation: ");
+	Log.comment(6, this.prettyFormatVecInt(currentExplanation));
 	boolean change = false;
 	// Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
 	IVecInt currentExplanationX = new VecInt(new int[] {});
@@ -345,8 +345,8 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	    for(Integer x: this.coveredLiterals.keySet())
 		assumptions.push(x);
 	    
-	    // Log.comment(2, "assumptions:");
-	    // this.prettyPrintVecInt(assumptions);
+	    Log.comment(6, "assumptions:");
+	    Log.comment(6, this.prettyFormatVecInt(assumptions));
 	    return assumptions;
 	}
 
