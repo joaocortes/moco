@@ -267,7 +267,7 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 		Objective ithObj = instance.getObj(iObj);
 		ReadOnlyVec<Real> objectiveCoeffs = ithObj.getSubObjCoeffs(0);	    
 		TreeMap<Integer, Integer> ithSortedMap = this.getIthYTable(iObj);
-		SortedMap<Integer, Integer> ithSortedMapClone = new TreeMap<Integer, Integer>();
+		SortedMap<Integer, Integer> ithSortedMapClone = new TreeMap<Integer, Integer>(ithSortedMap);
 		for(int j = 0, n = objectiveCoeffs.size(); j < n ; j++){
 		    int jthCoeff = objectiveCoeffs.get(j).asIntExact();
 		    if(jthCoeff < 0) jthCoeff = -jthCoeff;
