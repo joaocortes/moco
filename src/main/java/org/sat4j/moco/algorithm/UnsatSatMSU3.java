@@ -46,6 +46,8 @@ public class UnsatSatMSU3 extends  UnsatSat {
 
 
     public void saveModel(){
+	Log.comment(6, "model:");
+	Log.comment(6, this.prettyFormatVecInt(this.getXModel()));
 	this.result.saveModel(this.solver);
     }
 
