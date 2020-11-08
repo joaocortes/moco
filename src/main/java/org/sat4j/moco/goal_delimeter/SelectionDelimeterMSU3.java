@@ -359,7 +359,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	for(int iObj = 0;iObj< instance.nObjs(); ++iObj){
 	    Objective ithObj = instance.getObj(iObj);
 	    TreeMap<Integer, Integer> ithSortedMap = this.getIthYTable(iObj);
-	    SortedMap<Integer, Integer> ithSortedMapClone = new TreeMap<Integer, Integer>();
+	    SortedMap<Integer, Integer> ithSortedMapClone = new TreeMap<Integer, Integer>(this.getIthYTable(iObj));
 	    for(int j = 0, n = explanationX.size(); j < n ; j++){
 		int id = explanationX.get(j);
 		if(id < 0) id = - id;
