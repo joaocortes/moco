@@ -22,11 +22,9 @@
  *******************************************************************************/
 package org.sat4j.moco.algorithm;
 
-import org.sat4j.core.VecInt;
 import org.sat4j.moco.analysis.SubResult;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.Log;
-import org.sat4j.specs.IVecInt;
 
 /**
  * Class that implements UnsatSat, MSU3 flavoured
