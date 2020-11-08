@@ -122,7 +122,9 @@ public abstract class GoalDelimeter<PIndex extends Index> implements GoalDelimet
      */
 
     public boolean AddClause(IVecInt setOfLiterals){
-	// this.prettyPrintVecInt(setOfLiterals);
+	Log.comment(6, "clause to add:");
+	Log.comment(6, this.prettyFormatVecInt(setOfLiterals));
+
 	try{
 	    this.solver.AddClause(setOfLiterals);
 	} catch (ContradictionException e) {
