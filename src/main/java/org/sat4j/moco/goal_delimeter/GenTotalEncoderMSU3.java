@@ -954,8 +954,8 @@ public class GenTotalEncoderMSU3 extends GoalDelimeter<GTEIndex> {
      */
     @Override
     public boolean preAssumptionsExtend(IVecInt currentExplanation){
-	// Log.comment(2, "explanation: ");
-	// this.prettyPrintVecInt(currentExplanation);
+	Log.comment(6, "explanation: ");
+	Log.comment(6, this.prettyFormatVecInt(currentExplanation));
 	boolean change = false;
 	// Log.comment(0, "covered x variables: " + this.coveredLiterals.size());
 	IVecInt currentExplanationX = new VecInt(new int[] {});
@@ -1081,8 +1081,8 @@ private void updateAllUncoveredMaxKD(){
 	    for(Integer x: this.coveredLiterals.keySet())
 		assumptions.push(x);
 	    
-	    // Log.comment(2, "assumptions:");
-	    // this.prettyPrintVecInt(assumptions);
+	    Log.comment(2, "assumptions:");
+	    this.prettyPrintVecInt(assumptions);
 	    return assumptions;
 	}
 }
