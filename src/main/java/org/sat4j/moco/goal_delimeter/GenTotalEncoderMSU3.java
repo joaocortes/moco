@@ -1080,9 +1080,6 @@ private void updateAllUncoveredMaxKD(){
 	    IVecInt assumptions =  super.generateUpperBoundAssumptions(explanation, checkChange);
 	    for(Integer x: this.coveredLiterals.keySet())
 		assumptions.push(x);
-	    
-	    Log.comment(2, "assumptions:");
-	    this.prettyPrintVecInt(assumptions);
 	    return assumptions;
 	}
 }

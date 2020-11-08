@@ -344,9 +344,6 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	    IVecInt assumptions =  super.generateUpperBoundAssumptions(explanation, checkChange);
 	    for(Integer x: this.coveredLiterals.keySet())
 		assumptions.push(x);
-	    
-	    Log.comment(6, "assumptions:");
-	    Log.comment(6, this.prettyFormatVecInt(assumptions));
 	    return assumptions;
 	}
 
