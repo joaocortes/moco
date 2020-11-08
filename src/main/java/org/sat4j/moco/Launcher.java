@@ -152,6 +152,7 @@ public class Launcher {
             Instance moco = readMOCO(cl);
 	    AlgorithmCreator algCreator = new AlgorithmCreator();
 	    algorithm algorithm1 = algCreator.create(params, moco);
+	    setShutdownHandler(algorithm1);
 	    algorithm1.solve();
         }
         catch (ParseException e) {
