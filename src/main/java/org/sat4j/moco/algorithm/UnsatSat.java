@@ -98,6 +98,9 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
 	while(goOn){
 	    Log.comment("");
 	    Log.comment("new harvest cycle\n");
+	    this.logUpperLimit();
+	    Log.comment(6, "assumptions:");
+	    Log.comment(6, this.prettyFormatVecInt(currentAssumptions));
 	    solver.check(currentAssumptions);
 	    this.solver.printStats();
 	    if(goOn1 && solver.isSat()){
@@ -115,14 +118,14 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
 		    Log.comment(2, "explanation length: " + currentAssumptions.size());
 		    if(currentExplanation.size() == 0){
 			goOn = false;
+			Log.comment(6, "empty explanation");
 		    }else{
 			currentAssumptions = this.generateUpperBoundAssumptions(currentExplanation, true);
-			this.logUpperLimit();
 			// if currentAssumptions are null, then the
 			// attainable domain did was not expanded and
 			// there is no need to keep goind
 			if(currentAssumptions == null){
-			    Log.comment(2, "There was no expansion");
+			    Log.comment(6, "There was no expansion");
 			    goOn = false;
 			}else{
 			    Log.comment(2, "explanation length: " + currentExplanation.size());
@@ -388,9 +391,11 @@ public class UnsatSat extends algorithm implements IWithGoalDelimeter {
 
 
     public void printFlightRecordParticular(){
-	// Log.comment(2, "covered x variables: " + this.coveredLiterals.size());
     }
+
     public void saveModel(){
+	Log.comment(6, "model:");
+	Log.comment(6, this.prettyFormatVecInt(this.getXModel()));
 	this.subResult.saveModel(this.solver);
 }
     public void finalizeHarvest(){
