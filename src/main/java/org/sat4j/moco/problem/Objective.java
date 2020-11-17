@@ -77,9 +77,31 @@ public abstract class Objective {
     public ReadOnlyVecInt getSubObjLits(int i) { return getSubObj(i).getLits(); }
     
     /**
-     * Retrieves the coefficients of one of the PB objective's sub-objectives.
-     * @param i The sub-objective index.
-     * @return The {@code i}-th sub-objective.
+    /** Added by Joao Cortes at Wed 23 Oct 16:22:19 WEST 2019
+     * get the Max Weight of an objective.
+     * This only works well for integer weights
+     */
+    public int getMaxValue(){
+
+	int total = 0;
+	for (int i = 0; i < this.nSubObj() ; ++i){
+	    total+=this.getSubObj(i).getMaxSum().asIntExact();
+	}
+	return total;
+    }
+
+
+    /**
+     * get the Min Weight of an objective
+     */
+    public int getMinValue(){
+
+	int total = 0;
+	for (int i = 0; i < this.nSubObj() ; ++i){
+	    total += this.getSubObj(i).getMinSum().asIntExact();
+	}
+	return total;
+    }
      */
     public ReadOnlyVec<Real> getSubObjCoeffs(int i) { return getSubObj(i).getCoeffs(); }
     
