@@ -32,6 +32,12 @@ import org.sat4j.moco.util.Real;
  */
 // TODO: implement setters?
 public class Params {
+
+    /**
+     * default output for translation
+     */
+    private static final String DEFAULT_OUTPUT = "out.mocnf";
+
     /**
      *Default blankness
      */
@@ -80,6 +86,7 @@ public class Params {
      */
     public static Options buildOpts() {
         Options o = new Options();
+	o.addOption("o", "output", true, "output file for translation.");
         o.addOption("v", "verbosity", true,
                     "Set the verbosity level (from 0 to 3). Default is " + DEFAULT_VERB + ".");
         o.addOption("t", "timeout", true, "Set the time limit in seconds. No limit by default.");
@@ -101,6 +108,11 @@ public class Params {
         return o;
     }
     
+    /** 
+     * output file name for translation purposes
+     */
+    private String output = "";
+
     /**
      * Stores the verbosity level of the solver.
      */
@@ -165,6 +177,7 @@ public class Params {
      * Creates a parameters object with default configuration options.
      */
     public Params() {
+	this.output = DEFAULT_OUTPUT;
         this.verb = Integer.parseInt(DEFAULT_VERB);
         this.scale = Integer.parseInt(DEFAULT_SCALE);
         this.lwr = Double.parseDouble(DEFAULT_LWR);
@@ -179,8 +192,9 @@ public class Params {
      * @param cl The command line object.
      */
     public Params(CommandLine cl) {
-        this.verb = Integer.parseInt(cl.getOptionValue("v", DEFAULT_VERB));
+	this.output = cl.getOptionValue("o", DEFAULT_OUTPUT);
 	this.isBlank = Integer.parseInt(cl.getOptionValue("ib", DEFAULT_ISBLANK));
+        this.verb = Integer.parseInt(cl.getOptionValue("v", DEFAULT_VERB));
         this.suppress_assign = cl.hasOption("sa");
         this.scale = Integer.parseInt(cl.getOptionValue("ds", DEFAULT_SCALE));
         this.stratify = cl.hasOption("s");
@@ -264,4 +278,8 @@ public class Params {
     public String getEncodingGD(){return this.encodingGD;}
 
 	public int getIsBlank() {return isBlank;}
+
+    public String getOutput() {
+	return output;
+    }
 }
