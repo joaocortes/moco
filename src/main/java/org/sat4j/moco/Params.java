@@ -86,6 +86,7 @@ public class Params {
      */
     public static Options buildOpts() {
         Options o = new Options();
+	o.addOption("ib", "isBlank", true, "Should I translate or solve the instance?");
 	o.addOption("o", "output", true, "output file for translation.");
         o.addOption("v", "verbosity", true,
                     "Set the verbosity level (from 0 to 3). Default is " + DEFAULT_VERB + ".");
@@ -178,6 +179,7 @@ public class Params {
      */
     public Params() {
 	this.output = DEFAULT_OUTPUT;
+	this.isBlank = Integer.parseInt(DEFAULT_ISBLANK);
         this.verb = Integer.parseInt(DEFAULT_VERB);
         this.scale = Integer.parseInt(DEFAULT_SCALE);
         this.lwr = Double.parseDouble(DEFAULT_LWR);
@@ -274,10 +276,10 @@ public class Params {
     /**
      *returns the goal delimeter (GD) encoding to be used
      @return the name of the encoding of{@code GoalDelimeter} 
-     */
+    */
     public String getEncodingGD(){return this.encodingGD;}
 
-	public int getIsBlank() {return isBlank;}
+    public int getIsBlank() {return isBlank;}
 
     public String getOutput() {
 	return output;
