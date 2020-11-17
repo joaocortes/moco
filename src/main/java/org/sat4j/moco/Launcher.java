@@ -22,6 +22,10 @@
  *******************************************************************************/
 package org.sat4j.moco;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+
 import java.io.IOException;
 
 import org.apache.commons.cli.CommandLine;
@@ -31,6 +35,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.sat4j.moco.algorithm.AlgorithmCreator;
+import org.sat4j.moco.translator.Translator;
 import org.sat4j.moco.algorithm.algorithm;
 import org.sat4j.moco.analysis.Result;
 import org.sat4j.moco.parsing.OPBReader;
@@ -146,10 +151,22 @@ public class Launcher {
             Real.updtParams(params);
             Clock.instance().updtParams(params);
             Instance moco = readMOCO(cl);
-	    AlgorithmCreator algCreator = new AlgorithmCreator();
-	    algorithm algorithm1 = algCreator.create(params, moco);
-	    setShutdownHandler(algorithm1);
-	    algorithm1.solve();
+	    if(params.getIsBlank() == 0){
+		AlgorithmCreator algCreator = new AlgorithmCreator();
+		algorithm algorithm1 = algCreator.create(params, moco);
+		setShutdownHandler(algorithm1);
+		algorithm1.solve();
+		return;
+	    }else{
+		File f = File.createTempFile(".temp", ".cnf");
+		f.deleteOnExit();
+		BufferedWriter tempOut = new BufferedWriter(new FileWriter(f));
+	    
+		BufferedWriter out = new BufferedWriter(new FileWriter(params.getOutput())); 
+		Translator translator = new Translator(moco, out, tempOut);
+		translator.translate(f);
+	    }
+	    
         }
         catch (ParseException e) {
             printHelpMessage(options);
