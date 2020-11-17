@@ -23,19 +23,13 @@
 package org.sat4j.moco.goal_delimeter;
 
 import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.ArrayList;
 
 import java.util.HashMap;
 
 
 import org.sat4j.core.ReadOnlyVec;
-import org.sat4j.core.VecInt;
-import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
