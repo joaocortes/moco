@@ -32,6 +32,10 @@ import org.sat4j.moco.util.Real;
  */
 // TODO: implement setters?
 public class Params {
+    /**
+     *Default blankness
+     */
+    private static final String DEFAULT_ISBLANK = "0";
 
     /**
      * Default verbosity level.
@@ -154,6 +158,10 @@ public class Params {
     private int tt = 20;
     
     /**
+     *Stores the isBlank value
+     */
+    private int isBlank;
+    /**
      * Creates a parameters object with default configuration options.
      */
     public Params() {
@@ -172,6 +180,7 @@ public class Params {
      */
     public Params(CommandLine cl) {
         this.verb = Integer.parseInt(cl.getOptionValue("v", DEFAULT_VERB));
+	this.isBlank = Integer.parseInt(cl.getOptionValue("ib", DEFAULT_ISBLANK));
         this.suppress_assign = cl.hasOption("sa");
         this.scale = Integer.parseInt(cl.getOptionValue("ds", DEFAULT_SCALE));
         this.stratify = cl.hasOption("s");
@@ -253,4 +262,6 @@ public class Params {
      @return the name of the encoding of{@code GoalDelimeter} 
      */
     public String getEncodingGD(){return this.encodingGD;}
+
+	public int getIsBlank() {return isBlank;}
 }
