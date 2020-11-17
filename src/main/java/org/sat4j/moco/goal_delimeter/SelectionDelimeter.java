@@ -25,6 +25,8 @@ package org.sat4j.moco.goal_delimeter;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import java.util.Arrays;
@@ -36,6 +38,7 @@ import org.sat4j.core.ReadOnlyVec;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.util.Log;
 import org.sat4j.moco.util.Real;
+import org.sat4j.moco.goal_delimeter.Circuit.ControlledCompIterator;
 import org.sat4j.moco.goal_delimeter.Circuit.ControlledComponent;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
@@ -280,6 +283,44 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 
 	}
 
+    public void printBasis(BufferedWriter out) throws IOException{
+	for(int i = 0, n = this.instance.nObjs(); i < n; i++){
+	    out.write("b " + i + " ");
+	    DigitalEnv digitalEnv = this.getIthObjManager(i).getDigitalEnv();
+	    for(int j = 0, m = digitalEnv.getBasesN() - 1 ; j < m; j++)
+		out.write(digitalEnv.getRatio(j) + " ");
+	    out.write("\n");
+	}
+    }
+
+    public int numberOutVars(){
+	int sum = 0;
+	for(int i = 0, n = this.instance.nObjs(); i < n; i++){
+	    Circuit circuit = this.getIthObjManager(i).getCircuit();
+	    ControlledCompIterator iterator =  circuit.controlledCompIterator();
+	    while(iterator.hasNext()){
+		ControlledComponent contComp = iterator.next();
+		sum += contComp.getOutputsSize();
+	    }
+	}
+	return sum;
+
+    }
+    public void printOutVariables(BufferedWriter out) throws IOException{
+	for(int i = 0, n = this.instance.nObjs(); i < n; i++){
+	    Circuit circuit = this.getIthObjManager(i).getCircuit();
+	    ControlledCompIterator iterator =  circuit.controlledCompIterator();
+	    while(iterator.hasNext()){
+		out.write("l " + i + " ");
+		ControlledComponent contComp = iterator.next();
+		out.write(contComp.getBase() + " ");
+		for(int lit: contComp.getOutputs())
+		    out.write(lit + " ");
+		out.write("\n");
+	    }
+
+	}
+    }
 }
 
 
