@@ -35,9 +35,12 @@ public class GoalDelimeterCreator {
 	case "SD":
 	    if (MSU3) 
 		gd = new SelectionDelimeterMSU3(instance, solver, true);
-	    else 
-		gd = new SelectionDelimeter(instance, solver, true);
-	    break;
+	    else{
+	    SelectionDelimeter gd1 = new SelectionDelimeter(instance, solver, true);
+	    gd1.generateY();
+	    gd = gd1;
+
+	    }	    break;
 	case "GTE":
 	    if (MSU3) 
 		gd = new GenTotalEncoderMSU3(instance, solver);

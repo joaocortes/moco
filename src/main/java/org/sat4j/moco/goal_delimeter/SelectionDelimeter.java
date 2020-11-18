@@ -59,7 +59,6 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
     public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit) {
 		super(instance, solver, buildCircuit);
 		this.initializeYTable();
-		this.generateY();
 	}
 
 	public class ObjManager implements IObjManager{
