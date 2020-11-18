@@ -176,6 +176,28 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 	}
 
 
+	    /**
+	     *Optimize the ratios. Notice that this.digitalEnv is
+	     *reset by this.
+	     */
+	    public boolean optimizeRatios(int maxW, int maxSum){
+		DigitalEnv digitalEnv = this.getDigitalEnv();
+		int t;
+		DigitalNumber digits =  digitalEnv.toDigital(maxW);
+		t = this.getDigitalEnv().getBaseI(digits.MSB());
+		//TODO: return false if ratios stay the same
+		int x = maxSum;
+		for(int i = 0, n = digitalEnv.getBasesN(); i < n; i++ ){
+		    x -= digitalEnv.getBase(i)* (digitalEnv.getRatio(i) - 1);
+		}
+		int[] ratios = new int[t + 1];
+		for(int  i = 0; i < t; i++)
+		    ratios[i] = digitalEnv.getBase(i);
+		ratios[t] = x;
+		digitalEnv = new DigitalEnv();
+		digitalEnv.setRatios(ratios);
+		return true;		
+	    }
 
 	@Override
 	public void buildMyself() {
