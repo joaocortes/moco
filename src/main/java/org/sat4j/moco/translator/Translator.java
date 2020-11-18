@@ -42,6 +42,7 @@ import org.sat4j.specs.IVecInt;
 
 public class Translator{
     protected PBSolver solver = null;
+    private int nClauses = 0;
     private SelectionDelimeter selectionDelimeter = null;
     private Instance problem = null;
     private int nVars = 0;
@@ -94,10 +95,9 @@ public class Translator{
 	int nOutVars = this.selectionDelimeter.numberOutVars();
 	int nInVars = this.nVars;
 	int nObj = this.problem.nObjs();
-	int nClauses = this.solver.getClausesN();
 	int nTotalVars = this.solver.nVars();
 	try{
-	this.out.write("p mocnf " + nTotalVars + " " + nClauses + " " + nObj + " " + nInVars + " " + nOutVars + "\n");
+	this.out.write("p mocnf " + nTotalVars + " " + this.nClauses + " " + nObj + " " + nInVars + " " + nOutVars + "\n");
 	}
 	catch(IOException e){}
     }
@@ -158,6 +158,7 @@ public class Translator{
     }
 	catch (IOException e){
 	}
+    this.nClauses++;
     return true;
     }
 }
