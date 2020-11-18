@@ -28,3 +28,12 @@ $ java -cp org.sat4j.moco.jar org.sat4j.moco.analysis.Analyzer <instance file> [
 
 `<output file>` is expected to be in the output format produced by the MOCO solver.
 If there exist multiple files for different runs of the same algorithm, these should have the same `<label>`.
+
+# HOW TO RUN THE TRANSLATOR
+
+To print the encoding of the logical circuit of the selection delimeter into ``out.mocnf``,
+
+
+```
+java -jar  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar  examples/example1.opb -ib 1 
+```
