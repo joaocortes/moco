@@ -250,6 +250,15 @@ public class DigitalEnv {
 	    int MSBase =  this.digits.lastKey();
 	    return this.getDigit(MSBase);
 	}
+	/**
+	 * returns the most significant base used in the
+	 * representation of DigitalNumber, that is, the last base
+	 * whose digit is nonzero.
+	 */
+	public int getMSBase(){
+	    return this.digits.lastKey();
+	}
+
 	public String toString(){
 	    String result = "";
 	    Iterator<Integer> iterator = this.iterator2();
