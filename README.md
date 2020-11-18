@@ -35,7 +35,7 @@ To print the encoding of the logical circuit of the selection delimeter into ``o
 
 
 ```
-java -jar  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar  examples/example1.opb -ib 1 
+java -jar  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar  in.opb -ib 1 -o out.mocnf
 ```
 
 NOTE: Sequential encoder is not working.
