@@ -68,7 +68,6 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 	ObjManager(int iObj){
 	    this.iObj = iObj;
 	    this.digitalEnv = new DigitalEnv();
-	    
 	}
 
 
@@ -205,6 +204,17 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 		    public void buildCircuit(){
 			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
 			ArrayList<Integer> inputs = new ArrayList<Integer>();
+
+			int maxValue = getInstance().getObj(getIObj()).getWeightDiff();
+			ReadOnlyVec<Real> coeffs = getInstance().getObj(getIObj()).getSubObj(0).getCoeffs();
+			int maxCoeff = 0;
+			for(int i = 0, n = coeffs.size(); i < n; i++ ){
+			    int currentCoeff = coeffs.get(i).asIntExact();
+			    if(currentCoeff < 0) currentCoeff = -currentCoeff;
+			    if(currentCoeff > maxCoeff)
+				maxCoeff = currentCoeff;
+			}
+			optimizeRatios(maxCoeff, maxValue);
 			// last base needed to expand the weights
 			int ratioI = 0;
 			int base = 1;
@@ -248,6 +258,9 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 
 	    this.circuit.buildCircuit();
 	}
+
+
+
     }
 
 	@Override
