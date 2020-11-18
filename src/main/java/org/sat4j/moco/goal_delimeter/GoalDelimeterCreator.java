@@ -22,8 +22,6 @@
  *******************************************************************************/
 package org.sat4j.moco.goal_delimeter;
 
-import org.sat4j.moco.Params;
-import org.sat4j.moco.algorithm.algorithm;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.Log;
