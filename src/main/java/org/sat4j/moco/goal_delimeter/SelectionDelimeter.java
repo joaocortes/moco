@@ -183,7 +183,7 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 		DigitalEnv digitalEnv = this.getDigitalEnv();
 		int t;
 		DigitalNumber digits =  digitalEnv.toDigital(maxW);
-		t = this.getDigitalEnv().getBaseI(digits.getMSBase());
+		t = this.getDigitalEnv().getBaseI(digits.getMSBase()) - 1 ;
 		//TODO: return false if ratios stay the same
 		int x = maxSum;
 		for(int i = 0, n = digitalEnv.getBasesN(); i < n; i++ ){
