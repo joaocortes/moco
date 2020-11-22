@@ -22,6 +22,11 @@
  *******************************************************************************/
 package org.sat4j.moco;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.regex.MatchResult;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.sat4j.moco.util.Real;
@@ -86,6 +91,7 @@ public class Params {
      */
     public static Options buildOpts() {
         Options o = new Options();
+	o.addOption("ul", "upperLimits", true, "upper limits for each objective funciton.");
 	o.addOption("ib", "isBlank", true, "Should I translate or solve the instance?");
 	o.addOption("o", "output", true, "output file for translation.");
         o.addOption("v", "verbosity", true,
@@ -109,6 +115,12 @@ public class Params {
         return o;
     }
     
+    /**
+     * map with upper limits for each objective
+     */
+    Map<Integer, Integer> upperLimits;
+
+
     /** 
      * output file name for translation purposes
      */
@@ -194,6 +206,7 @@ public class Params {
      * @param cl The command line object.
      */
     public Params(CommandLine cl) {
+	this.upperLimits = parseUpperLimit(cl.getOptionValue("ul"));
 	this.output = cl.getOptionValue("o", DEFAULT_OUTPUT);
 	this.isBlank = Integer.parseInt(cl.getOptionValue("ib", DEFAULT_ISBLANK));
         this.verb = Integer.parseInt(cl.getOptionValue("v", DEFAULT_VERB));
@@ -208,6 +221,22 @@ public class Params {
         if (cl.hasOption("t")) {
             this.timeout = Integer.parseInt(cl.getOptionValue("t"));
         }
+    }
+
+    private Map<Integer, Integer> parseUpperLimit(String string){
+	Map<Integer, Integer> upperLimits = new HashMap<Integer, Integer>();
+	Scanner scanner = new Scanner(string);
+	scanner.useDelimiter(",");
+	String pattern = "(\\d+)\\:(\\d+)";
+	while(scanner.hasNext(pattern)){
+	    scanner.next(pattern);
+	    MatchResult match = scanner.match();
+	    int iObj = Integer.parseInt(match.group(1));
+	    int limit = Integer.parseInt(match.group(2));
+	    upperLimits.put(iObj, limit);
+	}
+	scanner.close();
+	return upperLimits;
     }
     
     /**
@@ -284,4 +313,12 @@ public class Params {
     public String getOutput() {
 	return output;
     }
+
+    public Map<Integer, Integer> getUpperLimits() {
+	return upperLimits;
+	}
+
+    public void setUpperLimits(Map<Integer, Integer> upperLimits) {
+	this.upperLimits = upperLimits;
+	}
 }
