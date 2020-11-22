@@ -27,6 +27,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
 
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.goal_delimeter.SelectionDelimeter;
@@ -65,9 +66,9 @@ public class Translator{
 	    
     }
 
-    public void translate(File tempFile)  throws IOException{
+    public void translate(File tempFile, Map<Integer, Integer> upperLimits)  throws IOException{
 	
-	this.selectionDelimeter = new SelectionDelimeter(this.problem, solver, true){
+	this.selectionDelimeter = new SelectionDelimeter(this.problem, solver, true, upperLimits){
 		public boolean AddClause(IVecInt setOfLiterals){
 		    AddClause1(setOfLiterals);
 		    return true;
