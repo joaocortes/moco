@@ -229,6 +229,10 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 				maxCoeff = currentCoeff;
 			}
 			optimizeRatios(maxCoeff, maxValue);
+			// to recover digitalEnv setup,
+			baseInputs = getInputsFromWeights(iObj);
+			//to make sure digitalEnv.basesN is correct,
+			getDigitalEnv().toDigital(maxValue);
 			// last base needed to expand the weights
 			int ratioI = 0;
 			int base = 1;
