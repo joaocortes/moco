@@ -186,15 +186,29 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 		t = this.getDigitalEnv().getBaseI(digits.getMSBase()) - 1 ;
 		//TODO: return false if ratios stay the same
 		int x = maxSum;
-		for(int i = 0, n = digitalEnv.getBasesN(); i < n; i++ ){
+		for(int i = 0, n = t ; i < n; i++ ){
 		    x -= digitalEnv.getBase(i)* (digitalEnv.getRatio(i) - 1);
 		}
-		int[] ratios = new int[t + 1];
-		for(int  i = 0; i < t; i++)
-		    ratios[i] = digitalEnv.getRatio(i);
-		ratios[t] = x;
-		digitalEnv = new DigitalEnv();
-		digitalEnv.setRatios(ratios);
+
+		//only change ratios if the t'th digit pushes at least
+		//one carry
+		if(x >=1){
+		    int[] ratios = new int[t + 1];
+		    int lastRatio = 0;
+		    int lastBase = digitalEnv.getBase(t);
+		    while(x > 0){
+			for(int j = 0; j < lastBase; j++)
+			    x--;
+			lastRatio++;
+		    }
+		    lastRatio++;
+		    for(int i = 0; i < t ; i++)
+			ratios[i] = digitalEnv.getRatio(i);
+		    ratios[t] = lastRatio;
+		    this.digitalEnv = new DigitalEnv();
+		    this.digitalEnv.setRatios(ratios);
+		    getDigitalEnv().toDigital(maxSum);
+		}
 		return true;		
 	    }
 
