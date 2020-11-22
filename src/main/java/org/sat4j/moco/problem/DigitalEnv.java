@@ -46,7 +46,7 @@ public class DigitalEnv {
     private int[] ratios;
 
     /**
-     *Last valid digit
+     * last base index, starting from 0.
      */
 
     private int basesN;
@@ -115,7 +115,8 @@ public class DigitalEnv {
     }
 
     /**
-     *get the index of the base. If not a valid base, returns -1.
+     *get the index of the base, starting in 1. TODO: checky if this
+     *makes sense.  If not a valid base, returns -1.
      */
 
     public int getBaseI(int base){
