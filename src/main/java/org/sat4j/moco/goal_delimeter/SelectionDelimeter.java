@@ -335,7 +335,7 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 	for(int i = 0, n = this.instance.nObjs(); i < n; i++){
 	    out.write("b " + i + " ");
 	    DigitalEnv digitalEnv = this.getIthObjManager(i).getDigitalEnv();
-	    for(int j = 0, m = digitalEnv.getBasesN() - 1 ; j < m; j++)
+	    for(int j = 0, m = digitalEnv.getBasesN() ; j < m; j++)
 		out.write(digitalEnv.getRatio(j) + " ");
 	    out.write("\n");
 	}
