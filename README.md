@@ -38,4 +38,7 @@ To print the encoding of the logical circuit of the selection delimeter into ``o
 java -jar  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar  in.opb -ib 1 -o out.mocnf
 ```
 
+If you would like to enforce upper limits into each objective function, use the ``ul`` option, with the syntax ``<iObj>:<upperLimit>,...``,
+where ``upperLimit`` is the exclusive upper limit, and ``iObj`` is the index of the objective function, starting from 0. Uppper limits may be set for any subset of the objective functions.
+
 NOTE: Sequential encoder is not working.
