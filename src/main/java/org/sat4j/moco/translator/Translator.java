@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.sat4j.core.VecInt;
-import org.sat4j.moco.goal_delimeter.SelectionDelimeter;
+import org.sat4j.moco.goal_delimeter.SelectionDelimeterMSU3;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.specs.ContradictionException;
@@ -44,7 +44,7 @@ import org.sat4j.specs.IVecInt;
 public class Translator{
     protected PBSolver solver = null;
     private int nClauses = 0;
-    private SelectionDelimeter selectionDelimeter = null;
+    private SelectionDelimeterMSU3 selectionDelimeter = null;
     private Instance problem = null;
     private int nVars = 0;
     BufferedWriter out = null;
@@ -68,7 +68,7 @@ public class Translator{
 
     public void translate(File tempFile, Map<Integer, Integer> upperLimits)  throws IOException{
 	
-	this.selectionDelimeter = new SelectionDelimeter(this.problem, solver, true, upperLimits){
+	this.selectionDelimeter = new SelectionDelimeterMSU3(this.problem, solver, true, upperLimits){
 		public boolean AddClause(IVecInt setOfLiterals){
 		    AddClause1(setOfLiterals);
 		    return true;
