@@ -144,7 +144,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 		int absWeight = weight > 0 ? weight: - weight;
 		Integer upperLimit = upperLimits.get(iObj);
 		if(upperLimit != null && upperLimit <= absWeight){
-		    AddClause(new VecInt(new int[]{absWeight > 0? -lit: lit}));
+		    AddClause(new VecInt(new int[]{weight > 0? -lit: lit}));
 		    continue;
 		}
 
