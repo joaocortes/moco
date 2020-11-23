@@ -225,6 +225,8 @@ public class Params {
 
     private Map<Integer, Integer> parseUpperLimit(String string){
 	Map<Integer, Integer> upperLimits = new HashMap<Integer, Integer>();
+	if(string ==null)
+	    return upperLimits;
 	Scanner scanner = new Scanner(string);
 	scanner.useDelimiter(",");
 	String pattern = "(\\d+)\\:(\\d+)";
