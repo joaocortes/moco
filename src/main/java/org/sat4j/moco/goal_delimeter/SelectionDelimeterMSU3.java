@@ -76,6 +76,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	this.uncoveredMaxKD = new int[this.instance.nObjs()];
 	this.UpperBound =  new int[(this.instance.nObjs())];
 	this.coveredLiterals = new HashMap<Integer, Boolean>(this.solver.nVars());
+	this.upperLimits = new HashMap<Integer, Integer>();
 	this.initializeCoveredLiterals();
 	if(buildCircuit)
 	    this.buildCircuits();
