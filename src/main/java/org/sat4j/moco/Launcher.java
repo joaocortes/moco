@@ -164,7 +164,7 @@ public class Launcher {
 	    
 		BufferedWriter out = new BufferedWriter(new FileWriter(params.getOutput())); 
 		Translator translator = new Translator(moco, out, tempOut);
-		translator.translate(f, params.getUpperLimits());
+		translator.translate(f, params.getUpperLimits(), params.getAllRatios());
 	    }
 	    
         }
