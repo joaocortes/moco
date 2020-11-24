@@ -56,10 +56,10 @@ public class DigitalEnv {
      */
     public DigitalEnv(){
 	this.basesN = 1;
-	this.ratios = new int[]{2};
+	this.ratios = new Integer[]{2};
 }
 
-    public DigitalEnv(int[] ratios){
+    public DigitalEnv(Integer[] ratios){
 	this.basesN = 1;
 	this.setRatios(ratios);
     }
