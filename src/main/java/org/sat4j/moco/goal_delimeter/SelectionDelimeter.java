@@ -192,7 +192,7 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 		//only change ratios if the t'th digit pushes at least
 		//one carry
 		if(x >=1){
-		    int[] ratios = new int[t + 1];
+		    Integer[] ratios = new Integer[t + 1];
 		    int lastRatio = 0;
 		    int lastBase = digitalEnv.getBase(t);
 		    while(x > 0){

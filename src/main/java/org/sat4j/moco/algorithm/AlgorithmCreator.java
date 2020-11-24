@@ -13,12 +13,9 @@ public class AlgorithmCreator {
     public algorithm create(Params params, Instance moco){
 	String encoding = params.getEncodingGD();
 	int algorithmI =  params.getAlgorithmI();
-	return create(algorithmI, encoding, moco);
-    }
-    
-     public algorithm create(int AlgorithmI, String encoding,  Instance moco){
+
 	algorithm algorithm1 = null;
-	switch(AlgorithmI) {
+	switch(algorithmI) {
 	case 0:
 	    algorithm1 = new ParetoMCS(moco);
 	    return algorithm1;
