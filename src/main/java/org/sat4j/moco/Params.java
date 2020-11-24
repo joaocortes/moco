@@ -255,7 +255,7 @@ public class Params {
 	if(string ==null)
 	    return allRatios;
 	Scanner scanner = new Scanner(string);
-	String pattern = "(\\d+)\\:\\[([\\d,]+)\\]";
+	String pattern = "(\\d+)\\:\\[([\\d+,]+)\\]";
 	while(scanner.hasNext(pattern)){
 	    scanner.next(pattern);
 	    MatchResult match = scanner.match();
