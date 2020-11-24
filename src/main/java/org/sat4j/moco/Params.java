@@ -364,4 +364,12 @@ public class Params {
     public void setUpperLimits(Map<Integer, Integer> upperLimits) {
 	this.upperLimits = upperLimits;
 	}
+
+	public Map<Integer, Integer[]> getAllRatios() {
+		return allRatios;
+	}
+
+	public void setAllRatios(Map<Integer, Integer[]> allRatios) {
+		this.allRatios = allRatios;
+	}
 }
