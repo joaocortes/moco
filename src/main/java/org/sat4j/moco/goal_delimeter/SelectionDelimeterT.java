@@ -23,6 +23,7 @@
 package org.sat4j.moco.goal_delimeter;
 
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.ArrayList;
 
@@ -49,6 +50,7 @@ abstract public class SelectionDelimeterT<PObjManager extends IObjManager> exten
     public SelectionDelimeterT(Instance instance, PBSolver solver, boolean buildCircuit) {
 	super(instance, solver);
 	this.objManagers =  objManagersCreator();
+	this.initializeObjectManagers();
 	this.initializeYTable();
 	if(buildCircuit){
 	    this.buildCircuits();
@@ -69,10 +71,14 @@ abstract public class SelectionDelimeterT<PObjManager extends IObjManager> exten
     abstract protected PObjManager[] objManagersCreator();
     abstract protected PObjManager objManagerCreator(int iObj);
 
+public void initializeObjectManagers(){
+	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
+	    this.objManagers[iObj] = this.objManagerCreator(iObj);
+	}
+    }
 
 public void buildCircuits(){
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    this.objManagers[iObj] = this.objManagerCreator(iObj);
 	    objManagers[iObj].buildMyself();
 
 	}
