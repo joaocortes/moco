@@ -43,7 +43,7 @@ public class DigitalEnv {
     /**
      *List of ratios. The last one will be repeated if needed.
      */
-    private int[] ratios;
+    private Integer[] ratios;
 
     /**
      * last base index, starting from 0.
@@ -94,7 +94,7 @@ public class DigitalEnv {
 	return result;    
     }
     
-    public void setRatios(int[] ratios){this.ratios = ratios;}
+    public void setRatios(Integer[] ratios){this.ratios = ratios;}
     public void setBasesN(int basesN){this.basesN = basesN;}
     public int getBasesN(){return this.basesN;}
     public int getRatio(int i){
