@@ -22,7 +22,9 @@
  *******************************************************************************/
 package org.sat4j.moco;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
@@ -91,7 +93,8 @@ public class Params {
      */
     public static Options buildOpts() {
         Options o = new Options();
-	o.addOption("ul", "upperLimits", true, "upper limits for each objective funciton.");
+	o.addOption("rb", "ratios", true, "ratios for each objective function. Only meaningful with SD encodings.");
+	o.addOption("ul", "upperLimits", true, "upper limits for each objective function. Only meaningful with delimeted algorithms");
 	o.addOption("ib", "isBlank", true, "Should I translate or solve the instance?");
 	o.addOption("o", "output", true, "output file for translation.");
         o.addOption("v", "verbosity", true,
@@ -119,6 +122,11 @@ public class Params {
      * map with upper limits for each objective
      */
     Map<Integer, Integer> upperLimits;
+
+    /**
+     * map with ratios for each objective
+     */
+    Map<Integer, Integer[]> allRatios;
 
 
     /** 
@@ -207,6 +215,7 @@ public class Params {
      */
     public Params(CommandLine cl) {
 	this.upperLimits = parseUpperLimit(cl.getOptionValue("ul"));
+	this.allRatios = parseAllRatios(cl.getOptionValue("rb"));
 	this.output = cl.getOptionValue("o", DEFAULT_OUTPUT);
 	this.isBlank = Integer.parseInt(cl.getOptionValue("ib", DEFAULT_ISBLANK));
         this.verb = Integer.parseInt(cl.getOptionValue("v", DEFAULT_VERB));
@@ -239,6 +248,38 @@ public class Params {
 	}
 	scanner.close();
 	return upperLimits;
+    }
+
+    private Map<Integer, Integer[]> parseAllRatios(String string){
+	Map<Integer, Integer[]> allRatios  = new HashMap<Integer, Integer[]>();
+	if(string ==null)
+	    return allRatios;
+	Scanner scanner = new Scanner(string);
+	String pattern = "(\\d+)\\:\\[([\\d,]+)\\]";
+	while(scanner.hasNext(pattern)){
+	    scanner.next(pattern);
+	    MatchResult match = scanner.match();
+	    int iObj = Integer.parseInt(match.group(1));
+	    Integer[] ratios = this.parseRatios(match.group(2));
+	    allRatios.put(iObj, ratios);
+	}
+	scanner.close();
+	return allRatios;
+    }
+
+    private Integer[] parseRatios(String string){
+	Integer[] ratios;
+	List<Integer> ratiosList  = new ArrayList<Integer>(0);
+	if(string ==null)
+	    return null;
+	Scanner scanner = new Scanner(string);
+	scanner.useDelimiter(",");
+	while(scanner.hasNext())
+	    ratiosList.add(scanner.nextInt());
+	scanner.close();
+	ratios = ratiosList.toArray(new Integer[0]);
+	scanner.close();
+	return ratios;
     }
     
     /**
