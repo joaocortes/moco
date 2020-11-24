@@ -68,12 +68,19 @@ public class Translator{
 
     public void translate(File tempFile, Map<Integer, Integer> upperLimits, Map<Integer, Integer[]> allRatios)  throws IOException{
 	
-	this.selectionDelimeter = new SelectionDelimeterMSU3(this.problem, solver, true, upperLimits, allRatios){
+	this.selectionDelimeter = new SelectionDelimeterMSU3(this.problem, solver, false, upperLimits){
 		public boolean AddClause(IVecInt setOfLiterals){
 		    AddClause1(setOfLiterals);
 		    return true;
 		    }
 		};
+
+	this.selectionDelimeter.initializeObjectManagers();
+	for(int i = 0, n = this.problem.nObjs();i<n;i++){
+	    if(allRatios.get(i) != null)
+		this.selectionDelimeter.getIthObjManager(i).getDigitalEnv().setRatios(allRatios.get(i));
+	}
+	this.selectionDelimeter.buildCircuits();
 	this.tempOut.close();
 	this.printHeaderLine();
 	this.selectionDelimeter.printBasis(out);
