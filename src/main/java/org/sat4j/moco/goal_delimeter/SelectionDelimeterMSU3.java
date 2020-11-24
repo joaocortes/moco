@@ -82,7 +82,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	    this.buildCircuits();
     }
 
-    public SelectionDelimeterMSU3(Instance instance, PBSolver solver, boolean buildCircuit, Map<Integer, Integer> upperLimits, Map<Integer, int[]> allRatios) {
+    public SelectionDelimeterMSU3(Instance instance, PBSolver solver, boolean buildCircuit, Map<Integer, Integer> upperLimits, Map<Integer, Integer[]> allRatios) {
 	this(instance, solver, false);
 	this.upperLimits = upperLimits;
 	for(int i = 0, n = this.getInstance().nObjs();i<n;i++)

@@ -66,9 +66,9 @@ public class Translator{
 	    
     }
 
-    public void translate(File tempFile, Map<Integer, Integer> upperLimits)  throws IOException{
+    public void translate(File tempFile, Map<Integer, Integer> upperLimits, Map<Integer, Integer[]> allRatios)  throws IOException{
 	
-	this.selectionDelimeter = new SelectionDelimeterMSU3(this.problem, solver, true, upperLimits){
+	this.selectionDelimeter = new SelectionDelimeterMSU3(this.problem, solver, true, upperLimits, allRatios){
 		public boolean AddClause(IVecInt setOfLiterals){
 		    AddClause1(setOfLiterals);
 		    return true;
