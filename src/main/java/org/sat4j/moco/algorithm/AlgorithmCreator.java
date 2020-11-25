@@ -10,10 +10,10 @@ import org.sat4j.moco.util.Log;
 
 public class AlgorithmCreator {
 
-    public algorithm create(Params params, Instance moco){
-	String encoding = params.getEncodingGD();
-	int algorithmI =  params.getAlgorithmI();
-
+    Params params;
+    public AlgorithmCreator(){
+}
+    public algorithm create(int algorithmI, String encoding, Instance moco){
 	algorithm algorithm1 = null;
 	switch(algorithmI) {
 	case 0:
@@ -38,12 +38,18 @@ public class AlgorithmCreator {
 	return algorithm1;
     }
 
-
+    public algorithm create(Instance moco, Params params){
+	this.params = params;
+	String encoding = params.getEncodingGD();
+	int algorithmI =  params.getAlgorithmI();
+	return create(algorithmI, encoding, moco);
+    }
 
     private  GoalDelimeter<?> createGoalDelimeter(String encoding, algorithm algorithm1, boolean MSU3){
 	PBSolver solver = algorithm1.getSolver();
 	Instance instance = algorithm1.getProblem();
-	return GoalDelimeterCreator.create(encoding, instance , solver, MSU3);
+	GoalDelimeterCreator gdCreator = new GoalDelimeterCreator(params);
+	return gdCreator.create(encoding, instance , solver, MSU3);
 	
     }
 
