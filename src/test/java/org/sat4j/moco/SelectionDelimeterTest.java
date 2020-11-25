@@ -133,7 +133,7 @@ public class SelectionDelimeterTest {
 
     @Test
     public void testDigits(){
-	int[] ratios = new int[]{2};
+	Integer[] ratios = new Integer[]{2};
 	DigitalEnv digitalEnv = new DigitalEnv(ratios);
 	DigitalEnv.DigitalNumber digitalNumber = digitalEnv.toDigital(9);
 	int digit0 = digitalNumber.getDigit(1);
@@ -148,7 +148,7 @@ public class SelectionDelimeterTest {
 
     @Test
     public void testDigitsMulti(){
-	int[] ratios = new int[]{2, 3};
+	Integer[] ratios = new Integer[]{2, 3};
 	DigitalEnv digitalEnv = new DigitalEnv(ratios);
 	DigitalEnv.DigitalNumber digitalNumber = digitalEnv.toDigital(8);
 	int digit0 = digitalNumber.getDigitI(0);
@@ -163,7 +163,7 @@ public class SelectionDelimeterTest {
 
     @Test
     public void testWeightExpansion(){
-	int[] ratios = new int[]{2, 3};
+	Integer[] ratios = new Integer[]{2, 3};
 	DigitalEnv digitalEnv = new DigitalEnv(ratios);
 	DigitalEnv.DigitalNumber digitalNumber = digitalEnv.toDigital(8);
 	int digit0 = digitalNumber.getDigitI(0);
