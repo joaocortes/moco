@@ -22,25 +22,42 @@
  *******************************************************************************/
 package org.sat4j.moco.goal_delimeter;
 
+import java.util.Map;
+
+import org.sat4j.moco.Params;
 import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.Log;
 
 
 public class GoalDelimeterCreator {
+    Params params;
     
-    static public GoalDelimeter<?> create(String encoding, Instance instance, PBSolver solver, boolean MSU3){
+    public GoalDelimeterCreator(Params params){
+	this.params = params;
+}
+    public GoalDelimeter<?> create(String encoding, Instance instance, PBSolver solver, boolean MSU3){
 	GoalDelimeter<?> gd = null;
+	Map<Integer, Integer[]> allRatios = this.params.getAllRatios();
 	switch(encoding) {
 	case "SD":
-	    if (MSU3) 
-		gd = new SelectionDelimeterMSU3(instance, solver, true);
+	    if (MSU3) {
+		SelectionDelimeterMSU3 sd = new SelectionDelimeterMSU3(instance, solver, false, params.getUpperLimits());
+		sd.initializeObjectManagers();
+		for(int i = 0, n = sd.getInstance().nObjs();i<n;i++){
+		    if(allRatios.get(i) != null)
+			sd.getIthObjManager(i).getDigitalEnv().setRatios(allRatios.get(i));
+		}
+		sd.buildCircuits();
+		gd = sd;
+	    }
 	    else{
-	    SelectionDelimeter gd1 = new SelectionDelimeter(instance, solver, true);
-	    gd1.generateY();
-	    gd = gd1;
+		SelectionDelimeter gd1 = new SelectionDelimeter(instance, solver, true);
+		gd1.generateY();
+		gd = gd1;
 
-	    }	    break;
+	    }	    
+	    break;
 	case "GTE":
 	    if (MSU3) 
 		gd = new GenTotalEncoderMSU3(instance, solver);

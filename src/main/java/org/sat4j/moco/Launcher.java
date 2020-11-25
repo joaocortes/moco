@@ -153,7 +153,7 @@ public class Launcher {
             Instance moco = readMOCO(cl);
 	    if(params.getIsBlank() == 0){
 		AlgorithmCreator algCreator = new AlgorithmCreator();
-		algorithm algorithm1 = algCreator.create(params, moco);
+		algorithm algorithm1 = algCreator.create(moco, params);
 		setShutdownHandler(algorithm1);
 		algorithm1.solve();
 		return;
