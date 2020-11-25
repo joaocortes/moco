@@ -51,4 +51,12 @@ set for any subset of the objective functions, separating the upper limits with 
 To impose an upper limit of 1 to the objective function 0 and an upper limit of 2 to the objective function 4,
 use ``-ul 0:1,4:2``
 
+To set the ratios used in the digital basis, use the option ``rb <arg>``, with ``<arg>=<iObj>:[r1,...rN],...``
+For exmple, to set the ratios of the first objective function `1` to ``[2,2,3]`` and the ratios of the objective function ``3`` to ``[4,4]``,
+use ``-rb 0:[2,3,3],3:[4,4]``.
+
+The last ratio will be inserted into the end of the list as many times
+as needed to fully represent the attainable values.
+
+
 NOTE: Sequential encoder is not working.
