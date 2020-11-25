@@ -233,12 +233,68 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	}
 
 
+
+
+	/**
+	 *Optimize the ratios. Notice that this.digitalEnv is
+	 *reset by this.
+	 */
+	public boolean optimizeRatios(int maxW, int maxSum){
+	    DigitalEnv digitalEnv = this.getDigitalEnv();
+	    int t;
+	    DigitalNumber digits =  digitalEnv.toDigital(maxW);
+	    t = this.getDigitalEnv().getBaseI(digits.getMSBase()) - 1 ;
+	    //TODO: return false if ratios stay the same
+	    int x = maxSum;
+	    for(int i = 0, n = t ; i < n; i++ ){
+		x -= digitalEnv.getBase(i)* (digitalEnv.getRatio(i) - 1);
+	    }
+
+	    //only change ratios if the t'th digit pushes at least
+	    //one carry
+	    if(x >=1){
+		Integer[] ratios = new Integer[t + 1];
+		int lastRatio = 0;
+		int lastBase = digitalEnv.getBase(t);
+		while(x > 0){
+		    for(int j = 0; j < lastBase; j++)
+			x--;
+		    lastRatio++;
+		}
+		lastRatio++;
+		for(int i = 0; i < t ; i++)
+		    ratios[i] = digitalEnv.getRatio(i);
+		ratios[t] = lastRatio;
+		this.digitalEnv = new DigitalEnv();
+		this.digitalEnv.setRatios(ratios);
+		getDigitalEnv().toDigital(maxSum);
+	    }
+	    return true;		
+	}
+
 	@Override
 	public void buildMyself() {
 	    this.circuit = new Circuit(getSolver()){
 		    public void buildCircuit(){
 			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
 			ArrayList<Integer> inputs = new ArrayList<Integer>();
+			int maxValue = getInstance().getObj(getIObj()).getWeightDiff();
+			ReadOnlyVec<Real> coeffs = getInstance().getObj(getIObj()).getSubObj(0).getCoeffs();
+			int maxCoeff = 0;
+			for(int i = 0, n = coeffs.size(); i < n; i++ ){
+			    int currentCoeff = coeffs.get(i).asIntExact();
+			    if(currentCoeff < 0) currentCoeff = -currentCoeff;
+			    if(currentCoeff > maxCoeff)
+				maxCoeff = currentCoeff;
+			}
+			optimizeRatios(maxCoeff, maxValue);
+			// to recover digitalEnv setup,
+			baseInputs = getInputsFromWeights(iObj);
+			//to make sure digitalEnv.basesN is correct,
+			getDigitalEnv().toDigital(maxValue);
+			// last base needed to expand the weights
+
+
 			// last base needed to expand the weights
 			int ratioI = 0;
 			int base = 1;
