@@ -80,8 +80,6 @@ public class pMinimal extends algorithm implements IWithGoalDelimeter  {
         }
 	this.realVariablesN = this.solver.nVars();
 	this.UpperKD =  new int[(this.problem.nObjs())];
-	for(int iObj = 0, nObj = this.problem.nObjs(); iObj < nObj; ++iObj)
-	    this.setUpperKD(iObj);
 	Log.comment(5, "}");
     }
 
@@ -94,6 +92,10 @@ public class pMinimal extends algorithm implements IWithGoalDelimeter  {
     public void solve() {
 	// IVecInt currentYModel = new VecInt(new int[] {});
 	// IVecInt currentXModel = new VecInt(new int[] {});
+	for(int iObj = 0, nObj = this.problem.nObjs(); iObj < nObj; ++iObj)
+	    this.setUpperKD(iObj);
+
+
 	boolean[] currentXModelValues = new boolean[this.problem.nVars()];
 	IVecInt assumptions = new VecInt(new int[] {});
 	boolean sat = false;
