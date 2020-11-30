@@ -26,11 +26,8 @@ import java.util.Vector;
 
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.analysis.Result;
-import org.sat4j.moco.goal_delimeter.GoalDelimeter;
 import org.sat4j.moco.goal_delimeter.GoalDelimeterI;
-import org.sat4j.moco.goal_delimeter.Index;
 import org.sat4j.moco.goal_delimeter.SeqEncoder;
-import org.sat4j.moco.pb.PBSolver;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
 import org.sat4j.moco.util.Log;
@@ -126,8 +123,16 @@ public class pMinimal extends algorithm implements IWithGoalDelimeter  {
 
     private void setAssumptions(IVecInt assumptions, boolean[] XModelValues){
 	int[] upperLimits = this.findUpperLimits(XModelValues);
-	for(int iObj = 0, n = this.problem.nObjs(); iObj < n; ++iObj)
-	    assumptions.push(-this.goalDelimeter.getY(iObj, upperLimits[iObj]));
+	boolean allZero = true;
+	for(int iObj = 0, n = this.problem.nObjs(); iObj < n; ++iObj){
+	    int lit = -this.goalDelimeter.getY(iObj, upperLimits[iObj]);
+	    if(upperLimits[iObj] != 0)
+		allZero = false;
+	    if(lit != 0)
+		assumptions.push(-this.goalDelimeter.getY(iObj, upperLimits[iObj]));
+}
+	if(allZero)
+	    assumptions.push(this.solver.constantLiteral(false));
     }
 
 
@@ -276,10 +281,12 @@ public class pMinimal extends algorithm implements IWithGoalDelimeter  {
     public boolean blockDominatedRegion(boolean[] XModelValues){
 	Log.comment(5, "{ pMinimal.blockDominatedregion");
 	int[] upperLimits = this.findUpperLimits(XModelValues);
-	int[] literals = new int[this.problem.nObjs()];
-	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj)
-	    literals[iObj] = -this.goalDelimeter.getY(iObj, upperLimits[iObj]);
-	IVecInt newHardClause = new VecInt(literals);
+	IVecInt newHardClause = new VecInt();
+	for (int iObj = 0; iObj < this.problem.nObjs(); ++iObj){
+	    int lit = -this.goalDelimeter.getY(iObj, upperLimits[iObj]);
+	    if(lit != 0)
+		newHardClause.push(-this.goalDelimeter.getY(iObj, upperLimits[iObj]));
+	}
 	Log.comment(5, "}");
 	return this.AddClause(newHardClause);
     }
