@@ -95,7 +95,14 @@ public abstract class Objective {
 
 	int total = 0;
 	for (int i = 0; i < this.nSubObj() ; ++i){
+	    try{	    
 	    total+=this.getSubObj(i).getMaxSum().asIntExact();
+	    }catch(ArithmeticException e){
+		if(total > 0)
+		    return Integer.MAX_VALUE;
+		else
+		    return -Integer.MAX_VALUE;
+}
 	}
 	return total;
     }
@@ -108,7 +115,15 @@ public abstract class Objective {
 
 	int total = 0;
 	for (int i = 0; i < this.nSubObj() ; ++i){
-	    total += this.getSubObj(i).getMinSum().asIntExact();
+	    try{
+		total += this.getSubObj(i).getMinSum().asIntExact();
+	    }catch(ArithmeticException e){
+		if(total > 0)
+		    return Integer.MAX_VALUE;
+		else
+		    return -Integer.MAX_VALUE;
+		    
+	    }
 	}
 	return total;
     }
