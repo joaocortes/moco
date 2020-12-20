@@ -100,10 +100,11 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	    int ithAbsoluteWeight;
 	    for(int iX = 0, nX = ithObjective.getTotalLits(); iX <nX; iX ++){
 		int ithX = objectiveLits.get(iX);
-		ithAbsoluteWeight = objectiveCoeffs.get(iX).asInt();
+		ithAbsoluteWeight = objectiveCoeffs.get(iX).asIntExact();
 		sign = (ithAbsoluteWeight > 0? 1 : -1);
 		ithAbsoluteWeight *= sign;
-		this.coveredLiterals.putIfAbsent(-sign * ithX, true);
+		if(this.upperLimits.get(iObj) != null &&  ithAbsoluteWeight <= this.upperLimits.get(iObj))
+		    this.coveredLiterals.putIfAbsent(-sign * ithX, true);
 	    }
 	}
 
