@@ -31,9 +31,14 @@ import java.util.TimerTask;
 import java.util.Map.Entry;
 
 import org.sat4j.core.VecInt;
+import org.sat4j.minisat.learning.ClauseOnlyLearning;
+import org.sat4j.minisat.restarts.LubyRestarts;
+import org.sat4j.minisat.restarts.NoRestarts;
 import org.sat4j.moco.util.Clock;
 import org.sat4j.pb.IPBSolver;
 import org.sat4j.pb.SolverFactory;
+import org.sat4j.pb.core.PBDataStructureFactory;
+import org.sat4j.pb.core.PBSolverResolution;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IVec;
 import org.sat4j.specs.IVecInt;
@@ -96,7 +101,12 @@ public class PBSolver {
      * Creates an instance of a PB solver.
      */
     public PBSolver() {
-	this.solver = SolverFactory.newDefault(); 
+	PBSolverResolution solver = SolverFactory.newResolutionGlucose21();
+	solver.setLearningStrategy(new ClauseOnlyLearning<PBDataStructureFactory>());
+	solver.setRestartStrategy(new NoRestarts());
+	solver.setSimplifier(solver.SIMPLE_SIMPLIFICATION);
+        solver.setLearnedConstraintsDeletionStrategy(solver.activity_based_low_memory);
+	this.solver = solver;
 	this.newVar();
 
     }
