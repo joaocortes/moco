@@ -24,6 +24,7 @@ package org.sat4j.moco.goal_delimeter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.io.BufferedWriter;
@@ -300,7 +301,12 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 			int ratioI = 0;
 			int base = 1;
 			int ratio = 1;
-			int maxBase = baseInputs.lastKey();
+			int maxBase = 0;
+			try{
+			    maxBase = baseInputs.lastKey();
+			}catch(NoSuchElementException e){
+}
+
 			List<Integer> carryBits = null;
 			int basesN = 1;
 			do{
