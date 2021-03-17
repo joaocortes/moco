@@ -11,15 +11,15 @@ deploy_deps:
 		 do \
 			if [ -f $$dep/sync.make ]; \
 			then make -C $$dep -f sync.make deploy; \
-			rsync -ruvb --delete $$dep/$(deployTarget)/ ./$(depRoot)/`basename $$dep`; \
+			rsync -ruvapb --delete $$dep/$(deployTarget)/ ./$(depRoot)/`basename $$dep`; \
 			else echo "How can I deploy $$dep?" ; exit 1; fi ; done
 
 deployMe:
 	@mkdir -p ./$(deployTarget)
-	@rsync -ruvb \
+	@rsync -ruvapb \
 	--delete \
 	--include="*.make" \
-	 --filter=":- .gitignore" \
+	 --filter=".- .gitignore" \
 	--exclude="deployTarget/" \
 	--exclude="bugs/" \
 	--exclude=".git/" \
