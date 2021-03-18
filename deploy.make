@@ -1,6 +1,5 @@
 depRoot = deps
 deployTarget = deployTarget
-default: deployMe
 
 depsList := $(wildcard ./depsList/*)
 
@@ -9,8 +8,8 @@ deploy: deploy_deps deployMe
 deploy_deps: 
 	@for dep in $(depsList);\
 		 do \
-			if [ -f $$dep/sync.make ]; \
-			then make -C $$dep -f sync.make deploy; \
+			if [ -f $$dep/deploy.make ]; \
+			then make -C $$dep -f deploy.make deploy; \
 			rsync -ruvapb --delete $$dep/$(deployTarget)/ ./$(depRoot)/`basename $$dep`; \
 			else echo "How can I deploy $$dep?" ; exit 1; fi ; done
 
