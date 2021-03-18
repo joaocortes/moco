@@ -9,14 +9,13 @@ deps := $(wildcard ./deps/*)
 cont: cont_deps cont_self 
 
 cont_self:
-	@if [ -f $$dep/$(context).make ]; \
+	@if [ -f $(context).make ]; \
 		then make -f $(context).make; fi
 
-cont_deps: deploy_deps
+cont_deps: 
 	@for dep in $(deps);\
 		 do \
 			if [ -f $$dep/$(context).make ]; \
 			then make -C $$dep -f context.make context=$(context) ; \
 			else echo "$$dep context not defined" ; fi ; done
 
-include sync.make
