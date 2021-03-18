@@ -17,11 +17,13 @@ deployMe:
 	@mkdir -p ./$(deployTarget)
 	@rsync -ruvapb \
 	--delete \
-	--include="*.make" \
-	 --filter=".- .gitignore" \
+	--filter=": deployFilter.rsync" \
 	--exclude="deployTarget/" \
 	--exclude="bugs/" \
 	--exclude=".git/" \
 	--exclude="private/*" \
 	. ./deployTarget
 
+cleanDeploy:
+	rm -rf deps/*
+	rm -rf deployTarget/
