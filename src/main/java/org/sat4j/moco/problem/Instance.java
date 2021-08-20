@@ -151,6 +151,14 @@ return n;
     }
     
     /**
+       Removes an objective
+     */
+       public void removeObj(int i){
+	   this.objs.delete(i);
+}
+
+
+    /**
      * Writes the MOCO instance to a given {@link Writer} object.
      * @param w The writer object.
      * @throws IOException if an error occurs writing the MOCO instance.
