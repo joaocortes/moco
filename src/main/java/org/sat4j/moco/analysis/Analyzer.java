@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.Map.Entry;
 
 import org.apache.commons.cli.CommandLine;
@@ -46,12 +46,14 @@ import org.moeaframework.Analyzer.IndicatorResult;
 import org.moeaframework.core.NondominatedPopulation;
 import org.moeaframework.core.Population;
 import org.moeaframework.core.PopulationIO;
+import org.sat4j.core.VecInt;
 import org.sat4j.moco.parsing.OPBReader;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.IOUtils;
 import org.sat4j.moco.util.Log;
+import org.sat4j.specs.IVecInt;
 
-
+import org.moeaframework.core.Solution;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -126,6 +128,43 @@ public class Analyzer {
         Log.comment(3, "out Analyzer.mkRefSet");
         return r;
     }
+    /**
+     * Builds the reference set of the MOCO instance to be used in computation of performance indicators
+     * that require a reference set (e.g. inverted generational distance).
+     * @return The reference set.
+     */
+    private void projectDataSet(IVecInt consObjectives) {
+	for( String key: this.dataset.keySet().toArray(new String[0])) {
+	    Result[] rs = this.dataset.get(key).toArray(Result[]::new);
+	    Result[] newRs = new Result[rs.length];
+	    int ir = 0;
+	    for(Result result: rs){
+		newRs[ir] = new Result(this.moco);
+		Iterator<Solution> it = result.getSolutions().iterator();
+		// project the solutions, and build a collection of
+		// results for the same key
+		while(it.hasNext()){
+		    Solution sol = it.next();
+		    Solution newSol = this.problem.newSolution();
+		    // build the new solution, and add it to the new result
+		    double[] objectives = new double[this.moco.nObjs()];
+		    int i = 0;
+		    for(int j  = 0, m = sol.getNumberOfObjectives(); j < m; j++){
+			if(!consObjectives.contains(j)){
+			    objectives[i] = sol.getObjective(j);
+			    i++;
+			}
+	    }
+
+		    newSol.setObjectives(objectives);
+		    newRs[ir].addSolution(newSol);
+		}
+	    }
+	    // replace the dataset with the projected values
+	    this.dataset.replaceValues(key, Arrays.asList(newRs));
+	}
+}
+
     
     /**
      * Writes the cost vectors of the solutions in a given population of solutions to a given file.
@@ -186,55 +225,116 @@ public class Analyzer {
         File r_file = IOUtils.mkTempFile("ref_set", ".pop", true);
         dumpObjVals(rs.getSolutions(), r_file);
         org.moeaframework.Analyzer analyzer = new org.moeaframework.Analyzer();
+	
         analyzer = analyzer.withProblem(this.problem)
-                           .withReferencePoint(rs.getRefPoint().getObjectives())
-                           .withIdealPoint(rs.getIdealPoint().getObjectives())
-                           // .includeInvertedGenerationalDistance()
-                           .includeHypervolume()
-                           .includeContribution()
-                           // .showIndividualValues()
-                           // .showStatisticalSignificance()
-                           .withReferenceSet(r_file);
+	    .withReferencePoint(rs.getRefPoint().getObjectives())
+	    .withIdealPoint(rs.getIdealPoint().getObjectives())
+	    // .includeInvertedGenerationalDistance()
+	    .includeHypervolume()
+	    .includeContribution()
+	    // .showIndividualValues()
+	    // .showStatisticalSignificance()
+	    .withReferenceSet(r_file);
         addDataset(analyzer);
         Log.comment(3, "out Analyzer.buildMOEAAnalyzer");
         return analyzer;
     }
+    /**
+       Check for objective functions that do not change over the reference set
+    */
+    private IVecInt checkConstantObjectives(ReferenceSet rs) {
+	Population p = rs.getSolutions();
+	IVecInt consObjectives = new VecInt(new int[]{});
+	// Objcectives need to be ordered in a descendent manner, to
+	// make sure I can delete them one by one.
+	for(int i = this.moco.nObjs()-1; i >= 0; i--)
+	    consObjectives.push(i);
+	for(int i = 1, n = p.size(); i < n; i++) {
+	    for(int j  = 0; j < consObjectives.size(); j++)
+		if(p.get(i).getObjective(consObjectives.get(j)) != p.get(0).getObjective(consObjectives.get(j))){
+		    consObjectives.remove(consObjectives.get(j));
+		    j--;
+		}
+	}
+	return consObjectives;
+    }
+
     
+    /**
+     project the reference set
+     */
+    private void projectReferenceSet(ReferenceSet rs, IVecInt consObjectives){
+	int nObj = this.moco.nObjs() - consObjectives.size();
+	Population p = rs.getSolutions();
+	Population p1 = new NondominatedPopulation();
+	for(int i = 0, n = p.size(); i < n; i++) {
+	    double[] objectives = new double[nObj];
+	    for(int j  = 0, m = nObj; j < m; j++){
+		objectives[j] = p.get(i).getObjective(j);
+		
+	    }
+}
+
+};
+
+    /**
+     projects the problem
+    */
+    private void projectInstance(Instance instance, IVecInt consObjectives){
+	int nObj = consObjectives.size();
+	for(int j  = 0; j < nObj; j++)
+	    instance.removeObj(consObjectives.get(j));
+	
+
+};
+
+    /**
+     projects tho data
+    */
+    private void projectInstance(Multimap<String, Result> dataset, IVecInt consObjectives){
+	int nObj = consObjectives.size();
+	for(Entry<String, Result> entryA: this.dataset.entries()){
+	    NondominatedPopulation B = entryA.getValue().solutions;	
+	    
+	}
+};
+
+
     /**
      *compare populations
      */
     private int compareAlgorithms(){
 
-	for(Entry<String, Result> entryA: this.dataset.entries()) {
-		NondominatedPopulation A = entryA.getValue().solutions;
-		for(Entry<String, Result> entryB: this.dataset.entries()) {
-		    NondominatedPopulation B = entryA.getValue().solutions;
-		    int iA = 0;
-		    int iB = 0;
-		    int [][] interDominance = new int [A.size()][ B.size()];
-	Iterator<org.moeaframework.core.Solution> itA = A.iterator();
-	Iterator<org.moeaframework.core.Solution> itB = B.iterator();
-	while(itA.hasNext()){
-	    iA++;
-	    while(itB.hasNext()){
-		iB++;
-		org.moeaframework.core.Solution solA = itA.next();
-		org.moeaframework.core.Solution solB = itB.next();
-		switch(A.getComparator().compare(solA, solB)){
-		case -1:
-		    interDominance[iA][iB] = -1;
-		case 1:
-		    interDominance[iA][iB] = 1;
-		    break;
-		case 0:
-		    interDominance[iA][iB] = 0;
-		    break;
-		}
-	    }}
-	    System.out.print(interDominance);
+    	for(Entry<String, Result> entryA: this.dataset.entries()) {
+	    NondominatedPopulation A = entryA.getValue().solutions;
+	    for(Entry<String, Result> entryB: this.dataset.entries()) {
+		NondominatedPopulation B = entryA.getValue().solutions;
+		int iA = 0;
+		int iB = 0;
+		int [][] interDominance = new int [A.size()][ B.size()];
+		Iterator<Solution> itA = A.iterator();
+		Iterator<Solution> itB = B.iterator();
+		while(itA.hasNext()){
+		    iA++;
+		    while(itB.hasNext()){
+			iB++;
+			Solution solA = itA.next();
+			Solution solB = itB.next();
+			switch(A.getComparator().compare(solA, solB)){
+			case -1:
+			    interDominance[iA][iB] = -1;
+			case 1:
+			    interDominance[iA][iB] = 1;
+			    break;
+			case 0:
+			    interDominance[iA][iB] = 0;
+			    break;
+			}
+		    }}
+		System.out.print(interDominance);
 	    }}
 	return 0;
-	 }
+    }
 
     /**
      *compare populations(simple)
@@ -243,22 +343,22 @@ public class Analyzer {
 	HashMap<String, Integer> interDominance = new HashMap<String, Integer>();
 	for(Entry<String, Result> entryA: this.dataset.entries()) {
 	    NondominatedPopulation A = entryA.getValue().solutions;
-		Iterator<org.moeaframework.core.Solution> itA = A.iterator();
-		int countA = 0;
-		for(Entry<String, Result> entryB: this.dataset.entries()){
-		    NondominatedPopulation B = entryA.getValue().solutions;
-		    Iterator<org.moeaframework.core.Solution> itB = B.iterator();
-		    while(itA.hasNext()){
-			org.moeaframework.core.Solution solA = itA.next();
-			while(itB.hasNext()){
-			    org.moeaframework.core.Solution solB = itB.next();
-			    if(A.getComparator().compare(solA, solB) == 1){
-				countA++;
-			    }
+	    Iterator<Solution> itA = A.iterator();
+	    int countA = 0;
+	    for(Entry<String, Result> entryB: this.dataset.entries()){
+		NondominatedPopulation B = entryA.getValue().solutions;
+		Iterator<Solution> itB = B.iterator();
+		while(itA.hasNext()){
+		    Solution solA = itA.next();
+		    while(itB.hasNext()){
+			Solution solB = itB.next();
+			if(A.getComparator().compare(solA, solB) == 1){
+			    countA++;
 			}
 		    }
-		    interDominance.put(entryA.getKey() + " < " + entryB.getKey(), countA);
 		}
+		interDominance.put(entryA.getKey() + " < " + entryB.getKey(), countA);
+	    }
 	}
 	String interDominanceLog ="interdominance: ";
 	for(Entry<String, Integer> interDominanceEntry:interDominance.entrySet()){
@@ -279,12 +379,20 @@ public class Analyzer {
     public void printAnalysis() {
         Log.comment(3, "{ Analyzer.printAnalysis");
         ReferenceSet ref = mkRefSet();
+	IVecInt objectives =  checkConstantObjectives(ref);
+	projectInstance(this.moco, objectives);
+	this.problem = new MOCOProblem(this.moco);
+	this.projectDataSet(objectives);
+	// project the ref set, after projecting the data set
+	ref = this.mkRefSet();
+
         if (ref.isEmpty()) {
             Log.comment("0 known solutions, impossible to analyze");
         }
         else {
             org.moeaframework.Analyzer analyzer = buildMOEAAnalyzer(ref);
-            AnalyzerResults results = analyzer.getAnalysis();
+	    
+           AnalyzerResults results = analyzer.getAnalysis();
             List<String> algs = results.getAlgorithms();
             for (Iterator<String> a_it = algs.iterator(); a_it.hasNext();) {
                 String alg = a_it.next();
