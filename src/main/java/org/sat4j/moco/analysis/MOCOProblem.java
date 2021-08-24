@@ -121,6 +121,11 @@ class MOCOProblem extends AbstractProblem {
     }
     
     /**
+       remove objective
+*/
+    public void removeObj(int i){this.instance.removeObj(i);}
+
+    /**
      * Creates an empty MOEA framework {@link Solution} object purely for storing the objective function
      * cost values of some assignment in a memory efficient manner.
      * @return The solution object.
