@@ -74,7 +74,11 @@ class OutputReader {
         for (String line = this.reader.readLine(); line != null; line = this.reader.readLine()) {
             line = line.trim();
             if (line.isEmpty() || (!add_mode && !line.startsWith("s "))) continue;
-            if (line.startsWith("s ")) { add_mode = true; continue; }
+            if (line.startsWith("s ")) { add_mode = true; 
+		if(parseState(line))
+		    r.setParetoFrontFound();
+		continue;
+	    }
             if (add_mode && line.startsWith("o ")) {
                 r.addSolution(parseCostVec(line));
             }
@@ -96,6 +100,17 @@ class OutputReader {
             s.setObjective(i-1, Double.parseDouble(tok));
         }
         return s;
+    }
+    /**
+     * Parses the final state
+     */
+    private boolean parseState(String line) {
+        assert(line.startsWith("s "));
+        String[] tokens = line.trim().split("\\s+");
+	if(tokens[1].equals("OPTIMUM"))
+	    return true;
+	else
+	    return false;
     }
     
     /**
