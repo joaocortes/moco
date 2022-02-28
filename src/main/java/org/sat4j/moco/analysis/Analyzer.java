@@ -232,6 +232,7 @@ public class Analyzer {
 	    // .includeInvertedGenerationalDistance()
 	    .includeHypervolume()
 	    .includeContribution()
+	    .includeInvertedGenerationalDistance()
 	    // .showIndividualValues()
 	    // .showStatisticalSignificance()
 	    .withReferenceSet(r_file);
