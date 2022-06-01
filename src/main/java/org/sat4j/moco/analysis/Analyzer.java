@@ -381,9 +381,12 @@ public class Analyzer {
         Log.comment(3, "{ Analyzer.printAnalysis");
         ReferenceSet ref = mkRefSet();
 	IVecInt objectives =  checkConstantObjectives(ref);
-	projectInstance(this.moco, objectives);
 	this.problem = new MOCOProblem(this.moco);
-	this.projectDataSet(objectives);
+	int nObjs = moco.nObjs();
+	if(nObjs != objectives.size()){
+	    this.projectInstance(this.moco, objectives);
+	    this.projectDataSet(objectives);
+	}
 	// project the ref set, after projecting the data set
 	ref = this.mkRefSet();
 
