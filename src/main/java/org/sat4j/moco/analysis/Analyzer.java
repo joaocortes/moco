@@ -138,28 +138,28 @@ public class Analyzer {
 	    Result[] rs = this.dataset.get(key).toArray(Result[]::new);
 	    Result[] newRs = new Result[rs.length];
 	    int ir = 0;
-	    for(Result result: rs){
-		newRs[ir] = new Result(this.moco);
-		Iterator<Solution> it = result.getSolutions().iterator();
-		// project the solutions, and build a collection of
-		// results for the same key
-		while(it.hasNext()){
-		    Solution sol = it.next();
-		    Solution newSol = this.problem.newSolution();
-		    // build the new solution, and add it to the new result
-		    double[] objectives = new double[this.moco.nObjs()];
-		    int i = 0;
-		    for(int j  = 0, m = sol.getNumberOfObjectives(); j < m; j++){
-			if(!consObjectives.contains(j)){
-			    objectives[i] = sol.getObjective(j);
-			    i++;
+		for(Result result: rs){
+		    newRs[ir] = new Result(this.moco);
+		    Iterator<Solution> it = result.getSolutions().iterator();
+		    // project the solutions, and build a collection of
+		    // results for the same key
+		    while(it.hasNext()){
+			Solution sol = it.next();
+			Solution newSol = this.problem.newSolution();
+			// build the new solution, and add it to the new result
+			double[] objectives = new double[this.moco.nObjs()];
+			int i = 0;
+			for(int j  = 0, m = sol.getNumberOfObjectives(); j < m; j++){
+			    if(!consObjectives.contains(j)){
+				objectives[i] = sol.getObjective(j);
+				i++;
+			    }
 			}
-	    }
 
-		    newSol.setObjectives(objectives);
-		    newRs[ir].addSolution(newSol);
+			newSol.setObjectives(objectives);
+			newRs[ir].addSolution(newSol);
+		    }
 		}
-	    }
 	    // replace the dataset with the projected values
 	    this.dataset.replaceValues(key, Arrays.asList(newRs));
 	}
