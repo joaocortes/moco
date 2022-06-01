@@ -143,10 +143,10 @@ class ReferenceSet {
 	if(this.idealPoint!=null)
 	    return this.idealPoint;
 
-	Vec<Integer> idealObjInt = this.problem.minPoint();
-	double[] idealObjDouble = new double[idealObjInt.size()];
-	for(int iObj=0, nObj = idealObjInt.size(); iObj < nObj; iObj++){
-	    idealObjDouble[iObj] = idealObjInt.get(iObj);
+	double[] idealObjInt = this.getPoint(false).getObjectives();
+	double[] idealObjDouble = new double[idealObjInt.length];
+	for(int iObj=0, nObj = idealObjInt.length; iObj < nObj; iObj++){
+	    idealObjDouble[iObj] = idealObjInt[iObj];
 	}
 	this.idealPoint = new Solution(idealObjDouble);
 	return this.idealPoint;
