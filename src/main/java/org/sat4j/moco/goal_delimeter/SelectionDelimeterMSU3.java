@@ -306,7 +306,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 			try{
 			    maxBase = baseInputs.lastKey();
 			}catch(NoSuchElementException e){
-}
+			}
 
 			List<Integer> carryBits = null;
 			int basesN = 1;
