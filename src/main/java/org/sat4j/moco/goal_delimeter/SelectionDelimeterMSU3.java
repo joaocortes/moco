@@ -122,6 +122,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	int iObj;
 	Circuit circuit;
 	DigitalEnv digitalEnv;
+	int ub = 0;
 
 	ObjManager(int iObj){
 	    this.iObj = iObj;
@@ -331,9 +332,11 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 		    }
 
 		    /**
-		     *range is the exclusive upper value the unary output may represent.
+		     *ub is the exclusive upper value the unary output may represent.
 		     */
 		    public List<Integer> buildControlledComponent(Integer[] inputs, int base, int modN){
+			if(modN > ub)
+			    modN = ub + 1;
 			DigitComponent digitComp = new DigitComponent(inputs, modN);
 			digitComp.constitutiveClause();
 			new ControlledComponent(base, digitComp);
