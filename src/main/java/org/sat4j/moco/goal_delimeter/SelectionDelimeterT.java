@@ -47,14 +47,11 @@ abstract public class SelectionDelimeterT<PObjManager extends IObjManager> exten
     private PObjManager[] objManagers;
     private ArrayList<TreeMap<Integer, Integer>> yTable = null;
     
-    public SelectionDelimeterT(Instance instance, PBSolver solver, boolean buildCircuit) {
+    public SelectionDelimeterT(Instance instance, PBSolver solver) {
 	super(instance, solver);
 	this.objManagers =  objManagersCreator();
 	this.initializeObjectManagers();
 	this.initializeYTable();
-	if(buildCircuit){
-	    this.buildCircuits();
-	}
 	// Log.comment(5, "}");
     }
 

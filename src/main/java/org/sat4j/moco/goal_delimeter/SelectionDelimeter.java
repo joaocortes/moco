@@ -53,9 +53,9 @@ import org.sat4j.specs.IVecInt;
 
 public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.ObjManager> {
     
-    public SelectionDelimeter(Instance instance, PBSolver solver, boolean buildCircuit) {
-		super(instance, solver, buildCircuit);
-		this.initializeYTable();
+    public SelectionDelimeter(Instance instance, PBSolver solver) {
+	super(instance, solver);
+	this.initializeYTable();
 	}
 
 
