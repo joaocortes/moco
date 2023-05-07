@@ -42,7 +42,7 @@ public class GoalDelimeterCreator {
 	switch(encoding) {
 	case "SD":
 	    if (MSU3) {
-		SelectionDelimeterMSU3 sd = new SelectionDelimeterMSU3(instance, solver, false, params.getUpperLimits());
+		SelectionDelimeterMSU3 sd = new SelectionDelimeterMSU3(instance, solver, params.getUpperLimits());
 		sd.initializeObjectManagers();
 		for(int i = 0, n = sd.getInstance().nObjs();i<n;i++){
 		    if(allRatios.get(i) != null)
@@ -52,7 +52,7 @@ public class GoalDelimeterCreator {
 		gd = sd;
 	    }
 	    else{
-		SelectionDelimeter gd1 = new SelectionDelimeter(instance, solver, true);
+		SelectionDelimeter gd1 = new SelectionDelimeter(instance, solver);
 		gd1.generateY();
 		gd = gd1;
 
