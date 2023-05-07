@@ -538,13 +538,13 @@ abstract public class Circuit{
 	    ModComponent modComponent;
 	    int modN;
 
-	    public  DigitComponent(Integer[] inputs, int modN){
-		super(inputs, modN - 1);
+	    public  DigitComponent(Integer[] inputs, int modN, int ub){
+		super(inputs, ub);
 		this.modN = modN;
 	    }
 
 	    public void constitutiveClause(){
-		this.selecComp = new SelectionComponent(inputs);
+		this.selecComp = new SelectionComponent(inputs, this.sortedPortionN);
 		this.selecComp.constitutiveClause();
 		this.modComponent = new ModComponent(this.selecComp.outputs, this.modN);
 		this.modComponent.constitutiveClause();
