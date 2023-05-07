@@ -72,23 +72,18 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
     private int[] UpperBound = null;
 
 
-    public SelectionDelimeterMSU3(Instance instance, PBSolver solver, boolean buildCircuit) {
-	super(instance, solver, false);
+    public SelectionDelimeterMSU3(Instance instance, PBSolver solver) {
+	super(instance, solver);
 	this.uncoveredMaxKD = new int[this.instance.nObjs()];
 	this.UpperBound =  new int[(this.instance.nObjs())];
 	this.coveredLiterals = new HashMap<Integer, Boolean>(this.solver.nVars());
 	this.upperLimits = new HashMap<Integer, Integer>();
 	this.initializeCoveredLiterals();
-	if(buildCircuit)
-	    this.buildCircuits();
     }
 
-    public SelectionDelimeterMSU3(Instance instance, PBSolver solver, boolean buildCircuit, Map<Integer, Integer> upperLimits) {
-	this(instance, solver, false);
+    public SelectionDelimeterMSU3(Instance instance, PBSolver solver, Map<Integer, Integer> upperLimits) {
+	this(instance, solver);
 	this.upperLimits = upperLimits;
-	if(buildCircuit)
-	    this.buildCircuits();
-
 }
 
 
