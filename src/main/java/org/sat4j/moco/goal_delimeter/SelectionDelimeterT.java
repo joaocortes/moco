@@ -56,7 +56,6 @@ abstract public class SelectionDelimeterT<PObjManager extends IObjManager> exten
 	super(instance, solver);
 	this.upperLimits = new HashMap<Integer, Integer>();
 	this.objManagers =  objManagersCreator();
-	this.initializeObjectManagers();
 	this.initializeYTable();
 	// Log.comment(5, "}");
     }
