@@ -63,8 +63,11 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 	int iObj;
 	Circuit circuit;
 	DigitalEnv digitalEnv;
-	ObjManager(int iObj){
+	int ub = 0;
+
+	ObjManager(int iObj, int ub){
 	    this.iObj = iObj;
+	    this.ub = ub;
 	    this.digitalEnv = new DigitalEnv();
 	}
 
@@ -286,7 +289,7 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 	}
 
 	@Override
-	protected ObjManager objManagerCreator(int iObj) {
+	protected ObjManager objManagerCreator(int iObj, int ub) {
 	    return new ObjManager(iObj);
 	}
 
