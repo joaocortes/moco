@@ -57,11 +57,6 @@ import org.sat4j.specs.IVecInt;
 
 public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimeterMSU3.ObjManager>{
 
-    /**
-     *upper limits. Only encode the circuit using weights that are
-     *lighter than this.
-     */
-    protected Map<Integer, Integer> upperLimits;
 
     private int[] uncoveredMaxKD = null;
     private HashMap<Integer, Boolean> coveredLiterals = null;
@@ -77,7 +72,6 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	this.uncoveredMaxKD = new int[this.instance.nObjs()];
 	this.UpperBound =  new int[(this.instance.nObjs())];
 	this.coveredLiterals = new HashMap<Integer, Boolean>(this.solver.nVars());
-	this.upperLimits = new HashMap<Integer, Integer>();
 	this.initializeCoveredLiterals();
     }
 
@@ -372,7 +366,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	}
 
 	@Override
-	protected ObjManager objManagerCreator(int iObj) {
+	protected ObjManager objManagerCreator(int iObj, int ub) {
 	    return new ObjManager(iObj);
 	}
 
