@@ -46,9 +46,15 @@ abstract public class SelectionDelimeterT<PObjManager extends IObjManager> exten
 
     private PObjManager[] objManagers;
     private ArrayList<TreeMap<Integer, Integer>> yTable = null;
-    
+    /**
+     *upper limits. Only encode the circuit using weights that are
+     *lighter than this.
+     */
+    protected Map<Integer, Integer> upperLimits;
+
     public SelectionDelimeterT(Instance instance, PBSolver solver) {
 	super(instance, solver);
+	this.upperLimits = new HashMap<Integer, Integer>();
 	this.objManagers =  objManagersCreator();
 	this.initializeObjectManagers();
 	this.initializeYTable();
@@ -66,11 +72,11 @@ abstract public class SelectionDelimeterT<PObjManager extends IObjManager> exten
     }
 
     abstract protected PObjManager[] objManagersCreator();
-    abstract protected PObjManager objManagerCreator(int iObj);
+    abstract protected PObjManager objManagerCreator(int iObj, int ub);
 
 public void initializeObjectManagers(){
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
-	    this.objManagers[iObj] = this.objManagerCreator(iObj);
+	    this.objManagers[iObj] = this.objManagerCreator(iObj, this.upperLimits.get(iObj));
 	}
     }
 
