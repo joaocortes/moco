@@ -113,10 +113,10 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	DigitalEnv digitalEnv;
 	int ub = 0;
 
-	ObjManager(int iObj){
+	ObjManager(int iObj, int ub){
 	    this.iObj = iObj;
 	    this.digitalEnv = new DigitalEnv();
-	    
+	    this.ub = ub;
 	}
 
 
@@ -367,7 +367,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 
 	@Override
 	protected ObjManager objManagerCreator(int iObj, int ub) {
-	    return new ObjManager(iObj);
+	    return new ObjManager(iObj, ub);
 	}
 
 
