@@ -325,7 +325,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 		     *ub is the exclusive upper value the unary output may represent.
 		     */
 		    public List<Integer> buildControlledComponent(Integer[] inputs, int base, int modN){
-			DigitComponent digitComp = new DigitComponent(inputs, modN, ub);
+			DigitComponent digitComp = new DigitComponent(inputs, modN, ub / base);
 			digitComp.constitutiveClause();
 			new ControlledComponent(base, digitComp);
 			return digitComp.getCarryBits(modN);
