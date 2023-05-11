@@ -277,6 +277,8 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 			for(int i = 0, n = coeffs.size(); i < n; i++ ){
 			    int currentCoeff = coeffs.get(i).asIntExact();
 			    if(currentCoeff < 0) currentCoeff = -currentCoeff;
+			    if(currentCoeff > ub)
+				continue;
 			    if(currentCoeff > maxCoeff)
 				maxCoeff = currentCoeff;
 			}
