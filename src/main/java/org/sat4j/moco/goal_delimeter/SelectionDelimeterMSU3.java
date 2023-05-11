@@ -287,8 +287,6 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 			baseInputs = getInputsFromWeights(iObj);
 			//to make sure digitalEnv.basesN is correct,
 			getDigitalEnv().toDigital(maxValue);
-			// last base needed to expand the weights
-
 
 			// last base needed to expand the weights
 			int ratioI = 0;
