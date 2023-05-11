@@ -539,7 +539,7 @@ abstract public class Circuit{
 	    int modN;
 
 	    public  DigitComponent(Integer[] inputs, int modN, int ub){
-		super(inputs, ub);
+		super(inputs, ub / modN);
 		this.modN = modN;
 	    }
 
