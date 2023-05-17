@@ -301,7 +301,7 @@ abstract public class Circuit{
 			this.inputs[i] = input2[i - n];
 		}
 	    	this.outputs = new Integer[jMax < this.sortedPortionN? jMax : this.sortedPortionN];
-	    	for(int j = 0; j < jMax; j++){
+	    	for(int j = 0; j < this.outputs.length; j++){
 	    	    // i is the index of the pair associated to j.
 	    	    int i = j / 2 ;
 	    	    Integer[] pair;
