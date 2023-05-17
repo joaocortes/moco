@@ -567,6 +567,7 @@ private void updateAllUncoveredMaxKD(){
 	    for(int j = 0, m = digitalEnv.getBasesN() ; j < m; j++)
 		out.write(digitalEnv.getRatio(j) + " ");
 	    out.write("\n");
+	    out.flush();
 	}
     }
 
