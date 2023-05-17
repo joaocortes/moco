@@ -456,7 +456,7 @@ public class CircuitTest {
 	}
 	Circuit circuit = new Circuit(pbSolver){
 		public void buildCircuit(){
-		    DigitComponent digitComp = new DigitComponent(inputs, modN);
+		    DigitComponent digitComp = new DigitComponent(inputs, modN, inputs.length);
 		    digitComp.constitutiveClause();
 		    new ControlledComponent(0, digitComp);
 		}
