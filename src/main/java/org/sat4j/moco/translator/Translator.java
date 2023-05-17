@@ -83,12 +83,16 @@ public class Translator{
 	this.selectionDelimeter.buildCircuits();
 	this.tempOut.close();
 	this.printHeaderLine();
-	this.selectionDelimeter.printBasis(out);
+	this.out.flush();
+	this.selectionDelimeter.printBasis(this.out);
+	this.out.flush();
 	this.selectionDelimeter.printOutVariables(this.out);
+	this.out.flush();
 	this.printOriginalVariables();
-
+	this.out.flush();
 	try{
 	this.mergeFiles(tempFile);
+	this.out.flush();
 	tempFile.delete();
 	    
 	}
