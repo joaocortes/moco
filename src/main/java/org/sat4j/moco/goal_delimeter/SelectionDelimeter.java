@@ -290,7 +290,7 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 
 	@Override
 	protected ObjManager objManagerCreator(int iObj, int ub) {
-	    return new ObjManager(iObj);
+	    return new ObjManager(iObj, ub);
 	}
 
 
