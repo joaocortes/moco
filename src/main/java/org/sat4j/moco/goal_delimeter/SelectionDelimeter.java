@@ -267,7 +267,7 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 		     *range is the exclusive upper value the unary output may represent.
 		     */
 		    public List<Integer> buildControlledComponent(Integer[] inputs, int base, int modN){
-			DigitComponent digitComp = new DigitComponent(inputs, modN);
+			DigitComponent digitComp = new DigitComponent(inputs, modN, inputs.length);
 			digitComp.constitutiveClause();
 			new ControlledComponent(base, digitComp);
 			return digitComp.getCarryBits(modN);
