@@ -60,11 +60,7 @@ abstract public class SelectionDelimeterT<PObjManager extends IObjManager> exten
 	// Log.comment(5, "}");
     }
 
-    
-
-
     static class SDIndex extends Index{
-
 	SDIndex(int iObj, int kD){
 	    super(iObj, kD);
 	}
@@ -73,13 +69,13 @@ abstract public class SelectionDelimeterT<PObjManager extends IObjManager> exten
     abstract protected PObjManager[] objManagersCreator();
     abstract protected PObjManager objManagerCreator(int iObj, int ub);
 
-public void initializeObjectManagers(){
+    public void initializeObjectManagers(){
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    this.objManagers[iObj] = this.objManagerCreator(iObj, this.upperLimits.get(iObj));
 	}
     }
 
-public void buildCircuits(){
+    public void buildCircuits(){
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    objManagers[iObj].buildMyself();
 
@@ -89,6 +85,7 @@ public void buildCircuits(){
     /**
      * Initialize the container of the Y variables
      */
+
     protected void initializeYTable(){
 	this.yTable = new ArrayList<TreeMap<Integer, Integer>>();
 
@@ -100,11 +97,6 @@ public void buildCircuits(){
 
     public PObjManager getIthObjManager(int i){return this.objManagers[i];}
 
-;
-
-
-
-
     public Integer[] concatenate(Integer[][] seq){
 	List<Integer> result = new ArrayList<Integer>();
 	for(Integer[] array: seq)
@@ -112,8 +104,6 @@ public void buildCircuits(){
 		result.add(value);
 	return result.toArray(new Integer[0]);
     }    
-
-
 
     protected HashMap<Integer, Integer> getWeights(int iObj){
 	HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
@@ -130,58 +120,56 @@ public void buildCircuits(){
 
     }
 
-
     public boolean isY(int id){
 	SDIndex index = librarian.getIndex(id);
 	if(index == null) return false;
 	return true;
     }
+
     public int getIObjFromY(int id){
 	SDIndex index = this.librarian.getIndex(id);
 	if(index!=null)
 	    return index.getIObj();
-	return 0;};
+	return 0;}
 
     public int getKDFromY(int id){
 	SDIndex index = this.librarian.getIndex(id);
 	if(index!=null)
 	    return index.getKD();
-	return 0;};
+	return 0;}
 
     public void  setY (int iObj, int kD, int id){
 	this.yTable.get(iObj).put(kD, id);
-}
+    }
+
     public int getY(int iObj, int kD){
-	
 	Integer y = this.yTable.get(iObj).get(kD);
 	if(y == null)
 	    return 0;
 	return y;
     }
 
-
     public int unaryToIndex(int kD){
 	return kD  - 1;
 
     }
 
-	@Override
-	public int getCurrentKD(int iObj) {
-	    return this.upperKD[iObj];
-	}
+    @Override
+    public int getCurrentKD(int iObj) {
+	return this.upperKD[iObj];
+    }
 
-
-	@Override
-	public int nextKDValue(int iObj, int kD) {
-	    Integer value = this.yTable.get(iObj).ceilingKey(kD + 1);
-	    if(value == null)
-		return kD;
-	    return value;
-	}
+    @Override
+    public int nextKDValue(int iObj, int kD) {
+	Integer value = this.yTable.get(iObj).ceilingKey(kD + 1);
+	if(value == null)
+	    return kD;
+	return value;
+    }
 
     public TreeMap<Integer, Integer> getIthYTable(int iObj) {
 	return yTable.get(iObj);
     }
-}
 
+}
 
