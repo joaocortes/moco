@@ -280,7 +280,7 @@ abstract public class Circuit{
 	    }
 
 	}
-	public class CombineComponent extends SortedComponent{
+    public class CombineComponent extends SortedComponent{
 
 	    public CombineComponent(int sortedPortionN){
 		this.sortedPortionN = sortedPortionN;
