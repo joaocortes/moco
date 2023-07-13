@@ -58,7 +58,6 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 	this.initializeYTable();
 	}
 
-
 	public class ObjManager implements IObjManager{
 	int iObj;
 	Circuit circuit;
@@ -293,7 +292,6 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 	    return new ObjManager(iObj, ub);
 	}
 
-
     public void generateY(){
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){
 	    Objective ithObjective = this.getInstance().getObj(iObj);
@@ -337,9 +335,4 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 
 	}
 
-
 }
-
-
-
-
