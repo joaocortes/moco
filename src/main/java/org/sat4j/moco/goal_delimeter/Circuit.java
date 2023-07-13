@@ -544,7 +544,7 @@ abstract public class Circuit{
 	    }
 
 	    public void constitutiveClause(){
-		this.selecComp = new SelectionComponent(inputs, this.sortedPortionN);
+	 	this.selecComp = new SelectionComponent(inputs, this.sortedPortionN);
 		this.selecComp.constitutiveClause();
 		this.modComponent = new ModComponent(this.selecComp.outputs, this.modN);
 		this.modComponent.constitutiveClause();
