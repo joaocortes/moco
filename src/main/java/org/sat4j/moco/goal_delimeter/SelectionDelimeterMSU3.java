@@ -234,33 +234,24 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	public boolean optimizeRatios(int maxW, int maxSum){
 	    DigitalEnv digitalEnv = this.getDigitalEnv();
 	    int t;
-	    DigitalNumber digits =  digitalEnv.toDigital(maxW);
-	    t = this.getDigitalEnv().getBaseI(digits.getMSBase()) - 1 ;
+	    digitalEnv.toDigital(maxW);
+	    t = this.getDigitalEnv().getBasesN() - 1;
 	    //TODO: return false if ratios stay the same
-	    int x = maxSum;
-	    for(int i = 0, n = t ; i < n; i++ ){
-		x -= digitalEnv.getBase(i)* (digitalEnv.getRatio(i) - 1);
-	    }
+	    int x = maxSum - this.getDigitalEnv().getRange(t);
 
 	    //only change ratios if the t'th digit pushes at least
 	    //one carry
-	    if(x >=1){
+	    int lastRatio = this.getDigitalEnv().getRatio(t);
+	    int lastBase = digitalEnv.getBase(t);
+	    if(lastRatio < x / lastBase + 1){
 		Integer[] ratios = new Integer[t + 1];
-		int lastRatio = 0;
-		int lastBase = digitalEnv.getBase(t);
-		while(x > 0){
-		    for(int j = 0; j < lastBase; j++)
-			x--;
-		    lastRatio++;
-		}
-		lastRatio++;
 		for(int i = 0; i < t ; i++)
 		    ratios[i] = digitalEnv.getRatio(i);
-		ratios[t] = lastRatio;
+		ratios[t] = x / lastBase + 1;
 		this.digitalEnv = new DigitalEnv();
 		this.digitalEnv.setRatios(ratios);
-		getDigitalEnv().toDigital(maxSum);
 	    }
+	    getDigitalEnv().toDigital(maxSum);
 	    return true;		
 	}
 
@@ -273,55 +264,65 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
 			ArrayList<Integer> inputs = new ArrayList<Integer>();
 			int maxValue = getInstance().getObj(getIObj()).getWeightDiff();
-			if(maxValue > ub) maxValue = ub;
+			if(maxValue >= ub) maxValue = ub;
 			ReadOnlyVec<Real> coeffs = getInstance().getObj(getIObj()).getSubObj(0).getCoeffs();
 			int maxCoeff = 0;
 			for(int i = 0, n = coeffs.size(); i < n; i++ ){
 			    int currentCoeff = coeffs.get(i).asIntExact();
 			    if(currentCoeff < 0) currentCoeff = -currentCoeff;
-			    if(currentCoeff > ub)
+			    if(currentCoeff >= ub)
 				continue;
 			    if(currentCoeff > maxCoeff)
 				maxCoeff = currentCoeff;
 			}
-			optimizeRatios(maxCoeff, maxValue);
+			//if all coeffs are zero, we are done.
+			if(maxCoeff == 0)
+			    return;
+			// optimizeRatios(maxCoeff, maxValue);
 			// to recover digitalEnv setup,
 			baseInputs = getInputsFromWeights(iObj);
 			//to make sure digitalEnv.basesN is correct,
-			getDigitalEnv().toDigital(maxValue);
-
 			// last base needed to expand the weights
+			getDigitalEnv().toDigital(maxCoeff);
+			Integer[] ratios = new Integer[getDigitalEnv().getBasesN()];
 			int ratioI = 0;
 			int base = 1;
-			int ratio = 1;
+			int ratio = 0;
 			int maxBase = 0;
-			try{
-			    maxBase = baseInputs.lastKey();
-			}catch(NoSuchElementException e){
-			}
-
+			ArrayList<Integer> last;
+			maxBase = baseInputs.lastKey();
+			last = baseInputs.get(maxBase);
+			baseInputs.remove(maxBase);
 			List<Integer> carryBits = null;
-			int basesN = 1;
-			do{
-			    ratio = digitalEnv.getRatio(ratioI++);
+			while(base < maxBase){
+			    ratio = digitalEnv.getRatio(ratioI);
+			    ratios[ratioI++] = ratio;
 			    inputs.clear();
 			    ArrayList<Integer> inputsWeights = baseInputs.get(base);
 			    if(carryBits != null)
 				inputs.addAll(carryBits);		    
 			    if(inputsWeights!=null)
 				inputs.addAll(inputsWeights);
-			    if(base <= maxBase || inputs.size() != 0){
-				if(base > maxBase)
-				    digitalEnv.setBasesN(basesN);
-				carryBits =
-				    buildControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
+			    if(inputs.size() != 0){
+				carryBits = 
+				    buildControlledComponent(inputs.toArray(new Integer[0]), 
+							     base, ratio);
 			    } else{break;}
 			    base *=ratio;
-			    basesN++;
-			}while(true);
-		    
-
+			}
+			if(carryBits != null)
+			    inputs.addAll(carryBits);		    
+			if(last!=null)
+			    inputs.addAll(last);
+			if(inputs.size() != 0){
+			    ratio = inputs.size() + 1;
+			    ratios[ratioI] = ratio;
+			    if(ratio != digitalEnv.getRatio(ratioI))
+				getDigitalEnv().setRatios(ratios);
+			    buildControlledComponent(inputs.toArray(new Integer[0]), base, ratio);
+			}
 		    }
+
 
 		    /**
 		     *ub is the exclusive upper value the unary output may represent.
