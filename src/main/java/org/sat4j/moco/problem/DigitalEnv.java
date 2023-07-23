@@ -102,6 +102,28 @@ public class DigitalEnv {
 	    return this.ratios[this.ratios.length -1];
 	else return this.ratios[i];
     }
+    public Integer[] getBases(){
+	Integer[] bases = new Integer[this.ratios.length + 1];
+	int i = 0;
+	bases[i] = 1;
+	for(Integer ratio: this.ratios){
+	    i++;
+	    bases[i+1] = bases[i] * ratio;
+	}
+	return bases;		
+    }
+    public int getRange(int index){
+	int result = 0;
+	int base = 1;
+	int ratio = 1;
+	if (index == 0 || index > this.basesN) index = this.basesN;
+	for(int i = 0; i < index; i++){
+	    ratio = this.getRatio(i);
+	    result += base * (ratio - 1);
+	    base *= ratio;
+	}
+	return result;
+    }
 
     /**
      *get Base element i.
