@@ -1,3 +1,4 @@
 bugs export-ignore
 target export-ignore
 theory export-ignore
+LAST_COMMIT export-subst
