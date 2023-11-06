@@ -215,6 +215,14 @@ abstract public class Circuit{
 		this.enforceOrder();
 		return;
 	    }
+	    // dumb thing, without any extra variables. Builds a
+	    // clause for each subset of inputs. Inputs => outputs
+	    // only. The call recurseSpecialCase(depth, first, clause)
+	    // will add all combinations of inputs whose index is
+	    // larger than first. The depth parameter records the
+	    // output variable to add to each clause. The subsets are
+	    // built in a lexicographic order of sorts.
+	    
 	    public void recurseSpecialCase(int depth,int first ,IVecInt clause){
 
 		if(depth == this.outputs.length || first == this.inputs.length)
