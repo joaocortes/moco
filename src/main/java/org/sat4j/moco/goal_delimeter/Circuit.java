@@ -161,6 +161,8 @@ abstract public class Circuit{
 		    IVecInt clause = new VecInt(new int[]{});
 		    Log.comment(6, "merge special case:");
 		    this.recurseSpecialCase(0, 0, clause);
+		    clause.clear();
+		    this.recurseSpecialCaseNegative(0, 0, clause);
 		    return;
 		}
 		if(n < 8 || k == n){
@@ -239,6 +241,32 @@ abstract public class Circuit{
 		    AddClause1(clause);
 		    clause.pop();
 		    recurseSpecialCase(depth + 1, i + 1, clause);
+		    clause.pop();
+		}
+		return;
+	    }
+	    public void recurseSpecialCaseNegative(int depth,int first ,IVecInt clause){
+	    // dumb thing, without any extra variables. Builds a
+	    // clause for each subset of inputs. ~Inputs => ~outputs
+	    // only, that is, I count the clear varibables, and set
+	    // the output accordingly. This is a spin off of
+	    // recurseSpecialCase. Check its documentation.
+	    
+
+		if(depth == this.outputs.length || first == this.inputs.length)
+		    return;
+		Integer currentOutput = this.getIthOutput(this.inputs.length - depth - 1);
+		if(currentOutput == null){
+		    currentOutput = getFreshVar1();
+		    this.outputs[depth] = currentOutput;
+		}
+		 
+		for(int i = first, n = this.inputs.length;i < n; i++){
+		    clause.push(this.getIthInput(i));
+		    clause.push(-currentOutput);
+		    AddClause1(clause);
+		    clause.pop();
+		    recurseSpecialCaseNegative(depth + 1, i + 1, clause);
 		    clause.pop();
 		}
 		return;
