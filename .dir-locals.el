@@ -9,7 +9,7 @@
   (projectile-project-compilation-cmd . "mvn -DskipTests=true package"))
  (java-mode
   (dap-debug-template-configurations .  (
-("Run unsatSat on exampleX" :type "java" :request "launch" :args "examples/exampleX.opb -ib 1 -v 6 -ul 0:1" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
+("Run unsatSat on exampleX" :type "java" :request "launch" :args "examples/exampleX.opb -ib 1 -v 6 -ul 0:100,1:100" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
  :name "example2" ;; :projectName  "org.sat4j.moco"
  :mainClass  "org.sat4j.moco.Launcher(org.sat4j.moco.threeAlgorithms)")
 ("Run analyzer on PU result" :type "java" :request "launch" :args xb"/home/Superficial/Mnemosyne/Aion/moco/mocoSource/solver/bugs/bugAnalyzer_singleton/rand149.pbmo  _S0:/home/Superficial/Mnemosyne/Aion/moco/mocoSource/solver/bugs/bugAnalyzer_singleton/solver_rand149_S0.txt_clean _S8:/home/Superficial/Mnemosyne/Aion/moco/mocoSource/solver/bugs/bugAnalyzer_singleton/solver_rand149_S8.txt_clean _S2:/home/Superficial/Mnemosyne/Aion/moco/mocoSource/solver/bugs/bugAnalyzer_singleton/solver_rand149_S2.txt_clean" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
