@@ -380,13 +380,13 @@ public class Analyzer {
     public void printAnalysis() {
         Log.comment(3, "{ Analyzer.printAnalysis");
         ReferenceSet ref = mkRefSet();
-	IVecInt objectives =  checkConstantObjectives(ref);
-	this.problem = new MOCOProblem(this.moco);
-	int nObjs = moco.nObjs();
-	if(nObjs != objectives.size()){
-	    this.projectInstance(this.moco, objectives);
-	    this.projectDataSet(objectives);
+	IVecInt objs =  checkConstantObjectives(ref);
+	if(objs.size() > 0){
+	    this.projectInstance(this.moco, objs);
+	    this.projectDataSet(objs);
 	}
+	this.problem = new MOCOProblem(this.moco);
+
 	// project the ref set, after projecting the data set
 	ref = this.mkRefSet();
 
