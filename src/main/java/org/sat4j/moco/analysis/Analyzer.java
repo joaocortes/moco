@@ -23,6 +23,7 @@
 package org.sat4j.moco.analysis;
 import org.moeaframework.core.Settings;
 
+import java.lang.Math;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -245,19 +246,27 @@ public class Analyzer {
     */
     private IVecInt checkConstantObjectives(ReferenceSet rs) {
 	Population p = rs.getSolutions();
-	IVecInt consObjectives = new VecInt(new int[]{});
+	IVecInt objs = new VecInt(new int[]{});
 	// Objcectives need to be ordered in a descendent manner, to
 	// make sure I can delete them one by one.
+	if(p.size() <= 1)
+	    return objs;
 	for(int i = this.moco.nObjs()-1; i >= 0; i--)
-	    consObjectives.push(i);
+	    objs.push(i);
+	Solution i0 = p.get(0);
 	for(int i = 1, n = p.size(); i < n; i++) {
-	    for(int j  = 0; j < consObjectives.size(); j++)
-		if(p.get(i).getObjective(consObjectives.get(j)) != p.get(0).getObjective(consObjectives.get(j))){
-		    consObjectives.remove(consObjectives.get(j));
+	    Solution is = p.get(i);
+	    for(int j  = 0; j < objs.size(); j++){
+		int objective = objs.get(j);
+		double val = i0.getObjective(objective) + 0.0;
+		double ival = is.getObjective(objective) + 0.0;
+		if(java.lang.Math.abs(ival-val) > 0.1){
+		    objs.remove(objective);
 		    j--;
 		}
+	    }
 	}
-	return consObjectives;
+	return objs ;
     }
 
     
