@@ -175,10 +175,12 @@ class ReferenceSet {
     // TODO: multiple calls can become inefficient; use caching?
     public Population getSolutions() {
         Population p = getMergedSet();
-        if (p.size() == 0) { return p; }
-        // MOEA Framework's analysis fails if the reference set has a single individual or if an objective's
-        // range is empty; in order to avoid such scenarios, new solutions are injected based on the reference
-        // and ideal points
+
+       if (p.size() == 0) { return p; }
+        // MOEA Framework's analysis fails if the reference set has a
+        // single individual or if an objective's range is empty; in
+        // order to avoid such scenarios, new solutions are injected
+        // based on the reference and ideal points
         boolean single = p.size() == 1;
 	Log.comment( "single  " + p.size());
         Solution nadir = getNadirPoint(), ideal = getIdealPoint(), ref = getRefPoint();
