@@ -245,27 +245,18 @@ public class Analyzer {
        Check for objective functions that do not change over the reference set
     */
     private IVecInt checkConstantObjectives(ReferenceSet rs) {
-	Population p = rs.getSolutions();
+
 	IVecInt objs = new VecInt(new int[]{});
-	// Objcectives need to be ordered in a descendent manner, to
-	// make sure I can delete them one by one.
-	if(p.size() <= 1)
-	    return objs;
-	for(int i = this.moco.nObjs()-1; i >= 0; i--)
-	    objs.push(i);
-	Solution i0 = p.get(0);
-	for(int i = 1, n = p.size(); i < n; i++) {
-	    Solution is = p.get(i);
-	    for(int j  = 0; j < objs.size(); j++){
-		int objective = objs.get(j);
-		double val = i0.getObjective(objective) + 0.0;
-		double ival = is.getObjective(objective) + 0.0;
-		if(java.lang.Math.abs(ival-val) > 0.1){
-		    objs.remove(objective);
-		    j--;
-		}
+	double[] ideal = rs.getIdealPoint().getObjectives();
+	double[] ref   = rs.getRefPoint().getObjectives();
+	{	int i = 0;
+	    for(double iel: ref){
+		if(iel - ideal[i] < Settings.EPS)
+		    objs.push(i);
+		i++;
 	    }
 	}
+	Log.comment("constant objectives:");
 	return objs ;
     }
 
