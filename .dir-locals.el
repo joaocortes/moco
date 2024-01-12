@@ -35,7 +35,25 @@
 3,GTE++:./bugs/bug22/bugVolume0/dal6 3,GTE+++:./bugs/bug22/bugVolume0/dal7 3,GTEGTE:./bugs/bug22/bugVolume0/dal8 3,SD:./bugs/bug22/bugVolume0/dal9 3,SDtrunc:./bugs/bug22/bugVolume0/dal10 \
 4,SDTruncOU:./bugs/bug22/bugVolume0/dal11 4,SDtruncO:./bugs/bug22/bugVolume0/dal12 4,SDtruncULO:./bugs/bug22/bugVolume0/dal13"
 				       :name "analyze_dal" 
-				       :mainClass  " org.sat4j.moco.analysis.Analyzer")
+				       :mainClass  "org.sat4j.moco.analysis.Analyzer")
+				      ("bug23: Run analyzer on DAL/sampleB result"
+				       :type "java" 
+				       :request "launch"
+				       :stopOnEntry
+				       :json-false
+				       :host "localhost"
+				       :request "launch"
+				       :args "-v 4 \
+/home/Superficial/Mnemosyne/Aion/moco/mocoData/runnerData/instances/DAL/\
+sampleB/f49-DC_TotalLoss.seq-B-3-1-irEDCBA.pbmo \
+0.0,*,run22:bugs/bug23/solver_f49-DC_TotalLoss.seq-B-3-1-irEDCBA_S0.txt_cleanedbyaypww8 \
+2.0,SWC,run14:bugs/bug23/solver_f49-DC_TotalLoss.seq-B-3-1-irEDCBA_S2.txt_cleanedd5hn388i \
+4.0,SDtruncO,run57:bugs/bug23/solver_f49-DC_TotalLoss.seq-B-3-1-irEDCBA_S4.txt_cleanedpuaull5i \
+4.0,SDTruncOU,run60:bugs/bug23/solver_f49-DC_TotalLoss.seq-B-3-1-irEDCBA_S4.txt_cleanedm4pc32a6 \
+6.0,SDtruncSingle,run85:bugs/bug23/solver_f49-DC_TotalLoss.seq-B-3-1-irEDCBA_S6.txt_cleanedrud6ws4s \
+10.0,SDtruncGood,run78:bugs/bug23/solver_f49-DC_TotalLoss.seq-B-3-1-irEDCBA_S10.txt_cleanedg_2j3mxt"
+				       :name "analyze_dal_b" 
+				       :mainClass  "org.sat4j.moco.analysis.Analyzer")
 				      ("Run analyzer on PU result" :type "java" :request "launch"
 				       :args "/home/Superficial/Mnemosyne/Aion/moco/mocoSource/solver/bugs/bugAnalyzer_singleton/rand149.pbmo  _S0:/home/Superficial/Mnemosyne/Aion/moco/mocoSource/solver/bugs/bugAnalyzer_singleton/solver_rand149_S0.txt_clean _S8:/home/Superficial/Mnemosyne/Aion/moco/mocoSource/solver/bugs/bugAnalyzer_singleton/solver_rand149_S8.txt_clean _S2:/home/Superficial/Mnemosyne/Aion/moco/mocoSource/solver/bugs/bugAnalyzer_singleton/solver_rand149_S2.txt_clean" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
 				       :name "analyze_pu" 
