@@ -54,7 +54,6 @@ import org.sat4j.moco.util.IOUtils;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.IVecInt;
 
-import org.moeaframework.core.variable.EncodingUtils;
 import org.moeaframework.core.Solution;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -136,36 +135,34 @@ public class Analyzer {
      * @return The reference set.
      */
     private void projectDataSet(IVecInt consObjectives) {
-	for(String key: this.dataset.keySet().toArray(new String[0])) {
+	for( String key: this.dataset.keySet().toArray(new String[0])) {
 	    Result[] rs = this.dataset.get(key).toArray(Result[]::new);
 	    Result[] newRs = new Result[rs.length];
 	    int ir = 0;
-	    for(Result result: rs){
-		newRs[ir] = new Result(this.moco);
-		Iterator<Solution> it = result.getSolutions().iterator();
-		// project the solutions, and build a collection of
-		// results for the same key
-		while(it.hasNext()){
-		    Solution sol = it.next();
-		    Solution newSol = new 
-			Solution(this.moco.nVars(), this.moco.nObjs(), this.moco.nConstrs());
-		    for (int i = 0; i < newSol.getNumberOfVariables(); ++i) {
-			newSol.setVariable(i, EncodingUtils.newBoolean());
-		    }
-		    // build the new solution, and add it to the new result
-		    double[] objectives = new double[this.moco.nObjs()];
-		    int i = 0;
-		    for(int j  = 0, m = sol.getNumberOfObjectives(); j < m; j++){
-			if(!consObjectives.contains(j)){
-			    objectives[i] = sol.getObjective(j);
-			    i++;
+		for(Result result: rs){
+		    newRs[ir] = new Result(this.moco);
+		    Iterator<Solution> it = result.getSolutions().iterator();
+		    // project the solutions, and build a collection of
+		    // results for the same key
+		    while(it.hasNext()){
+			Solution sol = it.next();
+			Solution newSol = this.problem.newSolution();
+			// build the new solution, and add it to the new result
+			double[] objectives = new double[this.moco.nObjs()];
+			int i = 0;
+			for(int j  = 0, m = sol.getNumberOfObjectives(); j < m; j++){
+			    if(!consObjectives.contains(j)){
+				objectives[i] = sol.getObjective(j);
+				i++;
+			    }
 			}
-		    }
 
-		    newSol.setObjectives(objectives);
-		    sol = newSol;
+			newSol.setObjectives(objectives);
+			newRs[ir].addSolution(newSol);
+		    }
 		}
-	    }
+	    // replace the dataset with the projected values
+	    this.dataset.replaceValues(key, Arrays.asList(newRs));
 	}
 }
 
