@@ -379,16 +379,18 @@ public class Analyzer {
      */
     public void printAnalysis() {
         Log.comment(3, "{ Analyzer.printAnalysis");
+	this.problem = new MOCOProblem(this.moco);
         ReferenceSet ref = mkRefSet();
+
 	IVecInt objs =  checkConstantObjectives(ref);
+
+	// project the ref set, after projecting the data set
 	if(objs.size() > 0){
 	    this.projectInstance(this.moco, objs);
 	    this.projectDataSet(objs);
+	    this.problem = new MOCOProblem(this.moco);
+	    ref = mkRefSet();
 	}
-	this.problem = new MOCOProblem(this.moco);
-
-	// project the ref set, after projecting the data set
-	ref = this.mkRefSet();
 
         if (ref.isEmpty()) {
             Log.comment("0 known solutions, impossible to analyze");
