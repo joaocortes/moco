@@ -90,9 +90,9 @@ public class Analyzer {
     public Analyzer(Instance m) {
         this.moco = m;
         this.problem = new MOCOProblem(m);
-	// Settings.PROPERTIES.setString("org.moeaframework.configuration.EPS", "0.0E-1");
-	// System.out.println("EPS is:");
-	// System.out.println(Settings.PROPERTIES.getDouble("org.moeaframework.configuration.EPS", 0));
+	Settings.PROPERTIES.setString("org.moeaframework.configuration.EPS", "1E-3");
+	System.out.println("EPS is:");
+	System.out.println(Settings.PROPERTIES.getDouble("org.moeaframework.configuration.EPS", 0));
 
     }
     
