@@ -20,7 +20,7 @@
 				       :stopOnEntry :json-false
 				       :host "localhost" 
 				       :name "bug21" 
-				       :mainClass  " org.sat4j.moco.analysis.Analyzer")
+				       :mainClass  "org.sat4j.moco.analysis.Analyzer")
 				      ("bug22: Run analyzer on DAL result"
 				       :type "java" 
 				       :request "launch"
@@ -39,6 +39,5 @@
 				      ("Run analyzer on PU result" :type "java" :request "launch"
 				       :args "/home/Superficial/Mnemosyne/Aion/moco/mocoSource/solver/bugs/bugAnalyzer_singleton/rand149.pbmo  _S0:/home/Superficial/Mnemosyne/Aion/moco/mocoSource/solver/bugs/bugAnalyzer_singleton/solver_rand149_S0.txt_clean _S8:/home/Superficial/Mnemosyne/Aion/moco/mocoSource/solver/bugs/bugAnalyzer_singleton/solver_rand149_S8.txt_clean _S2:/home/Superficial/Mnemosyne/Aion/moco/mocoSource/solver/bugs/bugAnalyzer_singleton/solver_rand149_S2.txt_clean" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
 				       :name "analyze_pu" 
-				       :mainClass  " org.sat4j.moco.analysis.Analyzer")
-				      
+				       :mainClass  "org.sat4j.moco.analysis.Analyzer")
 				      ))))
