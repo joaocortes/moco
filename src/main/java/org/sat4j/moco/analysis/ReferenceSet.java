@@ -183,8 +183,10 @@ class ReferenceSet {
         // based on the reference and ideal points
         boolean single = p.size() == 1;
 	Log.comment( "single  " + p.size());
-        Solution nadir = getNadirPoint(), ideal = getIdealPoint(), ref = getRefPoint();
-	// make sure all objectives attain a finite range inside the population. Add artificial points, if that is not the case.
+        Solution nadir = getNadirPoint(), ideal = getIdealPoint(), 
+	    ref = getRefPoint();
+	// make sure all objectives attain a finite range inside the
+	// population. Add artificial points, if that is not the case.
         for (int i = 0; i < this.problem.getNumberOfObjectives(); ++i) {
             if (single || nadir.getObjective(i) - ideal.getObjective(i) < Settings.EPS) {
                 Solution s = ref.copy();
