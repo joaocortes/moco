@@ -187,8 +187,10 @@ public class OPBReader {
             throw new ParserException(lineno, "linear objective terms among division objective");
         }
         else if (lits.size() == 0 && (!is_obj || num_lits.size() == 0)) {
-            throw new ParserException(lineno, "empty " + (is_obj ? "objective" : "constraint"));
-        }
+	    Log.comment(String.format("empty %s at line %d",(is_obj ? "objective" : "constraint"), lineno));
+            // throw new ParserException(lineno, "empty " + (is_obj ? "objective" : "constraint"));
+	    return;
+   }
         else if (is_obj && op != null) {
             throw new ParserException(lineno, "operator " + op + " in objective");
         }
