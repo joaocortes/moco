@@ -136,9 +136,9 @@ public class Analyzer {
      * @return The reference set.
      */
     private void projectDataSet(IVecInt consObjectives) {
-	for( String key: this.dataset.keySet().toArray(new String[0])) {
-	    Result[] rs = this.dataset.get(key).toArray(Result[]::new);
-	    Result[] newRs = new Result[rs.length];
+	for( String key: this.dataset.keySet()) {
+	    Collection<Result> rs = this.dataset.get(key);
+	    Result[] newRs = new Result[rs.size()];
 	    int ir = 0;
 	    for(Result result: rs){
 		newRs[ir] = new Result(this.moco);
@@ -148,20 +148,22 @@ public class Analyzer {
 		while(it.hasNext()){
 		    Solution sol = it.next();
 		    Solution newSol = new
-			Solution(this.moco.nVars(), this.moco.nObjs(), this.moco.nConstrs());
+			Solution(sol.getNumberOfVariables(),
+				 this.moco.nObjs(),
+				 sol.getNumberOfConstraints());
 		    // build the new solution, and add it to the new result
-		    for (int i = 0; i < newSol.getNumberOfVariables(); ++i) {
-			newSol.setVariable(i, EncodingUtils.newBoolean());
-		    }
 		    double[] objectives = new double[this.moco.nObjs()];
-		    int i = 0;
-		    for(int j  = 0, m = sol.getNumberOfObjectives(); j < m; j++){
+
+		    for(int j = 0, i = 0, m = sol.getNumberOfObjectives(); j < m; j++){
 			if(!consObjectives.contains(j)){
 			    objectives[i] = sol.getObjective(j);
 			    i++;
 			}
 		    }
-
+		    for (int i = 0; i < newSol.getNumberOfVariables(); ++i) {
+			newSol.setVariable(i, sol.getVariable(i));
+		    }
+		    it.remove();
 		    newSol.setObjectives(objectives);
 		    newRs[ir].addSolution(newSol);
 		}
