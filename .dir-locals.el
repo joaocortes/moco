@@ -9,9 +9,22 @@
   (projectile-project-compilation-cmd . "mvn -DskipTests=true package"))
  (java-mode
   (dap-debug-template-configurations .
-				     (("Run unsatSat on exampleX" :type "java" :request "launch" :args "examples/exampleX.opb -ib 1 -v 6 -ul 0:100,1:100" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
-				       :name "example2" ;; :projectName  "org.sat4j.moco"
+				     (("Run unsatSat on exampleX"
+				       :type "java"
+				       :request "launch"
+				       :args "examples/exampleX.opb -ib 1 -v 6 -ul 0:100,1:100"
+				       :cwd nil :stopOnEntry :json-false
+				       :host "localhost" :request "launch"
+				       :name "example2"
 				       :mainClass  "org.sat4j.moco.Launcher(org.sat4j.moco.threeAlgorithms)")
+				      ("bug24: empty objectives"
+				       :type "java" 
+				       :request "launch"
+				       :stopOnEntry :json-false
+				       :host "localhost" :request "launch"
+				       :args "-v 4 bugs/bug24/minimal.pbmo"
+				       :name "empty_objective" 
+				       :mainClass  "org.sat4j.moco.Launcher")
 				      ("bug21: Run analyzer on PU result"
 				       :type "java"
 				       :request "launch"
