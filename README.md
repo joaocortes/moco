@@ -43,13 +43,14 @@ delimeter into ``out.mocnf``,
 java -jar  ./target/org.sat4j.moco.threeAlgorithms-0.0.1-SNAPSHOT-jar-with-dependencies.jar  in.opb -ib 1 -o out.mocnf
 ```
 
-If you would like to enforce upper limits for the iObj'th objective function,
-use the ``ul`` option with the syntax ``<iObj>:<upperLimit>``,
-where ``upperLimit`` is the exclusive upper limit, and ``iObj`` is the
-index of the objective function, starting from 0. Uppper limits may be
-set for any subset of the objective functions, separating the upper limits with a comma. 
-To impose an upper limit of 1 to the objective function 0 and an upper limit of 2 to the objective function 4,
-use ``-ul 0:1,4:2``
+If you would like to enforce upper limits for the iObj'th objective
+function, use the ``ul`` option with the syntax
+``<iObj>:<upperLimit>``, where ``upperLimit`` is the exclusive upper
+limit, and ``iObj`` is the index of the objective function, starting
+from 0. Uppper limits may be set for any subset of the objective
+functions, separating the upper limits with a comma.  To impose an
+upper limit of 1 to the objective function 0 and an upper limit of 2
+to the objective function 4, use ``-ul 0:1,4:2``
 
 To set the ratios used in the digital basis, use the option ``rb <arg>``, with ``<arg>=<iObj>:[r1,...rN],...``
 For exmple, to set the ratios of the first objective function `1` to ``[2,2,3]`` and the ratios of the objective function ``3`` to ``[4,4]``,
