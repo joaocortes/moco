@@ -65,7 +65,7 @@ public class SelectionDelimeterTest {
 	    Log.comment("Could not build the solver");
             return;
         }
-	this.sd  = new SelectionDelimeter(moco, this.pbSolver,true){
+	this.sd  = new SelectionDelimeter(moco, this.pbSolver){
 
 		/**
 		 *Adds the disjunction of setOfLiterals, and logs
