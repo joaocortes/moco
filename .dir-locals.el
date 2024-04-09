@@ -12,6 +12,12 @@
 				     (("Run unsatSat on exampleX" :type "java" :request "launch" :args "examples/exampleX.opb -ib 1 -v 6 -ul 0:100,1:100" :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
 				       :name "example2" ;; :projectName  "org.sat4j.moco"
 				       :mainClass  "org.sat4j.moco.Launcher(org.sat4j.moco.threeAlgorithms)")
+				      ("Run p-minimal with SD encoding"
+				       :type "java" :request "launch"
+				       :args "/home/Superficial/Mnemosyne/Aion/moco/mocoData/solverData/bp-100-20-3-10-10192-SC.pbmo -enc SD -alg 2" 
+				       :cwd nil :stopOnEntry :json-false :host "localhost" :request "launch"
+				       :name "example2" ;; :projectName  "org.sat4j.moco"
+				       :mainClass  "org.sat4j.moco.Launcher(org.sat4j.moco.threeAlgorithms)")
 				      ("bug21: Run analyzer on PU result"
 				       :type "java"
 				       :request "launch"
