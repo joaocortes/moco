@@ -68,7 +68,7 @@ abstract public class SelectionDelimeterT<PObjManager extends IObjManager> exten
     }
 
     abstract protected PObjManager[] objManagersCreator();
-    abstract protected PObjManager objManagerCreator(int iObj, int ub);
+    abstract protected PObjManager objManagerCreator(int iObj, Integer ub);
 
     public void initializeObjectManagers(){
 	for(int iObj = 0, nObj = instance.nObjs() ;iObj< nObj; ++iObj){

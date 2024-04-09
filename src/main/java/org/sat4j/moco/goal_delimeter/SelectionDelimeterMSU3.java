@@ -367,7 +367,7 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	}
 
 	@Override
-	protected ObjManager objManagerCreator(int iObj, int ub) {
+	protected ObjManager objManagerCreator(int iObj, Integer ub) {
 	    return new ObjManager(iObj, ub);
 	}
 
