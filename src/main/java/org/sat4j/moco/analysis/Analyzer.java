@@ -255,7 +255,7 @@ public class Analyzer {
 
 	IVecInt objs = new VecInt(new int[]{});
 	double[] ideal = rs.getIdealPoint().getObjectives();
-	double[] ref   = rs.getRefPoint().getObjectives();
+	double[] ref   = rs.getNadirPoint().getObjectives();
 	{	int i = 0;
 	    for(double iel: ref){
 		if(iel - ideal[i] < Settings.EPS)
