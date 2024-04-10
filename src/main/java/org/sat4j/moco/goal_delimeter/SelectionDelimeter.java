@@ -55,7 +55,6 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
     
     public SelectionDelimeter(Instance instance, PBSolver solver) {
 	super(instance, solver);
-	this.initializeYTable();
 	}
 
 	public class ObjManager implements IObjManager{
