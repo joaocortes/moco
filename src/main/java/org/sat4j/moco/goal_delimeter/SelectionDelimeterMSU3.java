@@ -111,9 +111,9 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 	int iObj;
 	Circuit circuit;
 	DigitalEnv digitalEnv;
-	int ub = 0;
+	Integer ub;
 
-	ObjManager(int iObj, int ub){
+	ObjManager(int iObj, Integer ub){
 	    this.iObj = iObj;
 	    this.digitalEnv = new DigitalEnv();
 	    this.ub = ub;
@@ -266,6 +266,8 @@ public class SelectionDelimeterMSU3 extends SelectionDelimeterT<SelectionDelimet
 
 	@Override
 	public void buildMyself() {
+	    if(this.ub == null)
+		this.ub = getInstance().getObj(getIObj()).getWeightDiff();
 	    this.circuit = new Circuit(getSolver()){
 		    public void buildCircuit(){
 			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);

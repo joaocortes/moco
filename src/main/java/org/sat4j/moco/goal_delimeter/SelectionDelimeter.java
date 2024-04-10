@@ -214,12 +214,14 @@ public class SelectionDelimeter extends SelectionDelimeterT<SelectionDelimeter.O
 
 	@Override
 	public void buildMyself() {
+	    if(this.ub == null)
+		this.ub = getInstance().getObj(getIObj()).getWeightDiff();
     	    this.circuit = new Circuit(getSolver()){
 		    public void buildCircuit(){
 			SortedMap<Integer, ArrayList<Integer>> baseInputs = getInputsFromWeights(iObj);
 			ArrayList<Integer> inputs = new ArrayList<Integer>();
-
 			int maxValue = getInstance().getObj(getIObj()).getWeightDiff();
+			if(maxValue > ub) maxValue = ub;
 			ReadOnlyVec<Real> coeffs = getInstance().getObj(getIObj()).getSubObj(0).getCoeffs();
 			int maxCoeff = 0;
 			for(int i = 0, n = coeffs.size(); i < n; i++ ){
