@@ -50,9 +50,14 @@ import org.moeaframework.core.PopulationIO;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.parsing.OPBReader;
 import org.sat4j.moco.problem.Instance;
+import org.sat4j.moco.problem.Objective;
+import org.sat4j.moco.problem.PB;
+import org.sat4j.moco.pb.PBConstr;
 import org.sat4j.moco.util.IOUtils;
 import org.sat4j.moco.util.Log;
 import org.sat4j.specs.IVecInt;
+import org.sat4j.specs.IVec;
+import org.sat4j.core.Vec;
 
 import org.moeaframework.core.variable.EncodingUtils;
 import org.moeaframework.core.Solution;
@@ -288,13 +293,21 @@ public class Analyzer {
     /**
      projects the problem
     */
-    private void projectInstance(Instance instance, IVecInt consObjectives){
-	int nObj = consObjectives.size();
-	for(int j  = 0; j < nObj; j++)
-	    instance.removeObj(consObjectives.get(j));
-	
+    private void projectInstance(IVecInt consObjectives){
 
-};
+	if(consObjectives.size() == 0)
+	    return;
+
+	IVec<Objective> new_objectives = new Vec<Objective>();
+	for(int j  = 0, n = this.moco.nObjs(); j < n; j++)
+	    if(consObjectives.contains(j))
+		continue;
+	    else
+		new_objectives.push(this.moco.getObj(j));
+        IVec<PBConstr> constrs = new Vec<PBConstr>(this.moco.nConstrs());
+	this.moco = new Instance(constrs, new_objectives);
+	
+    };
 
     /**
      projects tho data
@@ -393,7 +406,7 @@ public class Analyzer {
 
 	// project the ref set, after projecting the data set
 	if(objs.size() > 0){
-	    this.projectInstance(this.moco, objs);
+	    this.projectInstance(objs);
 	    this.projectDataSet(objs);
 	    this.problem = new MOCOProblem(this.moco);
 	    ref = mkRefSet();
