@@ -51,7 +51,6 @@ import org.sat4j.core.VecInt;
 import org.sat4j.moco.parsing.OPBReader;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.problem.Objective;
-import org.sat4j.moco.problem.PB;
 import org.sat4j.moco.pb.PBConstr;
 import org.sat4j.moco.util.IOUtils;
 import org.sat4j.moco.util.Log;
