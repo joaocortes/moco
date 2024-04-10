@@ -53,6 +53,7 @@ public class GoalDelimeterCreator {
 	    }
 	    else{
 		SelectionDelimeter gd1 = new SelectionDelimeter(instance, solver);
+		gd1.buildCircuits();
 		gd1.generateY();
 		gd = gd1;
 
