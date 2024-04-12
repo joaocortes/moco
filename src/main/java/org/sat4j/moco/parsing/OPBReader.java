@@ -184,8 +184,7 @@ public class OPBReader {
         }
         assert(lits.size() == coeffs.size());
         if (lits.size() > 0 && num_lits.size() > 0) {
-	    Log.comment("empty objective. It will be ignored. Please do the same at the solution level.");
-            // throw new ParserException(lineno, "linear objective terms among division objective");
+            throw new ParserException(lineno, "linear objective terms among division objective");
         }
         else if (lits.size() == 0 && (!is_obj || num_lits.size() == 0)) {
             throw new ParserException(lineno, "empty " + (is_obj ? "objective" : "constraint"));
