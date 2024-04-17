@@ -192,7 +192,8 @@ public class OPBReader {
         else if (lits.size() == 0 && (!is_obj || num_lits.size() == 0)) {
 	    Log.comment("empty objective. It will be ignored. Please do the same at the solution level.");
             // throw new ParserException(lineno, "empty " + (is_obj ? "objective" : "constraint"));
-        }
+	    return;
+	}
         else if (is_obj && op != null) {
             throw new ParserException(lineno, "operator " + op + " in objective");
         }
