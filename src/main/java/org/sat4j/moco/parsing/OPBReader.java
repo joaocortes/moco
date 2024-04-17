@@ -99,6 +99,9 @@ public class OPBReader {
      * @param is_obj True if the line is an objective function, false otherwise.
      */
     private void parseLine(String line, int lineno, boolean is_obj) {
+	while (line.endsWith(";")) {
+	    line = line.substring(0, line.length() - 1);
+	}	
         String[] tokens = line.trim().split("\\s+");
         if (is_obj && !(tokens[0].equals("min:") || tokens[0].equals("max:"))) {
             throw new ParserException(lineno, "unknown objective type " + tokens[0]);
