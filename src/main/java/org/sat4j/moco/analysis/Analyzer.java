@@ -240,12 +240,9 @@ public class Analyzer {
         analyzer = analyzer.withProblem(this.problem)
 	    .withReferencePoint(rs.getRefPoint().getObjectives())
 	    .withIdealPoint(rs.getIdealPoint().getObjectives())
-	    // .includeInvertedGenerationalDistance()
 	    .includeHypervolume()
 	    .includeContribution()
 	    .includeInvertedGenerationalDistance()
-	    // .showIndividualValues()
-	    // .showStatisticalSignificance()
 	    .withReferenceSet(r_file);
         addDataset(analyzer);
         Log.comment(3, "out Analyzer.buildMOEAAnalyzer");
