@@ -46,7 +46,6 @@ import org.moeaframework.Analyzer.AnalyzerResults;
 import org.moeaframework.Analyzer.IndicatorResult;
 import org.moeaframework.core.NondominatedPopulation;
 import org.moeaframework.core.Population;
-import org.moeaframework.core.PopulationIO;
 import org.sat4j.core.VecInt;
 import org.sat4j.moco.parsing.OPBReader;
 import org.sat4j.moco.problem.Instance;
@@ -186,7 +185,7 @@ public class Analyzer {
     private void dumpObjVals(Population p, File f) {
         Log.comment(3, "{ Analyzer.dumpObjVals");
         try {
-            PopulationIO.writeObjectives(f, p);
+            p.saveObjectives(f);
         }
         catch (IOException e) {
             throw new RuntimeException("Failed to write reference set to temporary file", e);
