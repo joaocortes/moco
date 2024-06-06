@@ -266,8 +266,13 @@ public class Analyzer {
 		i++;
 	    }
 	}
-	Log.comment("constant objectives:");
-	return objs ;
+	String log = "";
+	if(objs.size() > 0)
+	    log = String.format("constant objectives: %d", objs.get(0));
+	for(int i = 1, n = objs.size(); i < n; i++)
+	    log += String.format(", %d", objs.get(i));
+	Log.comment(log);
+	return objs;
     }
 
     
