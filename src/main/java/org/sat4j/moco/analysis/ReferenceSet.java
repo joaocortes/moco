@@ -106,6 +106,7 @@ class ReferenceSet {
      */
     public boolean isEmpty() { return getMergedSet().isEmpty(); }
     
+  public boolean isSingleton() { return getMergedSet().size() == 1; }
     /**
      * Computes the ideal or nadir point of the MOCO instance based on the current reference set.
      * @param nadir True (false) if the nadir (ideal) point is to be computed.
