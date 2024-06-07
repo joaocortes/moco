@@ -396,11 +396,24 @@ public class Analyzer {
     public void printAnalysis() {
         Log.comment(3, "{ Analyzer.printAnalysis");
 	this.problem = new MOCOProblem(this.moco);
-        ReferenceSet ref = mkRefSet();
 
-	IVecInt objs =  checkConstantObjectives(ref);
+	ReferenceSet ref = mkRefSet();
+
 
 	// project the ref set, after projecting the data set
+
+
+        if (ref.isEmpty()) {
+            Log.comment("0 known solutions, impossible to analyze");
+	    return;
+	}
+	if(ref.isSingleton()){
+	    Log.comment("singleton reference");
+	    ref.getSolutions();
+	    ref.getIdealPoint(true);
+	    ref.getRefPoint(true);
+	}
+	IVecInt objs =  checkConstantObjectives(ref);
 	if(objs.size() > 0){
 	    this.projectInstance(objs);
 	    this.projectDataSet(objs);
