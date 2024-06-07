@@ -133,11 +133,7 @@ public class Analyzer {
         Log.comment(3, "out Analyzer.mkRefSet");
         return r;
     }
-    /**
-     * Builds the reference set of the MOCO instance to be used in computation of performance indicators
-     * that require a reference set (e.g. inverted generational distance).
-     * @return The reference set.
-     */
+
     private void projectDataSet(IVecInt consObjectives) {
 	for( String key: this.dataset.keySet()) {
 	    Collection<Result> rs = this.dataset.get(key);
