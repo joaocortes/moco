@@ -141,7 +141,13 @@ class ReferenceSet {
     // TODO: multiple calls can become inefficient; use caching?
     
     public Solution getIdealPoint() { 
-	if(this.idealPoint!=null)
+	return this.getIdealPoint(false);
+}
+
+
+    public Solution getIdealPoint(boolean force) { 
+
+	if(!force && this.idealPoint!=null)
 	    return this.idealPoint;
 
 	double[] idealObjInt = this.getPoint(false).getObjectives();
@@ -158,7 +164,11 @@ class ReferenceSet {
      * @return The reference point.
      */
     public Solution getRefPoint() {
-	if(this.refPoint!=null)
+	return this.getRefPoint(false);
+    }
+
+    public Solution getRefPoint(boolean force) {
+	if(!force && this.refPoint!=null)
 	    return this.refPoint;
 
         this.refPoint = getNadirPoint();
