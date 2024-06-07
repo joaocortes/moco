@@ -185,7 +185,7 @@ class ReferenceSet {
     // TODO: multiple calls can become inefficient; use caching?
     public Population getSolutions() {
         Population p = getMergedSet();
-
+	double EPS = Settings.PROPERTIES.getDouble("org.moeaframework.configuration.EPS", 0);
        if (p.size() == 0) { return p; }
         // MOEA Framework's analysis fails if the reference set has a
         // single individual or if an objective's range is empty; in

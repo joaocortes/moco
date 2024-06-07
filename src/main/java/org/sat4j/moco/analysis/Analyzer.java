@@ -93,7 +93,7 @@ public class Analyzer {
     public Analyzer(Instance m) {
         this.moco = m;
         this.problem = new MOCOProblem(m);
-	Settings.PROPERTIES.setString("org.moeaframework.configuration.EPS", "1E-3");
+	Settings.PROPERTIES.setString("org.moeaframework.configuration.EPS", "1E-6");
 	System.out.println("EPS is:");
 	System.out.println(Settings.PROPERTIES.getDouble("org.moeaframework.configuration.EPS", 0));
 
@@ -252,7 +252,7 @@ public class Analyzer {
        Check for objective functions that do not change over the reference set
     */
     private IVecInt checkConstantObjectives(ReferenceSet rs) {
-
+	double EPS = Settings.PROPERTIES.getDouble("org.moeaframework.configuration.EPS", 0);
 	IVecInt objs = new VecInt(new int[]{});
 	double[] ideal = rs.getIdealPoint().getObjectives();
 	double[] ref   = rs.getNadirPoint().getObjectives();
