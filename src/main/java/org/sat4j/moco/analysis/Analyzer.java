@@ -254,7 +254,7 @@ public class Analyzer {
 	double[] ref   = rs.getNadirPoint().getObjectives();
 	{	int i = 0;
 	    for(double iel: ref){
-		if(iel - ideal[i] < Settings.EPS)
+		if(iel - ideal[i] < .5 * EPS)
 		    objs.push(i);
 		i++;
 	    }
