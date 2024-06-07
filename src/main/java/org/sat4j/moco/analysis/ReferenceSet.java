@@ -193,18 +193,18 @@ class ReferenceSet {
         // based on the reference and ideal points
         boolean single = p.size() == 1;
 	Log.comment( "single  " + p.size());
-        Solution nadir = getNadirPoint(), ideal = getIdealPoint(), 
-	    ref = getRefPoint();
+        Solution nadir = getNadirPoint(), ideal = getIdealPoint(false), 
+	    ref = getRefPoint(false);
 	// make sure all objectives attain a finite range inside the
 	// population. Add artificial points, if that is not the case.
-        // for (int i = 0; i < this.problem.getNumberOfObjectives(); ++i) {
-        //     if (single || nadir.getObjective(i) - ideal.getObjective(i) < Settings.EPS) {
-        //         Solution s = ref.copy();
-        //         s.setObjective(i, s.getObjective(i) - Settings.EPS);    
-        //         p.add(s);                                                   
-	// 	Log.comment(1, "Artificial point, objective " + i);
-        //     }
-        // }
+        for (int i = 0; i < this.problem.getNumberOfObjectives(); ++i) {
+            if (single || nadir.getObjective(i) - ideal.getObjective(i) < EPS) {
+                Solution s = ideal.copy();
+                s.setObjective(i, s.getObjective(i) - 1*EPS);    
+                p.add(s);                                                   
+		Log.comment(1, "Artificial point, objective " + i);
+            }
+        }
         Log.comment(1, ":ref-set-size " + p.size());
         return p;
     }
