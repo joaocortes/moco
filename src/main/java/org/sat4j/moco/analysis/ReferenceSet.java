@@ -28,7 +28,7 @@ import java.util.Iterator;
 import org.moeaframework.core.Population;
 import org.moeaframework.core.Settings;
 import org.moeaframework.core.Solution;
-import org.moeaframework.analysis.tools.ReferenceSetMerger;
+import org.moeaframework.util.ReferenceSetMerger;
 import org.sat4j.core.Vec;
 import org.sat4j.moco.problem.Instance;
 import org.sat4j.moco.util.Log;
@@ -151,10 +151,11 @@ class ReferenceSet {
 	    return this.idealPoint;
 
 	double[] idealObjInt = this.getPoint(false).getObjectives();
-	this.idealPoint = new Solution(0, idealObjInt.length);
+	double[] idealObjDouble = new double[idealObjInt.length];
 	for(int iObj=0, nObj = idealObjInt.length; iObj < nObj; iObj++){
-	    this.idealPoint.setObjective(iObj, idealObjInt[iObj]);
+	    idealObjDouble[iObj] = idealObjInt[iObj];
 	}
+	this.idealPoint = new Solution(idealObjDouble);
 	return this.idealPoint;
     }
     
